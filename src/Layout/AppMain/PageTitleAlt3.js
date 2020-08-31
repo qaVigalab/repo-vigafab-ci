@@ -17,6 +17,9 @@ class PageTitleAlt3 extends Component {
             enablePageTitleIcon,
             enablePageTitleSubheading,
             heading,
+            empresa,
+            menues,
+            menu_actual,
             icon,
         } = this.props;
 
@@ -38,7 +41,11 @@ class PageTitleAlt3 extends Component {
                                 </div>
                                 <div
                                     className={cx("page-title-subheading opacity-10", {'d-none': !enablePageTitleSubheading})}>
-                                    <TitleComponent3/>
+                                    <TitleComponent3 
+                                    empresa={empresa} 
+                                    menues={menues}
+                                    menu_actual={menu_actual}
+                                    />
                                 </div>
                             </div>
                         </div>

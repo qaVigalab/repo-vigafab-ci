@@ -17,6 +17,8 @@
     "@fortawesome/free-brands-svg-icons": "^5.11.2",
     "@fortawesome/free-solid-svg-icons": "^5.11.2",
     "@fortawesome/react-fontawesome": "^0.1.4",
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
     "animate-sass": "^0.8.2",
     "apexcharts": "^3.8.6",
     "availity-reactstrap-validation": "^2.6.0",
@@ -158,6 +160,6 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "node-sass": "^4.12.0"
+    "node-sass": "^4.14.1"
   }
 }

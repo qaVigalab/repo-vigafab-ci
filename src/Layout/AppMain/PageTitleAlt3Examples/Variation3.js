@@ -14,6 +14,11 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 export default class TitleComponent3 extends Component {
 
     render() {
+        let {
+            empresa,
+            menues,
+            menu_actual
+        } = this.props;
         return (
             <Fragment>
                 <Breadcrumb>
@@ -21,9 +26,15 @@ export default class TitleComponent3 extends Component {
                         <FontAwesomeIcon icon={faHome}/></a>
                     </BreadcrumbItem>
                     <BreadcrumbItem>
-                        <a href="javascript:void(0);">Planta CIAL</a>
+        <a href="javascript:void(0);">{empresa}</a>
                     </BreadcrumbItem>
-                    <BreadcrumbItem active>Vista General</BreadcrumbItem>
+                    {
+                        menues.map(x=>(
+                            <BreadcrumbItem >{x}</BreadcrumbItem>
+                        ))
+                    }
+                  <BreadcrumbItem active>{menu_actual}</BreadcrumbItem>
+                   
                 </Breadcrumb>
             </Fragment>
         );
