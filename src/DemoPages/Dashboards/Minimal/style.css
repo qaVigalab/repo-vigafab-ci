@@ -222,3 +222,29 @@
   .produccion {
     background: #31cc54
   }
+
+  .bg-produccion {
+    background: #31cc54
+  }
+  .bg-inactivo{
+    background: #d9d9d9
+  }
+  .bg-naranjo{
+    background: #feb018
+  }
+
+  .bg-morado{
+    background: #775dd0
+  }
+ 
+  .bg-azul{
+    background: #25a0fc
+  }
+
+  .bg-amarillo {
+    background: #ffef45
+  }
+
+  .bg-rojo {
+    background: #ff4560
+  }

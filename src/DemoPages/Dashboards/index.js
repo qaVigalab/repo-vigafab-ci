@@ -10,10 +10,9 @@ import CRMDashboard from './CRM/';
 import MinimalDashboard1 from './Minimal/Variation1';
 import MinimalDashboard2 from './Minimal/Variation2';
 import Horno from './Minimal/Horno';
+import Detalle from './Minimal/DetalleAvanzado';
 import Envasadora from './Minimal/Envasadora';
-
-
-
+import Analisis from './Minimal/Analisis';
 // Layout
 
 import AppHeader from '../../Layout/AppHeader/';
@@ -39,8 +38,8 @@ const Dashboards = ({match}) => (
                     <Route path={`${match.url}/minimal-dashboard-2`} component={MinimalDashboard2}/>
                     <Route path={`${match.url}/envasadora`} component={Envasadora}/>
                     <Route path={`${match.url}/horno`} component={Horno}/>
-
-                    
+                    <Route path={`${match.url}/DetalleAvanzado`} component={Detalle}/>
+                    <Route path={`${match.url}/Analisis`} component={Analisis}/>
 
                 </div>
                 <AppFooter/>

@@ -11,6 +11,7 @@ export const Analisis= [
     {
         icon: 'pe-7s-graph',
         label: 'Análisis',
+        to: '#/dashboards/analisis'
 
     }
 ]
@@ -53,9 +54,6 @@ export const Envasadoras= [
 
     }
 ]
-
-
-
 
 export const MainNav = [
     {

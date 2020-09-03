@@ -16,7 +16,6 @@ import {
 } from "reactstrap";
 import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
 import CialWidget from "./CialWidget";
-import DetalleHorno from './DetalleHorno'
 import FormDateRangePicker from "./DateRangePicker";
 
 const data = {
@@ -45,7 +44,7 @@ const data = {
   ],
 };
 
-export default class Horno extends Component {
+export default class Analisis extends Component {
   applyCallback(startDate, endDate) {
     this.setState({
       start: startDate,
@@ -87,13 +86,13 @@ export default class Horno extends Component {
         >
           <Row>
             <Col>
-            <PageTitleAlt3
-                heading="HORNO 1"
+              <PageTitleAlt3
+                heading="ANÁLISIS"
                 subheading="This is an example dashboard created using build-in elements and components."
                 icon="lnr-apartment opacity-6"
                 empresa="Agrosuper"
-                menues={["Hornos"]}
-                menu_actual="Horno 1"
+                menues={[]}
+                menu_actual="Análisis"
               />
             </Col>
             <Col>
@@ -106,8 +105,70 @@ export default class Horno extends Component {
           </Row>
 
           <Row>
-            
-            <Col md="12" xl="12">
+            <Col md="6" xl="4">
+              <Card className="main-card mb-3">
+                <CardBody>
+                  <div className="titlecard">Filtrar Por</div>
+                  {/* modo 0 */}
+
+                  <Button
+                    outline={this.state.modo === 0 ? false : true}
+                    className="mb-2 mr-2"
+                    color={this.state.modo === 0 ? "primary" : "secondary"}
+                    onClick={() => {
+                      this.setState({
+                        modo: 0,
+                      });
+                    }}
+                  >
+                    Ver todos
+                  </Button>
+                  {/* modo 1 */}
+
+                  <Button
+                    outline={this.state.modo === 1 ? false : true}
+                    className="mb-2 mr-2 btn-transition"
+                    color={this.state.modo === 1 ? "primary" : "secondary"}
+                    onClick={() => {
+                      this.setState({
+                        modo: 1,
+                      });
+                    }}
+                  >
+                    Hornos
+                  </Button>
+                  {/* modo 2 */}
+
+                  <Button
+                    outline={this.state.modo === 2 ? false : true}
+                    className="mb-2 mr-2 btn-transition"
+                    color={this.state.modo === 2 ? "primary" : "secondary"}
+                    onClick={() => {
+                      this.setState({
+                        modo: 2,
+                      });
+                    }}
+                  >
+                    Envasadoras
+                  </Button>
+                  {/* modo 5 */}
+
+                  <Button
+                    outline={this.state.modo === 5 ? false : true}
+                    className="mb-2 mr-2 btn-transition"
+                    color={this.state.modo === 5 ? "primary" : "secondary"}
+                    onClick={() => {
+                      this.setState({
+                        modo: 5,
+                      });
+                    }}
+                  >
+                    Por Producto
+                  </Button>
+                </CardBody>
+              </Card>
+            </Col>
+            <Col md="6" xl="8">
               <Card className="main-card mb-3">
                 <CardBody>
                   <Container>
@@ -151,7 +212,7 @@ export default class Horno extends Component {
             </Col>
 
             <Col md="12" xl="12">
-              <Card className="main-card mb-1">
+              <Card className="main-card mb-3">
                 <Row>
                   <Col>
                     <div className="flechas">
@@ -176,74 +237,33 @@ export default class Horno extends Component {
           </Row>
 
           <div class="columns-parent">
-                <Card className="main-card mb-1">
-                    <Container>
-                        <Row>
-                        <Col xs='2'>
-                            Hora
-                        </Col>
-                        <Col xs='2'>
-                            Producción
-                        </Col>
-                        <Col xs='2'>
-                            Tiempo de actividad
-                        </Col>
-                        <Col xs='2'>
-                            Tipo
-                        </Col>
-                        <Col xs='2'>
-                            Tiempo
-                        </Col>
-                        <Col xs='2'>
-                            Razón / comentario
-                        </Col>
-                    </Row>
-                    </Container>
-                </Card>
             {this.state.modo === 1 || this.state.modo === 0 ? (
               <Row>
                 {/* Carta 3  black header*/}
-                <DetalleHorno
+                <CialWidget
                   modo={1}
                   estado={1}
-                  OE={2090}
-                  OET={2500}
-                  TA={3}
-                  TAT={5}
-                  hora={"7:00 - 8:00"}
-                  nombre="Horno 1"
-                  data={[2.2, 3, 4, 0.8, 0.3, 0.2, 1]}
-                  producto={true}
-                />
-               <DetalleHorno
-                  modo={1}
-                  estado={1}
-                  OE={2090}
-                  OET={2500}
-                  TA={1}
-                  TAT={2}
-                  hora={"8:00 - 9:00"}
                   nombre="Horno 1"
                   data={[2.2, 3, 2, 0.8, 0.3, 0.2, 5]}
-                  producto={false}
                 />
-                <DetalleHorno
+                <CialWidget
                   modo={1}
                   estado={2}
-                  OE={2090}
-                  OET={2500}
-                  TA={2}
-                  TAT={8}
-                  hora={"9:00 - 10:00"}
-                  nombre="Horno 1"
-                  data={[2.2, 1, 1, 0.8, 0.3, 0.2, 5]}
-                  producto={false}
+                  nombre="Horno 2"
+                  data={[3, 2.3, 1.2, 2.4, 1.5, 0.2, 4.8]}
+                />
+                <CialWidget
+                  modo={1}
+                  estado={1}
+                  nombre="Horno 3"
+                  data={[1.2, 2.3, 3.4, 5.5, 2, 5, 3]}
                 />
               </Row>
             ) : (
               ""
             )}
 
+            
           </div>
         </ReactCSSTransitionGroup>
       </Fragment>

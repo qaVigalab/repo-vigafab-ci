@@ -1,12 +1,11 @@
-import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Brightness1Icon from '@material-ui/icons/Brightness1';
+import ChatBubbleIcon from '@material-ui/icons/ChatBubble';
 import React, { Component } from "react";
 import { Doughnut } from "react-chartjs-2";
 import Circle from "react-circle";
-import { Card, Col, Container, Row, Table } from "reactstrap";
-import Brightness1Icon from '@material-ui/icons/Brightness1';
-import ChatBubbleIcon from '@material-ui/icons/ChatBubble';
+import { Card, Col, Container, Row, Table, Button } from "reactstrap";
 import './style.css';
+import { Link } from 'react-router-dom';
 export default class DetalleHorno extends Component {
   render() {
     let data = {
@@ -52,96 +51,23 @@ export default class DetalleHorno extends Component {
         },
       ],
     };
-
     
       return (
         <Col md="12" xl="12" lg="12" xs="12">
           <Card className="main-card mb-3" style={{height:'210px'}}>
-            {/* header */}
-            
-             {/*  <Container
-                className={
-                  this.props.modo === 1 || this.props.modo === 2
-                    ? ""
-                    : "darkbackground"
-                }
-              >
-                <Row>
-                  <Col>
-                    <div className="tizq">
-                      <div
-                        className={
-                          this.props.modo === 1 || this.props.modo === 2
-                            ? "title1"
-                            : "title1dark"
-                        }
-                      >
-                        {this.props.nombre}
-                      </div>
-                      <div>
-                        <div
-                          className={
-                            this.props.modo === 1 || this.props.modo === 2
-                              ? "indi"
-                              : "indi text-white"
-                          }
-                        >
-                          {this.props.estado === 1 ? (
-                            <span className="opacity-10 text-success pr-2">
-                              <FontAwesomeIcon icon={faAngleUp} />
-                            </span>
-                          ) : (
-                            <span className="opacity-10 text-danger pr-2">
-                              <FontAwesomeIcon icon={faAngleDown} />
-                            </span>
-                          )}
-                          {(
-                            (this.props.data[6] /
-                              this.props.data.reduce((a, b) => a + b, 0)) *
-                            100
-                          ).toFixed(0)}
-
-                          <small className="opacity-5 pl-1">%</small>
-                        </div>
-                      </div>{" "}
-                    </div>
-                  </Col>
-                  <Col>
-                    <div className="tde">
-                      {this.props.estado === 1 ? (
-                        <div className="title2">Produciendo</div>
-                      ) : (
-                        <div className="title2rojo">Parada</div>
-                      )}
-                      <div>
-                        <font color="#aaaaaa">Tiempo de Actividad</font>
-                      </div>
-                      <div>
-                        <font color="gray">
-                          {this.props.data[6]} hrs /{" "}
-                          {this.props.data
-                            .reduce((a, b) => a + b, 0)
-                            .toFixed(1)}{" "}
-                          hrs
-                        </font>{" "}
-                      </div>
-                    </div>
-
-                    <div />
-                  </Col>
-                </Row>
-                {this.props.modo === 3 || this.props.modo === 4 ? (
-                  <div style={{ padding: "10px" }} />
-                ) : (
-                  <hr />
-                )}
-              </Container> */}
-            
               <div className="centralbody2">
               <Container>
                   <Row>
                     <Col xs="2" style={{paddingTop:'50px'}}>
-                        {this.props.hora}
+                        {this.props.hora} <br />
+                        {this.props.producto===true?
+                          <Link to='DetalleAvanzado'>
+                            Ver detalle
+                          </Link>
+                          :
+                          ""
+                        }
+                        
                     </Col>
                     <Col xs="2">
                       <div >
