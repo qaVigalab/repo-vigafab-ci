@@ -6,6 +6,7 @@ import Circle from "react-circle";
 import { Card, Col, Container, Row, Table, Button } from "reactstrap";
 import './style.css';
 import { Link } from 'react-router-dom';
+
 export default class DetalleHorno extends Component {
   render() {
     let data = {

@@ -1,5 +1,6 @@
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Brightness1Icon from "@material-ui/icons/Brightness1";
 import React, { Component, Fragment } from "react";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 import DatePicker from "react-datepicker";
@@ -12,7 +13,9 @@ import {
   Input,
   InputGroup,
   InputGroupAddon,
+  Progress,
   Row,
+  Table,
 } from "reactstrap";
 import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
 import CialWidget from "./CialWidget";
@@ -238,32 +241,108 @@ export default class Analisis extends Component {
 
           <div class="columns-parent">
             {this.state.modo === 1 || this.state.modo === 0 ? (
-              <Row>
-                {/* Carta 3  black header*/}
-                <CialWidget
-                  modo={1}
-                  estado={1}
-                  nombre="Horno 1"
-                  data={[2.2, 3, 2, 0.8, 0.3, 0.2, 5]}
-                />
-                <CialWidget
-                  modo={1}
-                  estado={2}
-                  nombre="Horno 2"
-                  data={[3, 2.3, 1.2, 2.4, 1.5, 0.2, 4.8]}
-                />
-                <CialWidget
-                  modo={1}
-                  estado={1}
-                  nombre="Horno 3"
-                  data={[1.2, 2.3, 3.4, 5.5, 2, 5, 3]}
-                />
-              </Row>
+              <Fragment>
+                      <Row>
+                      <CialWidget
+                          modo={1}
+                          estado={1}
+                          nombre="Horno 1"
+                          data={[2.2, 3, 2, 0.8, 0.3, 0.2, 5]}
+                        />
+                        <CialWidget
+                          modo={1}
+                          estado={2}
+                          nombre="Horno 2"
+                          data={[3, 2.3, 1.2, 2.4, 1.5, 0.2, 4.8]}
+                        />
+                        <CialWidget
+                          modo={1}
+                          estado={1}
+                          nombre="Horno 3"
+                          data={[1.2, 2.3, 3.4, 5.5, 2, 5, 3]}
+                        />
+                      </Row>
+                        {/* Carta 3  black header*/}
+                        
+                      
+                      <Card className="main-card mb-3">
+                <CardBody>
+                  <Container>
+                    <Row>
+                      <Col xs="12">
+                        <Table size="sm">
+                          <tbody>
+                            <tr>
+                              <td style={{ width: "33%" }}>
+                                <Brightness1Icon style={{ color: "#31cc54" }} />
+                                Produciendo
+                              </td>
+
+                              <td style={{ width: "33%" }}>
+                                <Progress
+                                  value="90"
+                                  color="produccion"
+                                  max={100}
+                                />
+                              </td>
+                              <td style={{ width: "33%" }}>00:01 hras</td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <Brightness1Icon style={{ color: "#ff4560" }} />
+                                Paro
+                              </td>
+
+                              <td>
+                                <Progress value="15" color="rojo" max={100} />
+                              </td>
+                              <td>00:01 hras</td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <Brightness1Icon style={{ color: "#feb018" }} />
+                                Paro
+                              </td>
+                              <td>
+                                <Progress
+                                  value="70"
+                                  color="naranjo"
+                                  max={100}
+                                />
+                              </td>
+                              <td>00:01 hras</td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <Brightness1Icon style={{ color: "#25a0fc" }} />
+                                Paro
+                              </td>
+                              <td>
+                                <Progress value="30" color="azul" max={100} />
+                              </td>
+                              <td>00:01 hras</td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <Brightness1Icon style={{ color: "#775dd0" }} />
+                                Microparo
+                              </td>
+                              <td>
+                                <Progress value="50" color="morado" max={100} />
+                              </td>
+                              <td>00:01 hras</td>
+                            </tr>
+                          </tbody>
+                        </Table>
+                      </Col>
+                    </Row>
+                  </Container>
+                </CardBody>
+              </Card>
+              </Fragment>
             ) : (
               ""
             )}
-
-            
           </div>
         </ReactCSSTransitionGroup>
       </Fragment>

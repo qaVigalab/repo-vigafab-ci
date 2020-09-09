@@ -13,6 +13,7 @@ import Horno from './Minimal/Horno';
 import Detalle from './Minimal/DetalleAvanzado';
 import Envasadora from './Minimal/Envasadora';
 import Analisis from './Minimal/Analisis';
+
 // Layout
 
 import AppHeader from '../../Layout/AppHeader/';
@@ -40,7 +41,6 @@ const Dashboards = ({match}) => (
                     <Route path={`${match.url}/horno`} component={Horno}/>
                     <Route path={`${match.url}/DetalleAvanzado`} component={Detalle}/>
                     <Route path={`${match.url}/Analisis`} component={Analisis}/>
-
                 </div>
                 <AppFooter/>
             </div>

@@ -1,194 +1,173 @@
-import React, {Fragment} from 'react';
-
-import Ionicon from 'react-ionicons';
-
-import PerfectScrollbar from 'react-perfect-scrollbar';
-
+import { faAngleDown, faAlignCenter } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import React, { Fragment } from 'react';
+import { Bounce, toast } from 'react-toastify';
 import {
-    DropdownToggle, DropdownMenu,
-    Nav, Col, Row, Button, NavItem, NavLink,
-    UncontrolledTooltip, UncontrolledButtonDropdown
+    Button, DropdownMenu, DropdownToggle,
+    UncontrolledButtonDropdown
 } from 'reactstrap';
-
+import  { Redirect, withRouter, Link } from 'react-router-dom'
 import {
-    toast,
-    Bounce
-} from 'react-toastify';
+    UncontrolledDropdown,
+    Nav, NavItem, DropdownItem, Col, Row
+} from 'reactstrap';
+import Ionicon from 'react-ionicons';
+import Tabs from 'react-responsive-tabs';
+import InfoIcon from '@material-ui/icons/Info';
+import TimelineEx from './TabsContent/TimelineExample';
+import TimelineExNew from './TabsContent/TimelineExample2';
 
 
-import {
-    faAngleDown,
+const tabsContent = [
+   
+    {
+        title: 'Ultimas 10',
+        content: <TimelineEx />
+    },
+    
+];
 
-} from '@fortawesome/free-solid-svg-icons';
+function getTabs() {
+    return tabsContent.map((tab, index) => ({
+        title: tab.title,
+        getContent: () => tab.content,
+        key: index,
+    }));
+}
 
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-
-import city3 from '../../../assets/utils/images/dropdown-header/city3.jpg';
-import avatar1 from '../../../assets/utils/images/avatars/1.jpg';
-
-class UserBox extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            active: false,
-        };
-
-    }
-
-    notify2 = () => this.toastId = toast("You don't have any new items in your calendar for today! Go out and play!", {
-        transition: Bounce,
-        closeButton: true,
-        autoClose: 5000,
-        position: 'bottom-center',
-        type: 'success'
-    });
-
-
-    render() {
+const UserBox = (props) => {
+    
 
         return (
-            <Fragment>
-                <div className="header-btn-lg pr-0">
-                    <div className="widget-content p-0">
-                        <div className="widget-content-wrapper">
-                            <div className="widget-content-left">
-                                <UncontrolledButtonDropdown>
-                                    <DropdownToggle color="link" className="p-0">
-                                        <img width={42} className="rounded-circle" src={avatar1} alt=""/>
-                                        <FontAwesomeIcon className="ml-2 opacity-8" icon={faAngleDown}/>
-                                    </DropdownToggle>
-                                    <DropdownMenu right className="rm-pointers dropdown-menu-lg">
-                                        <div className="dropdown-menu-header">
-                                            <div className="dropdown-menu-header-inner bg-info">
-                                                <div className="menu-header-image opacity-2"
+    <Fragment>
+        <div className="widget-content p-0">
+            <div className="widget-content-wrapper">
+                <div className="widget-content-left">
+                <UncontrolledDropdown>
+                        <DropdownToggle className="p-0" color="link">
+                            
+                                <Ionicon beat={true} style={{height:"42px"}} color="white"  icon="md-notifications-outline"/>
+                              
+                        </DropdownToggle>
+                        <DropdownMenu right className="dropdown-menu-lg rm-pointers">
+                        <div className="dropdown-menu-header" style={{backgroundColor:"#2f4554"}}>
+                            <div className="dropdown-menu-header-inner " style={{backgroundColor:"#2f4554"}}>
+                                <div className="menu-header-image opacity-2"
                                                      style={{
-                                                         backgroundImage: 'url(' + city3 + ')'
+                                                         backgroundColor:"#2f4554"
+                                                         //#ff6c1c naranjo
+                                                         //backgroundImage: 'url(' + city3 + ')'
                                                      }}
-                                                />
-                                                <div className="menu-header-content text-left">
-                                                    <div className="widget-content p-0">
-                                                        <div className="widget-content-wrapper">
-                                                            <div className="widget-content-left mr-3">
-                                                                <img width={42} className="rounded-circle" src={avatar1}
-                                                                     alt=""/>
-                                                            </div>
-                                                            <div className="widget-content-left">
-                                                                <div className="widget-heading">
-                                                                    Alina Mcloughlin
-                                                                </div>
-                                                                <div className="widget-subheading opacity-8">
-                                                                    A short profile description
-                                                                </div>
-                                                            </div>
-                                                            <div className="widget-content-right mr-2">
-                                                                <Button className="btn-pill btn-shadow btn-shine"
-                                                                        color="focus">
-                                                                    Logout
-                                                                </Button>
-                                                            </div>
+                                               />
+                                    <Row xs="12" >
+                                    <Col xs="2" >
+                                        <InfoIcon style={{height:"42px", color:"white", float:"right"}} />
+                                    </Col>
+                                    <Col xs="7">
+                                    <div className="widget-content-left">
+                                        <div className="widget-heading">
+                                            Alertas
+                                        </div>
+                                        <div className="widget-subheading opacity-8">
+                                            De personal
+                                        </div>
+                                    </div>
+                                    </Col>
+                                    </Row>
+                                </div>
+                            </div>
+                            <Tabs tabsWrapperClass="body-tabs body-tabs-alt" transform={false} showInkBar={true}
+                                  items={getTabs()}/>
+                            {/* <Nav vertical>
+                                <NavItem className="nav-item-divider"/>
+                                <NavItem className="nav-item-btn text-center">
+                                    <Button size="sm" className="btn-shadow btn-wide btn-pill" color="focus">
+                                        Ver histórico
+                                    </Button>
+                                </NavItem>
+                            </Nav> */}
+                        </DropdownMenu>
+                    </UncontrolledDropdown>
+                </div>
+            </div>
+        </div>
+                
+        <div className="header-btn-lg pr-0">
+            <div className="widget-content p-0">
+                <div className="widget-content-wrapper">
+                
+                    <div className="widget-content-left">
+            
+                        <UncontrolledButtonDropdown>
+                            <DropdownToggle color="link" className="p-0">
+                                <AccountCircleIcon style={{height:"42px", color:"white"}} />
+                                {
+                                //<img width={42} className="rounded-circle" src={avatar1} alt=""/>
+                                }
+                                <FontAwesomeIcon className="ml-2 opacity-8" icon={faAngleDown}/>
+                            </DropdownToggle>
+                            <DropdownMenu right className="rm-pointers dropdown-menu-lg" >
+                                <div className="dropdown-menu-header" style={{backgroundColor:"#2f4554"}}>
+                                    <div className="dropdown-menu-header-inner " style={{backgroundColor:"#2f4554"}}>
+                                        <div className="menu-header-image opacity-2"
+                                                style={{
+                                                    backgroundColor:"#2f4554"
+                                                    //#ff6c1c naranjo
+                                                    //backgroundImage: 'url(' + city3 + ')'
+                                                }}
+                                        />
+                                        <div className="menu-header-content text-left">
+                                            <div className="widget-content p-0">
+                                                <div className="widget-content-wrapper">
+                                                    <div className="widget-content-left mr-3">
+                                                    <AccountCircleIcon style={{height:"42px", color:"white"}} />
+                                {
+                                //<img width={42} className="rounded-circle" src={avatar1} alt=""/>
+                                }
+                                                                
+                                                    </div>
+                                                    <div className="widget-content-left">
+                                                        <div className="widget-heading">
+                                                            Admin
                                                         </div>
+                                                        <div className="widget-subheading opacity-8">
+                                                            Admin
+                                                        </div>
+                                                    </div>
+                                                    <div className="widget-content-right mr-2">
+                                                        <Button className="btn-pill"
+                                                                style={{backgroundColor:"#ff6c1c"}}
+                                                                onClick={revent =>  (localStorage.clear(), window.location.href='#/pages/LoginBoxed')}>
+                                                            Cerrar sesión
+
+                                                        </Button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="scroll-area-xs" style={{
-                                            height: '150px'
-                                        }}>
-                                            <PerfectScrollbar>
-                                                <Nav vertical>
-                                                    <NavItem className="nav-item-header">
-                                                        Activity
-                                                    </NavItem>
-                                                    <NavItem>
-                                                        <NavLink href="javascript:void(0);">
-                                                            Chat
-                                                            <div className="ml-auto badge badge-pill badge-info">8</div>
-                                                        </NavLink>
-                                                    </NavItem>
-                                                    <NavItem>
-                                                        <NavLink href="javascript:void(0);">Recover Password</NavLink>
-                                                    </NavItem>
-                                                    <NavItem className="nav-item-header">
-                                                        My Account
-                                                    </NavItem>
-                                                    <NavItem>
-                                                        <NavLink href="javascript:void(0);">
-                                                            Settings
-                                                            <div className="ml-auto badge badge-success">New</div>
-                                                        </NavLink>
-                                                    </NavItem>
-                                                    <NavItem>
-                                                        <NavLink href="javascript:void(0);">
-                                                            Messages
-                                                            <div className="ml-auto badge badge-warning">512</div>
-                                                        </NavLink>
-                                                    </NavItem>
-                                                    <NavItem>
-                                                        <NavLink href="javascript:void(0);">
-                                                            Logs
-                                                        </NavLink>
-                                                    </NavItem>
-                                                </Nav>
-                                            </PerfectScrollbar>
-                                        </div>
-                                        <Nav vertical>
-                                            <NavItem className="nav-item-divider mb-0"/>
-                                        </Nav>
-                                        <div className="grid-menu grid-menu-2col">
-                                            <Row className="no-gutters">
-                                                <Col sm="6">
-                                                    <Button
-                                                        className="btn-icon-vertical btn-transition btn-transition-alt pt-2 pb-2"
-                                                        outline color="warning">
-                                                        <i className="pe-7s-chat icon-gradient bg-amy-crisp btn-icon-wrapper mb-2"> </i>
-                                                        Message Inbox
-                                                    </Button>
-                                                </Col>
-                                                <Col sm="6">
-                                                    <Button
-                                                        className="btn-icon-vertical btn-transition btn-transition-alt pt-2 pb-2"
-                                                        outline color="danger">
-                                                        <i className="pe-7s-ticket icon-gradient bg-love-kiss btn-icon-wrapper mb-2"> </i>
-                                                        <b>Support Tickets</b>
-                                                    </Button>
-                                                </Col>
-                                            </Row>
-                                        </div>
-                                        <Nav vertical>
-                                            <NavItem className="nav-item-divider"/>
-                                            <NavItem className="nav-item-btn text-center">
-                                                <Button size="sm" className="btn-wide" color="primary">
-                                                    Open Messages
-                                                </Button>
-                                            </NavItem>
-                                        </Nav>
-                                    </DropdownMenu>
-                                </UncontrolledButtonDropdown>
-                            </div>
-                            <div className="widget-content-left  ml-3 header-user-info">
-                                <div className="widget-heading">
-                                    Alina Mclourd
+                                    </div>
                                 </div>
-                                <div className="widget-subheading">
-                                    VP People Manager
-                                </div>
-                            </div>
-
-                            <div className="widget-content-right header-user-info ml-3">
-                                {/* <Button className="btn-shadow p-1" size="sm" onClick={this.notify2} color="info"
-                                        id="Tooltip-1">
-                                    <Ionicon color="#ffffff" fontSize="20px" icon="ios-calendar-outline"/>
-                                </Button> */}
-                                {/* <UncontrolledTooltip placement="bottom" target={'Tooltip-1'}>
-                                    Click for Toastify Notifications!
-                                </UncontrolledTooltip> */}
-                            </div>
+                                                                        
+                            </DropdownMenu>
+                        </UncontrolledButtonDropdown>
+                    </div>
+                    <div className="widget-content-left  ml-3 header-user-info">
+                        <div className="widget-heading">
+                            Admin
+                        </div>
+                        <div className="widget-subheading">
+                            Admin
                         </div>
                     </div>
+
+                    
                 </div>
-            </Fragment>
+            </div>
+        </div>
+    </Fragment>
         )
     }
-}
+
 
 export default UserBox;

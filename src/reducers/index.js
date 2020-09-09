@@ -1,5 +1,7 @@
 import ThemeOptions from './ThemeOptions';
+import dashboardReducers from './dashboardReducers';
 
 export default {
-    ThemeOptions
+    ThemeOptions,
+    dashboardReducers
 };
