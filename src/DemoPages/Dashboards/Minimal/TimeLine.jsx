@@ -10,23 +10,17 @@ class TimeLine extends Component {
           
             series: [
               {
-                name: 'Bob',
+                name: 'Produciendo',
                 data: [
                   {
-                    x: 'Normal',
+                    x: 'Justificado',
                     y: [
                       new Date('2015-03-05 00:05').getTime(),
                       new Date('2015-03-05 00:30').getTime(),
                     ],
                   },
                   
-                  {
-                    x: 'Justificado',
-                    y: [
-                        new Date('2015-03-05 00:30').getTime(),
-                        new Date('2015-03-05 01:05').getTime(),
-                    ]
-                  },
+                
                   {
                     x: 'Por Justificar',
                     y: [
@@ -35,12 +29,76 @@ class TimeLine extends Component {
                     ],
                   },
                   {
-                    x: 'Normal',
+                    x: 'Justificado',
                     y: [
-                      new Date('2015-03-05 01:05').getTime(),
+                      new Date('2015-03-05 01:10').getTime(),
                       new Date('2015-03-05 01:30').getTime(),
                     ],
                   },
+                  
+                ]
+              },
+              {
+                name: 'Paro justificado',
+                data: [
+                  
+                  
+                  {
+                    x: 'Justificado',
+                    y: [
+                        new Date('2015-03-05 01:30').getTime(),
+                        new Date('2015-03-05 03:05').getTime(),
+                    ]
+                  },
+                 
+                  
+                ]
+              },
+              {
+                name: 'asdf',
+                data: [
+                  
+                  
+                  {
+                    x: 'Por Justificar',
+                    y: [
+                        new Date('2015-03-05 03:05').getTime(),
+                        new Date('2015-03-05 03:20').getTime(),
+                    ]
+                  },
+                 
+                  
+                ]
+              },
+              {
+                name: 'asdf',
+                data: [
+                  
+                  
+                  {
+                    x: 'Por Justificar',
+                    y: [
+                        new Date('2015-03-05 03:20').getTime(),
+                        new Date('2015-03-05 03:45').getTime(),
+                    ]
+                  },
+                 
+                  
+                ]
+              },
+              {
+                name: 'asdf',
+                data: [
+                  
+                  
+                  {
+                    x: 'Por Justificar',
+                    y: [
+                        new Date('2015-03-05 00:30').getTime(),
+                        new Date('2015-03-05 01:05').getTime(),
+                    ]
+                  },
+                 
                   
                 ]
               },
@@ -48,7 +106,7 @@ class TimeLine extends Component {
             options: {
                 
               chart: {
-                height: 300,
+                height: 200,
                 type: 'rangeBar'
               },
               plotOptions: {
@@ -88,7 +146,7 @@ class TimeLine extends Component {
                 series={this.state.series} 
                 type="rangeBar" 
                 width="100%"
-                height={300}
+                height={200}
                 />
             </div>
         );

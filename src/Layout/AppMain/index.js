@@ -9,6 +9,7 @@ import {
 const UserPages = lazy(() => import('../../DemoPages/UserPages'));
 const Applications = lazy(() => import('../../DemoPages/Applications'));
 const Dashboards = lazy(() => import('../../DemoPages/Dashboards'));
+const LoginBoxed = lazy(() => import('../../DemoPages/UserPages/LoginBoxed'));
 
 const Widgets = lazy(() => import('../../DemoPages/Widgets'));
 const Elements = lazy(() => import('../../DemoPages/Elements'));
@@ -175,18 +176,19 @@ const AppMain = () => {
                             <Loader type="ball-grid-beat"/>
                         </div>
                         <h6 className="mt-3">
-                            Please wait while we load all the Dashboards examples
-                            <small>Because this is a demonstration, we load at once all the Dashboards examples. This wouldn't happen in a real live app!</small>
+                        Espere un momento, porfavor.
                         </h6>
                     </div>
                 </div>
             }>
-                <Route path="/dashboards" component={Dashboards}/>
+                <Route path="/dashboards" component={localStorage.getItem("token") && localStorage.getItem("token").length===20?Dashboards:LoginBoxed}/>
+
             </Suspense>
 
             <Route exact path="/" render={() => (
                 <Redirect to="/pages/LoginBoxed"/>
             )}/>
+
             <ToastContainer/>
         </Fragment>
     )

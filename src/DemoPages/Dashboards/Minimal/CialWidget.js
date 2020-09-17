@@ -68,7 +68,7 @@ export default class CialWidget extends Component {
                   style={{
                     color: "#ffffff",
                     background: this.props.color,
-                    padding: "20px",
+                    padding: "15px",
                     textAlign: "center",
                     fontSize: "18px",
                   }}
@@ -237,12 +237,12 @@ export default class CialWidget extends Component {
                       </div>
                     </Col>
                     <Col xs="4">
-                      <div className="Kg">{this.props.OE} Kg</div>
+                      <div className="Kg">{this.props.OE + "Kg"}</div>
                       <div className="circle">
                         <Circle
                           animate={true} // Boolean: Animated/Static progress
                           animationDuration="10s" // String: Length of animation
-                          responsive={false} // Boolean: Make SVG adapt to parent size
+                          responsive={true} // Boolean: Make SVG adapt to parent size
                           size="100" // String: Defines the size of the circle.
                           lineWidth="30" // String: Defines the thickness of the circle's stroke.
                           progress={(
@@ -253,7 +253,7 @@ export default class CialWidget extends Component {
                           bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                           textColor="#6b778c" // String: Color of percentage text color.
                           textStyle={{
-                            fontSize: "6rem", // CSSProperties: Custom styling for percentage.
+                            fontSize: "5rem", // CSSProperties: Custom styling for percentage.
                           }}
                           percentSpacing={5} // Number: Adjust spacing of "%" symbol and number.
                           roundedStroke={true} // Boolean: Rounded/Flat line ends

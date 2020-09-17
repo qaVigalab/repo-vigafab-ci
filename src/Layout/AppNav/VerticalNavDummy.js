@@ -3,7 +3,7 @@ import {withRouter} from 'react-router-dom';
 
 import MetisMenu from 'react-metismenu';
 
-import {MainNav, ComponentsNav, FormsNav, WidgetsNav, ChartsNav} from './NavItems';
+import {MainNav} from './NavItems';
 
 class NavDummy extends Component {
 

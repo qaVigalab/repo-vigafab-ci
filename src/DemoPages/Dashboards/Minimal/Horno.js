@@ -63,7 +63,16 @@ export default class Horno extends Component {
     };
     this.onDismiss = this.onDismiss.bind(this);
   }
-
+  handleChange = date => {
+    this.setState({
+      startDate: date
+    });
+  };
+  handleChange2 = date => {
+    this.setState({
+      endDate: date
+    });
+  };
   togglePop1() {
     this.setState({
       popoverOpen1: !this.state.popoverOpen1,
@@ -108,12 +117,12 @@ export default class Horno extends Component {
           <Row>
             
             <Col md="12" xl="12">
-              <Card className="main-card mb-3">
+            <Card className="main-card mb-3">
                 <CardBody>
                   <Container>
                     <Row>
                       <Col>
-                        <div className="titlecard">Ver Fecha</div>
+                        <div className="titlecard">Desde</div>
 
                         <InputGroup>
                           <InputGroupAddon addonType="prepend">
@@ -125,6 +134,9 @@ export default class Horno extends Component {
                             className="form-control"
                             selected={this.state.startDate}
                             onChange={this.handleChange}
+                            selectsStart
+                            startDate={this.state.startDate}
+                            endDate={this.state.endDate}
                           />
                         </InputGroup>
                       </Col>
@@ -139,9 +151,23 @@ export default class Horno extends Component {
                       </Col>
 
                       <Col>
-                        <div className="titlecard">Ver Rango Especifico</div>
+                        <div className="titlecard">Hasta</div>
                         <InputGroup>
-                          <FormDateRangePicker />
+                        <InputGroupAddon addonType="prepend">
+                            <div className="input-group-text">
+                              <FontAwesomeIcon icon={faCalendarAlt} />
+                            </div>
+                          </InputGroupAddon>
+                          <DatePicker
+                            className="form-control"
+                            selected={this.state.endDate}
+                            onChange={this.handleChange2}
+                            selectsEnd
+                            startDate={this.state.startDate}
+                            endDate={this.state.endDate}
+                            minDate={this.state.startDate}
+                            
+                          />
                         </InputGroup>
                       </Col>
                     </Row>

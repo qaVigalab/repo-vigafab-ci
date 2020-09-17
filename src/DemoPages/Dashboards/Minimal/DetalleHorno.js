@@ -6,7 +6,7 @@ import Circle from "react-circle";
 import { Card, Col, Container, Row, Table, Button } from "reactstrap";
 import './style.css';
 import { Link } from 'react-router-dom';
-
+import Tooltip from '@material-ui/core/Tooltip';
 export default class DetalleHorno extends Component {
   render() {
     let data = {
@@ -161,10 +161,12 @@ export default class DetalleHorno extends Component {
                                         razon
                                     </td>
                                     <td >
-                                        <ChatBubbleIcon 
+                                    <Tooltip title="aqui razon o comentario GG" placement="left">
+                                    <ChatBubbleIcon 
                                         style={{color:"#25a0fc"}}
                                         
                                             />
+                                    </Tooltip>
                                     </td>
                                 </tr>
                                 <tr>
@@ -180,10 +182,14 @@ export default class DetalleHorno extends Component {
                                         razon
                                     </td>
                                     <td >
-                                        <ChatBubbleIcon 
+                                    <Tooltip title="aqui razon o comentario GG" placement="left">
+                                    <ChatBubbleIcon 
                                         style={{color:"#25a0fc"}}
                                         
                                             />
+                                    </Tooltip>
+                                        
+                                            
                                     </td>
                                 </tr>
                                 <tr>

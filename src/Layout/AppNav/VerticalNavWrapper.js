@@ -6,7 +6,7 @@ import {
     setEnableMobileMenu
 } from '../../reducers/ThemeOptions';
 // import {MainNav, ComponentsNav, FormsNav, WidgetsNav, ChartsNav} from './NavItems';
-import {General, Hornos, Envasadoras, Analisis} from './NavItems';
+import {General} from './NavItems';
 
 class Nav extends Component {
 
@@ -20,21 +20,9 @@ class Nav extends Component {
     render() {
         return (
             <Fragment>
-                <h5 className="app-sidebar__heading">PLANTA CIAL</h5>
+                <h5 className="app-sidebar__heading">PLANTA</h5>
                 <MetisMenu content={General} onSelected={this.toggleMobileSidebar} activeLinkFromLocation className="vertical-nav-menu" iconNamePrefix="" classNameStateIcon="pe-7s-angle-down"/>       
-                <MetisMenu content={Hornos} onSelected={this.toggleMobileSidebar} activeLinkFromLocation className="vertical-nav-menu" iconNamePrefix="" classNameStateIcon="pe-7s-angle-down"/>       
-                <MetisMenu content={Envasadoras} onSelected={this.toggleMobileSidebar} activeLinkFromLocation className="vertical-nav-menu" iconNamePrefix="" classNameStateIcon="pe-7s-angle-down"/>     
-                <MetisMenu content={Analisis} onSelected={this.toggleMobileSidebar} activeLinkFromLocation className="vertical-nav-menu" iconNamePrefix="" classNameStateIcon="pe-7s-angle-down"/>       
-  
-                  {/* <MetisMenu content={MainNav} onSelected={this.toggleMobileSidebar} activeLinkFromLocation className="vertical-nav-menu" iconNamePrefix="" classNameStateIcon="pe-7s-angle-down"/>       
-                <h5 className="app-sidebar__heading">UI Components</h5>
-                <MetisMenu content={ComponentsNav}  onSelected={this.toggleMobileSidebar} activeLinkFromLocation className="vertical-nav-menu" iconNamePrefix="" classNameStateIcon="pe-7s-angle-down"/>
-                <h5 className="app-sidebar__heading">Dashboard Widgets</h5>
-                <MetisMenu content={WidgetsNav}  onSelected={this.toggleMobileSidebar} activeLinkFromLocation className="vertical-nav-menu" iconNamePrefix="" classNameStateIcon="pe-7s-angle-down"/>
-                <h5 className="app-sidebar__heading">Forms</h5>
-                <MetisMenu content={FormsNav}  onSelected={this.toggleMobileSidebar} activeLinkFromLocation className="vertical-nav-menu" iconNamePrefix="" classNameStateIcon="pe-7s-angle-down"/>
-                <h5 className="app-sidebar__heading">Charts</h5>
-                <MetisMenu content={ChartsNav}  onSelected={this.toggleMobileSidebar} activeLinkFromLocation className="vertical-nav-menu" iconNamePrefix="" classNameStateIcon="pe-7s-angle-down"/>   */}
+               
             </Fragment>
         );
     }

@@ -17,7 +17,8 @@ import {
 import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
 import CialWidget from "./CialWidget";
 import FormDateRangePicker from "./DateRangePicker";
-
+import Formadora from './Formadora';
+import Iqf from './Iqf'
 const data = {
   legend: [
     {
@@ -63,6 +64,16 @@ export default class MinimalDashboard1 extends Component {
     this.onDismiss = this.onDismiss.bind(this);
   }
 
+  handleChange = date => {
+    this.setState({
+      startDate: date
+    });
+  };
+  handleChange2 = date => {
+    this.setState({
+      endDate: date
+    });
+  };
   togglePop1() {
     this.setState({
       popoverOpen1: !this.state.popoverOpen1,
@@ -121,7 +132,7 @@ export default class MinimalDashboard1 extends Component {
                       });
                     }}
                   >
-                    Ver todos
+                    Desde
                   </Button>
                   {/* modo 1 */}
 
@@ -174,7 +185,7 @@ export default class MinimalDashboard1 extends Component {
                   <Container>
                     <Row>
                       <Col>
-                        <div className="titlecard">Ver Fecha</div>
+                        <div className="titlecard">Desde</div>
 
                         <InputGroup>
                           <InputGroupAddon addonType="prepend">
@@ -186,6 +197,9 @@ export default class MinimalDashboard1 extends Component {
                             className="form-control"
                             selected={this.state.startDate}
                             onChange={this.handleChange}
+                            selectsStart
+                            startDate={this.state.startDate}
+                            endDate={this.state.endDate}
                           />
                         </InputGroup>
                       </Col>
@@ -200,9 +214,23 @@ export default class MinimalDashboard1 extends Component {
                       </Col>
 
                       <Col>
-                        <div className="titlecard">Ver Rango Especifico</div>
+                        <div className="titlecard">Hasta</div>
                         <InputGroup>
-                          <FormDateRangePicker />
+                        <InputGroupAddon addonType="prepend">
+                            <div className="input-group-text">
+                              <FontAwesomeIcon icon={faCalendarAlt} />
+                            </div>
+                          </InputGroupAddon>
+                          <DatePicker
+                            className="form-control"
+                            selected={this.state.endDate}
+                            onChange={this.handleChange2}
+                            selectsEnd
+                            startDate={this.state.startDate}
+                            endDate={this.state.endDate}
+                            minDate={this.state.startDate}
+                            
+                          />
                         </InputGroup>
                       </Col>
                     </Row>
@@ -235,11 +263,29 @@ export default class MinimalDashboard1 extends Component {
               </Card>
             </Col>
           </Row>
-
+          
           <div class="columns-parent">
-            {this.state.modo === 1 || this.state.modo === 0 ? (
+            <Row>
+              <Formadora 
+              modo={1}
+              estado={1}
+              nombre="Formadora"
+              data={[2.2, 3, 2, 0.8, 0.3, 0.2, 5]}
+              descripcion="Receta actual: Hamburguesa de Vacuno 100 Grs La Crianza"
+              />
+            </Row>
+            <Row>
+              <Iqf 
+              modo={1}
+              estado={1}
+              nombre="IQF"
+              data={[2.2, 3, 2, 0.8, 0.3, 0.2, 5]}
+              descripcion="Receta actual: Hamburguesa de Vacuno 100 Grs La Crianza"
+              />
+            </Row>
+            {/*this.state.modo === 1 || this.state.modo === 0 ? (
               <Row>
-                {/* Carta 3  black header*/}
+               
                 <CialWidget
                   modo={1}
                   estado={1}
@@ -261,7 +307,7 @@ export default class MinimalDashboard1 extends Component {
               </Row>
             ) : (
               ""
-            )}
+            )*/}
 
             {this.state.modo === 2 || this.state.modo === 0 ? (
               <Row>

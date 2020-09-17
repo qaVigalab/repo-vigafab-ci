@@ -65,7 +65,16 @@ export default class Analisis extends Component {
     };
     this.onDismiss = this.onDismiss.bind(this);
   }
-
+  handleChange = date => {
+    this.setState({
+      startDate: date
+    });
+  };
+  handleChange2 = date => {
+    this.setState({
+      endDate: date
+    });
+  };
   togglePop1() {
     this.setState({
       popoverOpen1: !this.state.popoverOpen1,
@@ -172,12 +181,12 @@ export default class Analisis extends Component {
               </Card>
             </Col>
             <Col md="6" xl="8">
-              <Card className="main-card mb-3">
+            <Card className="main-card mb-3">
                 <CardBody>
                   <Container>
                     <Row>
                       <Col>
-                        <div className="titlecard">Ver Fecha</div>
+                        <div className="titlecard">Desde</div>
 
                         <InputGroup>
                           <InputGroupAddon addonType="prepend">
@@ -189,6 +198,9 @@ export default class Analisis extends Component {
                             className="form-control"
                             selected={this.state.startDate}
                             onChange={this.handleChange}
+                            selectsStart
+                            startDate={this.state.startDate}
+                            endDate={this.state.endDate}
                           />
                         </InputGroup>
                       </Col>
@@ -203,9 +215,23 @@ export default class Analisis extends Component {
                       </Col>
 
                       <Col>
-                        <div className="titlecard">Ver Rango Especifico</div>
+                        <div className="titlecard">Hasta</div>
                         <InputGroup>
-                          <FormDateRangePicker />
+                        <InputGroupAddon addonType="prepend">
+                            <div className="input-group-text">
+                              <FontAwesomeIcon icon={faCalendarAlt} />
+                            </div>
+                          </InputGroupAddon>
+                          <DatePicker
+                            className="form-control"
+                            selected={this.state.endDate}
+                            onChange={this.handleChange2}
+                            selectsEnd
+                            startDate={this.state.startDate}
+                            endDate={this.state.endDate}
+                            minDate={this.state.startDate}
+                            
+                          />
                         </InputGroup>
                       </Col>
                     </Row>
@@ -270,6 +296,74 @@ export default class Analisis extends Component {
                   <Container>
                     <Row>
                       <Col xs="12">
+                        Detalle
+                        <Table size="sm">
+                          <tbody>
+                            <tr>
+                              <td style={{ width: "33%" }}>
+                                <Brightness1Icon style={{ color: "#31cc54" }} />
+                                Produciendo
+                              </td>
+
+                              <td style={{ width: "33%" }}>
+                                <Progress
+                                  value="90"
+                                  color="produccion"
+                                  max={100}
+                                />
+                              </td>
+                              <td style={{ width: "33%" }}>00:01 hras</td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <Brightness1Icon style={{ color: "#ff4560" }} />
+                                Paro
+                              </td>
+
+                              <td>
+                                <Progress value="15" color="rojo" max={100} />
+                              </td>
+                              <td>00:01 hras</td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <Brightness1Icon style={{ color: "#feb018" }} />
+                                Paro
+                              </td>
+                              <td>
+                                <Progress
+                                  value="70"
+                                  color="naranjo"
+                                  max={100}
+                                />
+                              </td>
+                              <td>00:01 hras</td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <Brightness1Icon style={{ color: "#25a0fc" }} />
+                                Paro
+                              </td>
+                              <td>
+                                <Progress value="30" color="azul" max={100} />
+                              </td>
+                              <td>00:01 hras</td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <Brightness1Icon style={{ color: "#775dd0" }} />
+                                Microparo
+                              </td>
+                              <td>
+                                <Progress value="50" color="morado" max={100} />
+                              </td>
+                              <td>00:01 hras</td>
+                            </tr>
+                          </tbody>
+                        </Table>
+                      </Col>
+                      <Col xs="12">
+                        Producto
                         <Table size="sm">
                           <tbody>
                             <tr>
