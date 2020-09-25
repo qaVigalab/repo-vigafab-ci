@@ -6,6 +6,40 @@ import Circle from "react-circle";
 import { Card, Col, Container, Row } from "reactstrap";
 
 export default class CialWidget extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {paros: 0, produciendo:0};
+  }
+  componentDidMount() {
+    console.log("AQUIIIIIIIIIIIIIII----->ASDF")
+    var myHeaders = new Headers();
+    myHeaders.append("x-api-key", "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m");
+    myHeaders.append("Content-Type", "application/json");
+
+var raw = JSON.stringify({"id_vibot":this.props.id_vibot});
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    fetch(
+      "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getenvasadora",
+      requestOptions
+    )
+    .then(response => response.json())
+    .then( result => {
+          this.setState({
+            paros:result[0].paros,
+            produciendo:result[0].produciendo,
+            total:result[0].total
+          })
+        }
+    )
+      .catch((error) => console.log("error", error));
+  }
   render() {
     let data = {
       legend: [
@@ -18,32 +52,38 @@ export default class CialWidget extends Component {
       ],
 
       labels: [
-        "Inactivo",
+       /*  "Inactivo",
         "Naranjo",
         "Morado",
         "Azul",
-        "Amarillo",
-        "Rojo",
+        "Amarillo", */
+        "Paros",
         "Producción",
       ],
+      fill:{
+        pattern:{
+          strokeWidth: 5,
+        }
+      }
+      ,
       datasets: [
         {
-          data: this.props.data,
+          data: [this.state.paros, this.state.produciendo],
           backgroundColor: [
-            "#d9d9d9",
+            /* "#d9d9d9",
             "#feb018",
             "#775dd0",
             "#25a0fc",
-            "#ffef45",
+            "#ffef45", */
             "#ff4560",
             "#31cc54",
           ],
           hoverBackgroundColor: [
-            "#d9d9d9",
+           /*  "#d9d9d9",
             "#feb018",
             "#775dd0",
             "#25a0fc",
-            "#ffef45",
+            "#ffef45", */
             "#ff4560",
             "#31cc54",
           ],
@@ -246,7 +286,7 @@ export default class CialWidget extends Component {
                           size="100" // String: Defines the size of the circle.
                           lineWidth="30" // String: Defines the thickness of the circle's stroke.
                           progress={(
-                            (this.props.OE / this.props.OET) *
+                            (this.state.produciendo / this.state.total) *
                             100
                           ).toFixed(0)} // String: Update to change the progress and percentage.
                           progressColor="var(--primary)" // String: Color of "progress" portion of circle.

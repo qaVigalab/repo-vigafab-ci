@@ -16,9 +16,8 @@ import {
 } from "reactstrap";
 import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
 import CialWidget from "./CialWidget";
-import FormDateRangePicker from "./DateRangePicker";
 import Formadora from './Formadora';
-import Iqf from './Iqf'
+import Iqf from './Iqf';
 const data = {
   legend: [
     {
@@ -319,6 +318,7 @@ export default class MinimalDashboard1 extends Component {
                   estado={1}
                   nombre="Envasadora 1"
                   data={[4, 2, 0.11, 1.4, 1, 0.2, 3.8]}
+                  id_vibot={11414}
                 />
                 <CialWidget
                   modo={2}
@@ -328,6 +328,7 @@ export default class MinimalDashboard1 extends Component {
                   estado={0}
                   nombre="Envasadora 2"
                   data={[2, 0.4, 0.5, 0.8, 1.2, 1, 1.1]}
+                  id_vibot={0}
                 />
                 <CialWidget
                   modo={2}
@@ -337,6 +338,7 @@ export default class MinimalDashboard1 extends Component {
                   estado={1}
                   nombre="Envasadora 3"
                   data={[3.4, 1, 0.15, 0.13, 0.5, 1, 4]}
+                  id_vibot={0}
                 />
               </Row>
             ) : (
@@ -435,6 +437,7 @@ export default class MinimalDashboard1 extends Component {
                 ""
               )}
             </Row>
+           
           </div>
         </ReactCSSTransitionGroup>
       </Fragment>
