@@ -146,7 +146,7 @@ export default class Iqf extends Component {
                       
                     </div>
                   </Col>
-                  <Col xs={2}>
+                  {/* <Col xs={2}>
                   <div>
                         <div
                           className={
@@ -184,7 +184,7 @@ export default class Iqf extends Component {
                     </div>
 
                     <div />
-                  </Col>
+                  </Col> */}
                 </Row>
                 {this.props.modo === 3 || this.props.modo === 4 ? (
                   <div style={{ padding: "10px" }} />

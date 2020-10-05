@@ -11,7 +11,6 @@ export default class CialWidget extends Component {
     this.state = {paros: 0, produciendo:0};
   }
   componentDidMount() {
-    console.log("AQUIIIIIIIIIIIIIII----->ASDF")
     var myHeaders = new Headers();
     myHeaders.append("x-api-key", "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m");
     myHeaders.append("Content-Type", "application/json");
@@ -60,12 +59,9 @@ var raw = JSON.stringify({"id_vibot":this.props.id_vibot});
         "Paros",
         "Producción",
       ],
-      fill:{
-        pattern:{
-          strokeWidth: 5,
-        }
-      }
-      ,
+      stroke:{
+        width: 2,
+       },
       datasets: [
         {
           data: [this.state.paros, this.state.produciendo],
@@ -252,6 +248,7 @@ var raw = JSON.stringify({"id_vibot":this.props.id_vibot});
                     },
                     responsive: true,
                     maintainAspectRatio: true,
+                    aspectRatio:90
                   }}
                 />
               </div>
@@ -272,6 +269,13 @@ var raw = JSON.stringify({"id_vibot":this.props.id_vibot});
                             },
                             responsive: true,
                             maintainAspectRatio: true,
+                            plotOptions: {
+                              pie: {
+                                donut: {
+                                  size: '100%'
+                                }
+                              }
+                            }
                           }}
                         />
                       </div>

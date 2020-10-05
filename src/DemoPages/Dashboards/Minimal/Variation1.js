@@ -54,13 +54,20 @@ export default class MinimalDashboard1 extends Component {
 
   constructor(props) {
     super(props);
-
+    
     this.togglePop1 = this.togglePop1.bind(this);
 
     this.state = {
       modo: 0,
+      maquinas: [
+        {
+          id:"",
+          nombre:""
+        }
+      ],
     };
     this.onDismiss = this.onDismiss.bind(this);
+    this.getMaquinas = this.getMaquinas.bind(this);
   }
 
   handleChange = date => {
@@ -82,7 +89,40 @@ export default class MinimalDashboard1 extends Component {
   onDismiss() {
     this.setState({ visible: false });
   }
+async getMaquinas(tipo){
+  var myHeaders = new Headers();
+myHeaders.append("x-api-key", "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m");
+myHeaders.append("Content-Type", "application/json");
 
+var raw = JSON.stringify({"maquina":tipo});
+
+var requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: raw,
+  redirect: 'follow'
+};
+
+await fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getmaquinas", requestOptions)
+.then(response => response.json())
+.then( result => {
+      
+      this.setState({
+        maquinas: [...this.state.maquinas, {
+          id:result[0].id,
+          nombre:result[0].maquina,
+        }]
+      })
+    }
+)
+  .catch(error => console.log('error', error));
+}
+componentDidMount() {
+  this.setState({
+    maquinas:[]
+  })
+  this.getMaquinas('envasadora')
+}
   render() {
     return (
       <Fragment>
@@ -310,41 +350,27 @@ export default class MinimalDashboard1 extends Component {
 
             {this.state.modo === 2 || this.state.modo === 0 ? (
               <Row>
+
+              {this.state.maquinas.map( maquina =>
+                
                 <CialWidget
                   modo={2}
                   descripcion="009 - Vienesa Vacío 4 x 1 KG SJ"
                   OE={2090}
                   OET={2500}
                   estado={1}
-                  nombre="Envasadora 1"
+                  nombre={maquina.nombre}
                   data={[4, 2, 0.11, 1.4, 1, 0.2, 3.8]}
-                  id_vibot={11414}
+                  id_vibot={maquina.id}
                 />
-                <CialWidget
-                  modo={2}
-                  descripcion="1018 - Vienesa Pavo 8 x 1 KG SJ"
-                  OE={1200}
-                  OET={2100}
-                  estado={0}
-                  nombre="Envasadora 2"
-                  data={[2, 0.4, 0.5, 0.8, 1.2, 1, 1.1]}
-                  id_vibot={0}
-                />
-                <CialWidget
-                  modo={2}
-                  descripcion="1019 - Vienesa Pollo 8 x 1 KG SJ"
-                  OE={1050}
-                  OET={2000}
-                  estado={1}
-                  nombre="Envasadora 3"
-                  data={[3.4, 1, 0.15, 0.13, 0.5, 1, 4]}
-                  id_vibot={0}
-                />
+              )}
+                
+               
               </Row>
             ) : (
               ""
             )}
-            {this.state.modo === 5 || this.state.modo === 0 ? (
+            {/* {this.state.modo === 5 || this.state.modo === 0 ? (
               <Row>
                 <CialWidget
                   modo={5}
@@ -413,7 +439,7 @@ export default class MinimalDashboard1 extends Component {
               </Row>
             ) : (
               ""
-            )}
+            )} */}
             <Row alignItems="stretch">
               {this.state.modo === 1 || this.state.modo === 0 ? (
                 <CialWidget

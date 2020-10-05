@@ -42,8 +42,6 @@ function Scada(props) {
     "#25a0fc"
   );
   /* FIN techos de maquinas */
-
-    
   
   return (
     <Fragment>
@@ -78,6 +76,7 @@ function Scada(props) {
           <Card className="main-card mb-3">
             <Container>
               <Row>
+              
                 <svg
                   id="Capa_1"
                   x="0px"
@@ -1631,8 +1630,10 @@ function Scada(props) {
                     transform="translate(460.363 130.662)"
                     >
 
-                    <Gauge className="st13 st14 st15" 
-                    value={40} color="green" width={100} height={50} label="" />
+                     <Gauge className="st13 st14 st15" 
+                    value={80} color="green" width={100} height={50} label="" />
+
+
 
                     </g>
 
@@ -1730,13 +1731,23 @@ function Scada(props) {
                         d="M588.2 358.7H519c-2 0-4 .7-5.5 2.1-5.8 5.8-5.8 5.8-10.7.2l-.6-.5c-1.5-1.2-3.3-1.9-5.2-1.9h-69c-5.4 0-9.7-4.4-9.7-9.7V235.3c0-5.4 4.4-9.7 9.7-9.7h160.2c5.4 0 9.7 4.4 9.7 9.7v113.6c.1 5.4-4.3 9.8-9.7 9.8z"
                       />
 
-                      <text
+                     {/*  <text
                         transform="translate(441.363 304.855)"
                         className="st4 st14 st15"
                       >
                         {hamburguesasFormadas}
-                      </text>
+                      </text> */}
+                      <g 
+                    className="st13 st14 st15" 
+                    transform="translate(460.363 286.855)"
+                    >
 
+                     <Gauge className="st13 st14 st15" 
+                    value={40} color="red" width={100} height={50} label="" />
+
+
+
+                    </g>
                       <text
                         transform="translate(544.184 304.856)"
                         className="st4 st14 st16"
@@ -1751,7 +1762,7 @@ function Scada(props) {
                           {"Formadas"}
                         </tspan>
                       </text>
-                      <path
+                     {/*  <path
                         className="st4"
                         d="M500.5 329.9c-.7 1.3-1 2.8-.7 4.2 0 .1.2.2.4.2l.7-.1c.1 0 .2-.2.2-.4-.1-1 0-2.2.6-3.2s1.3-1.7 2.3-2.1c.1-.1.2-.2.2-.4l-.2-.7c0-.2-.2-.2-.5-.2-1.2.5-2.3 1.3-3 2.7z"
                       />
@@ -1764,7 +1775,7 @@ function Scada(props) {
                         d="M513.2 324.7c-.1-.1-.4 0-.4.2l-.2.7c-.1.1 0 .4.2.4 1.6.6 2.9 1.7 3.8 3.2.9 1.6 1.1 3.3.9 4.9 0 .1.1.4.2.4l.7.1c.1 0 .4-.1.4-.2.4-2 .1-4-1-5.9-1.2-1.7-2.8-3-4.6-3.8zM514.3 336.1v-1.8c0-3.1-2-5.4-4.8-6v-.7c0-.6-.5-1.1-1.1-1.1h-.6c-.6 0-1.1.5-1.1 1.1v.7c-2.9.6-4.8 2.9-4.8 6v1.8c0 1-.4 1.8-.9 2.6-.2.4-.4.6-.4 1.1v.1c0 1.1.9 2 2 2h11.2c1.1 0 2-.9 2-2v-.1c0-.4-.1-.7-.4-1.1-.7-.7-1.1-1.6-1.1-2.6zM508.1 345.4c1.1 0 2.1-1 2.1-2.1H506c.1 1.2 1 2.1 2.1 2.1z"
                       />
                       <path className="st18" d="M430.8 310H585.5V312H430.8z" />
-                    </g>
+                    */} </g>
                     <g>
                       <image
                         width={413}
