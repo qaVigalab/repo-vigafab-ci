@@ -18,6 +18,8 @@ import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
 import CialWidget from "./CialWidget";
 import Formadora from './Formadora';
 import Iqf from './Iqf';
+import NuevaOrden from './NuevaOrden';
+import Orden from './Orden';
 const data = {
   legend: [
     {
@@ -278,6 +280,8 @@ componentDidMount() {
               </Card>
             </Col>
 
+            
+
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
                 <Row>
@@ -302,6 +306,22 @@ componentDidMount() {
               </Card>
             </Col>
           </Row>
+
+          <Row>
+            <Col md="12" xl="12">
+              <Card className="main-card mb-3"> 
+                  <NuevaOrden/>
+               </Card>         
+              </Col>
+            </Row>
+
+            <Row>
+            <Col md="12" xl="12">
+              <Card className="main-card mb-3"> 
+                  <Orden/>
+               </Card>         
+              </Col>
+            </Row>
           
           <div class="columns-parent">
             <Row>

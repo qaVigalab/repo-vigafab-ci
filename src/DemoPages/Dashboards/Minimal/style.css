@@ -265,4 +265,25 @@
     -o-transition: height 0.6s ease;
     transition: height 0.6s ease;
   }
+  .title1orange {
+    color: #FF7700;
+    font-size: 18px;
+    
+    padding-top:20px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .buttonOrange{
+    background-color: #FF9F4B;
+    color:#ffffff;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    border: 0px;
+    
+  }
+  .buttonOrange:hover{
+    background-color: #FF7700;
+    color:#ffffff;
+    
+  }
   
