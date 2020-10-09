@@ -32,11 +32,11 @@ export default class NuevaOrden extends Component {
         this.cajasChange = this.cajasChange.bind(this);
 
         this.state = {
-            kg:0,
-            tiempo:0,
-            cajas:0,
-            productos : [],
-            producto:{}
+            kg: 0,
+            tiempo: 0,
+            cajas: 0,
+            productos: [],
+            producto: {}
         };
     }
 
@@ -63,26 +63,27 @@ export default class NuevaOrden extends Component {
     selectProducto(event) {
         const prod_id = event.target.value;
         const prod_sku = this.state.productos.find(p => p.id == prod_id);
-        this.setState({producto: prod_sku
-        
+        this.setState({
+            producto: prod_sku
+
         }, () => {
             this.cajasChange2()
         });
-        
-      }
-    
-    cajasChange(event){
-        this.setState({cajas: event.target.value});
+
+    }
+
+    cajasChange(event) {
+        this.setState({ cajas: event.target.value });
         const caja = event.target.value;
-        this.setState({kg: caja* this.state.producto.kg_caja});
-        this.setState({tiempo: (caja* this.state.producto.tiempo_produccion)/60})
+        this.setState({ kg: caja * this.state.producto.kg_caja });
+        this.setState({ tiempo: (caja * this.state.producto.tiempo_produccion) / 60 })
     }
-    cajasChange2(){
+    cajasChange2() {
         var caja = this.state.cajas;
-        this.setState({kg: caja* this.state.producto.kg_caja});
-        this.setState({tiempo: (caja* this.state.producto.tiempo_produccion)/60})
+        this.setState({ kg: caja * this.state.producto.kg_caja });
+        this.setState({ tiempo: (caja * this.state.producto.tiempo_produccion) / 60 })
     }
-    
+
     componentDidMount() {
 
         this.loadProductos()
@@ -104,7 +105,7 @@ export default class NuevaOrden extends Component {
                                     <FormGroup>
                                         <Label >Producto</Label>
                                         <Input type="select" name="select" id="prod_select" onChange={this.selectProducto}>
-                                            
+
                                             {
                                                 this.state.productos.map((producto, i) => (
                                                     <option key={i} value={producto.id}>{producto.producto}</option>
@@ -144,13 +145,13 @@ export default class NuevaOrden extends Component {
                                 <Col md="4">
                                     <FormGroup>
                                         <Label >Kg Solicitados</Label>
-                                        <Input type="text" name="kg_sol" id="kg_sol" placeholder="Numero" value={this.state.kg+" kg"} />
+                                        <Input type="text" name="kg_sol" id="kg_sol" placeholder="Numero" value={this.state.kg + " kg"} />
                                     </FormGroup>
                                 </Col>
                                 <Col md="4">
                                     <FormGroup>
                                         <Label>Tiempo Estimado</Label>
-                                        <Input type="text" name="tiempo" id="tiempo" placeholder="Hora" value={(Math.round(this.state.tiempo*100)/100)+" hrs"} />
+                                        <Input type="text" name="tiempo" id="tiempo" placeholder="Hora" value={(Math.round(this.state.tiempo * 100) / 100) + " hrs"} />
                                     </FormGroup>
                                 </Col>
                             </Row>
