@@ -30,17 +30,46 @@ export default class NuevaOrden extends Component {
         this.loadProductos = this.loadProductos.bind(this);
         this.selectProducto = this.selectProducto.bind(this);
         this.cajasChange = this.cajasChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.changePrioridad = this.changePrioridad.bind(this);
+        this.limpiarForm = this.limpiarForm.bind(this);
 
         this.state = {
             kg: 0,
             tiempo: 0,
             cajas: 0,
             productos: [],
-            producto: {}
+            producto: {},
+            prioridad: 5
         };
     }
 
-    loadProductos() {
+    handleSubmit(event) {
+        event.preventDefault();
+        fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/insertsuborder", {
+            "method": "POST",
+            "headers": {
+                "content-type": "application/json",
+                "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+            },
+            body: JSON.stringify({
+ 
+                prioridad : this.state.prioridad,
+                cajas : this.state.cajas,
+                kg_solicitados : this.state.kg,
+                id_producto : this.state.producto.id,
+                tiempo_estimado: this.state.tiempo                              
+              })
+        })
+            .then(res => res.json())           
+            .then(this.limpiarForm())
+            .catch(err => {
+                console.error(err);
+            });
+
+    }
+
+   loadProductos() {
         fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getproducto", {
             "method": "POST",
             "headers": {
@@ -89,6 +118,16 @@ export default class NuevaOrden extends Component {
         this.loadProductos()
     }
 
+    changePrioridad(e){
+        this.setState({prioridad : e.target.value})
+    }
+
+    limpiarForm(){
+            this.setState({
+                cajas: 0, kg: 0, tiempo: 0,
+            })
+    }
+
 
 
 
@@ -97,15 +136,15 @@ export default class NuevaOrden extends Component {
             <Container>
                 <div className="title1orange">Nueva Orden De Produccion</div>
                 <hr />
-                <Form>
+                <Form onSubmit={this.handleSubmit} >
                     <Row>
                         <Col md="7">
                             <Row>
                                 <Col md="6">
                                     <FormGroup>
                                         <Label >Producto</Label>
-                                        <Input type="select" name="select" id="prod_select" onChange={this.selectProducto}>
-
+                                        <Input  type="select" name="select" id="prod_select" onChange={this.selectProducto}>
+                                                
                                             {
                                                 this.state.productos.map((producto, i) => (
                                                     <option key={i} value={producto.id}>{producto.producto}</option>
@@ -123,12 +162,12 @@ export default class NuevaOrden extends Component {
                                 <Col md="2">
                                     <FormGroup>
                                         <Label >Prioridad</Label>
-                                        <Input type="select" name="prio" id="prio" placeholder="with a placeholder">
-                                            <option>1</option>
-                                            <option>2</option>
-                                            <option>3</option>
-                                            <option>4</option>
-                                            <option>5</option>
+                                        <Input value={this.state.prioridad} type="select" name="prio" id="prio" placeholder="with a placeholder" onChange={this.changePrioridad}>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
                                         </Input>
                                     </FormGroup>
                                 </Col>
@@ -139,7 +178,7 @@ export default class NuevaOrden extends Component {
                                 <Col md="4">
                                     <FormGroup>
                                         <Label >Cajas</Label>
-                                        <Input type="number" name="cajas" id="cajas" placeholder="Numero" onChange={this.cajasChange} />
+                                        <Input type="number" name="cajas" id="cajas" placeholder="Numero" value={this.state.cajas} onChange={this.cajasChange} />
                                     </FormGroup>
                                 </Col>
                                 <Col md="4">
