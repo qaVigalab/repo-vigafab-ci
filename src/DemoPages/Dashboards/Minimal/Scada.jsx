@@ -76,7 +76,7 @@ function Scada(props) {
           <Card className="main-card mb-3">
             <Container>
               <Row>
-                <p>bkabkabkabka</p>
+                
               
                 <svg
                   id="Capa_1"

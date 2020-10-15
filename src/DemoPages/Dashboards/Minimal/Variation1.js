@@ -17,10 +17,12 @@ import {
 import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
 import CialWidget from "./CialWidget";
 import Formadora from './Formadora';
+import Formadora2 from './Formadora2';
 import Iqf from './Iqf';
 import NuevaOrden from './NuevaOrden';
 import Orden from './Orden';
-import TabsExample from '../../Components/Tabs'
+import Produciendo from './Produciendo';
+
 const data = {
   legend: [
     {
@@ -325,16 +327,26 @@ export default class MinimalDashboard1 extends Component {
             </Col>
           </Row>
 
+          <Row>
+            <Col md="12" xl="12">
+              <Card className="main-card mb-3">
+                <Produciendo 
+                estado={1}/>
+              </Card>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col md="12" xl="12">
+              <Card className="main-card mb-3">
+                <Formadora2 
+                estado={1}/>
+              </Card>
+            </Col>
+          </Row>
+
           <div class="columns-parent">
-            <Row>
-              <Formadora
-                modo={1}
-                estado={1}
-                nombre="Formadora"
-                data={[2.2, 3, 2, 0.8, 0.3, 0.2, 5]}
-                descripcion="Receta actual: Hamburguesa de Vacuno 100 Grs La Crianza"
-              />
-            </Row>
+            
             <Row>
               <Iqf
                 modo={1}
