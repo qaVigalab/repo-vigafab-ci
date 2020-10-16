@@ -34,7 +34,7 @@ const Orden = () => {
     useEffect(() => {
         const interval = setInterval(() => {
             loadOrdenes();
-        }, 6000);
+        }, 60000);
         return () => clearInterval(interval);
       }, []);
 

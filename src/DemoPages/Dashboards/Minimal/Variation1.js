@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { Component, Fragment } from "react";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 import DatePicker from "react-datepicker";
+import {connect} from 'react-redux';
 import {
   Button,
   Card,
@@ -49,7 +50,7 @@ const data = {
   ],
 };
 
-export default class MinimalDashboard1 extends Component {
+ class MinimalDashboard1 extends Component {
   applyCallback(startDate, endDate) {
     this.setState({
       start: startDate,
@@ -504,3 +505,12 @@ export default class MinimalDashboard1 extends Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  id_orden: state.dashboardReducers.id_orden
+});
+
+export default MinimalDashboard1;
+export default connect(mapStateToProps,  mapDispatchToProps )(TransitionAlerts);
+
+

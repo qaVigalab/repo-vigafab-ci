@@ -6,127 +6,204 @@ import { Doughnut } from "react-chartjs-2";
 import Chart from 'react-apexcharts'
 
 import Circle from "react-circle";
-let data = {
-    legend: [
-        {
-            display: false,
-            position: "top",
-            fullWidth: true,
-            reverse: true,
-        },
-    ],
-
-    labels: [
-        "Inactivo",
-        //  "Naranjo",
-        //  "Morado",
-        "Azul",
-        "Amarillo",
-        "Rojo",
-        "Producción",
-    ],
-    datasets: [
-        {
-            data: [2.2, 3, 2, 0.8, 5],
-            backgroundColor: [
-                "#d9d9d9",
-                // "#feb018",
-                // "#775dd0",
-                "#25a0fc",
-                "#ffef45",
-                "#ff4560",
-                "#2B74BC",
-            ],
-            hoverBackgroundColor: [
-                "#d9d9d9",
-                //"#feb018",
-                // "#775dd0",
-                "#25a0fc",
-                "#ffef45",
-                "#ff4560",
-                "#2B74BC",
-            ],
-        },
-    ],
-};
-
-
-    let options2 = {
-        stroke:{
-            show: true,
-            width: 2,
-            curve:'smooth'
-        },
-        
-        chart: {
-            id: 'DetalleAvanzadoPorKilo'
-        },
-        dataLabels: {
-            enabled: false,
-            
-        },
-        plotOptions: {
-            bar: {
-                columnWidth: '95%',
-                horizontal: false,
-                
-            }
-        },
-        xaxis: {
-            categories: [
-            '07:00', 
-            '08:00', 
-            '09:00', 
-            '10:00', 
-            '11:00', 
-            '12:00', 
-            '13:00', 
-            '14:00',
-            '15:00', 
-            '16:00', 
-            '17:00', 
-            '18:00'
-            ],
-            labels:{
-                show:true,
-                rotate:-45
-            }
-        },/*
-        yaxis: {
-            labels: [
-            '00.00', 
-            '05.00', 
-            '10.00', 
-            '15.00', 
-            '20.00', 
-            '25.00', 
-            '30.00', 
-            '35.00'
-            ],
-            labels:{
-                show:true,
-                rotate:-45
-            }
-        },*/
-        yaxis: {
-            title: {
-              text: 'Temperature'
-            },
-            min: 5,
-            max: 40
-          },
-        
-    }
-    
-    let series2 = [{
-       
-        name: 'T°',
-        type: 'line',
-        data: [28,13,5,20 ,29, 33, 36, 32, 32,40,38,25, 33]
-      }, ]
 
 
 const Formadora2 = (props) => {
+    var temperatura = [];
+    var fecha = [];
+    let data = {
+        legend: [
+            {
+                display: false,
+                position: "top",
+                fullWidth: true,
+                reverse: true,
+            },
+        ],
+
+        labels: [
+            "Inactivo",
+            //  "Naranjo",
+            //  "Morado",
+            "Azul",
+            "Amarillo",
+            "Rojo",
+            "Producción",
+        ],
+        datasets: [
+            {
+                data: [2.2, 3, 2, 0.8, 5],
+                backgroundColor: [
+                    "#d9d9d9",
+                    // "#feb018",
+                    // "#775dd0",
+                    "#25a0fc",
+                    "#ffef45",
+                    "#ff4560",
+                    "#2B74BC",
+                ],
+                hoverBackgroundColor: [
+                    "#d9d9d9",
+                    //"#feb018",
+                    // "#775dd0",
+                    "#25a0fc",
+                    "#ffef45",
+                    "#ff4560",
+                    "#2B74BC",
+                ],
+            },
+        ],
+    };
+
+
+    const [options2, setOptions2] =useState(
+        {
+            chart: {
+                height: 350,
+                type: 'area',
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth',
+                width:2,
+                colors:"#9b97d4"
+            },
+            xaxis: {
+                type: 'datetime',
+                categories: fecha,
+                labels: {
+                    datetimeUTC: false
+                }
+                
+            },
+            tooltip: {
+                x: {
+                    format: 'dd MMM yyyy HH:mm:ss'
+                },
+                marker: {
+                    fillColors: ["#ff6c1c"]
+                  }
+            },
+            fill: {
+                //colors:"#72cab8",
+                type: 'gradient',
+                gradient: {
+                    enabled: true,
+                    gradientToColors:["#9b97d4", "#72cab8"],
+                    inverseColors: true,
+                    shadeIntensity: 1,
+                    opacityFrom: 1,
+                    opacityTo: 1,
+                    stops: [0, 100]
+               }
+            },
+            markers: {
+                size: 0,
+                colors: ["#ff6c1c"],
+                strokeColor: "white",
+                strokeWidth: 1,
+                
+              },
+            title: {
+                text: "Ciclo de T° corporal",
+                align: 'left',
+                margin: 10,
+                offsetX: 0,
+                offsetY: 0,
+                floating: false,
+                style: {
+                  fontSize:  '12px',
+                  fontFamily:  "Poppins SemiBold",
+                  color:  '#ff6200'
+                },
+            }
+        }) 
+        
+       const [series2, setSeries2] =useState(
+        [{
+            name: 'Temperatura',
+            data: temperatura,
+            
+        },]
+       )
+
+    const [producto, setProducto] = useState("")
+    const [hacumuladas, setHacumuladas] = useState(0)
+    const [tiempo, setTiempo] = useState(0)
+    const [kgacumulados, setKgacumulados] = useState(0)
+    const [estado, setEstado] = useState(0)
+
+    const loadResumen = () => {
+        fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenformadora", {
+            "method": "POST",
+            "headers": {
+                "content-type": "application/json",
+                "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+            },
+            "body": false
+        })
+            .then(response => response.json())
+            .then(result => {
+                
+                setProducto(result[0].sku + " " + result[0].producto)
+                setHacumuladas(result[0].hamburguesas_acumuladas)
+                setTiempo(result[0].tiempo_actividad)
+                setKgacumulados(result[0].real_kg)
+                setEstado(result[0].estado)
+            }
+            )
+            .catch(err => {
+                console.error(err);
+            });
+    }
+
+    const loadGraphTemp = () => {
+        
+        fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/gettempformadora", {
+            "method": "POST",
+            "headers": {
+                "content-type": "application/json",
+                "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+            },
+            "body": false
+        })
+            .then(response => response.json())
+            .then(result => {
+                result.map(r => (
+                    fecha.push(r.fecha),
+                    temperatura.push(r.temperatura)
+                ))
+
+            }
+            ).then(()=>{
+                setSeries2([{
+                    data:temperatura
+                }]);
+                setOptions2({xaxis:{categories:fecha}});
+            }
+            )
+            .catch(err => {
+                console.error(err);
+            });
+    }
+
+    useEffect(() => {
+        loadGraphTemp()
+        loadResumen()
+    }, [])
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            loadGraphTemp();
+            loadResumen();
+        }, 60000);
+        return () => clearInterval(interval);
+      }, []);
+
+
+
     return (
 
         <div>
@@ -141,6 +218,7 @@ const Formadora2 = (props) => {
                     <Col md="3"></Col>
 
                     <Col align="center" md="2">
+                        {/*
                         <div className="mt-3">
                             <div className={"indi"} >
                                 {props.estado === 1 ? (
@@ -154,14 +232,14 @@ const Formadora2 = (props) => {
                                     )}{"65"}
                                 <small className="opacity-5 pl-1">%</small>
                             </div>
-                        </div>{" "}
+                        </div>{" "} */}
                     </Col>
 
                     <Col md="3">
-                        <div align="center" className="font2 my-4">3.8 hrs Tiempo de Actividad</div>
+                        <div align="center" className="font2 my-4">{Math.round(tiempo / 60 * 100) / 100} hrs Tiempo de Actividad</div>
                     </Col>
                     <Col md="2">
-                        <div align="center" className="font2 my-4 pr-3">Produciendo</div>
+                        <div align="center" className="font2 my-4 pr-3">{estado == 1 ? "Detenida" : "Produciendo"}</div>
                     </Col>
 
                 </Row>
@@ -175,7 +253,7 @@ const Formadora2 = (props) => {
                                 <Col md="5"></Col>
                                 <Col md="6">
                                     <Row>
-                                        <div align="left" className="indi">600</div>
+                                        <div align="left" className="indi">{kgacumulados}</div>
 
                                         <div align="center" className=" mt-3 ml-1">Kg</div>
                                     </Row>
@@ -188,7 +266,7 @@ const Formadora2 = (props) => {
                             <Row >
 
                                 <Col md="12">
-                                    <div align="center" className="font3 mt-3 ml-3">600</div>
+                                    <div align="center" className="font3 mt-3 ml-3">{hacumuladas}</div>
                                     <div align="center" className="font2 mb-3 ml-3">Hamburguesas formadas</div>
                                 </Col>
 
@@ -274,19 +352,20 @@ const Formadora2 = (props) => {
                         </Col>
                         <Col md="8">
                             <div className="mt-5 mr-3">
-                            <Chart
-                                options={options2}
-                                series={series2}
-                                type="line"
-                                width="100%"
-                                height="200px"
-                            />
+                                <Chart
+                                    options={options2}
+                                    series={series2}
+                                    type="line"
+                                    width="100%"
+                                    height="200px"
+                                />
+                                
                             </div>
                         </Col>
                     </Row>
                 </Col>
             </Row>
-            <div className="bot-description">Receta actual: Hamburguesa de Vacuno 100 Grs La Crianza</div>
+            <div className="bot-description">Receta actual: {" " + producto}</div>
         </div>
     )
 }

@@ -3,7 +3,8 @@ import {
     SET_USER_LOGIN, 
     SET_SELECCIONADOS,
     SET_REMOVE_SELECCIONADOS,
-    SET_ACTUALIZAR
+    SET_ACTUALIZAR,
+    SET_ID_ORDEN
     } from '../types/dashboardTypes'
 import md5 from 'md5'
 
@@ -22,6 +23,10 @@ export  const setSeleccionados = seleccionados => ({
 export  const setRemoveSeleccionados = seleccionados => ({
     type: SET_REMOVE_SELECCIONADOS,
     seleccionados
+});
+export  const setIdOrden = id_orden => ({
+    type: SET_ID_ORDEN,
+    id_orden
 });
 
 export const userLoginFetch = (user) =>{
