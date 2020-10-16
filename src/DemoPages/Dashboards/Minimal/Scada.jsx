@@ -1,34 +1,31 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, useEffect } from "react";
 import { Card, Col, Container, Row, Progress } from "reactstrap";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
 import Gauge from 'react-svg-gauge';
+import G1 from './svgs/g1';
+import G2 from './svgs/g2';
+import G3 from './svgs/g3';
+import G4 from './svgs/g4';
+import G5 from './svgs/g5';
+import G6 from './svgs/g6'; 
+const Scada=(props)=> {
 
-function Scada(props) {
   /* INI estados de alerta */
-  const [colorAlerta, setColorAlerta] = useState("#ff4560");
-  const [colorLetraAlerta, setColorLetraAlerta] = useState("#fff");
-  const [colorNumeroAlerta, setColorNumeroAlerta] = useState("#fff");
-  const [colorUnidadAlerta, setColorUnidadAlerta] = useState("#fff");
+  const [colorAlerta, setColorAlerta] = useState("#ffffff");//ffffff //ff4560
+  const [colorLetraAlerta, setColorLetraAlerta] = useState("#606060"); //606060 //fff
+  const [colorNumeroAlerta, setColorNumeroAlerta] = useState("#606060");//606060
+  const [colorUnidadAlerta, setColorUnidadAlerta] = useState("#606060");//606060
 
-  const [formadoraTemperaturaSalida, setFormadoraTemperaturaSalida] = useState(
-    "10.000.000"
-  );
-  const [hamburguesasFormadas, setHamburguesasFormadas] = useState(
-    "10.000.001"
-  );
-  const [iqfTemperaturaSalida, setIqfTemperaturaSalida] = useState(
-    "10.000.002"
-  );
-  const [iqfVelocidadGiro, setIqfVelocidadGiro] = useState("10.000.003");
-  const [envasadora1Conteo, setEnvasadora1Conteo] = useState("10.000.004");
-  const [envasadora2Conteo, setEnvasadora2Conteo] = useState("10.000.005");
-  const [envasadora3Conteo, setEnvasadora3Conteo] = useState("10.000.006");
-  const [envasadora4Conteo, setEnvasadora4Conteo] = useState("10.000.007");
-  const [
-    empaquetadoraConteoEmpaques,
-    setEmpaquetadoraConteoEmpaques,
-  ] = useState("10.000.008");
+  const [formadoraTemperaturaSalida, setFormadoraTemperaturaSalida] = useState("1");
+  const [hamburguesasFormadas, setHamburguesasFormadas] = useState("2");
+  const [iqfTemperaturaSalida, setIqfTemperaturaSalida] = useState("3");
+  const [iqfVelocidadGiro, setIqfVelocidadGiro] = useState("4");
+  const [envasadora1Conteo, setEnvasadora1Conteo] = useState("5");
+  const [envasadora2Conteo, setEnvasadora2Conteo] = useState("6");
+  const [envasadora3Conteo, setEnvasadora3Conteo] = useState("7");
+  const [envasadora4Conteo, setEnvasadora4Conteo] = useState("8");
+  const [empaquetadoraConteoEmpaques, setEmpaquetadoraConteoEmpaques] = useState("9");
   /* FIN estados de alerta */
 
   /* INI techos de maquinas */
@@ -38,11 +35,31 @@ function Scada(props) {
   const [colorTechoEnvasadora2, setColorTechoEnvasadora2] = useState("#ff4560");
   const [colorTechoEnvasadora3, setColorTechoEnvasadora3] = useState("#feb018");
   const [colorTechoEnvasadora4, setColorTechoEnvasadora4] = useState("#ffef45");
-  const [colorTechoEmpaquetadora, setColorTechoEmpaquetadora] = useState(
-    "#25a0fc"
-  );
+  const [colorTechoEmpaquetadora, setColorTechoEmpaquetadora] = useState("#25a0fc");
   /* FIN techos de maquinas */
-  
+  const [colorCartelPiso, SetColorCartelPiso] = useState("#535bd5");//FF6200 //535bd5
+  useEffect(() => {
+    
+    
+  }, []);
+
+
+
+const loadGauge=(porcentaje)=>{
+  if(porcentaje==0){
+    return <G1 width={100} height={50}/>
+  }else if(porcentaje>0 && porcentaje<=20){
+    return <G2 width={100} height={50}/>
+  }else if(porcentaje>20 && porcentaje<=40){
+    return <G3 width={100} height={50}/>
+  }else if(porcentaje>40 && porcentaje<=60){
+    return <G4 width={100} height={50}/>
+  }else if(porcentaje>60 && porcentaje<=80){
+    return <G5 width={100} height={50}/>
+  }else if(porcentaje>80 && porcentaje<=100){
+    return <G6 width={100} height={50}/>
+  }
+}
   return (
     <Fragment>
       <ReactCSSTransitionGroup
@@ -86,7 +103,7 @@ function Scada(props) {
                   {...props}
                 >
                   <style>
-                    {".st1{fill:#535bd5}.st2{fill:#dbdcde}.st3{fill:#f8f8fb}.st4{fill:" +
+                    {".st1{fill:"+ colorCartelPiso +"}.st2{fill:#dbdcde}.st3{fill:#f8f8fb}.st4{fill:" +
                       colorLetraAlerta +
                       "}.st6{enable-background:new}.st7{fill:#b3b3b3}.st8{fill:#e1b689}.st9{fill:#e0e0ff}.st13{fill:gray}.st14{font-family:&apos;Sarabun-Regular&apos;}.st15{font-size:16px, fill:" +
                       colorNumeroAlerta +
@@ -1617,26 +1634,24 @@ function Scada(props) {
                       className="st20"
                       d="M588.2 204.5H519c-2 0-4 .7-5.5 2.1-5.8 5.8-5.8 5.8-10.7.2l-.6-.5c-1.5-1.2-3.3-1.9-5.2-1.9h-69c-5.4 0-9.7-4.4-9.7-9.7V81.1c0-5.4 4.4-9.7 9.7-9.7h160.2c5.4 0 9.7 4.4 9.7 9.7v113.6c.1 5.4-4.3 9.8-9.7 9.8z"
                     />
-                    {/* <text
-                      transform="translate(441.363 150.662)"
+                     <text
+                      transform="translate(551.363 150.662)"
                       className="st4 st14 st15"
                     >
                       
                       {formadoraTemperaturaSalida}
-                    </text> */}
+                    </text> 
 
                     <g 
                     className="st13 st14 st15" 
-                    transform="translate(460.363 130.662)"
+                    transform="translate(460.363 140.662)"
                     >
-
-                     <Gauge className="st13 st14 st15" 
-                    value={80} color="green" width={100} height={50} label="" />
-
+                     {loadGauge(56)}
+                  
 
 
                     </g>
-
+                    
                     <text
                       transform="translate(560.98 150.662)"
                       className="st4 st14 st16"
@@ -1731,23 +1746,13 @@ function Scada(props) {
                         d="M588.2 358.7H519c-2 0-4 .7-5.5 2.1-5.8 5.8-5.8 5.8-10.7.2l-.6-.5c-1.5-1.2-3.3-1.9-5.2-1.9h-69c-5.4 0-9.7-4.4-9.7-9.7V235.3c0-5.4 4.4-9.7 9.7-9.7h160.2c5.4 0 9.7 4.4 9.7 9.7v113.6c.1 5.4-4.3 9.8-9.7 9.8z"
                       />
 
-                     {/*  <text
+                      <text
                         transform="translate(441.363 304.855)"
                         className="st4 st14 st15"
                       >
                         {hamburguesasFormadas}
-                      </text> */}
-                      <g 
-                    className="st13 st14 st15" 
-                    transform="translate(460.363 286.855)"
-                    >
-
-                     <Gauge className="st13 st14 st15" 
-                    value={40} color="red" width={100} height={50} label="" />
-
-
-
-                    </g>
+                      </text>
+                      
                       <text
                         transform="translate(544.184 304.856)"
                         className="st4 st14 st16"
@@ -1762,7 +1767,7 @@ function Scada(props) {
                           {"Formadas"}
                         </tspan>
                       </text>
-                     {/*  <path
+                      <path
                         className="st4"
                         d="M500.5 329.9c-.7 1.3-1 2.8-.7 4.2 0 .1.2.2.4.2l.7-.1c.1 0 .2-.2.2-.4-.1-1 0-2.2.6-3.2s1.3-1.7 2.3-2.1c.1-.1.2-.2.2-.4l-.2-.7c0-.2-.2-.2-.5-.2-1.2.5-2.3 1.3-3 2.7z"
                       />
@@ -1775,7 +1780,7 @@ function Scada(props) {
                         d="M513.2 324.7c-.1-.1-.4 0-.4.2l-.2.7c-.1.1 0 .4.2.4 1.6.6 2.9 1.7 3.8 3.2.9 1.6 1.1 3.3.9 4.9 0 .1.1.4.2.4l.7.1c.1 0 .4-.1.4-.2.4-2 .1-4-1-5.9-1.2-1.7-2.8-3-4.6-3.8zM514.3 336.1v-1.8c0-3.1-2-5.4-4.8-6v-.7c0-.6-.5-1.1-1.1-1.1h-.6c-.6 0-1.1.5-1.1 1.1v.7c-2.9.6-4.8 2.9-4.8 6v1.8c0 1-.4 1.8-.9 2.6-.2.4-.4.6-.4 1.1v.1c0 1.1.9 2 2 2h11.2c1.1 0 2-.9 2-2v-.1c0-.4-.1-.7-.4-1.1-.7-.7-1.1-1.6-1.1-2.6zM508.1 345.4c1.1 0 2.1-1 2.1-2.1H506c.1 1.2 1 2.1 2.1 2.1z"
                       />
                       <path className="st18" d="M430.8 310H585.5V312H430.8z" />
-                    */} </g>
+                    </g>
                     <g>
                       <image
                         width={413}
@@ -1790,11 +1795,20 @@ function Scada(props) {
                         d="M1090.4 301.6h-69.2c-2 0-4 .7-5.5 2.1-5.8 5.8-5.8 5.8-10.7.2l-.6-.5c-1.5-1.2-3.3-1.9-5.2-1.9h-69c-5.4 0-9.7-4.4-9.7-9.7V178.3c0-5.4 4.4-9.7 9.7-9.7h160.2c5.4 0 9.7 4.4 9.7 9.7v113.6c.1 5.3-4.3 9.7-9.7 9.7z"
                       />
                       <text
-                        transform="translate(943.565 247.808)"
+                        transform="translate(1050.565 247.808)"
                         className="st4 st14 st15"
                       >
                         {iqfTemperaturaSalida}
                       </text>
+                      <g 
+                    className="st4 st14 st15" 
+                    transform="translate(958.565 230.808)"
+                    >
+                     {loadGauge(56)}
+                  
+
+
+                    </g>
                       <text
                         transform="translate(1063.18 247.808)"
                         className="st4 st14 st16"
@@ -1809,7 +1823,7 @@ function Scada(props) {
                           {"Temperatura de Salida"}
                         </tspan>
                       </text>
-                      <path
+                      {/* <path
                         className="st4"
                         d="M1002.7 272.8c-.7 1.3-1 2.8-.7 4.2 0 .1.2.2.4.2l.7-.1c.1 0 .2-.2.2-.4-.1-1 0-2.2.6-3.2s1.3-1.7 2.3-2.1c.1-.1.2-.2.2-.4l-.2-.7c0-.2-.2-.2-.5-.2-1.2.5-2.3 1.4-3 2.7z"
                       />
@@ -1821,7 +1835,7 @@ function Scada(props) {
                         className="st4"
                         d="M1015.4 267.7c-.1-.1-.4 0-.4.2l-.2.7c-.1.1 0 .4.2.4 1.6.6 2.9 1.7 3.8 3.2.9 1.6 1.1 3.3.9 4.9 0 .1.1.4.2.4l.7.1c.1 0 .4-.1.4-.2.4-2 .1-4-1-5.9-1.2-1.7-2.8-3.1-4.6-3.8zM1016.5 279.1v-1.8c0-3.1-2-5.4-4.8-6v-.7c0-.6-.5-1.1-1.1-1.1h-.6c-.6 0-1.1.5-1.1 1.1v.7c-2.9.6-4.8 2.9-4.8 6v1.8c0 1-.4 1.8-.9 2.6-.2.4-.4.6-.4 1.1v.1c0 1.1.9 2 2 2h11.2c1.1 0 2-.9 2-2v-.1c0-.4-.1-.7-.4-1.1-.7-.8-1.1-1.6-1.1-2.6zM1010.3 288.4c1.1 0 2.1-1 2.1-2.1h-4.2c.1 1.1 1 2.1 2.1 2.1z"
                       />
-                      <path className="st18" d="M933 252.9H1087.7V254.9H933z" />
+                      <path className="st18" d="M933 252.9H1087.7V254.9H933z" /> */}
                     </g>
                     <g>
                       <image

@@ -53,5 +53,11 @@ export const General= [
         to: '#/dashboards/Scada'
 
     },
+    {
+        icon: 'pe-7s-network',
+        label: 'Scada2',
+        to: '#/dashboards/Scada2'
+
+    },
 
 ]

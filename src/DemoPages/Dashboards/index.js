@@ -14,6 +14,7 @@ import Detalle from './Minimal/DetalleAvanzado';
 import Envasadora from './Minimal/Envasadora';
 import Analisis from './Minimal/Analisis';
 import Scada from './Minimal/Scada';
+import Scada2 from './Minimal/Scada2';
 // Layout
 
 import AppHeader from '../../Layout/AppHeader/';
@@ -42,6 +43,7 @@ const Dashboards = ({match}) => (
                     <Route path={`${match.url}/DetalleAvanzado`} component={Detalle}/>
                     <Route path={`${match.url}/Analisis`} component={Analisis}/>
                     <Route path={`${match.url}/Scada`} component={Scada}/>
+                    <Route path={`${match.url}/Scada2`} component={Scada2}/>
                 </div>
                 <AppFooter/>
             </div>
