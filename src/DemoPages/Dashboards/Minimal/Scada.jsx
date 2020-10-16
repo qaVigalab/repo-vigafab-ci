@@ -93,6 +93,7 @@ const loadGauge=(porcentaje)=>{
           <Card className="main-card mb-3">
             <Container>
               <Row>
+                
               
                 <svg
                   id="Capa_1"
@@ -2086,6 +2087,7 @@ const loadGauge=(porcentaje)=>{
                     </g>
                   </g>
                 </svg>
+             
               </Row>
             </Container>
           </Card>
