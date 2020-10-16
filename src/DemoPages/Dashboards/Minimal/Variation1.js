@@ -17,7 +17,12 @@ import {
 import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
 import CialWidget from "./CialWidget";
 import Formadora from './Formadora';
+import Formadora2 from './Formadora2';
 import Iqf from './Iqf';
+import NuevaOrden from './NuevaOrden';
+import Orden from './Orden';
+import Produciendo from './Produciendo';
+
 const data = {
   legend: [
     {
@@ -54,15 +59,15 @@ export default class MinimalDashboard1 extends Component {
 
   constructor(props) {
     super(props);
-    
+
     this.togglePop1 = this.togglePop1.bind(this);
 
     this.state = {
       modo: 0,
       maquinas: [
         {
-          id:"",
-          nombre:""
+          id: "",
+          nombre: ""
         }
       ],
     };
@@ -89,40 +94,40 @@ export default class MinimalDashboard1 extends Component {
   onDismiss() {
     this.setState({ visible: false });
   }
-async getMaquinas(tipo){
-  var myHeaders = new Headers();
-myHeaders.append("x-api-key", "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m");
-myHeaders.append("Content-Type", "application/json");
+  async getMaquinas(tipo) {
+    var myHeaders = new Headers();
+    myHeaders.append("x-api-key", "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m");
+    myHeaders.append("Content-Type", "application/json");
 
-var raw = JSON.stringify({"maquina":tipo});
+    var raw = JSON.stringify({ "maquina": tipo });
 
-var requestOptions = {
-  method: 'POST',
-  headers: myHeaders,
-  body: raw,
-  redirect: 'follow'
-};
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
 
-await fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getmaquinas", requestOptions)
-.then(response => response.json())
-.then( result => {
-      
-      this.setState({
-        maquinas: [...this.state.maquinas, {
-          id:result[0].id,
-          nombre:result[0].maquina,
-        }]
-      })
-    }
-)
-  .catch(error => console.log('error', error));
-}
-componentDidMount() {
-  this.setState({
-    maquinas:[]
-  })
-  this.getMaquinas('envasadora')
-}
+    await fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getmaquinas", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+
+        this.setState({
+          maquinas: [...this.state.maquinas, {
+            id: result[0].id,
+            nombre: result[0].maquina,
+          }]
+        })
+      }
+      )
+      .catch(error => console.log('error', error));
+  }
+  componentDidMount() {
+    this.setState({
+      maquinas: []
+    })
+    this.getMaquinas('envasadora')
+  }
   render() {
     return (
       <Fragment>
@@ -255,7 +260,7 @@ componentDidMount() {
                       <Col>
                         <div className="titlecard">Hasta</div>
                         <InputGroup>
-                        <InputGroupAddon addonType="prepend">
+                          <InputGroupAddon addonType="prepend">
                             <div className="input-group-text">
                               <FontAwesomeIcon icon={faCalendarAlt} />
                             </div>
@@ -268,7 +273,7 @@ componentDidMount() {
                             startDate={this.state.startDate}
                             endDate={this.state.endDate}
                             minDate={this.state.startDate}
-                            
+
                           />
                         </InputGroup>
                       </Col>
@@ -277,6 +282,8 @@ componentDidMount() {
                 </CardBody>
               </Card>
             </Col>
+
+
 
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
@@ -302,24 +309,51 @@ componentDidMount() {
               </Card>
             </Col>
           </Row>
-          
+
+          <Row>
+            <Col md="12" xl="12">
+              <Card className="main-card mb-3">
+                <NuevaOrden />
+                
+              </Card>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col md="12" xl="12">
+              <Card className="main-card mb-3">
+                <Orden />
+              </Card>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col md="12" xl="12">
+              <Card className="main-card mb-3">
+                <Produciendo 
+                estado={1}/>
+              </Card>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col md="12" xl="12">
+              <Card className="main-card mb-3">
+                <Formadora2 
+                estado={1}/>
+              </Card>
+            </Col>
+          </Row>
+
           <div class="columns-parent">
+            
             <Row>
-              <Formadora 
-              modo={1}
-              estado={1}
-              nombre="Formadora"
-              data={[2.2, 3, 2, 0.8, 0.3, 0.2, 5]}
-              descripcion="Receta actual: Hamburguesa de Vacuno 100 Grs La Crianza"
-              />
-            </Row>
-            <Row>
-              <Iqf 
-              modo={1}
-              estado={1}
-              nombre="IQF"
-              data={[2.2, 3, 2, 0.8, 0.3, 0.2, 5]}
-              descripcion="Receta actual: Hamburguesa de Vacuno 100 Grs La Crianza"
+              <Iqf
+                modo={1}
+                estado={1}
+                nombre="IQF"
+                data={[2.2, 3, 2, 0.8, 0.3, 0.2, 5]}
+                descripcion="Receta actual: Hamburguesa de Vacuno 100 Grs La Crianza"
               />
             </Row>
             {/*this.state.modo === 1 || this.state.modo === 0 ? (
@@ -351,25 +385,25 @@ componentDidMount() {
             {this.state.modo === 2 || this.state.modo === 0 ? (
               <Row>
 
-              {this.state.maquinas.map( maquina =>
-                
-                <CialWidget
-                  modo={2}
-                  descripcion="009 - Vienesa Vacío 4 x 1 KG SJ"
-                  OE={2090}
-                  OET={2500}
-                  estado={1}
-                  nombre={maquina.nombre}
-                  data={[4, 2, 0.11, 1.4, 1, 0.2, 3.8]}
-                  id_vibot={maquina.id}
-                />
-              )}
-                
-               
+                {this.state.maquinas.map(maquina =>
+
+                  <CialWidget
+                    modo={2}
+                    descripcion="009 - Vienesa Vacío 4 x 1 KG SJ"
+                    OE={2090}
+                    OET={2500}
+                    estado={1}
+                    nombre={maquina.nombre}
+                    data={[4, 2, 0.11, 1.4, 1, 0.2, 3.8]}
+                    id_vibot={maquina.id}
+                  />
+                )}
+
+
               </Row>
             ) : (
-              ""
-            )}
+                ""
+              )}
             {/* {this.state.modo === 5 || this.state.modo === 0 ? (
               <Row>
                 <CialWidget
@@ -448,8 +482,8 @@ componentDidMount() {
                   data={[6, 0.5, 1.2, 0.5, 1, 1.2, 5]}
                 />
               ) : (
-                ""
-              )}
+                  ""
+                )}
               {this.state.modo === 2 || this.state.modo === 0 ? (
                 <CialWidget
                   modo={4}
@@ -460,10 +494,10 @@ componentDidMount() {
                   data={[5, 0.2, 1, 0.4, 0.5, 1.2, 7]}
                 />
               ) : (
-                ""
-              )}
+                  ""
+                )}
             </Row>
-           
+
           </div>
         </ReactCSSTransitionGroup>
       </Fragment>
