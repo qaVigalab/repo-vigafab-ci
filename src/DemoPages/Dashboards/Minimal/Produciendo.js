@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {Row,Col} from "reactstrap";
+import { Row, Col } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 import { Doughnut } from "react-chartjs-2";
@@ -53,6 +53,60 @@ let data = {
 };
 
 const Produciendo = (props) => {
+
+    const [estado, setEstado] = useState(0)
+    const [nOrden, setnOrden] = useState(0)
+    const [sku, setSku] = useState("")
+    const [producto, setProducto] = useState("")
+    const [productividad, setProductividad] = useState(0)
+    const [tiempo, setTiempo] = useState(0)
+    const [kg_acumulado, setKg_acumulado] = useState(0)
+    const [h_acumulado, setH_acumulado] = useState(0)
+    const [cajas_acumuladas, setCajas_acumuladas] = useState(0)
+    const [kg_solicitado, setKg_solicitado] = useState(0)
+    const [h_solicitado, setH_solicitado] = useState(0)
+    const [cajas_solicitadas, setcajas_solicitadas] = useState(0)
+
+
+
+
+    const loadResumen = () => {
+        fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenempaquetadora2", {
+            "method": "POST",
+            "headers": {
+                "content-type": "application/json",
+                "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+            },
+            body: JSON.stringify({
+ 
+                id : 12                              
+              })
+        })
+            .then(response => response.json())
+            .then(result => {
+                console.log(result[0])
+                 setEstado(result[0].estado)
+                 setnOrden(result[0].id_sub_orden)
+                 setSku(result[0].sku)
+                 setProducto(result[0].producto)
+                 setProductividad(result[0].productividad)
+                 setTiempo(result[0].tiempo_actividad)
+                 setKg_acumulado(result[0].real_kg)
+                 setH_acumulado(result[0].hamburguesas_acumuladas)
+                 setCajas_acumuladas(result[0].cajas_acumuladas)
+                 setKg_solicitado(result[0].kg_solicitados)
+                 setH_solicitado(result[0].hamburguesas_solicitadas)
+                 setcajas_solicitadas(result[0].cajas)
+            }
+            )
+            .catch(err => {
+                console.error(err);
+            });
+    }
+    useEffect(() => {
+        loadResumen()
+    }, [])
+
     return (
 
         <div>
@@ -61,30 +115,30 @@ const Produciendo = (props) => {
                 <Row>
                     <br />
                     <Col md="2">
-                        <div align="center" className="font1">Produciendo</div>
+                        <div align="center" className="font1">{estado == 1 ? "Detenida" : "Produciendo"}</div>
                     </Col>
                     <Col md="2">
                         <Row>
                             <div align="center" className="font2 my-1">N° Orden:</div>
-                            <div align="left" className="font3 my-1">Productividad</div>
+                            <div align="left" className="font3 my-1">{nOrden }</div>
                         </Row>
                     </Col>
                     <Col md="2">
                         <Row>
                             <div align="left" className="font2 my-1">Sku:</div>
-                            <div align="left" className="font3 my-1">Productividad</div>
+                            <div align="left" className="font3 my-1">{sku}</div>
                         </Row>
                     </Col>
                     <Col md="3">
                         <Row>
                             <div align="left" className="font2 my-1">Producto:</div>
-                            <div align="left" className="font3 my-1">Productividad</div>
+                            <div align="left" className="font3 my-1">{producto}</div>
                         </Row>
                     </Col>
                     <Col md="2">
                         <Row>
                             <div align="left" className="font2 my-1">Productividad:</div>
-                            <div align="left" className="font3 my-1">Productividad</div>
+                            <div align="left" className="font3 my-1">{productividad}</div>
                         </Row>
                     </Col>
                     <br />
@@ -115,10 +169,10 @@ const Produciendo = (props) => {
                     </Col>
 
                     <Col md="3">
-                        <div align="center" className="font2 my-2">3.8 hrs Tiempo de Actividad</div>
+                        <div align="center" className="font2 my-2">{tiempo + " "} hrs Tiempo de Actividad</div>
                     </Col>
                     <Col md="2">
-                        <div align="center" className="font2 my-2 pr-3">Produciendo</div>
+                        <div align="center" className="font2 my-2 pr-3">{estado == 1 ? "Detenida" : "Produciendo"}</div>
                     </Col>
                 </Row>
             </div>
@@ -133,8 +187,8 @@ const Produciendo = (props) => {
                                     </div>
                                 </Col>
                                 <Col md="9">
-                                    <div align="center" className="bigFont mt-3">600</div>
-                                    <div align="center" className="littleFont">de 1.800 Kg</div>
+                                    <div align="center" className="bigFont mt-3">{kg_acumulado}</div>
+                                    <div align="center" className="littleFont">de {" " + kg_solicitado + " "} Kg</div>
                                 </Col>
 
                             </Row>
@@ -148,8 +202,8 @@ const Produciendo = (props) => {
                                     </div>
                                 </Col>
                                 <Col md="9">
-                                    <div align="center" className="bigFont mt-3">600</div>
-                                    <div align="center" className="littleFont">de 300 F. Pack</div>
+                                    <div align="center" className="bigFont mt-3">{h_acumulado}</div>
+                                    <div align="center" className="littleFont">de {" " + h_solicitado + " "} F. Pack</div>
                                 </Col>
 
                             </Row>
@@ -162,8 +216,8 @@ const Produciendo = (props) => {
                                     </div>
                                 </Col>
                                 <Col md="9">
-                                    <div align="center" className="bigFont mt-3">600</div>
-                                    <div align="center" className="littleFont">de 1.000 cajas</div>
+                                    <div align="center" className="bigFont mt-3">{Math.round(cajas_acumuladas)}</div>
+                                    <div align="center" className="littleFont">de {" " + cajas_solicitadas + " "} cajas</div>
                                 </Col>
 
                             </Row>

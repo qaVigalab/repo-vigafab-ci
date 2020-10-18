@@ -81,7 +81,7 @@ export default class NuevaOrden extends Component {
             .then(response => response.json())
             .then(result => {
                 this.setState({ productos: result })
-                console.log(result)
+                
             }
             )
             .catch(err => {
