@@ -375,7 +375,7 @@ class MinimalDashboard1 extends Component {
               ""
             )}
 
-            <Row alignItems="stretch">
+         {/*    <Row alignItems="stretch">
               {this.state.modo === 1 || this.state.modo === 0 ? (
                 <CialWidget
                   modo={3}
@@ -397,7 +397,7 @@ class MinimalDashboard1 extends Component {
               ) : (
                 ""
               )}
-            </Row>
+            </Row> */}
           </div>
         </ReactCSSTransitionGroup>
       </Fragment>
