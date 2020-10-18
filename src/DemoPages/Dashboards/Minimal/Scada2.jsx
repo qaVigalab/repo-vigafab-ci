@@ -16,15 +16,15 @@ const Scada2=(props)=> {
     const [colorNumeroAlerta, setColorNumeroAlerta] = useState("#606060");//606060
     const [colorUnidadAlerta, setColorUnidadAlerta] = useState("#606060");//606060
 
-    const [formadoraTemperaturaSalida, setFormadoraTemperaturaSalida] = useState("11");
-    const [hamburguesasFormadas, setHamburguesasFormadas] = useState("22");
-    const [iqfTemperaturaSalida, setIqfTemperaturaSalida] = useState("33");
-    const [iqfVelocidadGiro, setIqfVelocidadGiro] = useState("44");
-    const [envasadora1Conteo, setEnvasadora1Conteo] = useState("5");
-    const [envasadora2Conteo, setEnvasadora2Conteo] = useState("6");
-    const [envasadora3Conteo, setEnvasadora3Conteo] = useState("7");
-    const [envasadora4Conteo, setEnvasadora4Conteo] = useState("8");
-    const [empaquetadoraConteoEmpaques, setEmpaquetadoraConteoEmpaques] = useState("9");
+    const [formadoraTemperaturaSalida, setFormadoraTemperaturaSalida] = useState("0");
+    const [hamburguesasFormadas, setHamburguesasFormadas] = useState("0");
+    const [iqfTemperaturaSalida, setIqfTemperaturaSalida] = useState("0");
+    const [iqfVelocidadGiro, setIqfVelocidadGiro] = useState("0");
+    const [envasadora1Conteo, setEnvasadora1Conteo] = useState("0");
+    const [envasadora2Conteo, setEnvasadora2Conteo] = useState("0");
+    const [envasadora3Conteo, setEnvasadora3Conteo] = useState("0");
+    const [envasadora4Conteo, setEnvasadora4Conteo] = useState("0");
+    const [empaquetadoraConteoEmpaques, setEmpaquetadoraConteoEmpaques] = useState("0");
  
     /* INI techos de maquinas */
     const [colorTechoFormadora, setColorTechoFormadora] = useState("#444054");
@@ -35,10 +35,48 @@ const Scada2=(props)=> {
     const [colorTechoEnvasadora4, setColorTechoEnvasadora4] = useState("#ffef45");
     const [colorTechoEmpaquetadora, setColorTechoEmpaquetadora] = useState("#25a0fc");
 
+const loadData =()=>{
+    var myHeaders = new Headers();
+    myHeaders.append("x-api-key", "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m");
+    
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+    
+    fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getscada", requestOptions)
+    .then(response => response.json())
+    .then(result => {
+        setFormadoraTemperaturaSalida(result[0].formadora_temp)
+        setHamburguesasFormadas(result[0].formadora_rmp)
+        setIqfTemperaturaSalida(result[0].iqf_temp)
+        setIqfVelocidadGiro(result[0].iqf_vel)
+        setEnvasadora1Conteo(result[0].envasadora1)
+        setEnvasadora2Conteo(result[0].envasadora2)
+        setEnvasadora3Conteo(result[0].envasadora3)
+        setEnvasadora4Conteo(result[0].envasadora4)
+        setEmpaquetadoraConteoEmpaques(result[0].empaquetadora)
+    })
+      .catch(error => console.log('error', error));
+}
 
+var temp_formadora=(formadoraTemperaturaSalida>=-10 && formadoraTemperaturaSalida<=10?50:
+    formadoraTemperaturaSalida<-10 && formadoraTemperaturaSalida>=-13?30:
+    formadoraTemperaturaSalida<-13 && formadoraTemperaturaSalida>=-16?10:
+    formadoraTemperaturaSalida>10 && formadoraTemperaturaSalida<=13?70:
+    formadoraTemperaturaSalida>13?90:0
+    );
+var temp_iqf=(iqfTemperaturaSalida>=-18 && iqfTemperaturaSalida<=-15?50:
+    iqfTemperaturaSalida<-18 && iqfTemperaturaSalida>=-21?30:
+    iqfTemperaturaSalida<-21 && iqfTemperaturaSalida>=-24?10:
+    iqfTemperaturaSalida>-15 && iqfTemperaturaSalida<=-12?70:
+    iqfTemperaturaSalida>-12?90:0
+    );
     const loadGauge=(porcentaje)=>{
         var w = 150
         var h = 75
+        
         if(porcentaje==0){
           return <G1 width={w} height={h}/>
         }else if(porcentaje>0 && porcentaje<=20){
@@ -53,6 +91,18 @@ const Scada2=(props)=> {
           return <G6 width={w} height={h}/>
         }
       }
+
+      useEffect(() => {
+    
+        loadData()
+    }, []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            loadData();
+        }, 40000);
+        return () => clearInterval(interval);
+      }, []);
 
   return (
     <Fragment>
@@ -504,7 +554,7 @@ const Scada2=(props)=> {
             className="prefix__st151"
             d="M662.4 298c2.5 0 4.5-2 4.5-4.4l-2.9-19.5c-.1-1-1.6-1.1-1.8-.1l-4.2 19.5c0 2.5 2 4.5 4.4 4.5z"
           />  */}
-          {loadGauge(41)}
+          {loadGauge(temp_formadora)}
         </g> 
         <path
           className="prefix__st152"
@@ -711,7 +761,7 @@ const Scada2=(props)=> {
             className="prefix__st151"
             d="M1322.3 434.6c2.5 0 4.5-2 4.5-4.4l-2.9-19.5c-.1-1-1.6-1.1-1.8-.1l-4.2 19.5c0 2.5 2 4.5 4.4 4.5z"
           /> */}
-          {loadGauge(20)}
+          {loadGauge(temp_iqf)}
         </g>
         <path
           className="prefix__st152"

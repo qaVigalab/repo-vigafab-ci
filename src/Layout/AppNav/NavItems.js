@@ -47,15 +47,15 @@ export const General= [
         to: '#/dashboards/analisis'
 
     },
-    {
+    /* {
         icon: 'pe-7s-network',
         label: 'Scada',
         to: '#/dashboards/Scada'
 
-    },
+    }, */
     {
         icon: 'pe-7s-network',
-        label: 'Scada2',
+        label: 'Scada',
         to: '#/dashboards/Scada2'
 
     },

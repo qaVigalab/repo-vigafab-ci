@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { Component, Fragment } from "react";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 import DatePicker from "react-datepicker";
-import {connect} from 'react-redux';
+import { connect } from "react-redux";
 import {
   Button,
   Card,
@@ -17,12 +17,12 @@ import {
 } from "reactstrap";
 import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
 import CialWidget from "./CialWidget";
-import Formadora from './Formadora';
-import Formadora2 from './Formadora2';
-import Iqf from './Iqf';
-import NuevaOrden from './NuevaOrden';
-import Orden from './Orden';
-import Produciendo from './Produciendo';
+import Formadora from "./Formadora";
+import Formadora2 from "./Formadora2";
+import Iqf from "./Iqf";
+import NuevaOrden from "./NuevaOrden";
+import Orden from "./Orden";
+import Produciendo from "./Produciendo";
 
 const data = {
   legend: [
@@ -50,7 +50,7 @@ const data = {
   ],
 };
 
- class MinimalDashboard1 extends Component {
+class MinimalDashboard1 extends Component {
   applyCallback(startDate, endDate) {
     this.setState({
       start: startDate,
@@ -68,22 +68,22 @@ const data = {
       maquinas: [
         {
           id: "",
-          nombre: ""
-        }
+          nombre: "",
+        },
       ],
     };
     this.onDismiss = this.onDismiss.bind(this);
     this.getMaquinas = this.getMaquinas.bind(this);
   }
 
-  handleChange = date => {
+  handleChange = (date) => {
     this.setState({
-      startDate: date
+      startDate: date,
     });
   };
-  handleChange2 = date => {
+  handleChange2 = (date) => {
     this.setState({
-      endDate: date
+      endDate: date,
     });
   };
   togglePop1() {
@@ -95,39 +95,44 @@ const data = {
   onDismiss() {
     this.setState({ visible: false });
   }
-  async getMaquinas(tipo) {
+
+  getMaquinas(tipo) {
     var myHeaders = new Headers();
     myHeaders.append("x-api-key", "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m");
     myHeaders.append("Content-Type", "application/json");
 
-    var raw = JSON.stringify({ "maquina": tipo });
+    var raw = JSON.stringify({ maquina: tipo });
 
     var requestOptions = {
-      method: 'POST',
+      method: "POST",
       headers: myHeaders,
       body: raw,
-      redirect: 'follow'
+      redirect: "follow",
     };
 
-    await fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getmaquinas", requestOptions)
-      .then(response => response.json())
-      .then(result => {
-
+    fetch(
+      "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getmaquinas",
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((result) => {
         this.setState({
-          maquinas: [...this.state.maquinas, {
-            id: result[0].id,
-            nombre: result[0].maquina,
-          }]
-        })
-      }
-      )
-      .catch(error => console.log('error', error));
+          maquinas: [
+            ...this.state.maquinas,
+            {
+              id: result[0].id,
+              nombre: result[0].maquina,
+            },
+          ],
+        });
+      })
+      .catch((error) => console.log("error", error));
   }
   componentDidMount() {
     this.setState({
-      maquinas: []
-    })
-    this.getMaquinas('envasadora')
+      maquinas: [],
+    });
+    this.getMaquinas("envasadora");
   }
   render() {
     return (
@@ -274,7 +279,6 @@ const data = {
                             startDate={this.state.startDate}
                             endDate={this.state.endDate}
                             minDate={this.state.startDate}
-
                           />
                         </InputGroup>
                       </Col>
@@ -283,8 +287,6 @@ const data = {
                 </CardBody>
               </Card>
             </Col>
-
-
 
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
@@ -315,7 +317,6 @@ const data = {
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
                 <NuevaOrden />
-                
               </Card>
             </Col>
           </Row>
@@ -331,8 +332,7 @@ const data = {
           <Row>
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
-                <Produciendo 
-                estado={1}/>
+                <Produciendo estado={1} />
               </Card>
             </Col>
           </Row>
@@ -340,14 +340,12 @@ const data = {
           <Row>
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
-                <Formadora2 
-                estado={1}/>
+                <Formadora2 estado={1} />
               </Card>
             </Col>
           </Row>
 
           <div class="columns-parent">
-            
             <Row>
               <Iqf
                 modo={1}
@@ -357,37 +355,10 @@ const data = {
                 descripcion="Receta actual: Hamburguesa de Vacuno 100 Grs La Crianza"
               />
             </Row>
-            {/*this.state.modo === 1 || this.state.modo === 0 ? (
-              <Row>
-               
-                <CialWidget
-                  modo={1}
-                  estado={1}
-                  nombre="Horno 1"
-                  data={[2.2, 3, 2, 0.8, 0.3, 0.2, 5]}
-                />
-                <CialWidget
-                  modo={1}
-                  estado={2}
-                  nombre="Horno 2"
-                  data={[3, 2.3, 1.2, 2.4, 1.5, 0.2, 4.8]}
-                />
-                <CialWidget
-                  modo={1}
-                  estado={1}
-                  nombre="Horno 3"
-                  data={[1.2, 2.3, 3.4, 5.5, 2, 5, 3]}
-                />
-              </Row>
-            ) : (
-              ""
-            )*/}
 
             {this.state.modo === 2 || this.state.modo === 0 ? (
               <Row>
-
-                {this.state.maquinas.map(maquina =>
-
+                {this.state.maquinas.map((maquina) => (
                   <CialWidget
                     modo={2}
                     descripcion="009 - Vienesa Vacío 4 x 1 KG SJ"
@@ -398,83 +369,12 @@ const data = {
                     data={[4, 2, 0.11, 1.4, 1, 0.2, 3.8]}
                     id_vibot={maquina.id}
                   />
-                )}
-
-
-              </Row>
-            ) : (
-                ""
-              )}
-            {/* {this.state.modo === 5 || this.state.modo === 0 ? (
-              <Row>
-                <CialWidget
-                  modo={5}
-                  estado={1}
-                  color="#444054"
-                  OE="1980"
-                  nombre="1009 - Vienesa Vacío 4 x 1 KG SJ"
-                  data={[2.2, 3, 2, 0.8, 0.3, 0.2, 5]}
-                />
-                <CialWidget
-                  modo={5}
-                  estado={1}
-                  color="#444054"
-                  OE="1980"
-                  nombre="1018 - Vienesa Pavo 8 x 1 KG SJ"
-                  data={[2.2, 3, 2, 0.8, 0.3, 0.2, 5]}
-                />
-                <CialWidget
-                  modo={5}
-                  estado={1}
-                  color="#444054"
-                  OE="1980"
-                  nombre="1019 - Vienesa Pollo 8 x 1 KG SJ"
-                  data={[2.2, 3, 2, 0.8, 0.3, 0.2, 5]}
-                />
-                <CialWidget
-                  modo={5}
-                  estado={1}
-                  color="#444054"
-                  OE="1980"
-                  nombre="910 - Vienesa Unimarc 1 KG"
-                  data={[2.2, 3, 2, 0.8, 0.3, 0.2, 5]}
-                />
-                <CialWidget
-                  modo={5}
-                  estado={1}
-                  color="#444054"
-                  OE="1980"
-                  nombre="8772 - Salchicha tradicional 900 x 4 WN"
-                  data={[2.2, 3, 2, 0.8, 0.3, 0.2, 5]}
-                />
-                <CialWidget
-                  modo={5}
-                  estado={1}
-                  color="#444054"
-                  OE="1980"
-                  nombre="1032 - Vienesa Vacío 8 x 1 KG SJ"
-                  data={[2.2, 3, 2, 0.8, 0.3, 0.2, 5]}
-                />
-                <CialWidget
-                  modo={5}
-                  estado={1}
-                  color="#444054"
-                  OE="1980"
-                  nombre="1059- Vienesa Merkat 8x1 KG"
-                  data={[2.2, 3, 2, 0.8, 0.3, 0.2, 5]}
-                />
-                <CialWidget
-                  modo={5}
-                  estado={1}
-                  color="#444054"
-                  OE="1980"
-                  nombre="2380- Vienesas Tradicional Tottus"
-                  data={[2.2, 3, 2, 0.8, 0.3, 0.2, 5]}
-                />
+                ))}
               </Row>
             ) : (
               ""
-            )} */}
+            )}
+
             <Row alignItems="stretch">
               {this.state.modo === 1 || this.state.modo === 0 ? (
                 <CialWidget
@@ -483,8 +383,8 @@ const data = {
                   data={[6, 0.5, 1.2, 0.5, 1, 1.2, 5]}
                 />
               ) : (
-                  ""
-                )}
+                ""
+              )}
               {this.state.modo === 2 || this.state.modo === 0 ? (
                 <CialWidget
                   modo={4}
@@ -495,10 +395,9 @@ const data = {
                   data={[5, 0.2, 1, 0.4, 0.5, 1.2, 7]}
                 />
               ) : (
-                  ""
-                )}
+                ""
+              )}
             </Row>
-
           </div>
         </ReactCSSTransitionGroup>
       </Fragment>
@@ -506,11 +405,8 @@ const data = {
   }
 }
 
-const mapStateToProps = state => ({
-  id_orden: state.dashboardReducers.id_orden
+const mapStateToProps = (state) => ({
+  id_orden: state.dashboardReducers.id_orden,
 });
 
-export default MinimalDashboard1;
-export default connect(mapStateToProps,  mapDispatchToProps )(TransitionAlerts);
-
-
+export default connect(mapStateToProps)(MinimalDashboard1);
