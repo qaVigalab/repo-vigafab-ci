@@ -257,9 +257,9 @@ class MinimalDashboard1 extends Component {
                         <div className="titlecard">Turno</div>
 
                         <Input type="select" name="select" id="exampleSelect">
-                          <option>Turno 1</option>
-                          <option>Turno 2</option>
-                          <option>Turno 3</option>
+                          <option>SKU 1</option>
+                          <option>SKU 2</option>
+                          <option>SKU 3</option>
                         </Input>
                       </Col>
 
