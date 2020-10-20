@@ -6,7 +6,7 @@ export const General= [
 
     },
     
-    {
+    /*{
         icon: 'pe-7s-graph1',
         label: 'Hornos',
         content: [
@@ -46,7 +46,7 @@ export const General= [
         label: 'Análisis',
         to: '#/dashboards/analisis'
 
-    },
+    }*/,
     /* {
         icon: 'pe-7s-network',
         label: 'Scada',

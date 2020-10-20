@@ -67,11 +67,11 @@ const Produciendo = (props) => {
     const [kg_solicitado, setKg_solicitado] = useState(0)
     const [h_solicitado, setH_solicitado] = useState(0)
     const [cajas_solicitadas, setcajas_solicitadas] = useState(0)
+    const [auxId, setAuxId] = useState(props.id_orden)
 
 
 
-
-    const loadResumen = () => {
+    const loadResumen =  () => {
         fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenempaquetadora2", {
             "method": "POST",
             "headers": {
@@ -80,11 +80,12 @@ const Produciendo = (props) => {
             },
             body: JSON.stringify({
  
-                id : props.id_orden                             
+                id : auxId                          
               })
         })
             .then(response => response.json())
             .then(result => {
+            
                  setEstado(result[0].estado)
                  setnOrden(result[0].id_sub_orden)
                  setSku(result[0].sku)
@@ -109,13 +110,15 @@ const Produciendo = (props) => {
     }, [])
 
     useEffect(() => {
+        
         loadResumen()
         
-    }, [props.id_orden])
+    }, [auxId])
 
     useEffect(() => {
         const interval = setInterval(() => {
           loadResumen();
+          console.log(auxId)
         }, 6000);
         return () => clearInterval(interval);
       }, []);
