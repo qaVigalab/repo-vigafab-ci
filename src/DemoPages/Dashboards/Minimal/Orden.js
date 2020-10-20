@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Container, Table } from "reactstrap";
 import { connect } from "react-redux";
+import { setIdOrden } from '../../../actions/dashboardActions'
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import { green } from '@material-ui/core/colors';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 
-const Orden = () => {
+const Orden = (props) => {
+
   const [ordenes, setOrdenes] = useState([]);
+  let {setIdOrden} = props  
 
-  const loadOrdenes = () => {
-    fetch(
+  const loadOrdenes = async () => {
+    await fetch(
       "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getordenes",
       {
         method: "POST",
@@ -19,21 +26,33 @@ const Orden = () => {
     )
       .then((response) => response.json())
       .then((result) => {
-        setOrdenes(result);
+        setOrdenes(result)
+
       })
       .catch((err) => {
         console.error(err);
       });
   };
 
+    useEffect( () => {
+     try {
+      let ord = ordenes.find(o => o.id_estado == 1);
+      console.log(ord)
+      setIdOrden(ord.id_sub_orden)
+      
+    } catch (e) { }
+  }, [ordenes])
+
+
   useEffect(() => {
     loadOrdenes();
+
   }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
       loadOrdenes();
-    }, 60000);
+    }, 6000);
     return () => clearInterval(interval);
   }, []);
 
@@ -57,16 +76,13 @@ const Orden = () => {
             <th>Kg Producidos</th>
             <th>Kg %</th>
             <th>
-              {" "}
-              <div className="check">
-                <i className="lnr-checkmark-circle"> </i>
-              </div>
+            <CheckCircleOutlineIcon />
             </th>
           </tr>
         </thead>
         <tbody>
           {ordenes.map((orden, i) => (
-            <tr className={orden.prioridad == 1 ? "orangeRow" : "text-center"}>
+            <tr className={orden.id_estado == 1 ? "orangeRow" : "text-center"}>
               <th scope="row">{orden.prioridad}</th>
               <td>{orden.id_sub_orden}</td>
               <td>{orden.sku}</td>
@@ -81,16 +97,12 @@ const Orden = () => {
               <td>
                 {orden.kg_porcentual == null
                   ? "0 %"
-                  : orden.kg_porcentual + " %"}
+                  : orden.kg_porcentual > 100
+                    ? "100%"
+                    : orden.kg_porcentual + " %"}
               </td>
               <td>
-                <div className="container">
-                  <div className="round">
-                    <input type="checkbox" id="checkbox" />
-                    <label for="checkbox" />
-                  </div>
-                </div>
-              </td>
+                 {orden.id_estado == 3 ? <CheckCircleIcon style={{ color: green[500] }} /> : <RadioButtonUncheckedIcon />}              </td>
             </tr>
           ))}
         </tbody>
@@ -105,4 +117,11 @@ const mapStateToProps = (state) => ({
 
 //export default MinimalDashboard1;
 //export default connect(mapStateToProps,  mapDispatchToProps )(MinimalDashboard1);
-export default connect(mapStateToProps)(Orden);
+
+const mapDispatchToProps = dispatch => ({
+
+  setIdOrden: data => dispatch(setIdOrden(data)),
+
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Orden);
