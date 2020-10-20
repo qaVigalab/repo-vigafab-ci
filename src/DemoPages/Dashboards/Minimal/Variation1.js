@@ -117,13 +117,13 @@ class MinimalDashboard1 extends Component {
       .then((response) => response.json())
       .then((result) => {
         this.setState({
-          maquinas: [
+          maquinas: result /*[
             ...this.state.maquinas,
             {
               id: result[0].id,
               nombre: result[0].maquina,
             },
-          ],
+          ]*/,
         });
       })
       .catch((error) => console.log("error", error));
@@ -163,155 +163,7 @@ class MinimalDashboard1 extends Component {
                 </Button>
               </div>
             </Col>
-          </Row>
-
-          <Row>
-            <Col md="6" xl="4">
-              <Card className="main-card mb-3">
-                <CardBody>
-                  <div className="titlecard">Filtrar Por</div>
-                  {/* modo 0 */}
-
-                  <Button
-                    outline={this.state.modo === 0 ? false : true}
-                    className="mb-2 mr-2"
-                    color={this.state.modo === 0 ? "primary" : "secondary"}
-                    onClick={() => {
-                      this.setState({
-                        modo: 0,
-                      });
-                    }}
-                  >
-                    Desde
-                  </Button>
-                  {/* modo 1 */}
-
-                  <Button
-                    outline={this.state.modo === 1 ? false : true}
-                    className="mb-2 mr-2 btn-transition"
-                    color={this.state.modo === 1 ? "primary" : "secondary"}
-                    onClick={() => {
-                      this.setState({
-                        modo: 1,
-                      });
-                    }}
-                  >
-                    Hornos
-                  </Button>
-                  {/* modo 2 */}
-
-                  <Button
-                    outline={this.state.modo === 2 ? false : true}
-                    className="mb-2 mr-2 btn-transition"
-                    color={this.state.modo === 2 ? "primary" : "secondary"}
-                    onClick={() => {
-                      this.setState({
-                        modo: 2,
-                      });
-                    }}
-                  >
-                    Envasadoras
-                  </Button>
-                  {/* modo 5 */}
-
-                  <Button
-                    outline={this.state.modo === 5 ? false : true}
-                    className="mb-2 mr-2 btn-transition"
-                    color={this.state.modo === 5 ? "primary" : "secondary"}
-                    onClick={() => {
-                      this.setState({
-                        modo: 5,
-                      });
-                    }}
-                  >
-                    Por Producto
-                  </Button>
-                </CardBody>
-              </Card>
-            </Col>
-            <Col md="6" xl="8">
-              <Card className="main-card mb-3">
-                <CardBody>
-                  <Container>
-                    <Row>
-                      <Col>
-                        <div className="titlecard">Desde</div>
-
-                        <InputGroup>
-                          <InputGroupAddon addonType="prepend">
-                            <div className="input-group-text">
-                              <FontAwesomeIcon icon={faCalendarAlt} />
-                            </div>
-                          </InputGroupAddon>
-                          <DatePicker
-                            className="form-control"
-                            selected={this.state.startDate}
-                            onChange={this.handleChange}
-                            selectsStart
-                            startDate={this.state.startDate}
-                            endDate={this.state.endDate}
-                          />
-                        </InputGroup>
-                      </Col>
-                      <Col>
-                        <div className="titlecard">Turno</div>
-
-                        <Input type="select" name="select" id="exampleSelect">
-                          <option>SKU 1</option>
-                          <option>SKU 2</option>
-                          <option>SKU 3</option>
-                        </Input>
-                      </Col>
-
-                      <Col>
-                        <div className="titlecard">Hasta</div>
-                        <InputGroup>
-                          <InputGroupAddon addonType="prepend">
-                            <div className="input-group-text">
-                              <FontAwesomeIcon icon={faCalendarAlt} />
-                            </div>
-                          </InputGroupAddon>
-                          <DatePicker
-                            className="form-control"
-                            selected={this.state.endDate}
-                            onChange={this.handleChange2}
-                            selectsEnd
-                            startDate={this.state.startDate}
-                            endDate={this.state.endDate}
-                            minDate={this.state.startDate}
-                          />
-                        </InputGroup>
-                      </Col>
-                    </Row>
-                  </Container>
-                </CardBody>
-              </Card>
-            </Col>
-
-            <Col md="12" xl="12">
-              <Card className="main-card mb-3">
-                <Row>
-                  <Col>
-                    <div className="flechas">
-                      <div align="left">&lt;</div>
-                    </div>
-                  </Col>
-                  <Col>
-                    <div className="navegator">
-                      <div align="center">
-                        7:00 - 14:30 | TURNO 1 | 08 Ene 2020
-                      </div>
-                    </div>
-                  </Col>
-                  <Col>
-                    <div className="flechas">
-                      <div align="right">&gt;</div>
-                    </div>
-                  </Col>
-                </Row>
-              </Card>
-            </Col>
-          </Row>
+          </Row>    
 
           <Row>
             <Col md="12" xl="12">
@@ -365,7 +217,7 @@ class MinimalDashboard1 extends Component {
                     OE={2090}
                     OET={2500}
                     estado={1}
-                    nombre={maquina.nombre}
+                    nombre={maquina.maquina}
                     data={[4, 2, 0.11, 1.4, 1, 0.2, 3.8]}
                     id_vibot={maquina.id}
                   />

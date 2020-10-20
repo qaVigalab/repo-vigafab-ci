@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Container, Table } from "reactstrap";
 import { connect } from "react-redux";
+import {setIdOrden} from '../../../actions/dashboardActions'
 
-const Orden = () => {
+const Orden = (props) => {
   const [ordenes, setOrdenes] = useState([]);
 
-  const loadOrdenes = () => {
-    fetch(
+  const loadOrdenes = async() => {
+    await fetch(
       "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getordenes",
       {
         method: "POST",
@@ -20,6 +21,7 @@ const Orden = () => {
       .then((response) => response.json())
       .then((result) => {
         setOrdenes(result);
+        
       })
       .catch((err) => {
         console.error(err);
@@ -27,13 +29,21 @@ const Orden = () => {
   };
 
   useEffect(() => {
+    try {
+      props.setIdOrden(ordenes[0].id_sub_orden)
+  } catch (e) {}
+  }, [ordenes])
+
+
+  useEffect(() => {
     loadOrdenes();
+    
   }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
       loadOrdenes();
-    }, 60000);
+    }, 6000);
     return () => clearInterval(interval);
   }, []);
 
@@ -105,4 +115,11 @@ const mapStateToProps = (state) => ({
 
 //export default MinimalDashboard1;
 //export default connect(mapStateToProps,  mapDispatchToProps )(MinimalDashboard1);
-export default connect(mapStateToProps)(Orden);
+
+const mapDispatchToProps = dispatch => ({
+  
+  setIdOrden: data => dispatch(setIdOrden(data)),
+
+});
+
+export default connect(mapStateToProps,mapDispatchToProps)(Orden);

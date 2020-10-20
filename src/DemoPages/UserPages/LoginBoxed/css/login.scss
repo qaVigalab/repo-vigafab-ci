@@ -1,4 +1,4 @@
-$color-primario: #444054;
+$color-primario: #f57600e3;
 
 @font-face {
     font-family: 'Poppins Semibold';
@@ -20,27 +20,29 @@ $color-primario: #444054;
     color: $color-primario;
    
 }
+.fondo{
+  background-image: url("../img/fondo-agrosuper-login.png") !important;
+  background-repeat: no-repeat;
+  background-size: 100% 120%;
+}
 .body_aux{
     font-family: 'Poppins Regular' !important ;
-    background-image: url("../img/fondo01.png") !important;
-    background-size: 100%;
-    background-repeat: no-repeat;
-    height: 100vh ;
     
 }
 .parrafo{
   padding-top: 10px;
   white-space: pre;
   color:white;
-  font-size: 3vh;
+  font-size: 2vh;
 }
 .img_circulo{
   height: 60vh;
   padding-left: 90px;
+  
 }
 .img_logo{
   height: 15vh;
-  padding-left: 90px;
+  padding-left: 125px;
   padding-top: 40px;
 }
 .boton{

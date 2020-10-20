@@ -3,6 +3,7 @@ import { Row, Col } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 import { Doughnut } from "react-chartjs-2";
+import { connect } from "react-redux";
 import icono1 from "./images/icono1.png";
 import icono2 from "./images/icono2.png";
 import icono3 from "./images/icono3.png";
@@ -79,12 +80,11 @@ const Produciendo = (props) => {
             },
             body: JSON.stringify({
  
-                id : 12                              
+                id : props.id_orden                             
               })
         })
             .then(response => response.json())
             .then(result => {
-                console.log(result[0])
                  setEstado(result[0].estado)
                  setnOrden(result[0].id_sub_orden)
                  setSku(result[0].sku)
@@ -105,7 +105,20 @@ const Produciendo = (props) => {
     }
     useEffect(() => {
         loadResumen()
+      
     }, [])
+
+    useEffect(() => {
+        loadResumen()
+        
+    }, [props.id_orden])
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+          loadResumen();
+        }, 6000);
+        return () => clearInterval(interval);
+      }, []);
 
     return (
 
@@ -138,7 +151,7 @@ const Produciendo = (props) => {
                     <Col md="2">
                         <Row>
                             <div align="left" className="font2 my-1">Productividad:</div>
-                            <div align="left" className="font3 my-1">{productividad}</div>
+                            <div align="left" className="font3 my-1">{Math.round(productividad*10)/10 + " ham/min"}</div>
                         </Row>
                     </Col>
                     <br />
@@ -169,7 +182,7 @@ const Produciendo = (props) => {
                     </Col>
 
                     <Col md="3">
-                        <div align="center" className="font2 my-2">{tiempo + " "} hrs Tiempo de Actividad</div>
+                        <div align="center" className="font2 my-2">{Math.round(tiempo/60*100)/100 + " "} hrs Tiempo de Actividad</div>
                     </Col>
                     <Col md="2">
                         <div align="center" className="font2 my-2 pr-3">{estado == 1 ? "Detenida" : "Produciendo"}</div>
@@ -352,4 +365,8 @@ const Produciendo = (props) => {
     )
 }
 
-export default Produciendo
+const mapStateToProps = (state) => ({
+    id_orden: state.dashboardReducers.id_orden,
+  });
+
+export default connect(mapStateToProps)(Produciendo)
