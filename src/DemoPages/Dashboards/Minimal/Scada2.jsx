@@ -47,6 +47,8 @@ const loadData = () =>{
     fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getscada", requestOptions)
     .then(response => response.json())
     .then(result => {
+        
+        console.log(result[0])
         setFormadoraTemperaturaSalida(result[0].formadora_temp)
         setHamburguesasFormadas(result[0].formadora_rmp)
         setIqfTemperaturaSalida(result[0].iqf_temp)
@@ -627,7 +629,7 @@ var temp_iqf=(iqfTemperaturaSalida>=-18 && iqfTemperaturaSalida<=-15?50:
             transform="translate(657.24 524.872)"
             className="prefix__st146 prefix__st147 prefix__st148"
           >
-            {"unid/hr"}
+            {"unid/min"}
           </text>
         </g>
       </g>
