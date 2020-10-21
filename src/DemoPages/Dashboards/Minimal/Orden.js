@@ -10,10 +10,9 @@ import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 const Orden = (props) => {
 
   const [ordenes, setOrdenes] = useState([]);
-  let {setIdOrden} = props  
 
-  const loadOrdenes = async () => {
-    await fetch(
+  const loadOrdenes =  () => {
+     fetch(
       "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getordenes",
       {
         method: "POST",
@@ -27,22 +26,17 @@ const Orden = (props) => {
       .then((response) => response.json())
       .then((result) => {
         setOrdenes(result)
+        /*try {
+          let ord = result.find(o => o.id_estado == 1);
+          console.log(ord.id_sub_orden)
+         props.setIdOrden(ord.id_sub_orden)
 
+        } catch (e) { console.log(e)}*/
       })
       .catch((err) => {
         console.error(err);
       });
   };
-
-    useEffect( () => {
-     try {
-      let ord = ordenes.find(o => o.id_estado == 1);
-      console.log(ord)
-      setIdOrden(ord.id_sub_orden)
-      
-    } catch (e) { }
-  }, [ordenes])
-
 
   useEffect(() => {
     loadOrdenes();

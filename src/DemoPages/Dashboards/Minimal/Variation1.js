@@ -19,7 +19,7 @@ import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
 import CialWidget from "./CialWidget";
 import Formadora from "./Formadora";
 import Formadora2 from "./Formadora2";
-import Iqf from "./Iqf";
+import Iqf2 from "./Iqf2";
 import NuevaOrden from "./NuevaOrden";
 import Orden from "./Orden";
 import Produciendo from "./Produciendo";
@@ -198,15 +198,13 @@ class MinimalDashboard1 extends Component {
           </Row>
 
           <div class="columns-parent">
-            <Row>
-              <Iqf
-                modo={1}
-                estado={1}
-                nombre="IQF"
-                data={[2.2, 3, 2, 0.8, 0.3, 0.2, 5]}
-                descripcion="Receta actual: Hamburguesa de Vacuno 100 Grs La Crianza"
-              />
-            </Row>
+          <Row>
+            <Col md="12" xl="12">
+              <Card className="main-card mb-3">
+                <Iqf2 estado={1} />
+              </Card>
+            </Col>
+          </Row>
 
             {this.state.modo === 2 || this.state.modo === 0 ? (
               <Row>

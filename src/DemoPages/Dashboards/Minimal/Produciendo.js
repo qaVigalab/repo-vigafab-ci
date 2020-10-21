@@ -67,7 +67,8 @@ const Produciendo = (props) => {
     const [kg_solicitado, setKg_solicitado] = useState(0)
     const [h_solicitado, setH_solicitado] = useState(0)
     const [cajas_solicitadas, setcajas_solicitadas] = useState(0)
-    const [auxId, setAuxId] = useState(props.id_orden)
+    const [tInactivo, setTInactivo] = useState(0)
+    //const [auxId, setAuxId] = useState(props.id_orden)
 
 
 
@@ -78,14 +79,11 @@ const Produciendo = (props) => {
                 "content-type": "application/json",
                 "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
             },
-            body: JSON.stringify({
- 
-                id : auxId                          
-              })
+            "body": false
         })
             .then(response => response.json())
             .then(result => {
-            
+                
                  setEstado(result[0].estado)
                  setnOrden(result[0].id_sub_orden)
                  setSku(result[0].sku)
@@ -98,6 +96,7 @@ const Produciendo = (props) => {
                  setKg_solicitado(result[0].kg_solicitados)
                  setH_solicitado(result[0].hamburguesas_solicitadas)
                  setcajas_solicitadas(result[0].cajas)
+                 setTInactivo(result[0].tiempo_inactivo)
             }
             )
             .catch(err => {
@@ -107,18 +106,12 @@ const Produciendo = (props) => {
     useEffect(() => {
         loadResumen()
       
-    }, [])
-
-    useEffect(() => {
-        
-        loadResumen()
-        
-    }, [auxId])
+    }, [])  
 
     useEffect(() => {
         const interval = setInterval(() => {
           loadResumen();
-          console.log(auxId)
+          
         }, 6000);
         return () => clearInterval(interval);
       }, []);
@@ -219,7 +212,7 @@ const Produciendo = (props) => {
                                 </Col>
                                 <Col md="9">
                                     <div align="center" className="bigFont mt-3">{h_acumulado}</div>
-                                    <div align="center" className="littleFont">de {" " + h_solicitado + " "} F. Pack</div>
+                                    <div align="center" className="littleFont">de {" " + Math.round(h_solicitado) + " "} F. Pack</div>
                                 </Col>
 
                             </Row>
@@ -251,8 +244,7 @@ const Produciendo = (props) => {
                                     size="100" // String: Defines the size of the circle.
                                     lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                     progress={(
-                                        (0.5) *
-                                        100
+                                        (tiempo/(tInactivo+tiempo))*100
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
                                     progressColor="var(--primary)" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
