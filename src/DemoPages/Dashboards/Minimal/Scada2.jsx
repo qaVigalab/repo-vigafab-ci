@@ -9,7 +9,6 @@ import G4 from './svgs/g4';
 import G5 from './svgs/g5';
 import G6 from './svgs/g6'; 
 
-
 const Scada2=(props)=> {
     const [colorAlerta, setColorAlerta] = useState("#ffffff");//ffffff //ff4560
     const [colorLetraAlerta, setColorLetraAlerta] = useState("#606060"); //606060 //fff
@@ -35,7 +34,7 @@ const Scada2=(props)=> {
     const [colorTechoEnvasadora4, setColorTechoEnvasadora4] = useState("#ffef45");
     const [colorTechoEmpaquetadora, setColorTechoEmpaquetadora] = useState("#25a0fc");
 
-const loadData =()=>{
+const loadData = () =>{
     var myHeaders = new Headers();
     myHeaders.append("x-api-key", "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m");
     
@@ -48,6 +47,8 @@ const loadData =()=>{
     fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getscada", requestOptions)
     .then(response => response.json())
     .then(result => {
+        
+        console.log(result[0])
         setFormadoraTemperaturaSalida(result[0].formadora_temp)
         setHamburguesasFormadas(result[0].formadora_rmp)
         setIqfTemperaturaSalida(result[0].iqf_temp)
@@ -138,6 +139,9 @@ var temp_iqf=(iqfTemperaturaSalida>=-18 && iqfTemperaturaSalida<=-15?50:
           <Container>
             <Row>
     <svg
+    style={{
+      flex: 1
+    }}
       id="prefix__Capa_1"
       x={0}
       y={0}
@@ -542,18 +546,6 @@ var temp_iqf=(iqfTemperaturaSalida>=-18 && iqfTemperaturaSalida<=-15?50:
           </text>
         </g>
         <g transform="translate(585.363 230.662)">
-          {/* <path
-            className="prefix__st149"
-            d="M723.9 298c0-33.9-27.5-61.4-61.4-61.4s-61.4 27.5-61.4 61.4h26.7c0-19.2 15.5-34.7 34.7-34.7s34.7 15.5 34.7 34.7h26.7z"
-          />
-          <path
-            className="prefix__st150"
-            d="M662.5 236.6c-33.9 0-61.4 27.5-61.4 61.4h26.7c0-19.2 15.5-34.7 34.7-34.7v-26.7z"
-          />
-          <path
-            className="prefix__st151"
-            d="M662.4 298c2.5 0 4.5-2 4.5-4.4l-2.9-19.5c-.1-1-1.6-1.1-1.8-.1l-4.2 19.5c0 2.5 2 4.5 4.4 4.5z"
-          />  */}
           {loadGauge(temp_formadora)}
         </g> 
         <path
@@ -637,7 +629,7 @@ var temp_iqf=(iqfTemperaturaSalida>=-18 && iqfTemperaturaSalida<=-15?50:
             transform="translate(657.24 524.872)"
             className="prefix__st146 prefix__st147 prefix__st148"
           >
-            {"unid/hr"}
+            {"unid/min"}
           </text>
         </g>
       </g>
@@ -749,18 +741,6 @@ var temp_iqf=(iqfTemperaturaSalida>=-18 && iqfTemperaturaSalida<=-15?50:
           </text>
         </g>
         <g transform="translate(1245.363 370.662)">
-          {/* <path
-            className="prefix__st149"
-            d="M1383.8 434.6c0-33.9-27.5-61.4-61.4-61.4s-61.4 27.5-61.4 61.4h26.7c0-19.2 15.5-34.7 34.7-34.7s34.7 15.5 34.7 34.7h26.7z"
-          />
-          <path
-            className="prefix__st150"
-            d="M1322.4 373.2c-33.9 0-61.4 27.5-61.4 61.4h26.7c0-19.2 15.5-34.7 34.7-34.7v-26.7z"
-          />
-          <path
-            className="prefix__st151"
-            d="M1322.3 434.6c2.5 0 4.5-2 4.5-4.4l-2.9-19.5c-.1-1-1.6-1.1-1.8-.1l-4.2 19.5c0 2.5 2 4.5 4.4 4.5z"
-          /> */}
           {loadGauge(temp_iqf)}
         </g>
         <path
