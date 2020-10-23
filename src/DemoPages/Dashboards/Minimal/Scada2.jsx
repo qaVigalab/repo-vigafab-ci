@@ -629,7 +629,7 @@ var temp_iqf=(iqfTemperaturaSalida>=-18 && iqfTemperaturaSalida<=-15?50:
             transform="translate(657.24 524.872)"
             className="prefix__st146 prefix__st147 prefix__st148"
           >
-            {"unid/min"}
+            {"unid/min "}
           </text>
         </g>
       </g>
@@ -697,7 +697,7 @@ var temp_iqf=(iqfTemperaturaSalida>=-18 && iqfTemperaturaSalida<=-15?50:
           </text>
         </g>
       </g>
-       {/* <g>
+      <g>
         <image
           width={256}
           height={220}
@@ -764,7 +764,7 @@ var temp_iqf=(iqfTemperaturaSalida>=-18 && iqfTemperaturaSalida<=-15?50:
           </text>
         </g>
       </g>
-     */}
+     
       {/* <g>
         <image
           width={256}

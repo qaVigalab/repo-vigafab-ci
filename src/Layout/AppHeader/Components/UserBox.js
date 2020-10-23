@@ -41,7 +41,7 @@ const UserBox = (props) => {
 
         return (
     <Fragment>
-        <div className="widget-content p-0">
+       {/* <div className="widget-content p-0">
             <div className="widget-content-wrapper">
                 <div className="widget-content-left">
                 <UncontrolledDropdown>
@@ -86,12 +86,12 @@ const UserBox = (props) => {
                                         Ver histórico
                                     </Button>
                                 </NavItem>
-                            </Nav> */}
+                            </Nav> +/
                         </DropdownMenu>
                     </UncontrolledDropdown>
                 </div>
             </div>
-        </div>
+        </div>*/}
                 
         <div className="header-btn-lg pr-0">
             <div className="widget-content p-0">
