@@ -108,7 +108,7 @@ const Formadora2 = (props) => {
                 
               },
             title: {
-                text: "Ciclo de T° corporal",
+                text: "T° de Salida (C°)",
                 align: 'left',
                 margin: 10,
                 offsetX: 0,
