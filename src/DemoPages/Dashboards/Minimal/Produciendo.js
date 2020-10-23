@@ -54,7 +54,8 @@ let data = {
 };
 
 const Produciendo = (props) => {
-
+    const id_vibot=23643;
+    const capacidad=3000;
     const [estado, setEstado] = useState(0)
     const [nOrden, setnOrden] = useState(0)
     const [sku, setSku] = useState("")
@@ -83,7 +84,7 @@ const Produciendo = (props) => {
         })
             .then(response => response.json())
             .then(result => {
-                
+                console.log(result)
                  setEstado(result[0].estado)
                  setnOrden(result[0].id_sub_orden)
                  setSku(result[0].sku)
@@ -196,8 +197,8 @@ const Produciendo = (props) => {
                                     </div>
                                 </Col>
                                 <Col md="9">
-                                    <div align="center" className="bigFont mt-3">{kg_acumulado}</div>
-                                    <div align="center" className="littleFont">de {" " + kg_solicitado + " "} Kg</div>
+                                    <div align="center" className="bigFont mt-3">{Math.round(kg_acumulado*100)/100}</div>
+                                    <div align="center" className="littleFont">de {" " + Math.round(kg_solicitado*100)/100 + " "} Kg</div>
                                 </Col>
 
                             </Row>
@@ -269,8 +270,7 @@ const Produciendo = (props) => {
                                     size="100" // String: Defines the size of the circle.
                                     lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                     progress={(
-                                        (0.5) *
-                                        100
+                                        (h_acumulado/(tiempo+tInactivo)/(capacidad/(tiempo+tInactivo)))*100
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
                                     progressColor="var(--primary)" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.

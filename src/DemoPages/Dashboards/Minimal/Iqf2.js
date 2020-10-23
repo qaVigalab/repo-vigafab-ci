@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Row, Col } from "reactstrap";
 import Chart from 'react-apexcharts'
 import Circle from "react-circle";
-import { set } from "date-fns";
+import { set } from "date-fns"; 
 
 const Iqf2 = () => {
     const id_vibot = 38058;
@@ -159,22 +159,30 @@ const Iqf2 = () => {
     const [tActivo, setTActivo] = useState(0)
     const [tInactivo, setTInactivo] = useState(0)
 
+    const capacidad=3000;
+    const [estado, setEstado] = useState(0)
+    const [producto, setProducto] = useState("")
+    const [h_acumulado, setH_acumulado] = useState(0)
+
     const loadKpi = () => {
-        fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getkpimaquinas", {
+        fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenmaquina", {
             "method": "POST",
             "headers": {
-              "content-type": "application/json",
-              "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+               "content-type": "application/json",
+                "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
             },
+
             body: JSON.stringify({
                 id_vibot: id_vibot,
-              }),
+            }), 
         })
             .then(response => response.json())
             .then(result => {
-                console.log(result)
-                setTActivo(result[0].tiempo_activo)
+                setTActivo(result[0].tiempo_actividad)
                 setTInactivo(result[0].tiempo_inactivo)
+                setProducto(result[0].sku + " " + result[0].producto)
+                setEstado(result[0].estado)
+                setH_acumulado(result[0].hamburguesas_acumuladas)
             }
             )
             .catch(err => {
@@ -195,7 +203,7 @@ const Iqf2 = () => {
             .then(response => response.json())
             .then(result => {
                 result.map(r => (
-                    
+
                     fecha.push(r.fecha),
                     temperatura.push(r.temperatura),
                     velocidad.push(r.velocidad)
@@ -226,8 +234,8 @@ const Iqf2 = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-        loadGraphs()
-        loadKpi()
+            loadGraphs()
+            loadKpi()
         }, 60000);
         return () => clearInterval(interval);
     }, []);
@@ -267,7 +275,7 @@ const Iqf2 = () => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (tActivo/(tInactivo+tActivo))*100
+                                                (tActivo / (tInactivo + tActivo)) * 100
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#D35400" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -283,7 +291,7 @@ const Iqf2 = () => {
 
                                     </div>
                                 </Col>
-                                        <Col md="12"><div align="center" className="mr-4">Disponibilidad</div></Col>
+                                <Col md="12"><div align="center" className="mr-4">Disponibilidad</div></Col>
                             </Row>
                         </div>
                         <div className="ml-4 mt-3">
@@ -297,8 +305,7 @@ const Iqf2 = () => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (0.5) *
-                                                100
+                                                (h_acumulado/(tActivo+tInactivo)/(capacidad/(tActivo+tInactivo)))*100
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#D35400" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -347,6 +354,7 @@ const Iqf2 = () => {
                     </Row>
                 </Col>
             </Row>
+            <div className="bot-description">Receta actual: {" " + producto}</div>
         </div>
     )
 }

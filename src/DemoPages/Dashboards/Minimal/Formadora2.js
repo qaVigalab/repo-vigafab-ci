@@ -9,6 +9,7 @@ import Circle from "react-circle";
 
 
 const Formadora2 = (props) => {
+    const id_vibot = 6296;
     var temperatura = [];
     var fecha = [];
     let data = {
@@ -131,27 +132,34 @@ const Formadora2 = (props) => {
 
     const [producto, setProducto] = useState("")
     const [hacumuladas, setHacumuladas] = useState(0)
-    const [tiempo, setTiempo] = useState(0)
+    const [tActivo, setTActivo] = useState(0)
+    const [tInactivo, setTInactivo] = useState(0)
     const [kgacumulados, setKgacumulados] = useState(0)
     const [estado, setEstado] = useState(0)
+    const capacidad=3000;
 
     const loadResumen = () => {
-        fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenformadora", {
+        fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenmaquina", {
             "method": "POST",
             "headers": {
-                "content-type": "application/json",
+               "content-type": "application/json",
                 "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
             },
-            "body": false
+
+            body: JSON.stringify({
+                id_vibot: id_vibot,
+            }), 
         })
             .then(response => response.json())
             .then(result => {
-                
+
+                console.log(result)
+                setTActivo(result[0].tiempo_actividad)
+                setTInactivo(result[0].tiempo_inactivo)
                 setProducto(result[0].sku + " " + result[0].producto)
-                setHacumuladas(result[0].hamburguesas_acumuladas)
-                setTiempo(result[0].tiempo_actividad)
-                setKgacumulados(result[0].real_kg)
                 setEstado(result[0].estado)
+                setHacumuladas(result[0].hamburguesas_acumuladas)
+                setKgacumulados(result[0].real_kg)
             }
             )
             .catch(err => {
@@ -178,6 +186,7 @@ const Formadora2 = (props) => {
 
             }
             ).then(()=>{
+                
                 setSeries2([{
                     data:temperatura
                 }]);
@@ -198,7 +207,7 @@ const Formadora2 = (props) => {
         const interval = setInterval(() => {
             loadGraphTemp();
             loadResumen();
-        }, 60000);
+        }, 6000);
         return () => clearInterval(interval);
       }, []);
 
@@ -236,7 +245,7 @@ const Formadora2 = (props) => {
                     </Col>
 
                     <Col md="3">
-                        <div align="center" className="font2 my-4">{Math.round(tiempo / 60 * 100) / 100} hrs Tiempo de Actividad</div>
+                        <div align="center" className="font2 my-4">{Math.round(tActivo / 60 * 100) / 100} hrs Tiempo de Actividad</div>
                     </Col>
                     <Col md="2">
                         <div align="center" className="font2 my-4 pr-3">{estado == 1 ? "Detenida" : "Produciendo"}</div>
@@ -284,8 +293,7 @@ const Formadora2 = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (0.5) *
-                                                100
+                                                (tActivo / (tInactivo + tActivo)) * 100                                           
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#D35400" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -311,8 +319,7 @@ const Formadora2 = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (0.5) *
-                                                100
+                                                (hacumuladas/(tActivo+tInactivo)/(capacidad/(tActivo+tInactivo)))*100
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#D35400" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.

@@ -276,7 +276,7 @@
     padding-right: 10px;
   }
   .buttonOrange{
-    background-color: #FF9F4B;
+    background-color: #FF7700;
     color:#ffffff;
     margin-top: 30px;
     margin-bottom: 30px;
@@ -288,7 +288,7 @@
     color:#ffffff;
   }
   .theadBlue{
-    background-color:#23509B;
+    background-color:#2264A7;
     color:#ffffff;
   }
   .round {
@@ -337,7 +337,7 @@
     padding-left: 0px;
   }
   .orangeRow{
-    background : #FF9F4B !important;
+    background : #FF7700 !important;
     color: #fff;
     text-align: center;
   }
@@ -347,13 +347,13 @@
     text-align: center;
   }
   .title2Orange{
-    background : #FF9F4B !important;
+    background : #FF7700 !important;
     color: #fff;
     text-align: center;
     padding: 10px;
   }
   .titleBlue{
-    background : #23509B !important;
+    background : #2264A7 !important;
     color: #fff;
     text-align: center;
     padding:10px;
