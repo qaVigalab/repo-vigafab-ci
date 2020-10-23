@@ -153,7 +153,7 @@ class MinimalDashboard1 extends Component {
                 icon="lnr-apartment opacity-6"
                 empresa="Agrosuper"
                 menues={[]}
-                menu_actual="Vista general"
+                menu_actual="Scada"
               />
             </Col>
             <Col>

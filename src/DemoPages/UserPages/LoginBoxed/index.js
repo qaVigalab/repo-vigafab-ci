@@ -135,7 +135,7 @@ const LoginBoxed = (props) => {
 
     if (autenticated === 1) {
         props.setOpenAlert(false)
-        return <Redirect to='/dashboards/minimal-dashboard-1' />;
+        return <Redirect to='/dashboards/Scada2' />;
     } else {
         console.log("Se queda")
 

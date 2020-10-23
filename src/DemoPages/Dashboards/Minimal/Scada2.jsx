@@ -502,7 +502,7 @@ var temp_iqf=(iqfTemperaturaSalida>=-18 && iqfTemperaturaSalida<=-15?50:
           />
         </g>
       </g>
-      <g>
+     {/* <g>
         <image
           width={255}
           height={219}
@@ -568,7 +568,7 @@ var temp_iqf=(iqfTemperaturaSalida>=-18 && iqfTemperaturaSalida<=-15?50:
             {"\xB0C"}
           </text>
         </g>
-      </g>
+      </g>*/}
       <g>
         <image
           width={256}
@@ -697,7 +697,7 @@ var temp_iqf=(iqfTemperaturaSalida>=-18 && iqfTemperaturaSalida<=-15?50:
           </text>
         </g>
       </g>
-      <g>
+       {/* <g>
         <image
           width={256}
           height={220}
@@ -764,7 +764,8 @@ var temp_iqf=(iqfTemperaturaSalida>=-18 && iqfTemperaturaSalida<=-15?50:
           </text>
         </g>
       </g>
-      <g>
+     */}
+      {/* <g>
         <image
           width={256}
           height={144}
@@ -827,7 +828,7 @@ var temp_iqf=(iqfTemperaturaSalida>=-18 && iqfTemperaturaSalida<=-15?50:
             {"rpm"}
           </text>
         </g>
-      </g>
+      </g> */}
       <g>
         <image
           width={181}
