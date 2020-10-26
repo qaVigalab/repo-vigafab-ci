@@ -17,12 +17,12 @@ import {
 } from "reactstrap";
 import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
 import CialWidget from "./CialWidget";
-import Formadora from "./Formadora";
 import Formadora2 from "./Formadora2";
 import Iqf2 from "./Iqf2";
 import NuevaOrden from "./NuevaOrden";
 import Orden from "./Orden";
 import Produciendo from "./Produciendo";
+import TimeLine from "./TimeLine";
 
 const data = {
   legend: [
@@ -196,6 +196,8 @@ class MinimalDashboard1 extends Component {
               </Card>
             </Col>
           </Row>
+
+          
 
           <div class="columns-parent">
           <Row>

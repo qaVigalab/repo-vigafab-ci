@@ -9,6 +9,7 @@ const Iqf2 = () => {
     var temperatura = [];
     var fecha = [];
     var velocidad = [];
+    var date,newDate;
 
     const [options, setOptions] = useState(
         {
@@ -203,8 +204,16 @@ const Iqf2 = () => {
             .then(response => response.json())
             .then(result => {
                 result.map(r => (
-
-                    fecha.push(r.fecha),
+                    newDate = new Date(r.fecha),
+                    newDate.setHours(newDate.getHours() + 3),
+                 date =
+                    ("00" + (newDate.getMonth() + 1)).slice(-2) + "-" +
+                    ("00" + newDate.getDate()).slice(-2) + "-" +
+                    newDate.getFullYear() + " " +
+                    ("00" + newDate.getHours()).slice(-2) + ":" +
+                    ("00" + newDate.getMinutes()).slice(-2) + ":" +
+                    ("00" + newDate.getSeconds()).slice(-2),
+                    fecha.push(date),
                     temperatura.push(r.temperatura),
                     velocidad.push(r.velocidad)
 
