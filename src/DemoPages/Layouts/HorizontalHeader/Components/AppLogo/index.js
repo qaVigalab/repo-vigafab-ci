@@ -63,9 +63,11 @@ class HeaderLogo extends React.Component {
 
         return (
             <Fragment>
-                <div className="app-header__logo">
+                <div className="app-header__logo ">
                     <div className="logo-src"
-                    style={{backgroundImage:`url(${localStorage.getItem("img")}) `}}
+                    style={{
+                        backgroundImage:`url(${localStorage.getItem("img")}) `
+                    }}
                     />
                 </div>
 

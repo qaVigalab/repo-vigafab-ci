@@ -1,22 +1,15 @@
 
-import React from "react";
+import React,{useEffect, useState} from "react";
 import ReactApexChart from "react-apexcharts";
 
-class TimeLine extends React.Component {
-  constructor(props) {
-    super(props);
+const TimeLine = (props) => {
 
-    var objeto;
-    var objeto_anterior;
     const labels = {
       enabled: false
     };
-
-
     const markers = {
       size: 0
     };
-
     const tooltips = {
 
       x: {
@@ -30,65 +23,19 @@ class TimeLine extends React.Component {
         },
       },
     };
+    
+    const [infoData, setTInfoData] = useState()
+    const [series2, setSeries2] = useState([])
+    const [options2, setOptions2] = useState(
 
-
-    this.state =
-    {
-      dataBD: [],
-      infoData: true,
-
-      series2: [{
-
-        data: [
-          {
-            x: 'En Paro',
-            y: [
-              new Date('2019-02-27').getTime()
-            ],
-            fillColor: '#008FFB'
-          },
-          {
-            x: 'Produciendo',
-            y: [
-              new Date('2019-03-04').getTime()
-            ],
-            fillColor: '#00E396'
-          },
-
-          {
-            x: 'En Paro',
-            y: [
-              new Date('2019-03-10').getTime()
-            ],
-            fillColor: '#008FFB'
-          },
-          {
-            x: 'Produciendo',
-            y: [
-              new Date('2019-03-14').getTime()
-            ],
-            fillColor: '#00E396'
-          },
-          {
-            x: 'En Paro',
-            y: [
-              new Date('2019-03-18').getTime(),
-              new Date('2019-03-24').getTime()
-            ],
-            fillColor: '#008FFB'
-          }
-
-        ]
-      }],
-
-      options2: {
+      {
 
         dataLabels: labels,
         markers: markers,
         tooltip: tooltips,
 
         chart: {
-          type: 'rangeBar'
+          type: 'rangeBar',
         },
         plotOptions: {
           bar: {
@@ -102,7 +49,9 @@ class TimeLine extends React.Component {
 
         xaxis: {
           type: 'datetime',
-
+          labels: {
+            datetimeUTC: false
+        }
         },
 
         grid: {
@@ -111,54 +60,89 @@ class TimeLine extends React.Component {
             opacity: 1
           }
         }
-      },
-
-    }
-
-  }
-
-  /*loadTimeLine(){
-    fetch(
-      "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getproducto",
-      {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
-        },
-        body: false,
       }
     )
+    
+    
+    useEffect(() => {
+      loadTimeLine()
+
+  }, [])
+
+  useEffect(() => {
+
+}, [series2])
+
+  
+
+ const loadTimeLine = () =>  {
+
+    fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/gettimeline", {
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+      },
+      "body": false
+    })
       .then((response) => response.json())
-      .then((result) => {
-        //this.setState({ productos: result });
-        result.map(r => (
-          objeto={
-            x: r.id_tipo_reporte == 1 ? 'En Paro' : 'En Producción',
-            y: [
-              r.fecha,
-              new Date('2019-03-04').getTime()
-            ],
-            fillColor: '#008FFB'
+      .then((r) => {
+        var objeto = {};
+        var objetos = [
+          {
+            x: 'En Producción',
+            y: [new Date(r[0].fecha_inicio).getTime()-2,
+            new Date(r[0].fecha_inicio).getTime()-1],
+            fillColor: '#2264A7'
+          },
+          {
+            x: 'En Paro',
+            y: [new Date(r[0].fecha_inicio).getTime()-1,
+            new Date(r[0].fecha_inicio).getTime()],
+            fillColor: '#F7431E'
           }
-        )
+        ];
+        for (let i = 0; i < r.length; i++) {
 
-          )
+          if (i == r.length - 1) {
+            objeto = {
+              x: r[i].id_tipo_reporte == 2 ? 'En Producción' : 'En Paro' ,
+              y: [
+                new Date(r[i].fecha_inicio).getTime(),
+                new Date().getTime(),
+              ],
+              fillColor: r[i].id_tipo_reporte == 2 ? '#2264A7' : '#F7431E'
+            }
 
+          }
+          else {
+            objeto = {
+              x: r[i].id_tipo_reporte == 2 ? 'En Producción' : 'En Paro' ,
+              y: [
+                new Date(r[i].fecha_inicio).getTime(),
+                  new Date(r[i + 1].fecha_inicio).getTime()
+              ],
+              fillColor: r[i].id_tipo_reporte == 2 ? '#2264A7' : '#F7431E'
+            }
+          }
+          objetos.push(objeto)
+        }
+        setSeries2([{
+          data:objetos
+      }]);
+        //console.log(objetos)
       })
+
       .catch((err) => {
         console.error(err);
       });
-  }*/
+  }
 
-
-
-  render() {
     return (
 
 
       <div id="chart">
-        <ReactApexChart options={this.state.options2} series={this.state.series2} type="rangeBar" height={250} />
+        <ReactApexChart options={options2} series={series2} type="rangeBar" height={250} />
 
       </div>
 
@@ -167,6 +151,6 @@ class TimeLine extends React.Component {
 
     );
   }
-}
+
 
 export default TimeLine;

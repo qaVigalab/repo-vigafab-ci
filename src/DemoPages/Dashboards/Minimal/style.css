@@ -342,7 +342,7 @@
     text-align: center;
   }
   .blueRow{
-    background : #1E3862 !important;
+    background : #13395E !important;
     color: #fff;
     text-align: center;
   }
@@ -375,20 +375,20 @@
     margin-right:5px;
   }
   .blackBorder{
-    border-bottom: 2px solid #ABB2B9 !important;
-    border-right: 2px solid #ABB2B9 !important;
+    border-bottom: 1px solid #ABB2B9 !important;
+    border-right: 1px solid #ABB2B9 !important;
     margin-left: 10px;
     padding:0px;
     border-radius: 0%;
   }
   .blackBorder2{
-    border-bottom: 2px solid #ABB2B9 !important;
+    border-bottom: 1px solid #ABB2B9 !important;
     margin-left: 10px;
     margin-right: 10px;
     padding:0px;
   }
   .blackBorder3{
-    border-right: 2px solid #ABB2B9 !important;
+    border-right: 1px solid #ABB2B9 !important;
     margin-left: 10px;
     padding:0px;
   }

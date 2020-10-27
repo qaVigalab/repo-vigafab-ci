@@ -26,33 +26,24 @@ const Formadora2 = (props) => {
 
         labels: [
             "Inactivo",
-            //  "Naranjo",
-            //  "Morado",
-            "Azul",
-            "Amarillo",
-            "Rojo",
+            "Paro sin Justificar",
+            "Paro Justificado",
             "Producción",
         ],
         datasets: [
             {
-                data: [2.2, 3, 2, 0.8, 5],
+                data: [ 3, 2, 0.8, 5],
                 backgroundColor: [
                     "#d9d9d9",
-                    // "#feb018",
-                    // "#775dd0",
-                    "#25a0fc",
-                    "#ffef45",
-                    "#ff4560",
-                    "#2B74BC",
+                    "#F7431E  ",
+                    "#FFB000",
+                    "#2264A7",
                 ],
                 hoverBackgroundColor: [
                     "#d9d9d9",
-                    //"#feb018",
-                    // "#775dd0",
-                    "#25a0fc",
-                    "#ffef45",
-                    "#ff4560",
-                    "#2B74BC",
+                    "#F7431E  ",
+                    "#FFB000",
+                    "#2264A7 ",
                 ],
             },
         ],
@@ -136,7 +127,7 @@ const Formadora2 = (props) => {
             stroke: {
                 curve: 'smooth',
                 width: 2,
-                colors: "#9b97d4"
+                colors: "#02c39a"
             },
             xaxis: {
                 type: 'datetime',
@@ -159,7 +150,7 @@ const Formadora2 = (props) => {
                 type: 'gradient',
                 gradient: {
                     enabled: true,
-                    gradientToColors: ["#9b97d4", "#72cab8"],
+                    gradientToColors: ["#02c39a", "#02c39a"],
                     inverseColors: true,
                     shadeIntensity: 1,
                     opacityFrom: 1,
@@ -175,16 +166,16 @@ const Formadora2 = (props) => {
 
             },
             title: {
-                text: "Ciclo de T° corporal",
+                text: "T° de Salida",
                 align: 'left',
                 margin: 10,
                 offsetX: 0,
                 offsetY: 0,
                 floating: false,
                 style: {
-                    fontSize: '12px',
+                    fontSize: '16px',
                     fontFamily: "Poppins SemiBold",
-                    color: '#ff6200'
+                    color: '#606060'
                 },
             }
         })
@@ -372,7 +363,7 @@ return (
                                         progress={(
                                             (tActivo / (tInactivo + tActivo)) * 100
                                         ).toFixed(0)} // String: Update to change the progress and percentage.
-                                        progressColor="#D35400" // String: Color of "progress" portion of circle.
+                                        progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                         bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                         textColor="#6b778c" // String: Color of percentage text color.
                                         textStyle={{
@@ -398,7 +389,7 @@ return (
                                         progress={(
                                             (hacumuladas / (tActivo + tInactivo) / (capacidad / (tActivo + tInactivo))) * 100
                                         ).toFixed(0)} // String: Update to change the progress and percentage.
-                                        progressColor="#D35400" // String: Color of "progress" portion of circle.
+                                        progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                         bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                         textColor="#6b778c" // String: Color of percentage text color.
                                         textStyle={{
@@ -441,7 +432,7 @@ return (
                                 series={series2}
                                 type="line"
                                 width="100%"
-                                height="200px"
+                                height="290px"
                             />
 
                         </div>
@@ -449,7 +440,9 @@ return (
                 </Row>
             </Col>
         </Row>
-        <div className="bot-description">Receta actual: {" " + producto}</div>
+        {
+        //<div className="bot-description">Receta actual: {" " + producto}</div>
+        }
     </div>
 )
 }

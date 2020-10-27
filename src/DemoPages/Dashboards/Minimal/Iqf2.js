@@ -23,7 +23,7 @@ const Iqf2 = () => {
             stroke: {
                 curve: 'smooth',
                 width: 2,
-                colors: "#9b97d4"
+                colors: "#2264A7"
             },
             xaxis: {
                 type: 'datetime',
@@ -46,7 +46,7 @@ const Iqf2 = () => {
                 type: 'gradient',
                 gradient: {
                     enabled: true,
-                    gradientToColors: ["#9b97d4", "#72cab8"],
+                    gradientToColors: ["#2264A7", "#2264A7"],
                     inverseColors: true,
                     shadeIntensity: 1,
                     opacityFrom: 1,
@@ -71,7 +71,7 @@ const Iqf2 = () => {
                 style: {
                     fontSize: '16px',
                     fontFamily: "Poppins SemiBold",
-                    color: '#ff6200'
+                    color: '#606060'
                 },
             }
         })
@@ -96,7 +96,7 @@ const Iqf2 = () => {
             stroke: {
                 curve: 'smooth',
                 width: 2,
-                colors: "#9b97d4"
+                colors: "#2264A7"
             },
             xaxis: {
                 type: 'datetime',
@@ -119,7 +119,7 @@ const Iqf2 = () => {
                 type: 'gradient',
                 gradient: {
                     enabled: true,
-                    gradientToColors: ["#9b97d4", "#72cab8"],
+                    gradientToColors: ["#2264A7", "#2264A7"],
                     inverseColors: true,
                     shadeIntensity: 1,
                     opacityFrom: 1,
@@ -144,7 +144,7 @@ const Iqf2 = () => {
                 style: {
                     fontSize: '16px',
                     fontFamily: "Poppins SemiBold",
-                    color: '#ff6200'
+                    color: '#606060'
                 },
             }
         })
@@ -286,7 +286,7 @@ const Iqf2 = () => {
                                             progress={(
                                                 (tActivo / (tInactivo + tActivo)) * 100
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
-                                            progressColor="#D35400" // String: Color of "progress" portion of circle.
+                                            progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                             textColor="#6b778c" // String: Color of percentage text color.
                                             textStyle={{
@@ -316,7 +316,7 @@ const Iqf2 = () => {
                                             progress={(
                                                 (h_acumulado/(tActivo+tInactivo)/(capacidad/(tActivo+tInactivo)))*100
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
-                                            progressColor="#D35400" // String: Color of "progress" portion of circle.
+                                            progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                             textColor="#6b778c" // String: Color of percentage text color.
                                             textStyle={{
@@ -363,7 +363,9 @@ const Iqf2 = () => {
                     </Row>
                 </Col>
             </Row>
-            <div className="bot-description">Receta actual: {" " + producto}</div>
+            {
+                //<div className="bot-description">Receta actual: {" " + producto}</div>
+            }
         </div>
     )
 }

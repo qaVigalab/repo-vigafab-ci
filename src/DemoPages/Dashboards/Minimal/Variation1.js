@@ -1,18 +1,12 @@
-import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import React, { Component, Fragment } from "react";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
-import DatePicker from "react-datepicker";
+
 import { connect } from "react-redux";
 import {
   Button,
   Card,
-  CardBody,
   Col,
-  Container,
-  Input,
-  InputGroup,
-  InputGroupAddon,
   Row,
 } from "reactstrap";
 import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
@@ -22,7 +16,6 @@ import Iqf2 from "./Iqf2";
 import NuevaOrden from "./NuevaOrden";
 import Orden from "./Orden";
 import Produciendo from "./Produciendo";
-import TimeLine from "./TimeLine";
 
 const data = {
   legend: [
