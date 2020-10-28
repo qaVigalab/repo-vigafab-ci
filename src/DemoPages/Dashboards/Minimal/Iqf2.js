@@ -257,7 +257,7 @@ const Iqf2 = () => {
                 <Row>
                     <br />
                     <Col align="center" md="2">
-                        <div className="title1orange">IQF</div>
+                        <div className="text-uppercase font-weight-bold title1orange">IQF</div>
                     </Col>
 
                     <Col md="6"></Col>

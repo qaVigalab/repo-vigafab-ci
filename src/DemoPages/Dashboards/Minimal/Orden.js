@@ -53,7 +53,7 @@ const Orden = (props) => {
   return (
     <div>
       <Container>
-        <div className="title1orange">Produccion en línea</div>
+        <div className="text-uppercase font-weight-bold title1orange">Produccion en línea</div>
       </Container>
       <br />
       <Table striped>

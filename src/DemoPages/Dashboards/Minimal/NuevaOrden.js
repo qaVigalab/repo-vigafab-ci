@@ -120,7 +120,7 @@ class NuevaOrden extends Component {
     return (
       <div>
         <Container>
-          <div className="title1orange">Nueva Orden De Produccion</div>
+          <div className="text-uppercase font-weight-bold title1orange">Nueva Orden De Produccion</div>
           <hr />
           <Form onSubmit={this.handleSubmit}>
             <Row>

@@ -16,6 +16,8 @@ import Iqf2 from "./Iqf2";
 import NuevaOrden from "./NuevaOrden";
 import Orden from "./Orden";
 import Produciendo from "./Produciendo";
+import TotalEnvasadoras from "./TotalEnvasadoras";
+import Empaque from "./Empaque";
 
 const data = {
   legend: [
@@ -244,6 +246,20 @@ class MinimalDashboard1 extends Component {
               )}
             </Row> */}
           </div>
+
+          <Row>
+            <Col md="6" xl="6">
+              <Card className="main-card mb-3">
+                <TotalEnvasadoras estado={1} />
+              </Card>
+            </Col>
+
+            <Col md="6" xl="6">
+              <Card className="main-card mb-3">
+                <Empaque estado={1} />
+              </Card>
+            </Col>
+          </Row>
         </ReactCSSTransitionGroup>
       </Fragment>
     );

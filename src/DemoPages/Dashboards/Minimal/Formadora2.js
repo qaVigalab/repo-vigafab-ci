@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col } from "reactstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
+
 import { Doughnut } from "react-chartjs-2";
 import Chart from 'react-apexcharts'
 
@@ -289,7 +288,7 @@ return (
             <Row>
                 <br />
                 <Col align="center" md="2">
-                    <div className="title1orange">Formadora</div>
+                    <div className="text-uppercase font-weight-bold title1orange">Formadora</div>
                 </Col>
 
                 <Col md="3"></Col>
