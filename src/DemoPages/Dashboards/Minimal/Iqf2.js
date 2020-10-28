@@ -9,6 +9,7 @@ const Iqf2 = () => {
     var temperatura = [];
     var fecha = [];
     var velocidad = [];
+    var date,newDate;
 
     const [options, setOptions] = useState(
         {
@@ -22,7 +23,7 @@ const Iqf2 = () => {
             stroke: {
                 curve: 'smooth',
                 width: 2,
-                colors: "#9b97d4"
+                colors: "#2264A7"
             },
             xaxis: {
                 type: 'datetime',
@@ -45,7 +46,7 @@ const Iqf2 = () => {
                 type: 'gradient',
                 gradient: {
                     enabled: true,
-                    gradientToColors: ["#9b97d4", "#72cab8"],
+                    gradientToColors: ["#2264A7", "#2264A7"],
                     inverseColors: true,
                     shadeIntensity: 1,
                     opacityFrom: 1,
@@ -70,7 +71,7 @@ const Iqf2 = () => {
                 style: {
                     fontSize: '16px',
                     fontFamily: "Poppins SemiBold",
-                    color: '#ff6200'
+                    color: '#606060'
                 },
             }
         })
@@ -95,7 +96,7 @@ const Iqf2 = () => {
             stroke: {
                 curve: 'smooth',
                 width: 2,
-                colors: "#9b97d4"
+                colors: "#2264A7"
             },
             xaxis: {
                 type: 'datetime',
@@ -118,7 +119,7 @@ const Iqf2 = () => {
                 type: 'gradient',
                 gradient: {
                     enabled: true,
-                    gradientToColors: ["#9b97d4", "#72cab8"],
+                    gradientToColors: ["#2264A7", "#2264A7"],
                     inverseColors: true,
                     shadeIntensity: 1,
                     opacityFrom: 1,
@@ -143,7 +144,7 @@ const Iqf2 = () => {
                 style: {
                     fontSize: '16px',
                     fontFamily: "Poppins SemiBold",
-                    color: '#ff6200'
+                    color: '#606060'
                 },
             }
         })
@@ -203,8 +204,16 @@ const Iqf2 = () => {
             .then(response => response.json())
             .then(result => {
                 result.map(r => (
-
-                    fecha.push(r.fecha),
+                    newDate = new Date(r.fecha),
+                    newDate.setHours(newDate.getHours() + 3),
+                 date =
+                    ("00" + (newDate.getMonth() + 1)).slice(-2) + "-" +
+                    ("00" + newDate.getDate()).slice(-2) + "-" +
+                    newDate.getFullYear() + " " +
+                    ("00" + newDate.getHours()).slice(-2) + ":" +
+                    ("00" + newDate.getMinutes()).slice(-2) + ":" +
+                    ("00" + newDate.getSeconds()).slice(-2),
+                    fecha.push(date),
                     temperatura.push(r.temperatura),
                     velocidad.push(r.velocidad)
 
@@ -248,7 +257,7 @@ const Iqf2 = () => {
                 <Row>
                     <br />
                     <Col align="center" md="2">
-                        <div className="title1orange">IQF</div>
+                        <div className="text-uppercase font-weight-bold title1orange">IQF</div>
                     </Col>
 
                     <Col md="6"></Col>
@@ -277,7 +286,7 @@ const Iqf2 = () => {
                                             progress={(
                                                 (tActivo / (tInactivo + tActivo)) * 100
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
-                                            progressColor="#D35400" // String: Color of "progress" portion of circle.
+                                            progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                             textColor="#6b778c" // String: Color of percentage text color.
                                             textStyle={{
@@ -307,7 +316,7 @@ const Iqf2 = () => {
                                             progress={(
                                                 (h_acumulado/(tActivo+tInactivo)/(capacidad/(tActivo+tInactivo)))*100
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
-                                            progressColor="#D35400" // String: Color of "progress" portion of circle.
+                                            progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                             textColor="#6b778c" // String: Color of percentage text color.
                                             textStyle={{
@@ -354,7 +363,9 @@ const Iqf2 = () => {
                     </Row>
                 </Col>
             </Row>
-            <div className="bot-description">Receta actual: {" " + producto}</div>
+            {
+                //<div className="bot-description">Receta actual: {" " + producto}</div>
+            }
         </div>
     )
 }

@@ -21,33 +21,24 @@ let data = {
 
     labels: [
         "Inactivo",
-        //  "Naranjo",
-        //  "Morado",
-        "Azul",
-        "Amarillo",
-        "Rojo",
+        "Paro sin Justificar",
+        "Paro Justificado",
         "Producción",
     ],
     datasets: [
         {
-            data: [2.2, 3, 2, 0.8, 5],
+            data: [ 3, 2, 0.8, 5],
             backgroundColor: [
                 "#d9d9d9",
-                // "#feb018",
-                // "#775dd0",
-                "#25a0fc",
-                "#ffef45",
-                "#ff4560",
-                "#2B74BC",
+                "#F7431E  ",
+                "#FFB000",
+                "#2264A7",
             ],
             hoverBackgroundColor: [
                 "#d9d9d9",
-                //"#feb018",
-                // "#775dd0",
-                "#25a0fc",
-                "#ffef45",
-                "#ff4560",
-                "#2B74BC",
+                "#F7431E  ",
+                "#FFB000",
+                "#2264A7 ",
             ],
         },
     ],
@@ -247,7 +238,7 @@ const Produciendo = (props) => {
                                     progress={(
                                         (tiempo/(tInactivo+tiempo))*100
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
-                                    progressColor="var(--primary)" // String: Color of "progress" portion of circle.
+                                    progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                     textColor="#6b778c" // String: Color of percentage text color.
                                     textStyle={{
@@ -272,7 +263,7 @@ const Produciendo = (props) => {
                                     progress={(
                                         (h_acumulado/(tiempo+tInactivo)/(capacidad/(tiempo+tInactivo)))*100
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
-                                    progressColor="var(--primary)" // String: Color of "progress" portion of circle.
+                                    progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                     textColor="#6b778c" // String: Color of percentage text color.
                                     textStyle={{
@@ -298,7 +289,7 @@ const Produciendo = (props) => {
                                         (0.5) *
                                         100
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
-                                    progressColor="var(--primary)" // String: Color of "progress" portion of circle.
+                                    progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                     textColor="#6b778c" // String: Color of percentage text color.
                                     textStyle={{
@@ -324,7 +315,7 @@ const Produciendo = (props) => {
                                         (0.5) *
                                         100
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
-                                    progressColor="var(--primary)" // String: Color of "progress" portion of circle.
+                                    progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                     textColor="#6b778c" // String: Color of percentage text color.
                                     textStyle={{

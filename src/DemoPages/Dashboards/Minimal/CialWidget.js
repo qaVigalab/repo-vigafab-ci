@@ -51,14 +51,11 @@ var raw = JSON.stringify({"id_vibot":this.props.id_vibot});
       ],
 
       labels: [
-       /*  "Inactivo",
-        "Naranjo",
-        "Morado",
-        "Azul",
-        "Amarillo", */
-        "Paros",
+       //"Inactivo",
+        "Paro sin Justificar",
+        //"Paro Justificado",
         "Producción",
-      ],
+    ],
       stroke:{
         width: 2,
        },
@@ -66,23 +63,17 @@ var raw = JSON.stringify({"id_vibot":this.props.id_vibot});
         {
           data: [this.state.paros, this.state.produciendo],
           backgroundColor: [
-            /* "#d9d9d9",
-            "#feb018",
-            "#775dd0",
-            "#25a0fc",
-            "#ffef45", */
-            "#ff4560",
-            "#31cc54",
-          ],
-          hoverBackgroundColor: [
-           /*  "#d9d9d9",
-            "#feb018",
-            "#775dd0",
-            "#25a0fc",
-            "#ffef45", */
-            "#ff4560",
-            "#31cc54",
-          ],
+           // "#d9d9d9",
+            "#F7431E  ",
+            //"#FFB000",
+            "#2264A7",
+        ],
+        hoverBackgroundColor: [
+           //"#d9d9d9",
+            "#F7431E  ",
+           // "#FFB000",
+            "#2264A7 ",
+        ],
         },
       ],
     };
@@ -95,7 +86,7 @@ var raw = JSON.stringify({"id_vibot":this.props.id_vibot});
       this.props.modo === 5
     )
       return (
-        <Col md="6" xl="4" lg="6" xs="12">
+        <Col md="6" xl="3" lg="6" xs="12">
           <Card className="main-card mb-3">
             {/* header */}
             {this.props.modo === 5 ? (
@@ -293,7 +284,7 @@ var raw = JSON.stringify({"id_vibot":this.props.id_vibot});
                             (this.state.produciendo / this.state.total) *
                             100
                           ).toFixed(0)} // String: Update to change the progress and percentage.
-                          progressColor="var(--primary)" // String: Color of "progress" portion of circle.
+                          progressColor="#02c39a" // String: Color of "progress" portion of circle.
                           bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                           textColor="#6b778c" // String: Color of percentage text color.
                           textStyle={{

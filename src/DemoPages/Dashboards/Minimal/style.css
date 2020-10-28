@@ -179,7 +179,8 @@
 
   .indi {
     font-weight: bold;
-    font-size: 25px;
+    font-size: 30px;
+    color: #606060;
   }
 
   text-white{
@@ -268,15 +269,15 @@
     transition: height 0.6s ease;
   }
   .title1orange {
-    color: #FF7700;
-    font-size: 18px;
-    
+    color: #FF6200;
+    font-size: 16px;
+    letter-spacing: 0.5px;
     padding-top:20px;
     padding-left: 10px;
     padding-right: 10px;
   }
   .buttonOrange{
-    background-color: #FF7700;
+    background-color: #FF6200;
     color:#ffffff;
     margin-top: 30px;
     margin-bottom: 30px;
@@ -284,7 +285,7 @@
     
   }
   .buttonOrange:hover{
-    background-color: #FF7700;
+    background-color: #FF6200;
     color:#ffffff;
   }
   .theadBlue{
@@ -337,17 +338,17 @@
     padding-left: 0px;
   }
   .orangeRow{
-    background : #FF7700 !important;
+    background : #FF6200 !important;
     color: #fff;
     text-align: center;
   }
   .blueRow{
-    background : #1E3862 !important;
+    background : #13395E !important;
     color: #fff;
     text-align: center;
   }
   .title2Orange{
-    background : #FF7700 !important;
+    background : #FF6200 !important;
     color: #fff;
     text-align: center;
     padding: 10px;
@@ -375,22 +376,37 @@
     margin-right:5px;
   }
   .blackBorder{
-    border-bottom: 2px solid #ABB2B9 !important;
-    border-right: 2px solid #ABB2B9 !important;
-    margin-left: 10px;
+    border-bottom: 1px solid #ABB2B9 !important;
+    border-right: 1px solid #ABB2B9 !important;
+    margin-left: 0px;
     padding:0px;
     border-radius: 0%;
   }
   .blackBorder2{
-    border-bottom: 2px solid #ABB2B9 !important;
-    margin-left: 10px;
-    margin-right: 10px;
+    border-bottom: 1px solid #ABB2B9 !important;
+    margin-left: 3px;
+    margin-right: 3px;
     padding:0px;
   }
   .blackBorder3{
-    border-right: 2px solid #ABB2B9 !important;
-    margin-left: 10px;
+    border-right: 1px solid #ABB2B9 !important;
     padding:0px;
+  }
+  .blackBorderTop{
+    border-top: 1px solid #ABB2B9 !important;
+    padding:0px;
+  }
+  .blackBorderLeft{
+    border-left: 1px solid #ABB2B9 !important;
+    padding:0px;
+  }
+  .blackBorderBot{
+    border-bottom: 1px solid #ABB2B9 !important;
+    padding:px;
+    margin-left: 10px;
+  }
+  .blackBorderRight{
+    border-right: 1px solid #ABB2B9 !important;
   }
   .font1 { 
 
@@ -401,9 +417,27 @@
 
   .font2 { 
 
-    font-size: 14px; 
+    font-size: 16px; 
     font-weight: normal;
     margin-left: 10px;
+  }
+  .font2Blue { 
+
+    font-size: 16px; 
+    font-weight: bold;
+    color: #2264A7;
+  }
+  .font2Red { 
+
+    font-size: 16px; 
+    font-weight: bold;
+    color: #F7431E;
+  }
+  .font2gray { 
+
+    font-size: 16px; 
+    font-weight: bold;
+    color: #606060;
   }
   .font3 { 
 
