@@ -159,11 +159,9 @@ const Iqf2 = () => {
 
     const [tActivo, setTActivo] = useState(0)
     const [tInactivo, setTInactivo] = useState(0)
-
-    const capacidad=3000;
+    const [kgacumulados, setKgacumulados] = useState(0)
     const [estado, setEstado] = useState(0)
-    const [producto, setProducto] = useState("")
-    const [h_acumulado, setH_acumulado] = useState(0)
+    const [capacidad, setCapacidad] = useState(0)
 
     const loadKpi = () => {
         fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenmaquina", {
@@ -181,9 +179,9 @@ const Iqf2 = () => {
             .then(result => {
                 setTActivo(result[0].tiempo_actividad)
                 setTInactivo(result[0].tiempo_inactivo)
-                setProducto(result[0].sku + " " + result[0].producto)
                 setEstado(result[0].estado)
-                setH_acumulado(result[0].hamburguesas_acumuladas)
+                setKgacumulados(result[0].real_kg)
+                setCapacidad(result[0].kg_hora)
             }
             )
             .catch(err => {
@@ -253,22 +251,26 @@ const Iqf2 = () => {
 
         <div>
 
-            <div className="blackBorder2" >
-                <Row>
-                    <br />
-                    <Col align="center" md="2">
-                        <div className="text-uppercase font-weight-bold title1orange">IQF</div>
-                    </Col>
+<div className="blackBorder2" >
+        <Row>
+                <br />
+                <Col align="center"  md="2">
+                    <div className="text-uppercase font-weight-bold title1orange my-1">Iqf</div>
+                </Col>
 
-                    <Col md="6"></Col>
+                <Col md={{ span: 10, offset: 5 }}>
+                    <Row >                   
+                         <div className="font2  my-4 text-right">Estado</div>
+                        <div  className={estado == 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
+                        <div className="font2 ml-3 my-4">Tiempo de Actividad</div>
+                        <div align="right" className="font2Blue ml-1 my-4">{ Math.round(tActivo / 60 * 100) / 100} hrs</div>
+                        
+                    </Row>
 
+                </Col>
 
-                    <Col md="4">
-                        <div align="left" className="font2 mr-1 my-4">{Math.round(tActivo / 60 * 100) / 100} hrs Tiempo de Actividad</div>
-                    </Col>
-
-                </Row>
-            </div >
+            </Row>
+        </div >
 
             <Row>
                 <Col md="2">
@@ -314,7 +316,7 @@ const Iqf2 = () => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (h_acumulado/(tActivo+tInactivo)/(capacidad/(tActivo+tInactivo)))*100
+                                                (kgacumulados/ (capacidad *((tActivo + tInactivo)/60))) * 100 //(totalKG/capacidad*tiempo que se demoro)
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.

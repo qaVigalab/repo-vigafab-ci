@@ -211,7 +211,7 @@ class MinimalDashboard1 extends Component {
                     descripcion="009 - Vienesa Vacío 4 x 1 KG SJ"
                     OE={2090}
                     OET={2500}
-                    estado={1}
+                    estado={2}
                     nombre={maquina.maquina}
                     data={[4, 2, 0.11, 1.4, 1, 0.2, 3.8]}
                     id_vibot={maquina.id}

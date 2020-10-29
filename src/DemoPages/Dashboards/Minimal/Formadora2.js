@@ -186,13 +186,12 @@ const Formadora2 = (props) => {
         },]
     )
 
-    const [producto, setProducto] = useState("")
     const [hacumuladas, setHacumuladas] = useState(0)
     const [tActivo, setTActivo] = useState(0)
     const [tInactivo, setTInactivo] = useState(0)
     const [kgacumulados, setKgacumulados] = useState(0)
     const [estado, setEstado] = useState(0)
-    const capacidad = 3000;
+    const [capacidad, setCapacidad] = useState(0)
 
     const loadResumen = () => {
         fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenmaquina", {
@@ -208,14 +207,12 @@ const Formadora2 = (props) => {
         })
             .then(response => response.json())
             .then(result => {
-
-                console.log(result)
                 setTActivo(result[0].tiempo_actividad)
                 setTInactivo(result[0].tiempo_inactivo)
-                setProducto(result[0].sku + " " + result[0].producto)
                 setEstado(result[0].estado)
                 setHacumuladas(result[0].hamburguesas_acumuladas)
                 setKgacumulados(result[0].real_kg)
+                setCapacidad(result[0].kg_hora)
             }
             )
             .catch(err => {
@@ -235,7 +232,6 @@ const Formadora2 = (props) => {
         })
             .then(response => response.json())
             .then(result => {
-                console.log(result)
                 result.map(r => (
 
                     newDate = new Date(r.fecha),
@@ -285,70 +281,52 @@ return (
     <div>
 
         <div className="blackBorder2" >
-            <Row>
+        <Row>
                 <br />
-                <Col align="center" md="2">
-                    <div className="text-uppercase font-weight-bold title1orange">Formadora</div>
+                <Col align="center"  md="2">
+                    <div className="text-uppercase font-weight-bold title1orange my-1">Formadora</div>
                 </Col>
 
-                <Col md="3"></Col>
+                <Col md={{ span: 10, offset: 5 }}>
+                    <Row >                   
+                         <div className="font2  my-4 text-right">Estado</div>
+                        <div  className={estado == 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
+                        <div className="font2 ml-3 my-4">Tiempo de Actividad</div>
+                        <div align="right" className="font2Blue ml-1 my-4">{ Math.round(tActivo / 60 * 100) / 100} hrs</div>
+                        
+                    </Row>
 
-                <Col align="center" md="2">
-                    {/*
-                        <div className="mt-3">
-                            <div className={"indi"} >
-                                {props.estado === 1 ? (
-                                    <span className="opacity-10 text-success pr-2">
-                                        <FontAwesomeIcon icon={faAngleUp} />
-                                    </span>
-                                ) : (
-                                        <span className="opacity-10 text-danger pr-2">
-                                            <FontAwesomeIcon icon={faAngleDown} />
-                                        </span>
-                                    )}{"65"}
-                                <small className="opacity-5 pl-1">%</small>
-                            </div>
-                        </div>{" "} */}
-                </Col>
-
-                <Col md="3">
-                    <div align="center" className="font2 my-4">{Math.round(tActivo / 60 * 100) / 100} hrs Tiempo de Actividad</div>
-                </Col>
-                <Col md="2">
-                    <div align="center" className="font2 my-4 pr-3">{estado == 1 ? "Detenida" : "Produciendo"}</div>
                 </Col>
 
             </Row>
         </div >
 
-        <Row>
-            <Col md="3">
-                <div class="noSpace">
-                    <div className="blackBorder py-3">
-                        <Row >
-                            <Col md="5"></Col>
-                            <Col md="6">
-                                <Row>
-                                    <div align="left" className="indi">{kgacumulados}</div>
+        
 
-                                    <div align="center" className=" mt-3 ml-1">Kg</div>
-                                </Row>
-                            </Col>
+        <Row>
+            <Col md="2" className="blackBorderRight">
+                <div class="noSpace">
+                    <div className="blackBorderBot">
+                        <Row className="my-4">
+                            
+                           
+                            <div align="center" className="ml-auto indi">{ Intl.NumberFormat().format(kgacumulados)}</div>
+                                <div align="center" className="font2 mt-3 ml-2 mr-auto">     Kg </div>
 
                         </Row>
                     </div>
 
-                    <div className="blackBorder">
-                        <Row >
+                    <div className="blackBorderBot">
+                        <Row className="" >
 
                             <Col md="12">
-                                <div align="center" className="font3 mt-3 ml-3">{hacumuladas}</div>
-                                <div align="center" className="font2 mb-3 ml-3">Hamburguesas formadas</div>
+                                <div align="center" className="indi mt-3 ">{ Intl.NumberFormat().format(hacumuladas)}</div>
+                                <div align="left" className="font2 mb-3 ">Hamburguesas formadas</div>
                             </Col>
 
                         </Row>
                     </div>
-                    <div className=" blackBorder3">
+                    <div className="my-4">
                         <Row >
 
                             <Col md="6">
@@ -373,7 +351,7 @@ return (
                                         showPercentage={true} // Boolean: Show/hide percentage.
                                         showPercentageSymbol={true} // Boolean: Show/hide only the "%" symbol.
                                     />
-                                    <div align="center" className="mt-3">Disponibilidad</div>
+                                    <div align="left" className="mt-3">Disponibilidad</div>
                                 </div>
                             </Col>
 
@@ -386,7 +364,7 @@ return (
                                         size="100" // String: Defines the size of the circle.
                                         lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                         progress={(
-                                            (hacumuladas / (tActivo + tInactivo) / (capacidad / (tActivo + tInactivo))) * 100
+                                            (kgacumulados/ (capacidad *((tActivo + tInactivo)/60))) * 100 //(totalKG/capacidad*tiempo que se demoro)
                                         ).toFixed(0)} // String: Update to change the progress and percentage.
                                         progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                         bgColor="#ecedf0" // String: Color of "empty" portion of circle.

@@ -129,13 +129,13 @@ return (
                         <Row className="mt-4">
 
 
-                            <div align="center" className="ml-auto indi">{hacumuladas }</div>
-                            <div align="center" className="font2 mt-3 ml-2 mr-auto">de {hsolicitadas} F.Packs</div>
+                            <div align="center" className="ml-auto indi">{Intl.NumberFormat().format(hacumuladas) }</div>
+                            <div align="center" className="font2 mt-3 ml-2 mr-auto">de { Intl.NumberFormat().format(hsolicitadas)} F.Packs</div>
 
                         </Row>
                         <Row className="mt-1 mb-4">
-                            <div align="left" className="ml-auto indi">{kgacumulados }</div>
-                            <div align="center" className="font2 mt-3 ml-2 mr-auto"> de {kgsolicitados} Kgs</div>
+                            <div align="left" className="ml-auto indi">{Intl.NumberFormat().format(kgacumulados) }</div>
+                            <div align="center" className="font2 mt-3 ml-2 mr-auto"> de { Intl.NumberFormat().format(kgsolicitados)} Kgs</div>
 
                         </Row>
 
@@ -152,7 +152,7 @@ return (
                                         size="100" // String: Defines the size of the circle.
                                         lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                         progress={(
-                                            (tActivo / (tInactivo + tActivo)) + 1 * 100
+                                            (tActivo / (tInactivo + tActivo))* 100
                                         ).toFixed(0)} // String: Update to change the progress and percentage.
                                         progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                         bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -178,7 +178,7 @@ return (
                                         size="100" // String: Defines the size of the circle.
                                         lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                         progress={(
-                                            (kgacumulados / (tActivo + tInactivo) / (capacidad *((tActivo + tInactivo)/60))) * 100
+                                            (kgacumulados/ (capacidad *((tActivo + tInactivo)/60))) * 100 //(totalKG/capacidad*tiempo que se demoro)
                                         ).toFixed(0)} // String: Update to change the progress and percentage.
                                         progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                         bgColor="#ecedf0" // String: Color of "empty" portion of circle.

@@ -27,7 +27,7 @@ let data = {
     ],
     datasets: [
         {
-            data: [ 3, 2, 0.8, 5],
+            data: [3, 2, 0.8, 5],
             backgroundColor: [
                 "#d9d9d9",
                 "#F7431E  ",
@@ -45,8 +45,8 @@ let data = {
 };
 
 const Produciendo = (props) => {
-    const id_vibot=23643;
-    const capacidad=3000;
+    const id_vibot = 23643;
+    const capacidad = 3000;
     const [estado, setEstado] = useState(0)
     const [nOrden, setnOrden] = useState(0)
     const [sku, setSku] = useState("")
@@ -64,7 +64,7 @@ const Produciendo = (props) => {
 
 
 
-    const loadResumen =  () => {
+    const loadResumen = () => {
         fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenempaquetadora2", {
             "method": "POST",
             "headers": {
@@ -75,20 +75,19 @@ const Produciendo = (props) => {
         })
             .then(response => response.json())
             .then(result => {
-                console.log(result)
-                 setEstado(result[0].estado)
-                 setnOrden(result[0].id_sub_orden)
-                 setSku(result[0].sku)
-                 setProducto(result[0].producto)
-                 setProductividad(result[0].productividad)
-                 setTiempo(result[0].tiempo_actividad)
-                 setKg_acumulado(result[0].real_kg)
-                 setH_acumulado(result[0].hamburguesas_acumuladas)
-                 setCajas_acumuladas(result[0].cajas_acumuladas)
-                 setKg_solicitado(result[0].kg_solicitados)
-                 setH_solicitado(result[0].hamburguesas_solicitadas)
-                 setcajas_solicitadas(result[0].cajas)
-                 setTInactivo(result[0].tiempo_inactivo)
+                setEstado(result[0].estado)
+                setnOrden(result[0].id_sub_orden)
+                setSku(result[0].sku)
+                setProducto(result[0].producto)
+                setProductividad(result[0].productividad)
+                setTiempo(result[0].tiempo_actividad)
+                setKg_acumulado(result[0].real_kg)
+                setH_acumulado(result[0].hamburguesas_acumuladas)
+                setCajas_acumuladas(result[0].cajas_acumuladas)
+                setKg_solicitado(result[0].kg_solicitados)
+                setH_solicitado(result[0].hamburguesas_solicitadas)
+                setcajas_solicitadas(result[0].cajas)
+                setTInactivo(result[0].tiempo_inactivo)
             }
             )
             .catch(err => {
@@ -97,16 +96,16 @@ const Produciendo = (props) => {
     }
     useEffect(() => {
         loadResumen()
-      
-    }, [])  
+
+    }, [])
 
     useEffect(() => {
         const interval = setInterval(() => {
-          loadResumen();
-          
+            loadResumen();
+
         }, 6000);
         return () => clearInterval(interval);
-      }, []);
+    }, []);
 
     return (
 
@@ -116,12 +115,12 @@ const Produciendo = (props) => {
                 <Row>
                     <br />
                     <Col md="2">
-                        <div align="center" className="font1">{estado == 1 ? "Detenida" : "Produciendo"}</div>
+                        <div align="center" className="text-uppercase font-weight-bold my-1">{estado == 1 ? "Detenida" : "Produciendo"}</div>
                     </Col>
                     <Col md="2">
                         <Row>
                             <div align="center" className="font2 my-1">N° Orden:</div>
-                            <div align="left" className="font3 my-1">{nOrden }</div>
+                            <div align="left" className="font3 my-1">{nOrden}</div>
                         </Row>
                     </Col>
                     <Col md="2">
@@ -139,7 +138,7 @@ const Produciendo = (props) => {
                     <Col md="2">
                         <Row>
                             <div align="left" className="font2 my-1">Productividad:</div>
-                            <div align="left" className="font3 my-1">{Math.round(productividad*10)/10 + " ham/min"}</div>
+                            <div align="left" className="font3 my-1">{Math.round(productividad * 10) / 10 + " ham/min"}</div>
                         </Row>
                     </Col>
                     <br />
@@ -149,47 +148,33 @@ const Produciendo = (props) => {
             <div className="titleBlue p-1">
                 <Row>
                     <br />
-                    <Col align="left" md="5">
-                        <div className="font1 my-2 pl-2">Linea de Producción</div>
+                    <Col align="center" md="2">
+                        <div className="text-uppercase font-weight-bold titleBlue">Línea de Producción</div>
                     </Col>
-                    <Col align="right" md="2">
-                        <div className="ml-1">
-                            <div className={"indi"} >
-                                {props.estado === 1 ? (
-                                    <span className="opacity-10 text-success pr-2">
-                                        <FontAwesomeIcon icon={faAngleUp} />
-                                    </span>
-                                ) : (
-                                        <span className="opacity-10 text-danger pr-2">
-                                            <FontAwesomeIcon icon={faAngleDown} />
-                                        </span>
-                                    )}{"65"}
-                                <small className="opacity-5 pl-1">%</small>
-                            </div>
-                        </div>{" "}
-                    </Col>
+                    <Col md={{ span: 10, offset: 5 }}>
+                        <Row >
+                            <div className="font2  my-1 text-right">Estado</div>
+                            <div className={estado == 1 ? "font2White ml-1 my-1" : "font2White ml-1 my-1"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
+                            <div className="font2 ml-3 my-1">Tiempo de Actividad</div>
+                            <div align="right" className="font2White ml-1 my-1">{Math.round(tiempo / 60 * 100) / 100} hrs</div>
 
-                    <Col md="3">
-                        <div align="center" className="font2 my-2">{Math.round(tiempo/60*100)/100 + " "} hrs Tiempo de Actividad</div>
-                    </Col>
-                    <Col md="2">
-                        <div align="center" className="font2 my-2 pr-3">{estado == 1 ? "Detenida" : "Produciendo"}</div>
+                        </Row>
                     </Col>
                 </Row>
             </div>
             <Row>
-                <Col md="3">
-                    <div class="blueRow">
+                <Col className="blueRow ml-3" md="3">
+                    
                         <div className="whiteBorder">
                             <Row >
                                 <Col md="3">
-                                    <div className=" ml-4 mt-2  ">
+                                    <div className=" ml-4 my-4  ">
                                         <img src={icono1} className="rounded float-left mb-2" alt="Balanza" />
                                     </div>
                                 </Col>
                                 <Col md="9">
-                                    <div align="center" className="bigFont mt-3">{Math.round(kg_acumulado*100)/100}</div>
-                                    <div align="center" className="littleFont">de {" " + Math.round(kg_solicitado*100)/100 + " "} Kg</div>
+                                    <div align="center" className="bigFont mt-4">{Math.round(kg_acumulado * 100) / 100}</div>
+                                    <div align="center" className="littleFont">de {" " + Math.round(kg_solicitado * 100) / 100 + " "} Kg</div>
                                 </Col>
 
                             </Row>
@@ -198,12 +183,12 @@ const Produciendo = (props) => {
                         <div className="whiteBorder">
                             <Row >
                                 <Col md="3">
-                                    <div className="ml-4 mt-2 ">
+                                    <div className="ml-4 my-4 ">
                                         <img src={icono2} className="rounded float-left mb-2" alt="Empaque" />
                                     </div>
                                 </Col>
                                 <Col md="9">
-                                    <div align="center" className="bigFont mt-3">{h_acumulado}</div>
+                                    <div align="center" className="bigFont mt-4">{h_acumulado}</div>
                                     <div align="center" className="littleFont">de {" " + Math.round(h_solicitado) + " "} F. Pack</div>
                                 </Col>
 
@@ -212,20 +197,20 @@ const Produciendo = (props) => {
                         <div className="">
                             <Row >
                                 <Col md="3">
-                                    <div className="ml-4 mt-2 ">
+                                    <div className="ml-4 my-4 ">
                                         <img src={icono3} className="rounded float-left mb-2" alt="Caja" />
                                     </div>
                                 </Col>
                                 <Col md="9">
-                                    <div align="center" className="bigFont mt-3">{Math.round(cajas_acumuladas)}</div>
+                                    <div align="center" className="bigFont mt-2">{Math.round(cajas_acumuladas)}</div>
                                     <div align="center" className="littleFont">de {" " + cajas_solicitadas + " "} cajas</div>
                                 </Col>
 
                             </Row>
                         </div>
-                    </div>
+                    
                 </Col>
-                <Col md="9">
+                <Col md="8" className="ml-5">
                     <Row>
                         <Col md="2">
                             <div className="circle">
@@ -236,7 +221,7 @@ const Produciendo = (props) => {
                                     size="100" // String: Defines the size of the circle.
                                     lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                     progress={(
-                                        (tiempo/(tInactivo+tiempo))*100
+                                        (tiempo / (tInactivo + tiempo)) * 100
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
                                     progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -261,7 +246,7 @@ const Produciendo = (props) => {
                                     size="100" // String: Defines the size of the circle.
                                     lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                     progress={(
-                                        (h_acumulado/(tiempo+tInactivo)/(capacidad/(tiempo+tInactivo)))*100
+                                        (h_acumulado / (tiempo + tInactivo) / (capacidad / (tiempo + tInactivo))) * 100
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
                                     progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -353,6 +338,6 @@ const Produciendo = (props) => {
 
 const mapStateToProps = (state) => ({
     id_orden: state.dashboardReducers.id_orden,
-  });
+});
 
 export default connect(mapStateToProps)(Produciendo)

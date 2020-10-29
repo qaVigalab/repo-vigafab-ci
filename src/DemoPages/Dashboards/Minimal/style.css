@@ -352,6 +352,7 @@
     color: #fff;
     text-align: center;
     padding: 10px;
+    font-size: 16px;
   }
   .titleBlue{
     background : #2264A7 !important;
@@ -427,6 +428,12 @@
     font-weight: bold;
     color: #2264A7;
   }
+  .font2White { 
+
+    font-size: 16px; 
+    font-weight: bold;
+    color: white;
+  }
   .font2Red { 
 
     font-size: 16px; 
@@ -441,7 +448,7 @@
   }
   .font3 { 
 
-    font-size: 14px; 
+    font-size: 16px; 
     font-weight: bold;
     margin-left: 5px;
   }
@@ -452,6 +459,10 @@
   .space5px{
     margin: 5px !important;
     padding:5px !important;
+  }
+  .space3px{
+    margin: 2px !important;
+    padding:2px !important;
   }
   .check{
     background: green !important;
