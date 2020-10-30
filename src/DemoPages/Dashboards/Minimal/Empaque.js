@@ -8,40 +8,40 @@ import Circle from "react-circle";
 
 const Empaque = (props) => {
     const id_vibot = 23643;
-    let data = {
-        legend: [
-            {
-                display: false,
-                position: "top",
-                fullWidth: true,
-                reverse: true,
-            },
-        ],
+    const [dataTorta, setDataTorta] = useState(
+        {
+            legend: [
+                {
+                    display: false,
+                    position: "top",
+                    fullWidth: true,
+                    reverse: true,
+                },
+            ],
 
-        labels: [
-            "Inactivo",
-            "Paro sin Justificar",
-            "Paro Justificado",
-            "Producción",
-        ],
-        datasets: [
-            {
-                data: [3, 2, 0.8, 5],
-                backgroundColor: [
-                    "#d9d9d9",
-                    "#F7431E  ",
-                    "#FFB000",
-                    "#2264A7",
-                ],
-                hoverBackgroundColor: [
-                    "#d9d9d9",
-                    "#F7431E  ",
-                    "#FFB000",
-                    "#2264A7 ",
-                ],
-            },
-        ],
-    };
+            labels: [
+                "Desconectado",
+                "Paro sin Justificar",
+                "Producción",
+            ],
+            datasets: [
+                {
+                    data: [],
+                    backgroundColor: [
+                        "#d9d9d9",
+                        "#F7431E  ",
+                        "#2264A7",
+                    ],
+                    hoverBackgroundColor: [
+                        "#d9d9d9",
+                        "#F7431E  ",
+                        "#2264A7 ",
+                    ],
+                },
+            ],
+        }
+    )
+
 
 
 
@@ -68,14 +68,29 @@ const Empaque = (props) => {
         })
             .then(response => response.json())
             .then(result => {
+                let data = [];
+                if (result[0].tiempo_inactivo == 0 || result[0].tiempo_actividad == 0) {
+                    data = [1, 0, 0]
+                } else {
+                    data = [0, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
+                }
                 setTActivo(result[0].tiempo_actividad)
-                setTInactivo(result[0].tiempo_inactivo)
+                setTInactivo(result[0].tiempo_inactivo == 0 ? 1 :result[0].tiempo_inactivo)
                 setEstado(result[0].estado)
                 setHacumuladas(result[0].hamburguesas_acumuladas)
                 setKgacumulados(result[0].real_kg)
                 setHsolicitadas(result[0].cajas )
                 setKgsolicitados(result[0].kg_solicitados)
                 setCapacidad(result[0].kg_hora)
+                setDataTorta(
+                    {
+                        datasets: [
+                            {
+                                data: data
+                            }
+                        ],
+                    }
+                )
 
             }
             )
@@ -211,7 +226,7 @@ const Empaque = (props) => {
                         <Col md="10" xs="12" className="mx-auto">
                             <div className="centralbodydetail">
                                 <Doughnut
-                                    data={data}
+                                    data={dataTorta}
                                     width="12"
                                     height="12"
                                     align="center"

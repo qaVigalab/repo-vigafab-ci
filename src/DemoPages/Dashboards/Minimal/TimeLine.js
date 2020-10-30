@@ -69,9 +69,6 @@ const TimeLine = (props) => {
 
   }, [])
 
-  useEffect(() => {
-
-}, [series2])
 
   
 

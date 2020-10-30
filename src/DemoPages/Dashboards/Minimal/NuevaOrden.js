@@ -89,14 +89,14 @@ class NuevaOrden extends Component {
     const caja = event.target.value;
     this.setState({ kg: caja * this.state.producto.kg_caja });
     this.setState({
-      tiempo: (caja * this.state.producto.tiempo_produccion) / 60,
+      tiempo: (caja * this.state.producto.kg_caja / this.state.producto.kg_hora),
     });
   }
   cajasChange2() {
     var caja = this.state.cajas;
     this.setState({ kg: caja * this.state.producto.kg_caja });
     this.setState({
-      tiempo: (caja * this.state.producto.tiempo_produccion) / 60,
+      tiempo: (caja * this.state.producto.kg_caja / this.state.producto.kg_hora),
     });
   }
 

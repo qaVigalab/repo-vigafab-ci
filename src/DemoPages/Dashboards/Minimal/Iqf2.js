@@ -178,7 +178,7 @@ const Iqf2 = () => {
             .then(response => response.json())
             .then(result => {
                 setTActivo(result[0].tiempo_actividad)
-                setTInactivo(result[0].tiempo_inactivo)
+                setTInactivo(result[0].tiempo_inactivo == 0 ? 1 :result[0].tiempo_inactivo)
                 setEstado(result[0].estado)
                 setKgacumulados(result[0].real_kg)
                 setCapacidad(result[0].kg_hora)

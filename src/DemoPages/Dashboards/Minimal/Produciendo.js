@@ -9,44 +9,12 @@ import icono2 from "./images/icono2.png";
 import icono3 from "./images/icono3.png";
 
 import Circle from "react-circle";
-let data = {
-    legend: [
-        {
-            display: false,
-            position: "top",
-            fullWidth: true,
-            reverse: true,
-        },
-    ],
-
-    labels: [
-        "Inactivo",
-        "Paro sin Justificar",
-        "Paro Justificado",
-        "Producción",
-    ],
-    datasets: [
-        {
-            data: [3, 2, 0.8, 5],
-            backgroundColor: [
-                "#d9d9d9",
-                "#F7431E  ",
-                "#FFB000",
-                "#2264A7",
-            ],
-            hoverBackgroundColor: [
-                "#d9d9d9",
-                "#F7431E  ",
-                "#FFB000",
-                "#2264A7 ",
-            ],
-        },
-    ],
-};
 
 const Produciendo = (props) => {
-    const id_vibot = 23643;
-    const capacidad = 3000;
+    const [calidad, setCalidad] = useState(0)
+    const [eficiencia, setEficiencia] = useState(0)
+    const [disponibilidad, setDisponibilidad] = useState(0)
+    const [capacidad, setCapacidad] = useState(0)
     const [estado, setEstado] = useState(0)
     const [nOrden, setnOrden] = useState(0)
     const [sku, setSku] = useState("")
@@ -60,21 +28,59 @@ const Produciendo = (props) => {
     const [h_solicitado, setH_solicitado] = useState(0)
     const [cajas_solicitadas, setcajas_solicitadas] = useState(0)
     const [tInactivo, setTInactivo] = useState(0)
+    const [kg_caja, setKgcaja] = useState(0)
     //const [auxId, setAuxId] = useState(props.id_orden)
+    const [dataTorta, setDataTorta] = useState(
+        {
+            legend: [
+                {
+                    display: false,
+                    position: "top",
+                    fullWidth: true,
+                    reverse: true,
+                },
+            ],
+
+            labels: [
+                "Desconectado",
+                "Paro sin Justificar",
+                "Paro Justificado",
+                "Producción",
+            ],
+            datasets: [
+                {
+                    data: [],
+                    backgroundColor: [
+                        "#d9d9d9",
+                        "#F7431E  ",
+                        "#FFB000",
+                        "#2264A7",
+                    ],
+                    hoverBackgroundColor: [
+                        "#d9d9d9",
+                        "#F7431E  ",
+                        "#FFB000",
+                        "#2264A7 ",
+                    ],
+                },
+            ],
+        }
+    )
 
 
 
     const loadResumen = () => {
-        fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenempaquetadora2", {
+        fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenlinea", {
             "method": "POST",
             "headers": {
-                "content-type": "application/json",
+                "Content-Type": "application/json",
                 "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
             },
             "body": false
         })
             .then(response => response.json())
             .then(result => {
+                console.log(result)
                 setEstado(result[0].estado)
                 setnOrden(result[0].id_sub_orden)
                 setSku(result[0].sku)
@@ -87,7 +93,46 @@ const Produciendo = (props) => {
                 setKg_solicitado(result[0].kg_solicitados)
                 setH_solicitado(result[0].hamburguesas_solicitadas)
                 setcajas_solicitadas(result[0].cajas)
-                setTInactivo(result[0].tiempo_inactivo)
+                setKgcaja(result[0].kg_caja)
+                setCapacidad(result[0].kg_hora)
+                setTInactivo(result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo)
+                setCalidad((result[0].cajas_acumuladas*result[0].kg_caja)/result[0].real_kg)
+                setEficiencia( (result[0].real_kg/ (result[0].kg_hora *((result[0].tiempo_actividad + (result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo))/60)) ))
+                setDisponibilidad((result[0].tiempo_actividad / ((result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo) + result[0].tiempo_actividad)))
+            }
+            )
+            .catch(err => {
+                console.error(err);
+            });
+    }
+
+    const loadTorta = () => {
+        fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getparosgeneral", {
+            "method": "POST",
+            "headers": {
+                "Content-Type": "application/json",
+                "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+            },
+            "body": false
+        })
+            .then(response => response.json())
+            .then(r => {
+                let data = [];
+                if (r[0].tiempo_paro == 0 || r[0].tiempo_justificado == 0 || r[0].tiempo_produccion == 0) {
+                    data = [1, 0, 0, 0]
+                } else {
+                    data = [0, Math.round(r[0].tiempo_paro / 60 * 100) / 100, Math.round(r[0].tiempo_justificado / 60 * 100) / 100, Math.round(r[0].tiempo_produccion / 60 * 100) / 100]
+                }
+
+                setDataTorta(
+                    {
+                        datasets: [
+                            {
+                                data: [Math.round(r[0].tiempo_desconectado / 60 * 100) / 100, Math.round(r[0].tiempo_paro / 60 * 100) / 100, Math.round(r[0].tiempo_justificado / 60 * 100) / 100, Math.round(r[0].tiempo_produccion / 60 * 100) / 100]
+                            }
+                        ],
+                    }
+                )
             }
             )
             .catch(err => {
@@ -96,6 +141,7 @@ const Produciendo = (props) => {
     }
     useEffect(() => {
         loadResumen()
+        loadTorta()
 
     }, [])
 
@@ -164,51 +210,51 @@ const Produciendo = (props) => {
             </div>
             <Row>
                 <Col className="blueRow ml-3" md="3">
-                    
-                        <div className="whiteBorder">
-                            <Row >
-                                <Col md="3">
-                                    <div className=" ml-4 my-4  ">
-                                        <img src={icono1} className="rounded float-left mb-2" alt="Balanza" />
-                                    </div>
-                                </Col>
-                                <Col md="9">
-                                    <div align="center" className="bigFont mt-4">{Math.round(kg_acumulado * 100) / 100}</div>
-                                    <div align="center" className="littleFont">de {" " + Math.round(kg_solicitado * 100) / 100 + " "} Kg</div>
-                                </Col>
 
-                            </Row>
-                        </div>
+                    <div className="whiteBorder">
+                        <Row >
+                            <Col md="3">
+                                <div className=" ml-4 my-4  ">
+                                    <img src={icono1} className="rounded float-left mb-2" alt="Balanza" />
+                                </div>
+                            </Col>
+                            <Col md="9">
+                                <div align="center" className="bigFont mt-4">{Math.round(kg_acumulado * 100) / 100}</div>
+                                <div align="center" className="littleFont">de {" " + Math.round(kg_solicitado * 100) / 100 + " "} Kg</div>
+                            </Col>
 
-                        <div className="whiteBorder">
-                            <Row >
-                                <Col md="3">
-                                    <div className="ml-4 my-4 ">
-                                        <img src={icono2} className="rounded float-left mb-2" alt="Empaque" />
-                                    </div>
-                                </Col>
-                                <Col md="9">
-                                    <div align="center" className="bigFont mt-4">{h_acumulado}</div>
-                                    <div align="center" className="littleFont">de {" " + Math.round(h_solicitado) + " "} F. Pack</div>
-                                </Col>
+                        </Row>
+                    </div>
 
-                            </Row>
-                        </div>
-                        <div className="">
-                            <Row >
-                                <Col md="3">
-                                    <div className="ml-4 my-4 ">
-                                        <img src={icono3} className="rounded float-left mb-2" alt="Caja" />
-                                    </div>
-                                </Col>
-                                <Col md="9">
-                                    <div align="center" className="bigFont mt-2">{Math.round(cajas_acumuladas)}</div>
-                                    <div align="center" className="littleFont">de {" " + cajas_solicitadas + " "} cajas</div>
-                                </Col>
+                    <div className="whiteBorder">
+                        <Row >
+                            <Col md="3">
+                                <div className="ml-4 my-4 ">
+                                    <img src={icono2} className="rounded float-left mb-2" alt="Empaque" />
+                                </div>
+                            </Col>
+                            <Col md="9">
+                                <div align="center" className="bigFont mt-4">{h_acumulado}</div>
+                                <div align="center" className="littleFont">de {" " + Math.round(h_solicitado) + " "} F. Pack</div>
+                            </Col>
 
-                            </Row>
-                        </div>
-                    
+                        </Row>
+                    </div>
+                    <div className="">
+                        <Row >
+                            <Col md="3">
+                                <div className="ml-4 my-4 ">
+                                    <img src={icono3} className="rounded float-left mb-2" alt="Caja" />
+                                </div>
+                            </Col>
+                            <Col md="9">
+                                <div align="center" className="bigFont mt-2">{Math.round(cajas_acumuladas)}</div>
+                                <div align="center" className="littleFont">de {" " + cajas_solicitadas + " "} cajas</div>
+                            </Col>
+
+                        </Row>
+                    </div>
+
                 </Col>
                 <Col md="8" className="ml-5">
                     <Row>
@@ -221,7 +267,7 @@ const Produciendo = (props) => {
                                     size="100" // String: Defines the size of the circle.
                                     lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                     progress={(
-                                        (tiempo / (tInactivo + tiempo)) * 100
+                                        disponibilidad * 100
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
                                     progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -246,7 +292,7 @@ const Produciendo = (props) => {
                                     size="100" // String: Defines the size of the circle.
                                     lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                     progress={(
-                                        (h_acumulado / (tiempo + tInactivo) / (capacidad / (tiempo + tInactivo))) * 100
+                                        eficiencia* 100 //(totalKG/capacidad*tiempo que se demoro)
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
                                     progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -271,8 +317,7 @@ const Produciendo = (props) => {
                                     size="100" // String: Defines the size of the circle.
                                     lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                     progress={(
-                                        (0.5) *
-                                        100
+                                        calidad*100
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
                                     progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -297,8 +342,7 @@ const Produciendo = (props) => {
                                     size="100" // String: Defines the size of the circle.
                                     lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                     progress={(
-                                        (0.5) *
-                                        100
+                                        eficiencia*disponibilidad*calidad*100
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
                                     progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -317,7 +361,7 @@ const Produciendo = (props) => {
                         <Col md="4">
                             <div className="centralbodydetail" style={{ paddingBottom: '15px' }}>
                                 <Doughnut
-                                    data={data}
+                                    data={dataTorta}
                                     width="12"
                                     height="12"
                                     align="left"
