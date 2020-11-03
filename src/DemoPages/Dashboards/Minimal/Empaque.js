@@ -7,54 +7,52 @@ import Circle from "react-circle";
 
 
 const Empaque = (props) => {
-    const id_vibot = 6296;
-    var temperatura = [];
-    var date;
-    var newDate;
-    var fecha = [];
-    let data = {
-        legend: [
-            {
-                display: false,
-                position: "top",
-                fullWidth: true,
-                reverse: true,
-            },
-        ],
+    const id_vibot = 23643;
+    const [dataTorta, setDataTorta] = useState(
+        {
+            legend: [
+                {
+                    display: false,
+                    position: "top",
+                    fullWidth: true,
+                    reverse: true,
+                },
+            ],
 
-        labels: [
-            "Inactivo",
-            "Paro sin Justificar",
-            "Paro Justificado",
-            "Producción",
-        ],
-        datasets: [
-            {
-                data: [3, 2, 0.8, 5],
-                backgroundColor: [
-                    "#d9d9d9",
-                    "#F7431E  ",
-                    "#FFB000",
-                    "#2264A7",
-                ],
-                hoverBackgroundColor: [
-                    "#d9d9d9",
-                    "#F7431E  ",
-                    "#FFB000",
-                    "#2264A7 ",
-                ],
-            },
-        ],
-    };
+            labels: [
+                "Desconectado",
+                "Paro sin Justificar",
+                "Producción",
+            ],
+            datasets: [
+                {
+                    data: [],
+                    backgroundColor: [
+                        "#d9d9d9",
+                        "#F7431E  ",
+                        "#2264A7",
+                    ],
+                    hoverBackgroundColor: [
+                        "#d9d9d9",
+                        "#F7431E  ",
+                        "#2264A7 ",
+                    ],
+                },
+            ],
+        }
+    )
 
 
-    const [producto, setProducto] = useState("")
+
+
     const [hacumuladas, setHacumuladas] = useState(0)
     const [tActivo, setTActivo] = useState(0)
     const [tInactivo, setTInactivo] = useState(0)
     const [kgacumulados, setKgacumulados] = useState(0)
     const [estado, setEstado] = useState(0)
-    const capacidad = 3000;
+    const [kgsolicitados, setKgsolicitados] = useState(0)
+    const [hsolicitadas, setHsolicitadas] = useState(0)
+    const [capacidad, setCapacidad] = useState(0)
 
     const loadResumen = () => {
         fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenmaquina", {
@@ -70,14 +68,30 @@ const Empaque = (props) => {
         })
             .then(response => response.json())
             .then(result => {
-
-                console.log(result)
+                let data = [];
+                if (result[0].tiempo_inactivo == 0 && result[0].tiempo_actividad == 0) {
+                    data = [1, 0, 0]
+                } else {
+                    data = [0, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
+                }
                 setTActivo(result[0].tiempo_actividad)
-                setTInactivo(result[0].tiempo_inactivo)
-                setProducto(result[0].sku + " " + result[0].producto)
+                setTInactivo(result[0].tiempo_inactivo == 0 ? 1 :result[0].tiempo_inactivo)
                 setEstado(result[0].estado)
                 setHacumuladas(result[0].hamburguesas_acumuladas)
                 setKgacumulados(result[0].real_kg)
+                setHsolicitadas(result[0].cajas )
+                setKgsolicitados(result[0].kg_solicitados)
+                setCapacidad(result[0].kg_hora)
+                setDataTorta(
+                    {
+                        datasets: [
+                            {
+                                data: data
+                            }
+                        ],
+                    }
+                )
+
             }
             )
             .catch(err => {
@@ -94,7 +108,7 @@ const Empaque = (props) => {
         const interval = setInterval(() => {
 
             loadResumen();
-        }, 6000);
+        }, 15000);
         return () => clearInterval(interval);
     }, []);
 
@@ -113,7 +127,7 @@ const Empaque = (props) => {
                     <Col md="4">
                         <Row align="right">
                             <div className="font2 ml-3 my-4">Estado</div>
-                            <div className={estado == 1 ? "font2Red ml-1 my-4" : "font2Blue ml-1 my-4"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
+                            <div className={estado == 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
                         </Row>
                     </Col>
 
@@ -121,9 +135,9 @@ const Empaque = (props) => {
                     <Col md="4">
                         <Row align="right">
                             <div className="font2 ml-3 my-4">Tiempo de Actividad</div>
-                            <div className="font2Blue ml-1 my-4">{" 1" + Math.round(tActivo / 60 * 100) / 100} hrs</div>
+                            <div className="font2Blue ml-1 my-4">{Math.round(tActivo / 60 * 100) / 100} hrs</div>
                         </Row>
-                        
+
                     </Col>
 
                 </Row>
@@ -136,15 +150,16 @@ const Empaque = (props) => {
                             <Row className="mt-4">
 
 
-                                <div align="center" className="ml-auto indi">{kgacumulados + 188}</div>
-                                <div align="center" className="font2 mt-3 ml-2 mr-auto">de 300 F.Packs</div>
+                                <div align="center" className="ml-auto indi">{ Intl.NumberFormat().format(hacumuladas)}</div>
+                                <div align="center" className="font2 mt-3 ml-2 mr-auto">de { Intl.NumberFormat().format(hsolicitadas)} Cajas </div>
 
                             </Row>
                             <Row className="mt-1 mb-4">
-                                <div align="left" className="ml-auto indi">{kgacumulados + 1656}</div>
-                                <div align="center" className="font2 mt-3 ml-2 mr-auto"> de 1800 Kgs</div>
+                                <div align="left" className="ml-auto indi">{ Intl.NumberFormat().format(kgacumulados)}</div>
+                                <div align="center" className="font2 mt-3 ml-2 mr-auto"> de { Intl.NumberFormat().format(kgsolicitados)} Kgs</div>
 
                             </Row>
+                            
 
                         </div>
                         <div className="my-3">
@@ -159,7 +174,7 @@ const Empaque = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (tActivo / (tInactivo + tActivo)) + 1 * 100
+                                                (tActivo / (tInactivo + tActivo)) * 100
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -185,7 +200,7 @@ const Empaque = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (hacumuladas / (tActivo + tInactivo) / (capacidad / (tActivo + tInactivo))) * 100
+                                                (kgacumulados/ (capacidad *((tActivo + tInactivo)/60))) * 100 //(totalKG/capacidad*tiempo que se demoro)
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -211,7 +226,7 @@ const Empaque = (props) => {
                         <Col md="10" xs="12" className="mx-auto">
                             <div className="centralbodydetail">
                                 <Doughnut
-                                    data={data}
+                                    data={dataTorta}
                                     width="12"
                                     height="12"
                                     align="center"

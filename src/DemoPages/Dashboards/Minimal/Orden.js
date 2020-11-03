@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Table } from "reactstrap";
+import { Container,Col, Table, Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { connect } from "react-redux";
 import { setIdOrden } from '../../../actions/dashboardActions'
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
@@ -7,12 +7,50 @@ import { green } from '@material-ui/core/colors';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 
+
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+
+
 const Orden = (props) => {
+
+
+const deleteOrdenes = (id_sub,e) => {
+  e.preventDefault();
+
+  fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/deletesuborden", {
+  "method": "POST",
+  "headers": {
+    "Content-Type": "application/json",
+    "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+  },
+      body: JSON.stringify({
+        id: id_sub,
+      }),
+    }
+  )
+    .then((res) => res.json())
+    .catch((err) => {
+      console.error(err);
+    });
+
+    console.log(id_sub)
+
+    setModal(!modal);
+    loadOrdenes();
+}
+
+  const [modal, setModal] = useState(false);
+
+  const toggle = () => {
+      setModal(!modal);
+
+  }
 
   const [ordenes, setOrdenes] = useState([]);
 
-  const loadOrdenes =  () => {
-     fetch(
+  const loadOrdenes = () => {
+    fetch(
       "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getordenes",
       {
         method: "POST",
@@ -26,12 +64,6 @@ const Orden = (props) => {
       .then((response) => response.json())
       .then((result) => {
         setOrdenes(result)
-        /*try {
-          let ord = result.find(o => o.id_estado == 1);
-          console.log(ord.id_sub_orden)
-         props.setIdOrden(ord.id_sub_orden)
-
-        } catch (e) { console.log(e)}*/
       })
       .catch((err) => {
         console.error(err);
@@ -52,9 +84,9 @@ const Orden = (props) => {
 
   return (
     <div>
-      <Container>
-        <div className="text-uppercase font-weight-bold title1orange">Produccion en línea</div>
-      </Container>
+      <Col align="left">
+        <div className="text-uppercase font-weight-bold title1orange ml-3">Producción en línea</div>
+      </Col>
       <br />
       <Table striped>
         <thead className="theadBlue">
@@ -70,8 +102,12 @@ const Orden = (props) => {
             <th>Kg Producidos</th>
             <th>Kg %</th>
             <th>
-            <CheckCircleOutlineIcon />
+              <CheckCircleOutlineIcon />
             </th>
+            <th>
+              <DeleteIcon />
+            </th>
+
           </tr>
         </thead>
         <tbody>
@@ -96,11 +132,33 @@ const Orden = (props) => {
                     : orden.kg_porcentual + " %"}
               </td>
               <td>
-                 {orden.id_estado == 3 ? <CheckCircleIcon style={{ color: green[500] }} /> : <RadioButtonUncheckedIcon />}              </td>
+                {orden.id_estado == 3 ? <CheckCircleIcon style={{ color: green[500] }} /> : <RadioButtonUncheckedIcon />}
+              </td>
+              <td>
+                <IconButton aria-label="delete" style={orden.id_estado == 1 ? { color: "#ffebee" } : {}} onClick={toggle}>
+                  <DeleteIcon />
+                </IconButton>
+                <Modal isOpen={modal} toggle={toggle}>
+                  <ModalHeader toggle={toggle}>{"Desea eliminar la orden n° " + orden.id_sub_orden}</ModalHeader>
+                  <ModalBody>
+                    <Container>
+                      Sku: {orden.sku} <br />
+                      Producto: {orden.producto} <br />
+                      Cajas : {orden.cajas} <br />
+                    </Container>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="danger" onClick={(e) => deleteOrdenes(orden.id_sub_orden,e)}>Eliminar</Button>{' '}
+                    <Button color="secondary" onClick={toggle}>Cancelar</Button>
+                  </ModalFooter>
+                </Modal>
+              </td>
+
             </tr>
           ))}
         </tbody>
       </Table>
+
     </div>
   );
 };

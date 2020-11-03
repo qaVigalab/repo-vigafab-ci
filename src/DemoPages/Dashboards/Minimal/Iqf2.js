@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Row, Col } from "reactstrap";
 import Chart from 'react-apexcharts'
 import Circle from "react-circle";
-import { set } from "date-fns"; 
+import { set } from "date-fns";
 
 const Iqf2 = () => {
     const id_vibot = 38058;
     var temperatura = [];
     var fecha = [];
     var velocidad = [];
-    var date,newDate;
+    var date, newDate;
 
     const [options, setOptions] = useState(
         {
@@ -159,31 +159,29 @@ const Iqf2 = () => {
 
     const [tActivo, setTActivo] = useState(0)
     const [tInactivo, setTInactivo] = useState(0)
-
-    const capacidad=3000;
+    const [kgacumulados, setKgacumulados] = useState(0)
     const [estado, setEstado] = useState(0)
-    const [producto, setProducto] = useState("")
-    const [h_acumulado, setH_acumulado] = useState(0)
+    const [capacidad, setCapacidad] = useState(0)
 
     const loadKpi = () => {
         fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenmaquina", {
             "method": "POST",
             "headers": {
-               "content-type": "application/json",
+                "content-type": "application/json",
                 "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
             },
 
             body: JSON.stringify({
                 id_vibot: id_vibot,
-            }), 
+            }),
         })
             .then(response => response.json())
             .then(result => {
                 setTActivo(result[0].tiempo_actividad)
-                setTInactivo(result[0].tiempo_inactivo)
-                setProducto(result[0].sku + " " + result[0].producto)
+                setTInactivo(result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo)
                 setEstado(result[0].estado)
-                setH_acumulado(result[0].hamburguesas_acumuladas)
+                setKgacumulados(result[0].real_kg)
+                setCapacidad(result[0].kg_hora)
             }
             )
             .catch(err => {
@@ -206,7 +204,7 @@ const Iqf2 = () => {
                 result.map(r => (
                     newDate = new Date(r.fecha),
                     newDate.setHours(newDate.getHours() + 3),
-                 date =
+                    date =
                     ("00" + (newDate.getMonth() + 1)).slice(-2) + "-" +
                     ("00" + newDate.getDate()).slice(-2) + "-" +
                     newDate.getFullYear() + " " +
@@ -257,25 +255,30 @@ const Iqf2 = () => {
                 <Row>
                     <br />
                     <Col align="center" md="2">
-                        <div className="text-uppercase font-weight-bold title1orange">IQF</div>
+                        <div className="text-uppercase font-weight-bold title1orange my-1">Iqf</div>
                     </Col>
 
-                    <Col md="6"></Col>
+                    <Col  >
+                        <Row >
+                            <Col align="right">
+                            <div className="font2  my-4 ">Estado</div></Col>
+                            <div className={estado == 1 ? "font2gray  my-4" : "font2Blue my-4"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
+                            <div className="font2 ml-3 my-4">Tiempo de Actividad</div>
+                            <div  className="font2Blue ml-2 my-4 mr-5">{Math.round(tActivo / 60 * 100) / 100} hrs</div>
 
+                        </Row>
 
-                    <Col md="4">
-                        <div align="left" className="font2 mr-1 my-4">{Math.round(tActivo / 60 * 100) / 100} hrs Tiempo de Actividad</div>
                     </Col>
 
                 </Row>
             </div >
 
             <Row>
-                <Col md="2">
+                <Col md="2" className="blackBorderRight">
                     <div class="noSpace">
-                        <div className="ml-4">
+                        <div className="ml-5 mt-3">
                             <Row >
-                                <Col md="10">
+                                <Col md="8" align="center">
                                     <div className="circle space5px">
                                         <Circle
                                             animate={true} // Boolean: Animated/Static progress
@@ -300,12 +303,12 @@ const Iqf2 = () => {
 
                                     </div>
                                 </Col>
-                                <Col md="12"><div align="center" className="mr-4">Disponibilidad</div></Col>
+                                <Col md="8"><div align="center" className="">Disponibilidad</div></Col>
                             </Row>
                         </div>
-                        <div className="ml-4 mt-3">
+                        <div className="ml-5 my-4">
                             <Row >
-                                <Col md="10">
+                                <Col md="8">
                                     <div className="circle space5px">
                                         <Circle
                                             animate={true} // Boolean: Animated/Static progress
@@ -314,7 +317,7 @@ const Iqf2 = () => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (h_acumulado/(tActivo+tInactivo)/(capacidad/(tActivo+tInactivo)))*100
+                                                (kgacumulados / (capacidad * ((tActivo + tInactivo) / 60))) * 100 //(totalKG/capacidad*tiempo que se demoro)
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -330,7 +333,7 @@ const Iqf2 = () => {
 
                                     </div>
                                 </Col>
-                                <Col md="12"><div align="center" className="mr-4">Eficiencia</div></Col>
+                                <Col md="8"><div align="center" className="">Eficiencia</div></Col>
                             </Row>
                         </div>
                     </div>
@@ -338,7 +341,7 @@ const Iqf2 = () => {
                 <Col md="10">
                     <Row>
                         <Col md="6">
-                            <div className=" mt-3">
+                            <div className=" my-4 mr-3">
                                 <Chart
                                     options={options}
                                     series={series}
@@ -350,8 +353,8 @@ const Iqf2 = () => {
                             </div>
                         </Col>
                         <Col md="6">
-                            <div className="">
-                                <Chart className="pt-3"
+                            <div className="mr-5 my-4">
+                                <Chart 
                                     options={options2}
                                     series={series2}
                                     type="line"

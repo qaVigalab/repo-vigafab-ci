@@ -1,443 +1,256 @@
-import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { Component } from "react";
+
+import React, { useEffect, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
 import Circle from "react-circle";
 import { Card, Col, Container, Row } from "reactstrap";
 
-export default class CialWidget extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {paros: 0, produciendo:0};
-  }
-  componentDidMount() {
-    var myHeaders = new Headers();
-    myHeaders.append("x-api-key", "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m");
-    myHeaders.append("Content-Type", "application/json");
+const CialWidget = (props) => {
 
-var raw = JSON.stringify({"id_vibot":this.props.id_vibot});
+    const [hacumuladas, setHacumuladas] = useState(0)
+    const [tActivo, setTActivo] = useState(0)
+    const [tInactivo, setTInactivo] = useState(0)
+    const [kgacumulados, setKgacumulados] = useState(0)
+    const [estado, setEstado] = useState(0)
+    const [capacidad, setCapacidad] = useState(0)
+    const [kgsolicitados, setKgsolicitados] = useState(0)
+    const [hsolicitadas, setHsolicitadas] = useState(0)
+    const id_vibot = props.id_vibot
 
-    var requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
+    const [dataTorta, setDataTorta] = useState(
+      {
+          legend: [
+              {
+                  display: false,
+                  position: "top",
+                  fullWidth: true,
+                  reverse: true,
+              },
+          ],
+      
+          labels: [
+              "Desconectado", 
+              "Paro sin Justificar",
+              "Producción",
+          ],
+          datasets: [
+              {
+                  data: [],
+                  backgroundColor: [
+                      "#d9d9d9",
+                      "#F7431E  ",
+                      "#2264A7",
+                  ],
+                  hoverBackgroundColor: [
+                      "#d9d9d9",
+                      "#F7431E  ",
+                      "#2264A7 ",
+                  ],
+              },
+          ],
+      }
+  )
 
-    fetch(
-      "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getenvasadora",
-      requestOptions
-    )
-    .then(response => response.json())
-    .then( result => {
-          this.setState({
-            paros:result[0].paros,
-            produciendo:result[0].produciendo,
-            total:result[0].total
-          })
+
+  const loadResumen = () => {
+    fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenmaquina", {
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json",
+        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+      },
+
+      body: JSON.stringify({
+        id_vibot: id_vibot,
+      }),
+    })
+      .then(response => response.json())
+      .then(result => {
+        let data = [];
+        if (result[0].tiempo_inactivo == 0 && result[0].tiempo_actividad == 0) {
+          data = [1, 0, 0]
+        } else {
+          data = [0, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
         }
-    )
-      .catch((error) => console.log("error", error));
+        setTActivo(result[0].tiempo_actividad)
+        setTInactivo(result[0].tiempo_inactivo == 0 ? 1 :result[0].tiempo_inactivo)
+        setEstado(result[0].estado)
+        setHacumuladas(result[0].hamburguesas_acumuladas)
+        setKgacumulados(result[0].real_kg)
+        setHsolicitadas(result[0].cajas)
+        setKgsolicitados(result[0].kg_solicitados)
+        setCapacidad(result[0].kg_hora)
+        setDataTorta(
+          {
+            datasets: [
+              {
+                data: data
+              }
+            ],
+          }
+        )
+
+      }
+      )
+      .catch(err => {
+        console.error(err);
+      });
   }
-  render() {
-    let data = {
-      legend: [
-        {
-          display: false,
-          position: "top",
-          fullWidth: true,
-          reverse: true,
-        },
-      ],
 
-      labels: [
-       //"Inactivo",
-        "Paro sin Justificar",
-        //"Paro Justificado",
-        "Producción",
-    ],
-      stroke:{
-        width: 2,
-       },
-      datasets: [
-        {
-          data: [this.state.paros, this.state.produciendo],
-          backgroundColor: [
-           // "#d9d9d9",
-            "#F7431E  ",
-            //"#FFB000",
-            "#2264A7",
-        ],
-        hoverBackgroundColor: [
-           //"#d9d9d9",
-            "#F7431E  ",
-           // "#FFB000",
-            "#2264A7 ",
-        ],
-        },
-      ],
-    };
+  useEffect(() => {
+    loadResumen()
+  }, [])
 
-    if (
-      this.props.modo === 2 ||
-      this.props.modo === 1 ||
-      this.props.modo === 3 ||
-      this.props.modo === 4 ||
-      this.props.modo === 5
-    )
-      return (
-        <Col md="6" xl="3" lg="6" xs="12">
-          <Card className="main-card mb-3">
-            {/* header */}
-            {this.props.modo === 5 ? (
-              <div>
-                <Container
-                  style={{
-                    color: "#ffffff",
-                    background: this.props.color,
-                    padding: "15px",
-                    textAlign: "center",
-                    fontSize: "18px",
-                  }}
-                >
-                  {" "}
-                  {this.props.nombre}
-                </Container>
-                <Container>
-                  <Row>
-                    <Col>
-                      <div className="Kgi">
-                        {this.props.estado === 1 ? (
-                          <span className="opacity-10 text-success pr-2">
-                            <FontAwesomeIcon icon={faAngleUp} />
-                          </span>
-                        ) : (
-                          <span className="opacity-10 text-danger pr-2">
-                            <FontAwesomeIcon icon={faAngleDown} />
-                          </span>
-                        )}
-                        {this.props.OE} Kg
-                      </div>
-                    </Col>
+  useEffect(() => {
+    const interval = setInterval(() => {
 
-                    <Col>
-                      <div style={{ paddingTop: "15px" }} />
-                      <div className="tde">
-                        <div>
-                          <font color="#aaaaaa">Tiempo de Actividad</font>
-                        </div>
-                        <div>
-                          <font color="gray">
-                            {this.props.data[6]} hrs /{" "}
-                            {this.props.data
-                              .reduce((a, b) => a + b, 0)
-                              .toFixed(1)}{" "}
-                            hrs
-                          </font>{" "}
-                        </div>
-                      </div>
-                    </Col>
-                  </Row>
-                </Container>
-              </div>
-            ) : (
-              <Container
-                className={
-                  this.props.modo === 1 || this.props.modo === 2
-                    ? ""
-                    : "darkbackground"
-                }
-              >
-                <Row>
-                  <Col>
-                    <div className="tizq">
-                      <div
-                        className={
-                          this.props.modo === 1 || this.props.modo === 2
-                            ? "title1"
-                            : "title1dark"
-                        }
-                      >
-                        {this.props.nombre}
-                      </div>
-                      <div>
-                        <div
-                          className={
-                            this.props.modo === 1 || this.props.modo === 2
-                              ? "indi"
-                              : "indi text-white"
-                          }
-                        >
-                          {this.props.estado === 1 ? (
-                            <span className="opacity-10 text-success pr-2">
-                              <FontAwesomeIcon icon={faAngleUp} />
-                            </span>
-                          ) : (
-                            <span className="opacity-10 text-danger pr-2">
-                              <FontAwesomeIcon icon={faAngleDown} />
-                            </span>
-                          )}
-                          {(
-                            (this.props.data[6] /
-                              this.props.data.reduce((a, b) => a + b, 0)) *
-                            100
-                          ).toFixed(0)}
+      loadResumen();
+    }, 15000);
+    return () => clearInterval(interval);
+  }, []);
 
-                          <small className="opacity-5 pl-1">%</small>
-                        </div>
-                      </div>{" "}
-                    </div>
-                  </Col>
-                  <Col>
-                    <div className="tde">
-                      {this.props.estado === 1 ? (
-                        <div className="title2">Produciendo</div>
-                      ) : (
-                        <div className="title2rojo">Parada</div>
-                      )}
-                      <div>
-                        <font color="#aaaaaa">Tiempo de Actividad</font>
-                      </div>
-                      <div>
-                        <font color="gray">
-                          {this.props.data[6]} hrs /{" "}
-                          {this.props.data
-                            .reduce((a, b) => a + b, 0)
-                            .toFixed(1)}{" "}
-                          hrs
-                        </font>{" "}
-                      </div>
-                    </div>
+  return (
+    <Col md="6" xl="3" lg="6" xs="12">
+      <Card className="main-card mb-3">
+        {/* header */}
 
-                    <div />
-                  </Col>
-                </Row>
-                {this.props.modo === 3 || this.props.modo === 4 ? (
-                  <div style={{ padding: "10px" }} />
-                ) : (
-                  <hr />
-                )}
-              </Container>
-            )}
-            {this.props.modo === 4 ? (
-              <div style={{ padding: "10px" }} />
-            ) : this.props.modo === 3 ? (
-              <div style={{ padding: "8px" }} />
-            ) : (
-              ""
-            )}
+        <div className="blackBorder2" >
+          <Row>
+            <br />
+            <Col align="left" md="12">
+              <div className="text-uppercase font-weight-bold title1orange mb-3 ml-3">{props.nombre}</div>
+            </Col>
+          </Row>
+        </div >
 
-            {this.props.modo === 1 ||
-            this.props.modo === 3 ||
-            this.props.modo === 5 ? (
-              <div className="centralbody2">
+        <div className="space5px ">
+          <Row>
+            <br />
+            <Col md="6">
+              <Row className="mt-4" align="left">
+
+                 <div  className="ml-4 font2gray">{Intl.NumberFormat().format(hacumuladas)}</div>
+
+                  <div  className="ml-2">de {Intl.NumberFormat().format(hsolicitadas)} F.Packs </div>
+                  
+              </Row>
+              <Row className="mb-4" align="left"> 
+                  <div  className="ml-4 font2gray">{Intl.NumberFormat().format(kgacumulados)}</div>
+
+                <div align="center" className=" ml-2 mr-auto"> de {Intl.NumberFormat().format(kgsolicitados)} Kgs</div>
+
+              </Row>
+            </Col>
+            <Col md="6">
+              <Row >
+                <Col align="right">
+                  <div className={estado == 1 ? "font2gray mr-2 " : "font2Blue mr-2"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
+                </Col>
+              </Row>
+              <Row >
+                <Col align="right">
+                  <div className="font2Blue mr-2 ">{Math.round(tActivo / 60 * 100) / 100} hrs</div></Col>
+              </Row>
+              <Row className=" mb-4">
+                <Col align="right">
+                  <div className="mr-2 ">Tiempo de Actividad</div>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+
+
+          <Row >
+            <Col xs="9" className="ml-5">
+              <div className="space5px">
                 <Doughnut
-                  data={data}
+                  data={dataTorta}
+                  width="10"
+                  height="10"
+                  align="center"
                   options={{
                     legend: {
                       display: false,
                     },
                     responsive: true,
                     maintainAspectRatio: true,
-                    aspectRatio:90
+                    plotOptions: {
+                      pie: {
+                        donut: {
+                          size: '100%'
+                        }
+                      }
+                    }
                   }}
                 />
               </div>
-            ) : (
-              <div className="centralbody">
-                <Container>
-                  <Row>
-                    <Col xs="8">
-                      <div className="centralbodydetail">
-                        <Doughnut
-                          data={data}
-                          width="10"
-                          height="10"
-                          align="left"
-                          options={{
-                            legend: {
-                              display: false,
-                            },
-                            responsive: true,
-                            maintainAspectRatio: true,
-                            plotOptions: {
-                              pie: {
-                                donut: {
-                                  size: '100%'
-                                }
-                              }
-                            }
-                          }}
-                        />
-                      </div>
-                    </Col>
-                    <Col xs="4">
-                      <div className="Kg">{this.props.OE + "Kg"}</div>
-                      <div className="circle">
-                        <Circle
-                          animate={true} // Boolean: Animated/Static progress
-                          animationDuration="10s" // String: Length of animation
-                          responsive={true} // Boolean: Make SVG adapt to parent size
-                          size="100" // String: Defines the size of the circle.
-                          lineWidth="30" // String: Defines the thickness of the circle's stroke.
-                          progress={(
-                            (this.state.produciendo / this.state.total) *
-                            100
-                          ).toFixed(0)} // String: Update to change the progress and percentage.
-                          progressColor="#02c39a" // String: Color of "progress" portion of circle.
-                          bgColor="#ecedf0" // String: Color of "empty" portion of circle.
-                          textColor="#6b778c" // String: Color of percentage text color.
-                          textStyle={{
-                            fontSize: "5rem", // CSSProperties: Custom styling for percentage.
-                          }}
-                          percentSpacing={5} // Number: Adjust spacing of "%" symbol and number.
-                          roundedStroke={true} // Boolean: Rounded/Flat line ends
-                          showPercentage={true} // Boolean: Show/hide percentage.
-                          showPercentageSymbol={true} // Boolean: Show/hide only the "%" symbol.
-                        />
-                      </div>
-                      <div className="OE">OEE</div>
-                      <div className="kgpor">
-                        {this.props.OE}/{this.props.OET} Kg
-                      </div>
-                    </Col>
-                  </Row>
-                </Container>
-              </div>
-            )}
-            {this.props.modo === 1 ||
-            this.props.modo === 3 ||
-            this.props.modo === 5 ? (
-              <div style={{ padding: "11px" }} />
-            ) : (
-              ""
-            )}
-            {this.props.modo !== 5 ? (
-              <div className="barrainferior">
-                <div className="progress">
-                  <div
-                    className="progress-bar bg-produciendo"
-                    role="progressbar"
-                    style={{
-                      width:
-                        (this.props.data[6] * 100) /
-                          this.props.data
-                            .reduce((a, b) => a + b, 0)
-                            .toString() +
-                        "%",
-                    }}
-                    aria-valuenow={15}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                  />
-                  <div
-                    className="progress-bar rojo"
-                    role="progressbar"
-                    style={{
-                      width:
-                        (this.props.data[5] * 100) /
-                          this.props.data
-                            .reduce((a, b) => a + b, 0)
-                            .toString() +
-                        "%",
-                    }}
-                    aria-valuenow={30}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                  />
-                  <div
-                    className="progress-bar amarillo"
-                    role="progressbar"
-                    style={{
-                      width:
-                        (this.props.data[4] * 100) /
-                          this.props.data
-                            .reduce((a, b) => a + b, 0)
-                            .toString() +
-                        "%",
-                    }}
-                    aria-valuenow={20}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                  />
+            </Col>
+          </Row>
 
-                  <div
-                    className="progress-bar azul"
-                    role="progressbar"
-                    style={{
-                      width:
-                        (this.props.data[3] * 100) /
-                          this.props.data
-                            .reduce((a, b) => a + b, 0)
-                            .toString() +
-                        "%",
-                    }}
-                    aria-valuenow={20}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                  />
 
-                  <div
-                    className="progress-bar morado"
-                    role="progressbar"
-                    style={{
-                      width:
-                        (this.props.data[2] * 100) /
-                          this.props.data
-                            .reduce((a, b) => a + b, 0)
-                            .toString() +
-                        "%",
-                    }}
-                    aria-valuenow={20}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                  />
+          <Container>
+            <Row className="blackBorderTop ">
 
-                  <div
-                    className="progress-bar naranjo"
-                    role="progressbar"
-                    style={{
-                      width:
-                        (this.props.data[1] * 100) /
-                          this.props.data
-                            .reduce((a, b) => a + b, 0)
-                            .toString() +
-                        "%",
+              <Col xs="5" className="ml-4">
+                <div className="circle space5px ">
+                  <Circle
+                    animate={true} // Boolean: Animated/Static progress
+                    animationDuration="10s" // String: Length of animation
+                    responsive={true} // Boolean: Make SVG adapt to parent size
+                    size="50" // String: Defines the size of the circle.
+                    lineWidth="30" // String: Defines the thickness of the circle's stroke.
+                    progress={(
+                      (tActivo / (tInactivo + tActivo)) * 100
+                    ).toFixed(0)} // String: Update to change the progress and percentage.
+                    progressColor="#02c39a" // String: Color of "progress" portion of circle.
+                    bgColor="#ecedf0" // String: Color of "empty" portion of circle.
+                    textColor="#6b778c" // String: Color of percentage text color.
+                    textStyle={{
+                      fontSize: "5rem", // CSSProperties: Custom styling for percentage.
                     }}
-                    aria-valuenow={20}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                  />
-
-                  <div
-                    className="progress-bar inactivo"
-                    role="progressbar"
-                    style={{
-                      width:
-                        (this.props.data[0] * 100) /
-                          this.props.data
-                            .reduce((a, b) => a + b, 0)
-                            .toString() +
-                        "%",
-                    }}
-                    aria-valuenow={20}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
+                    percentSpacing={5} // Number: Adjust spacing of "%" symbol and number.
+                    roundedStroke={true} // Boolean: Rounded/Flat line ends
+                    showPercentage={true} // Boolean: Show/hide percentage.
+                    showPercentageSymbol={true} // Boolean: Show/hide only the "%" symbol.
                   />
                 </div>
-              </div>
-            ) : (
-              ""
-            )}
-            {this.props.modo === 2 || this.props.modo === 4 ? (
-              <div className="bot-description">{this.props.descripcion}</div>
-            ) : this.props.modo === 1 || this.props.modo === 3 ? (
-              <div style={{ padding: "10px" }} />
-            ) : (
-              ""
-            )}
-          </Card>
-        </Col>
-      );
-  }
+                <div align="center" className="font2 mt-3">Disponibilidad</div>
+
+              </Col>
+              <Col xs="5">
+                <div className="circle space5px">
+                  <Circle
+                    animate={true} // Boolean: Animated/Static progress
+                    animationDuration="10s" // String: Length of animation
+                    responsive={true} // Boolean: Make SVG adapt to parent size
+                    size="50" // String: Defines the size of the circle.
+                    lineWidth="30" // String: Defines the thickness of the circle's stroke.
+                    progress={(
+                      (kgacumulados/ (capacidad *((tActivo + tInactivo)/60))) * 100 //(totalKG/capacidad*tiempo que se demoro)
+                    ).toFixed(0)} // String: Update to change the progress and percentage.
+                    progressColor="#02c39a" // String: Color of "progress" portion of circle.
+                    bgColor="#ecedf0" // String: Color of "empty" portion of circle.
+                    textColor="#6b778c" // String: Color of percentage text color.
+                    textStyle={{
+                      fontSize: "5rem", // CSSProperties: Custom styling for percentage.
+                    }}
+                    percentSpacing={5} // Number: Adjust spacing of "%" symbol and number.
+                    roundedStroke={true} // Boolean: Rounded/Flat line ends
+                    showPercentage={true} // Boolean: Show/hide percentage.
+                    showPercentageSymbol={true} // Boolean: Show/hide only the "%" symbol.
+                  />
+                </div>
+
+                <div align="center" className="font2 mt-3">Eficiencia</div>
+              </Col>
+
+            </Row>
+          </Container>
+        </div>
+
+
+
+      </Card>
+    </Col>
+  );
 }
+export default CialWidget

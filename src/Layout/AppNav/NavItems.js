@@ -1,5 +1,5 @@
 export const General= [
-   /* {
+    {
         icon: 'pe-7s-graph',
         label: 'Vista General',
         to: '#/dashboards/minimal-dashboard-1',
