@@ -66,7 +66,7 @@ const CialWidget = (props) => {
       .then(response => response.json())
       .then(result => {
         let data = [];
-        if (result[0].tiempo_inactivo == 0 || result[0].tiempo_actividad == 0) {
+        if (result[0].tiempo_inactivo == 0 && result[0].tiempo_actividad == 0) {
           data = [1, 0, 0]
         } else {
           data = [0, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
@@ -97,7 +97,6 @@ const CialWidget = (props) => {
   }
 
   useEffect(() => {
-    console.log(props.nombre + " "+ props.id_vibot)
     loadResumen()
   }, [])
 
@@ -127,15 +126,16 @@ const CialWidget = (props) => {
           <Row>
             <br />
             <Col md="6">
-              <Row className="mt-4">
+              <Row className="mt-4" align="left">
 
+                 <div  className="ml-4 font2gray">{Intl.NumberFormat().format(hacumuladas)}</div>
 
-                <div align="center" className="ml-auto font2gray">{Intl.NumberFormat().format(hacumuladas)}</div>
-                <div align="center" className="  ml-2 mr-auto">de {Intl.NumberFormat().format(hsolicitadas)} F.Packs </div>
-
+                  <div  className="ml-2">de {Intl.NumberFormat().format(hsolicitadas)} F.Packs </div>
+                  
               </Row>
-              <Row className="mb-4">
-                <div align="left" className="ml-auto font2gray">{Intl.NumberFormat().format(kgacumulados)}</div>
+              <Row className="mb-4" align="left"> 
+                  <div  className="ml-4 font2gray">{Intl.NumberFormat().format(kgacumulados)}</div>
+
                 <div align="center" className=" ml-2 mr-auto"> de {Intl.NumberFormat().format(kgsolicitados)} Kgs</div>
 
               </Row>

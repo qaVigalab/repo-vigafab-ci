@@ -119,117 +119,121 @@ class NuevaOrden extends Component {
   render() {
     return (
       <div>
-        <Container>
-          <div className="text-uppercase font-weight-bold title1orange">Nueva Orden De Produccion</div>
-          <hr />
-          <Form onSubmit={this.handleSubmit}>
-            <Row>
-              <Col md="7">
-                <Row>
-                  <Col md="6">
-                    <FormGroup>
-                      <Label>Producto</Label>
-                      <Input
-                        type="select"
-                        name="select"
-                        id="prod_select"
-                        onChange={this.selectProducto}
-                      >
-                        {this.state.productos.map((producto, i) => (
-                          <option key={i} value={producto.id}>
-                            {producto.producto}
-                          </option>
-                        ))}
-                      </Input>
-                    </FormGroup>
-                  </Col>
-                  <Col md="4">
-                    <FormGroup>
-                      <Label>SKU</Label>
-                      <Input
-                        type="text"
-                        name="sku"
-                        id="sku"
-                        value={this.state.producto.sku}
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col md="2">
-                    <FormGroup>
-                      <Label>Prioridad</Label>
-                      <Input
-                        value={this.state.prioridad}
-                        type="select"
-                        name="prio"
-                        id="prio"
-                        placeholder="with a placeholder"
-                        onChange={this.changePrioridad}
-                      >
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                      </Input>
-                    </FormGroup>
-                  </Col>
-                </Row>
-              </Col>
-              <Col md="5">
-                <Row>
-                  <Col md="4">
-                    <FormGroup>
-                      <Label>Cajas</Label>
-                      <Input
-                        type="number"
-                        name="cajas"
-                        id="cajas"
-                        placeholder="Numero"
-                        value={this.state.cajas}
-                        onChange={this.cajasChange}
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col md="4">
-                    <FormGroup>
-                      <Label>Kg Solicitados</Label>
-                      <Input
-                        type="text"
-                        name="kg_sol"
-                        id="kg_sol"
-                        placeholder="Numero"
-                        value={this.state.kg + " kg"}
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col md="4">
-                    <FormGroup>
-                      <Label>Tiempo Estimado</Label>
-                      <Input
-                        type="text"
-                        name="tiempo"
-                        id="tiempo"
-                        placeholder="Hora"
-                        value={
-                          Math.round(this.state.tiempo * 100) / 100 + " hrs"
-                        }
-                      />
-                    </FormGroup>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <div align="right">
-                  <Button className="buttonOrange" size="lg">
-                    Generar nueva orden de Producción
+        <Row>
+        <Col align="left">
+          <div  className="ml-3 text-uppercase font-weight-bold title1orange">Nueva Orden De Produccion</div>
+        </Col>
+        <Col align="right">
+          <div  className="mr-4 cerrarO ">Cerrar</div>
+        </Col>
+        </Row>
+        <hr />
+        <Form className="ml-4 mr-4" onSubmit={this.handleSubmit}>
+          <Row>
+            <Col md="5">
+              <Row>
+                <Col md="6">
+                  <FormGroup>
+                    <Label>Producto</Label>
+                    <Input
+                      type="select"
+                      name="select"
+                      id="prod_select"
+                      onChange={this.selectProducto}
+                    >
+                      {this.state.productos.map((producto, i) => (
+                        <option key={i} value={producto.id}>
+                          {producto.producto}
+                        </option>
+                      ))}
+                    </Input>
+                  </FormGroup>
+                </Col>
+                <Col md="4">
+                  <FormGroup>
+                    <Label>SKU</Label>
+                    <Input
+                      type="text"
+                      name="sku"
+                      id="sku"
+                      value={this.state.producto.sku}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md="2">
+                  <FormGroup>
+                    <Label>Prioridad</Label>
+                    <Input
+                      value={this.state.prioridad}
+                      type="select"
+                      name="prio"
+                      id="prio"
+                      placeholder="with a placeholder"
+                      onChange={this.changePrioridad}
+                    >
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </Input>
+                  </FormGroup>
+                </Col>
+              </Row>
+            </Col>
+            <Col md="5">
+              <Row>
+                <Col md="4">
+                  <FormGroup>
+                    <Label>Cajas</Label>
+                    <Input
+                      type="number"
+                      name="cajas"
+                      id="cajas"
+                      placeholder="Numero"
+                      value={this.state.cajas}
+                      onChange={this.cajasChange}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md="4">
+                  <FormGroup>
+                    <Label>Kg Solicitados</Label>
+                    <Input
+                      type="text"
+                      name="kg_sol"
+                      id="kg_sol"
+                      placeholder="Numero"
+                      value={this.state.kg + " kg"}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md="4">
+                  <FormGroup>
+                    <Label>Tiempo Estimado</Label>
+                    <Input
+                      type="text"
+                      name="tiempo"
+                      id="tiempo"
+                      placeholder="Hora"
+                      value={
+                        Math.round(this.state.tiempo * 100) / 100 + " hrs"
+                      }
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
+            </Col>
+            <Col md="2">
+                    <Button className="buttonOrange" size="lg" block>
+                      Generar Orden de Producción 
                   </Button>
-                </div>
-              </Col>
-            </Row>
-          </Form>
-        </Container>
+
+
+            </Col>
+          </Row>
+        </Form>
+
       </div>
     );
   }

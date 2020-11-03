@@ -132,7 +132,7 @@
   .circle {
     align-content: flex-end;
     text-align: right;
-    padding-right: 15px;
+    
     padding-top: 60px;
     padding-bottom: 30px
   }
@@ -276,6 +276,14 @@
     padding-left: 10px;
     padding-right: 10px;
   }
+  .cerrarO {
+    color: #ABB2B9;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    padding-top:20px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
   .buttonOrange{
     background-color: #FF6200;
     color:#ffffff;
@@ -288,6 +296,31 @@
     background-color: #FF6200;
     color:#ffffff;
   }
+
+  .buttonOrange2{
+    background-color: #FF6200;
+    color:#ffffff;
+    border: 0px;
+    
+  }
+  .buttonOrange2:hover{
+    background-color: #D75200;
+    color:#ffffff;
+
+    border: 0px;
+    
+  }
+  .buttonBlue{
+    background-color: #2264A7;
+    color:#ffffff;
+    border: 0px;
+    
+  }
+  .buttonBlue:hover{
+    background-color: #2368AF;
+    color:#ffffff;
+  }
+  
   .theadBlue{
     background-color:#2264A7;
     color:#ffffff;
@@ -357,7 +390,6 @@
   .titleBlue{
     background : #2264A7 !important;
     color: #fff;
-    text-align: center;
     padding:10px;
   }
   .bigFont{

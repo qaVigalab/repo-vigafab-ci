@@ -18,7 +18,8 @@ import Orden from "./Orden";
 import Produciendo from "./Produciendo";
 import TotalEnvasadoras from "./TotalEnvasadoras";
 import Empaque from "./Empaque";
-
+import AddIcon from '@material-ui/icons/Add';
+import GetAppIcon from '@material-ui/icons/GetApp';
 const data = {
   legend: [
     {
@@ -153,12 +154,24 @@ class MinimalDashboard1 extends Component {
             </Col>
             <Col>
               <div align="right">
-                <Button className="mb-2 mr-2" color="primary">
-                  Descargar como Reporte
+                <Button className="buttonOrange2 mr-2" size="">
+                  <Row>
+                  <AddIcon className="ml-3 mt-1" /> 
+                  <div className="ml-2 mr-4 mt-1">Nueva orden de Producción</div>
+                  </Row>
                 </Button>
               </div>
             </Col>
-          </Row>    
+            <div align="right">
+              <Button className=" buttonBlue mr-4" size="">
+                <Row>
+                  <GetAppIcon className="ml-3 mt-1"/>
+                  <div className="ml-2 mr-4 mt-1">Descargar como Reporte</div>
+                </Row>
+              </Button>
+            </div>
+
+          </Row>
 
           <Row>
             <Col md="12" xl="12">
@@ -192,16 +205,16 @@ class MinimalDashboard1 extends Component {
             </Col>
           </Row>
 
-          
+
 
           <div class="columns-parent">
-          <Row>
-            <Col md="12" xl="12">
-              <Card className="main-card mb-3">
-                <Iqf2 estado={1} />
-              </Card>
-            </Col>
-          </Row>
+            <Row>
+              <Col md="12" xl="12">
+                <Card className="main-card mb-3">
+                  <Iqf2 estado={1} />
+                </Card>
+              </Col>
+            </Row>
 
             {this.state.modo === 2 || this.state.modo === 0 ? (
               <Row>
@@ -213,10 +226,10 @@ class MinimalDashboard1 extends Component {
                 ))}
               </Row>
             ) : (
-              ""
-            )}
+                ""
+              )}
 
-         {/*    <Row alignItems="stretch">
+            {/*    <Row alignItems="stretch">
               {this.state.modo === 1 || this.state.modo === 0 ? (
                 <CialWidget
                   modo={3}

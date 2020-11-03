@@ -62,7 +62,7 @@ const TotalEnvasadoras = (props) => {
             .then(response => response.json())
             .then(result => {
                 let data = [];
-                if (result[0].tiempo_inactivo == 0 || result[0].tiempo_actividad == 0) {
+                if (result[0].tiempo_inactivo == 0 && result[0].tiempo_actividad == 0) {
                     data = [1, 0, 0]
                 } else {
                     data = [0, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]

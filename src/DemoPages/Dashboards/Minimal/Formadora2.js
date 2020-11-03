@@ -208,12 +208,11 @@ const Formadora2 = (props) => {
             .then(response => response.json())
             .then(result => {
                 let data =[];
-                if (result[0].tiempo_inactivo == 0 || result[0].tiempo_actividad == 0) {
+                if (result[0].tiempo_inactivo == 0 && result[0].tiempo_actividad == 0) {
                     data =[1,0, 0]
                 }else {
                     data = [0, Math.round(result[0].tiempo_inactivo/60*100)/100 , Math.round(result[0].tiempo_actividad/60*100)/100]
                 }
-                console.log(data)
                 setTActivo(result[0].tiempo_actividad)
                 setTInactivo(result[0].tiempo_inactivo == 0 ? 1 :result[0].tiempo_inactivo)
                 setEstado(result[0].estado)
@@ -303,12 +302,13 @@ return (
                     <div className="text-uppercase font-weight-bold title1orange my-1">Formadora</div>
                 </Col>
 
-                <Col md={{ span: 10, offset: 5 }}>
-                    <Row >                   
-                         <div className="font2  my-4 text-right">Estado</div>
-                        <div  className={estado == 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
+                <Col >
+                    <Row >              
+                        <Col align="right"> 
+                         <div className="font2  my-4 ">Estado</div></Col>    
+                        <div  className={estado == 1 ? "font2gray  my-4" : "font2Blue my-4"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
                         <div className="font2 ml-3 my-4">Tiempo de Actividad</div>
-                        <div align="right" className="font2Blue ml-1 my-4">{ Math.round(tActivo / 60 * 100) / 100} hrs</div>
+                        <div className="font2Blue ml-1 mr-5 my-4">{ Math.round(tActivo / 60 * 100) / 100} hrs</div>
                         
                     </Row>
 
@@ -342,11 +342,11 @@ return (
 
                         </Row>
                     </div>
-                    <div className="my-4">
+                    <div className="my-3">
                         <Row >
 
                             <Col md="6">
-                                <div className="circle space5px">
+                                <div className="circle space5px ml-5">
                                     <Circle
                                         animate={true} // Boolean: Animated/Static progress
                                         animationDuration="10s" // String: Length of animation
@@ -367,8 +367,9 @@ return (
                                         showPercentage={true} // Boolean: Show/hide percentage.
                                         showPercentageSymbol={true} // Boolean: Show/hide only the "%" symbol.
                                     />
-                                    <div align="left" className="mt-3">Disponibilidad</div>
+                                    
                                 </div>
+                                <div align="left" className="mt-2 ml-2">Disponibilidad</div>
                             </Col>
 
                             <Col md="6">
@@ -393,8 +394,9 @@ return (
                                         showPercentage={true} // Boolean: Show/hide percentage.
                                         showPercentageSymbol={true} // Boolean: Show/hide only the "%" symbol.
                                     />
-                                    <div align="center" className="mt-3">Eficiencia</div>
+                                    
                                 </div>
+                                <div align="center" className="mt-2">Eficiencia</div>
                             </Col>
 
                         </Row>

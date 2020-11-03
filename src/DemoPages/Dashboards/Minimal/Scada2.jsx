@@ -28,13 +28,13 @@ const Scada2 = (props) => {
   const [empaquetadoraConteoEmpaques, setEmpaquetadoraConteoEmpaques] = useState("0");
 
   /* INI techos de maquinas */
-  const [colorTechoFormadora, setColorTechoFormadora] = useState("#444054");
-  const [colorTechoIQF, setColorTechoIQF] = useState("#775dd0");
-  const [colorTechoEnvasadora1, setColorTechoEnvasadora1] = useState("#31cc54");
-  const [colorTechoEnvasadora2, setColorTechoEnvasadora2] = useState("#ff4560");
-  const [colorTechoEnvasadora3, setColorTechoEnvasadora3] = useState("#feb018");
-  const [colorTechoEnvasadora4, setColorTechoEnvasadora4] = useState("#ffef45");
-  const [colorTechoEmpaquetadora, setColorTechoEmpaquetadora] = useState("#25a0fc");
+  const [colorTechoFormadora, setColorTechoFormadora] = useState("");
+  const [colorTechoIQF, setColorTechoIQF] = useState("");
+  const [colorTechoEnvasadora1, setColorTechoEnvasadora1] = useState("");
+  const [colorTechoEnvasadora2, setColorTechoEnvasadora2] = useState("");
+  const [colorTechoEnvasadora3, setColorTechoEnvasadora3] = useState("");
+  const [colorTechoEnvasadora4, setColorTechoEnvasadora4] = useState("F7431E");
+  const [colorTechoEmpaquetadora, setColorTechoEmpaquetadora] = useState("");
 
   const loadData = () => {
     var myHeaders = new Headers();
@@ -60,6 +60,14 @@ const Scada2 = (props) => {
         setEnvasadora3Conteo(result[0].envasadora3)
         setEnvasadora4Conteo(result[0].envasadora4)
         setEmpaquetadoraConteoEmpaques(result[0].empaquetadora)
+        setColorTechoFormadora(result[0].est_for==2 ? "#2264A7" :"#F7431E")
+        setColorTechoIQF(result[0].est_iqf==2 ? "#2264A7" :"#F7431E")
+        setColorTechoEnvasadora1(result[0].est_env1==2 ? "#2264A7" :"#F7431E")
+        setColorTechoEnvasadora2(result[0].est_env2==2 ? "#2264A7" :"#F7431E")
+        setColorTechoEnvasadora3(result[0].est_env3==2 ? "#2264A7" :"#F7431E")
+        setColorTechoEnvasadora4(result[0].est_env3==2 ? "#2264A7" :"#F7431E")
+        setColorTechoEmpaquetadora(result[0].est_emp==2 ? "#2264A7" :"#F7431E")
+        var myHeaders = new Headers();
       })
       .catch(error => console.log('error', error));
   }
@@ -136,7 +144,7 @@ const Scada2 = (props) => {
             </div>
           </Col>
         </Row>
-              
+
         <Col xs="12">
           <Card className="main-card mb-3">
             <Container>
@@ -309,10 +317,11 @@ const Scada2 = (props) => {
                       d="M1347.1 1251.9l-88.5 51.1v-107.7l88.5-51.1z"
                     />
                     <path
-                      className="prefix__st67 setColorTechoEnvasadora4"
+                      className={"colorTechoEnvasadora4"}
                       d="M1258.6 1195.3l-81.4-47 88.5-51.1 81.4 47z"
                       id="prefix__Cube_face_-_top_103_"
                     />
+
                   </g>
                   <g className="prefix__st72">
                     <path
@@ -505,7 +514,8 @@ const Scada2 = (props) => {
                       />
                     </g>
                   </g>
-                  <g>
+                  {/*}
+                <g>
                     <image
                       width={255}
                       height={219}
@@ -571,7 +581,9 @@ const Scada2 = (props) => {
                         {"\xB0C"}
                       </text>
                     </g>
-                  </g>
+                  </g> 
+                  */}
+                  
                   <g>
                     <image
                       width={256}
@@ -767,7 +779,7 @@ const Scada2 = (props) => {
                       </text>
                     </g>
                   </g>
-                  <g>
+           {/*       <g>
                     <image
                       width={256}
                       height={144}
@@ -831,7 +843,7 @@ const Scada2 = (props) => {
                       </text>
                     </g>
                   </g>
-                  <g>
+                  */}<g>
                     <image
                       width={181}
                       height={115}
@@ -1692,29 +1704,29 @@ const Scada2 = (props) => {
         </Col>
       </ReactCSSTransitionGroup>
 
-      
-        <Col  xs="12">
-          <Card>
 
-            <CardHeader className="card-header-tab">
-              <Col>
-                <div className="modal-title font-size-md header-card-padding text-uppercase font-weight-bold">
-                  Funcionamiento de la linea de producción
+      <Col xs="12">
+        <Card>
+
+          <CardHeader className="card-header-tab">
+            <Col>
+              <div className="modal-title font-size-md header-card-padding text-uppercase font-weight-bold">
+                Funcionamiento de la linea de producción
                  </div>
-              </Col>
-            </CardHeader>
-            
-            <CardBody className="card-body-tab">
-              <TimeLine />
-            </CardBody>
+            </Col>
+          </CardHeader>
 
-          </Card>
-        </Col>
-      
-      
+          <CardBody className="card-body-tab">
+            <TimeLine />
+          </CardBody>
+
+        </Card>
+      </Col>
 
 
-      
+
+
+
     </Fragment>
 
 

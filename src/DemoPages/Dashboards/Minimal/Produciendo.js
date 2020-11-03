@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col } from "reactstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 import { Doughnut } from "react-chartjs-2";
 import { connect } from "react-redux";
 import icono1 from "./images/icono1.png";
@@ -29,7 +27,6 @@ const Produciendo = (props) => {
     const [cajas_solicitadas, setcajas_solicitadas] = useState(0)
     const [tInactivo, setTInactivo] = useState(0)
     const [kg_caja, setKgcaja] = useState(0)
-    //const [auxId, setAuxId] = useState(props.id_orden)
     const [dataTorta, setDataTorta] = useState(
         {
             legend: [
@@ -80,7 +77,6 @@ const Produciendo = (props) => {
         })
             .then(response => response.json())
             .then(result => {
-                console.log(result)
                 setEstado(result[0].estado)
                 setnOrden(result[0].id_sub_orden)
                 setSku(result[0].sku)
@@ -96,7 +92,7 @@ const Produciendo = (props) => {
                 setKgcaja(result[0].kg_caja)
                 setCapacidad(result[0].kg_hora)
                 setTInactivo(result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo)
-                setCalidad((result[0].cajas_acumuladas*result[0].kg_caja)/result[0].real_kg)
+                setCalidad((result[0].cajas_acumuladas*result[0].kg_caja)/result[0].real_kg==0 ? 1 : result[0].real_kg)
                 setEficiencia( (result[0].real_kg/ (result[0].kg_hora *((result[0].tiempo_actividad + (result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo))/60)) ))
                 setDisponibilidad((result[0].tiempo_actividad / ((result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo) + result[0].tiempo_actividad)))
             }
@@ -118,7 +114,7 @@ const Produciendo = (props) => {
             .then(response => response.json())
             .then(r => {
                 let data = [];
-                if (r[0].tiempo_paro == 0 || r[0].tiempo_justificado == 0 || r[0].tiempo_produccion == 0) {
+                if (r[0].tiempo_paro == 0 && r[0].tiempo_justificado == 0 && r[0].tiempo_produccion == 0) {
                     data = [1, 0, 0, 0]
                 } else {
                     data = [0, Math.round(r[0].tiempo_paro / 60 * 100) / 100, Math.round(r[0].tiempo_justificado / 60 * 100) / 100, Math.round(r[0].tiempo_produccion / 60 * 100) / 100]
@@ -161,7 +157,7 @@ const Produciendo = (props) => {
                 <Row>
                     <br />
                     <Col md="2">
-                        <div align="center" className="text-uppercase font-weight-bold my-1">{estado == 1 ? "Detenida" : "Produciendo"}</div>
+                        <div align="left" className="text-uppercase font-weight-bold my-1 ml-4">{estado == 1 ? "Detenida" : "Produciendo"}</div>
                     </Col>
                     <Col md="2">
                         <Row>
@@ -191,18 +187,19 @@ const Produciendo = (props) => {
                 </Row>
             </div>
 
-            <div className="titleBlue p-1">
+            <div className="titleBlue ">
                 <Row>
                     <br />
-                    <Col align="center" md="2">
-                        <div className="text-uppercase font-weight-bold titleBlue">Línea de Producción</div>
+                    <Col align="left" md="2">
+                        <div className="text-uppercase font-weight-bold ml-3 titleBlue">Línea de Producción</div>
                     </Col>
-                    <Col md={{ span: 10, offset: 5 }}>
+                    <Col>
                         <Row >
-                            <div className="font2  my-1 text-right">Estado</div>
-                            <div className={estado == 1 ? "font2White ml-1 my-1" : "font2White ml-1 my-1"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
+                            <Col align="right">
+                            <div className="font2  my-1">Estado</div></Col>
+                            <div className={estado == 1 ? "font2White  my-1" : "font2White my-1"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
                             <div className="font2 ml-3 my-1">Tiempo de Actividad</div>
-                            <div align="right" className="font2White ml-1 my-1">{Math.round(tiempo / 60 * 100) / 100} hrs</div>
+                            <div align="right" className="font2White ml-1 mr-5 my-1">{Math.round(tiempo / 60 * 100) / 100} hrs</div>
 
                         </Row>
                     </Col>
@@ -212,44 +209,44 @@ const Produciendo = (props) => {
                 <Col className="blueRow ml-3" md="3">
 
                     <div className="whiteBorder">
-                        <Row >
+                        <Row className="mb-2">
                             <Col md="3">
-                                <div className=" ml-4 my-4  ">
+                                <div className=" ml-4 my-3  ">
                                     <img src={icono1} className="rounded float-left mb-2" alt="Balanza" />
                                 </div>
                             </Col>
                             <Col md="9">
-                                <div align="center" className="bigFont mt-4">{Math.round(kg_acumulado * 100) / 100}</div>
-                                <div align="center" className="littleFont">de {" " + Math.round(kg_solicitado * 100) / 100 + " "} Kg</div>
+                                <div align="center" className="bigFont mt-4">{Intl.NumberFormat().format(Math.round(kg_acumulado * 100) / 100)}</div>
+                                <div align="center" className="littleFont">de {" " + Intl.NumberFormat().format(Math.round(kg_solicitado * 100) / 100) + " "} Kg</div>
                             </Col>
 
                         </Row>
                     </div>
 
                     <div className="whiteBorder">
-                        <Row >
+                        <Row className="mb-2" >
                             <Col md="3">
-                                <div className="ml-4 my-4 ">
+                                <div className="ml-3 my-3 ">
                                     <img src={icono2} className="rounded float-left mb-2" alt="Empaque" />
                                 </div>
                             </Col>
                             <Col md="9">
-                                <div align="center" className="bigFont mt-4">{h_acumulado}</div>
-                                <div align="center" className="littleFont">de {" " + Math.round(h_solicitado) + " "} F. Pack</div>
+                                <div align="center" className="bigFont mt-4">{Intl.NumberFormat().format(h_acumulado)}</div>
+                                <div align="center" className="littleFont">de {" " + Intl.NumberFormat().format(Math.round(h_solicitado)) + " "} F. Pack</div>
                             </Col>
 
                         </Row>
                     </div>
                     <div className="">
-                        <Row >
+                        <Row className="mb-2">
                             <Col md="3">
-                                <div className="ml-4 my-4 ">
-                                    <img src={icono3} className="rounded float-left mb-2" alt="Caja" />
+                                <div className="ml-4 my-3 ">
+                                    <img src={icono3} className="rounded float-left mb-3" alt="Caja" />
                                 </div>
                             </Col>
                             <Col md="9">
-                                <div align="center" className="bigFont mt-2">{Math.round(cajas_acumuladas)}</div>
-                                <div align="center" className="littleFont">de {" " + cajas_solicitadas + " "} cajas</div>
+                                <div align="center" className="bigFont mt-4">{Intl.NumberFormat().format(Math.round(cajas_acumuladas))}</div>
+                                <div align="center" className="littleFont">de {" " + Intl.NumberFormat().format(cajas_solicitadas) + " "} cajas</div>
                             </Col>
 
                         </Row>
