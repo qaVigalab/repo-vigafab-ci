@@ -4,6 +4,7 @@ import { Doughnut } from "react-chartjs-2";
 import Circle from "react-circle";
 import { Card, Col, Container, Row } from "reactstrap";
 
+import ReactApexChart from "react-apexcharts";
 const CialWidget = (props) => {
 
     const [hacumuladas, setHacumuladas] = useState(0)
@@ -15,6 +16,25 @@ const CialWidget = (props) => {
     const [kgsolicitados, setKgsolicitados] = useState(0)
     const [hsolicitadas, setHsolicitadas] = useState(0)
     const id_vibot = props.id_vibot
+    const labels = {
+      enabled: false
+  };
+  const markers = {
+      size: 0
+  };
+  const tooltips = {
+
+      x: {
+          format: 'dd/MM/yy HH:mm',
+
+      },
+      y: {
+          formatter: undefined,
+          title: {
+              formatter: '',
+          },
+      },
+  };
 
     const [dataTorta, setDataTorta] = useState(
       {
@@ -47,6 +67,43 @@ const CialWidget = (props) => {
                   ],
               },
           ],
+      }
+  )
+  const [seriesTimeLine, setSeriesTimeLine] = useState([])
+  const [optionsTimeLine, setOptionsTimeLine] = useState(
+
+      {
+
+          dataLabels: labels,
+          markers: markers,
+          tooltip: tooltips,
+
+          chart: {
+              type: 'rangeBar',
+          },
+          plotOptions: {
+              bar: {
+                  horizontal: true,
+                  distributed: false,
+                  dataLabels: {
+                      hideOverflowingLabels: false
+                  }
+              }
+          },
+
+          xaxis: {
+              type: 'datetime',
+              labels: {
+                  datetimeUTC: false
+              }
+          },
+
+          grid: {
+              row: {
+                  colors: ['#f3f4f5', '#fff'],
+                  opacity: 1
+              }
+          }
       }
   )
 
@@ -95,8 +152,62 @@ const CialWidget = (props) => {
         console.error(err);
       });
   }
+  const loadTimeLine = () => {
+
+    fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/gettimelinemaquina", {
+        "method": "POST",
+        "headers": {
+            "Content-Type": "application/json",
+            "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+        },
+        body: JSON.stringify({
+            id_vibot: id_vibot,
+        }),
+    })
+        .then((response) => response.json())
+        .then((r) => {
+            var objeto = {};
+            var objetos = [
+                {
+                    x: 'Prod',
+                    y: [new Date(r[0].hora_inicio).getTime(),
+                    new Date(r[0].hora_inicio).getTime()],
+                    fillColor: '#2264A7'
+                },
+                {
+                    x: 'Paro',
+                    y: [new Date(r[0].hora_inicio).getTime(),
+                    new Date(r[0].hora_inicio).getTime()],
+                    fillColor: '#F7431E'
+                }
+            ];
+            for (let i = 0; i < r.length; i++) {
+
+                objeto = {
+                    x: r[i].id_tipo == 2 ? 'Prod' : 'Paro',
+                    y: [
+                        new Date(r[i].hora_inicio).getTime(),
+                        new Date(r[i].hora_termino).getTime()
+                    ],
+                    fillColor: r[i].id_tipo == 2 ? '#2264A7' : '#F7431E'
+
+                }
+                objetos.push(objeto)
+            }
+            //console.log(objetos)
+            setSeriesTimeLine([{
+                data: objetos
+            }]);
+            //console.log(objetos)
+        })
+
+        .catch((err) => {
+            console.error(err);
+        });
+}
 
   useEffect(() => {
+    loadTimeLine()
     loadResumen()
   }, [])
 
@@ -104,7 +215,7 @@ const CialWidget = (props) => {
     const interval = setInterval(() => {
 
       loadResumen();
-    }, 15000);
+    }, 30000);
     return () => clearInterval(interval);
   }, []);
 
@@ -162,6 +273,7 @@ const CialWidget = (props) => {
           <Row >
             <Col xs="9" className="ml-5">
               <div className="space5px">
+                <Container>
                 <Doughnut
                   data={dataTorta}
                   width="10"
@@ -182,21 +294,21 @@ const CialWidget = (props) => {
                     }
                   }}
                 />
+                </Container>
               </div>
             </Col>
           </Row>
 
 
-          <Container>
-            <Row className="blackBorderTop ">
+            <Row className="blackBorderTop blackBorderBot mr-2  " align="left">
 
-              <Col xs="5" className="ml-4">
+              <Col xs="6" className="mb-3">
                 <div className="circle space5px ">
                   <Circle
                     animate={true} // Boolean: Animated/Static progress
                     animationDuration="10s" // String: Length of animation
                     responsive={true} // Boolean: Make SVG adapt to parent size
-                    size="50" // String: Defines the size of the circle.
+                    size="14rem" // String: Defines the size of the circle.
                     lineWidth="30" // String: Defines the thickness of the circle's stroke.
                     progress={(
                       (tActivo / (tInactivo + tActivo)) * 100
@@ -205,7 +317,7 @@ const CialWidget = (props) => {
                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                     textColor="#6b778c" // String: Color of percentage text color.
                     textStyle={{
-                      fontSize: "5rem", // CSSProperties: Custom styling for percentage.
+                      fontSize: "4rem", // CSSProperties: Custom styling for percentage.
                     }}
                     percentSpacing={5} // Number: Adjust spacing of "%" symbol and number.
                     roundedStroke={true} // Boolean: Rounded/Flat line ends
@@ -213,10 +325,10 @@ const CialWidget = (props) => {
                     showPercentageSymbol={true} // Boolean: Show/hide only the "%" symbol.
                   />
                 </div>
-                <div align="center" className="font2 mt-3">Disponibilidad</div>
+                <div align="center" className="font2 mt-3 ">Disponibilidad</div>
 
               </Col>
-              <Col xs="5">
+              <Col xs="6">
                 <div className="circle space5px">
                   <Circle
                     animate={true} // Boolean: Animated/Static progress
@@ -244,7 +356,16 @@ const CialWidget = (props) => {
               </Col>
 
             </Row>
-          </Container>
+
+            
+          <Row>
+                <Col xs="12">
+                    <div id="chart">
+                        <ReactApexChart options={optionsTimeLine} series={seriesTimeLine} type="rangeBar" height={150} />
+
+                    </div>
+                </Col>
+            </Row>
         </div>
 
 

@@ -101,7 +101,7 @@ const TotalEnvasadoras = (props) => {
         const interval = setInterval(() => {
 
             loadResumen();
-        }, 60000);
+        }, 30000);
         return () => clearInterval(interval);
     }, []);
 

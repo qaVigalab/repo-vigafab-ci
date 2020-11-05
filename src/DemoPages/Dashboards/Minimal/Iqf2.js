@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Row, Col } from "reactstrap";
 import Chart from 'react-apexcharts'
 import Circle from "react-circle";
-import { set } from "date-fns";
+import ReactApexChart from "react-apexcharts";
 
 const Iqf2 = () => {
     const id_vibot = 38058;
@@ -163,6 +163,64 @@ const Iqf2 = () => {
     const [estado, setEstado] = useState(0)
     const [capacidad, setCapacidad] = useState(0)
 
+    const labels = {
+        enabled: false
+    };
+    const markers = {
+        size: 0
+    };
+    const tooltips = {
+
+        x: {
+            format: 'dd/MM/yy HH:mm',
+
+        },
+        y: {
+            formatter: undefined,
+            title: {
+                formatter: '',
+            },
+        },
+    };
+    const [seriesTimeLine, setSeriesTimeLine] = useState([])
+    const [optionsTimeLine, setOptionsTimeLine] = useState(
+
+        {
+
+            dataLabels: labels,
+            markers: markers,
+            tooltip: tooltips,
+
+            chart: {
+                type: 'rangeBar',
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                    distributed: false,
+                    dataLabels: {
+                        hideOverflowingLabels: false
+                    }
+                }
+            },
+
+            xaxis: {
+                type: 'datetime',
+                labels: {
+                    datetimeUTC: false
+                }
+            },
+
+            grid: {
+                row: {
+                    colors: ['#f3f4f5', '#fff'],
+                    opacity: 1
+                }
+            }
+        }
+    )
+
+
     const loadKpi = () => {
         fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenmaquina", {
             "method": "POST",
@@ -234,8 +292,63 @@ const Iqf2 = () => {
             });
     }
 
+    const loadTimeLine = () => {
+
+        fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/gettimelinemaquina", {
+            "method": "POST",
+            "headers": {
+                "Content-Type": "application/json",
+                "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+            },
+            body: JSON.stringify({
+                id_vibot: id_vibot,
+            }),
+        })
+            .then((response) => response.json())
+            .then((r) => {
+                var objeto = {};
+                var objetos = [
+                    {
+                        x: 'En Producción',
+                        y: [new Date(r[0].hora_inicio).getTime() - 2,
+                        new Date(r[0].hora_inicio).getTime() - 1],
+                        fillColor: '#2264A7'
+                    },
+                    {
+                        x: 'En Paro',
+                        y: [new Date(r[0].hora_inicio).getTime() - 1,
+                        new Date(r[0].hora_inicio).getTime()],
+                        fillColor: '#F7431E'
+                    }
+                ];
+                for (let i = 0; i < r.length; i++) {
+
+                    objeto = {
+                        x: r[i].id_tipo == 2 ? 'En Producción' : 'En Paro',
+                        y: [
+                            new Date(r[i].hora_inicio).getTime(),
+                            new Date(r[i].hora_termino).getTime()
+                        ],
+                        fillColor: r[i].id_tipo == 2 ? '#2264A7' : '#F7431E'
+
+                    }
+                    objetos.push(objeto)
+                }
+                //console.log(objetos)
+                setSeriesTimeLine([{
+                    data: objetos
+                }]);
+                //console.log(objetos)
+            })
+
+            .catch((err) => {
+                console.error(err);
+            });
+    }
+
     useEffect(() => {
         loadGraphs()
+        //loadTimeLine()
         loadKpi()
     }, [])
 
@@ -243,7 +356,7 @@ const Iqf2 = () => {
         const interval = setInterval(() => {
             loadGraphs()
             loadKpi()
-        }, 60000);
+        }, 30000);
         return () => clearInterval(interval);
     }, []);
 
@@ -366,6 +479,17 @@ const Iqf2 = () => {
                     </Row>
                 </Col>
             </Row>
+            {/*
+            <Row>
+                <Col xs="12">
+                    <div id="chart">
+                        <ReactApexChart options={optionsTimeLine} series={seriesTimeLine} type="rangeBar" height={150} />
+
+                    </div>
+                </Col>
+            </Row>
+            */}
+            
             {
                 //<div className="bot-description">Receta actual: {" " + producto}</div>
             }

@@ -226,7 +226,7 @@ class NuevaOrden extends Component {
             </Col>
             <Col md="2">
                     <Button className="buttonOrange" size="lg" block>
-                      Generar Orden de Producción 
+                      Generar Orden 
                   </Button>
 
 

@@ -285,7 +285,7 @@ useEffect(() => {
     const interval = setInterval(() => {
         loadGraphTemp();
         loadResumen();
-    }, 6000);
+    }, 30000);
     return () => clearInterval(interval);
 }, []);
 

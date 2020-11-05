@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import icono1 from "./images/icono1.png";
 import icono2 from "./images/icono2.png";
 import icono3 from "./images/icono3.png";
+import TimeLine from "./TimeLine";
 
 import Circle from "react-circle";
 
@@ -92,8 +93,8 @@ const Produciendo = (props) => {
                 setKgcaja(result[0].kg_caja)
                 setCapacidad(result[0].kg_hora)
                 setTInactivo(result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo)
-                setCalidad((result[0].cajas_acumuladas*result[0].kg_caja)/result[0].real_kg==0 ? 1 : result[0].real_kg)
-                setEficiencia( (result[0].real_kg/ (result[0].kg_hora *((result[0].tiempo_actividad + (result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo))/60)) ))
+                setCalidad((result[0].cajas_acumuladas * result[0].kg_caja) / result[0].real_kg == 0 ? 1 : result[0].real_kg)
+                setEficiencia((result[0].real_kg / (result[0].kg_hora * ((result[0].tiempo_actividad + (result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo)) / 60))))
                 setDisponibilidad((result[0].tiempo_actividad / ((result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo) + result[0].tiempo_actividad)))
             }
             )
@@ -145,7 +146,7 @@ const Produciendo = (props) => {
         const interval = setInterval(() => {
             loadResumen();
 
-        }, 6000);
+        }, 30000);
         return () => clearInterval(interval);
     }, []);
 
@@ -196,7 +197,7 @@ const Produciendo = (props) => {
                     <Col>
                         <Row >
                             <Col align="right">
-                            <div className="font2  my-1">Estado</div></Col>
+                                <div className="font2  my-1">Estado</div></Col>
                             <div className={estado == 1 ? "font2White  my-1" : "font2White my-1"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
                             <div className="font2 ml-3 my-1">Tiempo de Actividad</div>
                             <div align="right" className="font2White ml-1 mr-5 my-1">{Math.round(tiempo / 60 * 100) / 100} hrs</div>
@@ -289,7 +290,7 @@ const Produciendo = (props) => {
                                     size="100" // String: Defines the size of the circle.
                                     lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                     progress={(
-                                        eficiencia* 100 //(totalKG/capacidad*tiempo que se demoro)
+                                        eficiencia * 100 //(totalKG/capacidad*tiempo que se demoro)
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
                                     progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -314,7 +315,7 @@ const Produciendo = (props) => {
                                     size="100" // String: Defines the size of the circle.
                                     lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                     progress={(
-                                        calidad*100
+                                        calidad * 100
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
                                     progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -339,7 +340,7 @@ const Produciendo = (props) => {
                                     size="100" // String: Defines the size of the circle.
                                     lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                     progress={(
-                                        eficiencia*disponibilidad*calidad*100
+                                        eficiencia * disponibilidad * calidad * 100
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
                                     progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -371,6 +372,11 @@ const Produciendo = (props) => {
                                     }} /></div>
                         </Col>
                     </Row>
+                </Col>
+            </Row>
+            <Row className="blackBorderTop mx-2">
+                <Col xs="12" className="my-3 mx-2">
+                    <TimeLine />
                 </Col>
             </Row>
         </div>

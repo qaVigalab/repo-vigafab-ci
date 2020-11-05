@@ -7,6 +7,7 @@ import {
   Button,
   Card,
   Col,
+  Container,
   Row,
 } from "reactstrap";
 import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
@@ -205,11 +206,9 @@ class MinimalDashboard1 extends Component {
             </Col>
           </Row>
 
-
-
           <div class="columns-parent">
             <Row>
-              <Col md="12" xl="12">
+              <Col xs="12" xl="12">
                 <Card className="main-card mb-3">
                   <Iqf2 estado={1} />
                 </Card>
