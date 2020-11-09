@@ -84,6 +84,7 @@ const TimeLine = (props) => {
     })
       .then((response) => response.json())
       .then((r) => {
+        console.log(r)
         var objeto = {};
         var objetos = [
           {
@@ -103,23 +104,23 @@ const TimeLine = (props) => {
 
           if (i == r.length - 1) {
             objeto = {
-              x: r[i].id_tipo_reporte == 2 ? 'En Producción' : 'En Paro' ,
+              x: r[i].id_tipo_reporte == 1 ? 'En Producción' : 'En Paro' ,
               y: [
                 new Date(r[i].fecha_inicio).getTime(),
                 new Date().getTime(),
               ],
-              fillColor: r[i].id_tipo_reporte == 2 ? '#2264A7' : '#F7431E'
+              fillColor: r[i].id_tipo_reporte == 1 ? '#2264A7' : '#F7431E'
             }
 
           }
           else {
             objeto = {
-              x: r[i].id_tipo_reporte == 2 ? 'En Producción' : 'En Paro' ,
+              x: r[i].id_tipo_reporte == 1 ? 'En Producción' : 'En Paro' ,
               y: [
                 new Date(r[i].fecha_inicio).getTime(),
                   new Date(r[i + 1].fecha_inicio).getTime()
               ],
-              fillColor: r[i].id_tipo_reporte == 2 ? '#2264A7' : '#F7431E'
+              fillColor: r[i].id_tipo_reporte == 1 ? '#2264A7' : '#F7431E'
             }
           }
           objetos.push(objeto)
@@ -127,7 +128,6 @@ const TimeLine = (props) => {
         setSeries2([{
           data:objetos
       }]);
-        //console.log(objetos)
       })
 
       .catch((err) => {
