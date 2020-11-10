@@ -8,7 +8,7 @@ import G3 from './svgs/g3';
 import G4 from './svgs/g4';
 import G5 from './svgs/g5';
 import G6 from './svgs/g6';
-import TimeLine from "./TimeLine";
+import TimeLineScada from "./TimeLineScada";
 const Scada2 = (props) => {
 
 
@@ -1720,7 +1720,7 @@ const Scada2 = (props) => {
           </CardHeader>
 
           <CardBody className="card-body-tab">
-            <TimeLine />
+            <TimeLineScada />
           </CardBody>
 
         </Card>
