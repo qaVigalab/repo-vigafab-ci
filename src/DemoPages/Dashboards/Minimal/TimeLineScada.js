@@ -2,7 +2,7 @@
 import React,{useEffect, useState} from "react";
 import ReactApexChart from "react-apexcharts";
 
-const TimeLine = (props) => {
+const TimeLineScada = (props) => {
 
     const labels = {
       enabled: false
@@ -74,7 +74,7 @@ const TimeLine = (props) => {
 
  const loadTimeLine = () =>  {
 
-    fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/gettimelinesku", {
+    fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/gettimeline", {
       "method": "POST",
       "headers": {
         "Content-Type": "application/json",
@@ -84,8 +84,6 @@ const TimeLine = (props) => {
     })
       .then((response) => response.json())
       .then((r) => {
-        let fecha_final = (new Date().getTime()-10800000) //menos 3 horas
-
         var objeto = {};
         var objetos = [
           {
@@ -108,7 +106,7 @@ const TimeLine = (props) => {
               x: r[i].id_tipo_reporte == 1 ? 'En Producción' : 'En Paro' ,
               y: [
                 new Date(r[i].fecha_inicio).getTime(),
-                fecha_final,
+                new Date().getTime()-10800000, //menos 3 horas
               ],
               fillColor: r[i].id_tipo_reporte == 1 ? '#2264A7' : '#F7431E'
             }
@@ -129,6 +127,7 @@ const TimeLine = (props) => {
         setSeries2([{
           data:objetos
       }]);
+        //console.log(objetos)
       })
 
       .catch((err) => {
@@ -151,4 +150,4 @@ const TimeLine = (props) => {
   }
 
 
-export default TimeLine;
+export default TimeLineScada;
