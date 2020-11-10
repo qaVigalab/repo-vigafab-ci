@@ -45,7 +45,7 @@ const Orden = (props) => {
   }
 
   const [ordenes, setOrdenes] = useState([]);
-  const [vacio, setVacio] = useState(1);
+  const [vacio, setVacio] = useState(0);
 
   const loadOrdenes = () => {
     fetch(
@@ -61,7 +61,7 @@ const Orden = (props) => {
     )
       .then((response) => response.json())
       .then((result) => {
-        result.lenght === 0 ? setVacio(1) : setOrdenes(result)
+        result[0].id_sub_orden === null && result[1].id_sub_orden === null ? setVacio(1) : setOrdenes(result)  
       })
       .catch((err) => {
         console.error(err);
@@ -85,10 +85,10 @@ const Orden = (props) => {
       <Col align="left">
         <div className="text-uppercase font-weight-bold title1orange ml-3">Producción en línea</div>
       </Col>
-      <br />
+      <br />{vacio === 1 ? 
       <Alert color="warning" className="mb-0">
          <a className="alert-link">No existen ordenes para mostrar</a>. 
-      </Alert>
+      </Alert> : ""}
       <Table striped className="mt-0">
         <thead className="theadBlue">
           <tr className="text-center">
@@ -114,7 +114,7 @@ const Orden = (props) => {
         <tbody>
           {vacio === 1 ? <tr className="text-center">
             <td>---</td>
-            <td>No existe ninguna orden</td>
+            <td>No existe ninguna orden activa</td>
             <td>---</td>
             <td>---</td>
             <td>---</td>
@@ -139,8 +139,9 @@ const Orden = (props) => {
           </tr>
 
             : ordenes.map((orden, i) => (
+              orden.id_sub_orden ?
               <tr className={orden.id_estado == 1 ? "orangeRow" : "text-center"}>
-                <td>{orden.proridad}</td>
+                <td>{orden.prioridad}</td>
                 <td>{orden.id_sub_orden}</td>
                 <td>{orden.sku}</td>
                 <td>{orden.producto}</td>
@@ -182,7 +183,7 @@ const Orden = (props) => {
                 </td>
 
               </tr>
-            ))}
+            :""))}
         </tbody>
       </Table>
 
