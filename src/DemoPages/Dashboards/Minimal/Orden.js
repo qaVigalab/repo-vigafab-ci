@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container,Col, Table, Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import { Container, Col, Table, Button, Modal, ModalHeader, ModalBody, ModalFooter,Alert } from "reactstrap";
 import { connect } from "react-redux";
 import { setIdOrden } from '../../../actions/dashboardActions'
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
@@ -15,39 +15,37 @@ import DeleteIcon from '@material-ui/icons/Delete';
 const Orden = (props) => {
 
 
-const deleteOrdenes = (id_sub,e) => {
-  e.preventDefault();
+  const deleteOrdenes = (id_sub, e) => {
+    e.preventDefault();
 
-  fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/deletesuborden", {
-  "method": "POST",
-  "headers": {
-    "Content-Type": "application/json",
-    "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
-  },
+    fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/deletesuborden", {
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+      },
       body: JSON.stringify({
         id: id_sub,
       }),
     }
-  )
-    .then((res) => res.json())
-    .catch((err) => {
-      console.error(err);
-    });
-
-    console.log(id_sub)
-
+    )
+      .then((res) => res.json())
+      .catch((err) => {
+        console.error(err);
+      });
     setModal(!modal);
     loadOrdenes();
-}
+  }
 
   const [modal, setModal] = useState(false);
 
   const toggle = () => {
-      setModal(!modal);
+    setModal(!modal);
 
   }
 
   const [ordenes, setOrdenes] = useState([]);
+  const [vacio, setVacio] = useState(0);
 
   const loadOrdenes = () => {
     fetch(
@@ -63,7 +61,7 @@ const deleteOrdenes = (id_sub,e) => {
     )
       .then((response) => response.json())
       .then((result) => {
-        setOrdenes(result)
+        result[0].id_sub_orden === null && result[1].id_sub_orden === null ? setVacio(1) : setOrdenes(result)  
       })
       .catch((err) => {
         console.error(err);
@@ -87,8 +85,11 @@ const deleteOrdenes = (id_sub,e) => {
       <Col align="left">
         <div className="text-uppercase font-weight-bold title1orange ml-3">Producción en línea</div>
       </Col>
-      <br />
-      <Table striped>
+      <br />{vacio === 1 ? 
+      <Alert color="warning" className="mb-0">
+         <a className="alert-link">No existen ordenes para mostrar</a>. 
+      </Alert> : ""}
+      <Table striped className="mt-0">
         <thead className="theadBlue">
           <tr className="text-center">
             <th>Prioridad</th>
@@ -111,51 +112,78 @@ const deleteOrdenes = (id_sub,e) => {
           </tr>
         </thead>
         <tbody>
-          {ordenes.map((orden, i) => (
-            <tr className={orden.id_estado == 1 ? "orangeRow" : "text-center"}>
-              <th scope="row">{orden.prioridad}</th>
-              <td>{orden.id_sub_orden}</td>
-              <td>{orden.sku}</td>
-              <td>{orden.producto}</td>
-              <td>{orden.cajas}</td>
-              <td>
-                {Math.round(orden.productividad * 100) / 100 + " ham/min"}
+          {vacio === 1 ? <tr className="text-center">
+            <td>---</td>
+            <td>No existe ninguna orden activa</td>
+            <td>---</td>
+            <td>---</td>
+            <td>---</td>
+            <td>
+              ---
               </td>
-              <td>{Math.round(orden.tiempo_estimado * 100) / 100 + " hrs"}</td>
-              <td>{orden.kg_solicitados + " Kg"}</td>
-              <td>{orden.real_kg + " Kg"}</td>
-              <td>
-                {orden.kg_porcentual == null
-                  ? "0 %"
-                  : orden.kg_porcentual > 100
-                    ? "100%"
-                    : orden.kg_porcentual + " %"}
+            <td>---</td>
+            <td>---</td>
+            <td>---</td>
+            <td>
+              ---
               </td>
-              <td>
-                {orden.id_estado == 3 ? <CheckCircleIcon style={{ color: green[500] }} /> : <RadioButtonUncheckedIcon />}
-              </td>
-              <td>
-                <IconButton aria-label="delete" style={orden.id_estado == 1 ? { color: "#ffebee" } : {}} onClick={toggle}>
-                  <DeleteIcon />
-                </IconButton>
-                <Modal isOpen={modal} toggle={toggle}>
-                  <ModalHeader toggle={toggle}>{"Desea eliminar la orden n° " + orden.id_sub_orden}</ModalHeader>
-                  <ModalBody>
-                    <Container>
-                      Sku: {orden.sku} <br />
+            <td>
+              <RadioButtonUncheckedIcon />
+            </td>
+            <td>
+              <IconButton aria-label="delete" >
+                <DeleteIcon />
+              </IconButton>
+            </td>
+
+          </tr>
+
+            : ordenes.map((orden, i) => (
+              orden.id_sub_orden ?
+              <tr className={orden.id_estado == 1 ? "orangeRow" : "text-center"}>
+                <td>{orden.prioridad}</td>
+                <td>{orden.id_sub_orden}</td>
+                <td>{orden.sku}</td>
+                <td>{orden.producto}</td>
+                <td>{orden.cajas}</td>
+                <td>
+                  {Math.round(orden.productividad * 100) / 100 + " ham/min"}
+                </td>
+                <td>{Math.round(orden.tiempo_estimado * 100) / 100 + " hrs"}</td>
+                <td>{orden.kg_solicitados + " Kg"}</td>
+                <td>{orden.real_kg + " Kg"}</td>
+                <td>
+                  {orden.kg_porcentual == null
+                    ? "0 %"
+                    : orden.kg_porcentual > 100
+                      ? "100%"
+                      : orden.kg_porcentual + " %"}
+                </td>
+                <td>
+                  {orden.id_estado == 3 ? <CheckCircleIcon style={{ color: green[500] }} /> : <RadioButtonUncheckedIcon />}
+                </td>
+                <td>
+                  <IconButton aria-label="delete" style={orden.id_estado == 1 ? { color: "#ffebee" } : {}} onClick={toggle}>
+                    <DeleteIcon />
+                  </IconButton>
+                  <Modal isOpen={modal} toggle={toggle}>
+                    <ModalHeader toggle={toggle}>{"Desea eliminar la orden n° " + orden.id_sub_orden}</ModalHeader>
+                    <ModalBody>
+                      <Container>
+                        Sku: {orden.sku} <br />
                       Producto: {orden.producto} <br />
                       Cajas : {orden.cajas} <br />
-                    </Container>
-                  </ModalBody>
-                  <ModalFooter>
-                    <Button color="danger" onClick={(e) => deleteOrdenes(orden.id_sub_orden,e)}>Eliminar</Button>{' '}
-                    <Button color="secondary" onClick={toggle}>Cancelar</Button>
-                  </ModalFooter>
-                </Modal>
-              </td>
+                      </Container>
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button color="danger" onClick={(e) => deleteOrdenes(orden.id_sub_orden, e)}>Eliminar</Button>{' '}
+                      <Button color="secondary" onClick={toggle}>Cancelar</Button>
+                    </ModalFooter>
+                  </Modal>
+                </td>
 
-            </tr>
-          ))}
+              </tr>
+            :""))}
         </tbody>
       </Table>
 

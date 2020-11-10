@@ -86,7 +86,6 @@ const Empaque = (props) => {
             xaxis: {
                 type: 'datetime',
                 labels: {
-                    datetimeUTC: false
                 }
             },
 

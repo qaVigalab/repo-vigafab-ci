@@ -50,7 +50,7 @@ const TimeLine = (props) => {
         xaxis: {
           type: 'datetime',
           labels: {
-            datetimeUTC: false
+            
         }
         },
 

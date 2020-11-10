@@ -93,8 +93,7 @@ const CialWidget = (props) => {
 
           xaxis: {
               type: 'datetime',
-              labels: {
-                  datetimeUTC: false
+              labels: {                 
               }
           },
 
