@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Col, Table, Button, Modal, ModalHeader, ModalBody, ModalFooter, Alert } from "reactstrap";
+import { Container, Col, Table, Button, Modal, ModalHeader, ModalBody, ModalFooter, Alert,Row } from "reactstrap";
 import { connect } from "react-redux";
 import { setIdOrden } from '../../../actions/dashboardActions'
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
@@ -13,6 +13,12 @@ import DeleteIcon from '@material-ui/icons/Delete';
 
 
 const Orden = (props) => {
+
+
+  const [ordenes, setOrdenes] = useState([]);
+  const [vacio, setVacio] = useState(0);
+  const [fechaFinal, setFechaFinal] = useState();
+
 
 
   const deleteOrdenes = (id_sub, e) => {
@@ -44,9 +50,6 @@ const Orden = (props) => {
 
   }
 
-  const [ordenes, setOrdenes] = useState([]);
-  const [vacio, setVacio] = useState(0);
-
   const loadOrdenes = () => {
     fetch(
       "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getordenes",
@@ -61,6 +64,8 @@ const Orden = (props) => {
     )
       .then((response) => response.json())
       .then((result) => {
+
+
         result[0].id_sub_orden === null ? setVacio(1) : setOrdenes(result)
         if (result[1].id_sub_orden != null) {
           setVacio(2)
@@ -73,6 +78,12 @@ const Orden = (props) => {
   };
 
   useEffect(() => {
+    let fecha = new Date();
+    let date = fecha.getDate() < 10 ? ("0" + fecha.getDate()) : fecha.getDate();
+    let month = fecha.getMonth() + 1;
+    let year = fecha.getFullYear();
+    fecha = (year + "-" + month + "-" + date)
+    setFechaFinal(fecha)
     loadOrdenes();
 
   }, []);
@@ -86,9 +97,15 @@ const Orden = (props) => {
 
   return (
     <div>
-      <Col align="left">
-        <div className="text-uppercase font-weight-bold title1orange ml-3">Producción en línea</div>
-      </Col>
+      <Row>
+        <Col align="left">
+          <div className="text-uppercase font-weight-bold title1orange ml-3">Producción en línea</div>
+
+        </Col>
+        <Col align="left">
+          <div className="text-uppercase font-weight-bold title1orange ml-3">{fechaFinal}</div>
+        </Col>
+      </Row>
       <br />{vacio === 1 ?
         <Alert color="warning" className="mb-0">
           <a className="alert-link">No existen ordenes para mostrar</a>.
