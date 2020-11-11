@@ -116,6 +116,7 @@ const Orden = (props) => {
           </tr>
         </thead>
         <tbody>
+          {/**PRUEBA COMMIT RAMA DAVID --> DEV */}
           {vacio === 1 ? <tr className="text-center">
             <td>---</td>
             <td>---</td>
