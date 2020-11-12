@@ -93,7 +93,7 @@ const Produciendo = (props) => {
                 setKgcaja(result[0].kg_caja)
                 setCapacidad(result[0].kg_hora)
                 setTInactivo(result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo)
-                setCalidad((result[0].cajas_acumuladas * result[0].kg_caja) / result[0].real_kg == 0 ? 1 : result[0].real_kg)
+                setCalidad((result[0].cajas_acumuladas * result[0].kg_caja) / (result[0].real_kg == 0 ? 1 : result[0].real_kg))
                 setEficiencia((result[0].real_kg / (result[0].kg_hora * ((result[0].tiempo_actividad + (result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo)) / 60))))
                 setDisponibilidad((result[0].tiempo_actividad / ((result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo) + result[0].tiempo_actividad)))
             }
