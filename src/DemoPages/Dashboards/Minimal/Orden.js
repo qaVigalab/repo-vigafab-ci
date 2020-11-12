@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Col, Table, Button, Modal, ModalHeader, ModalBody, ModalFooter, Alert,Row } from "reactstrap";
+import { Container, Col, Table, Button, Modal, ModalHeader, ModalBody, ModalFooter, Alert, Row, Input, Label } from "reactstrap";
 import { connect } from "react-redux";
 import { setIdOrden } from '../../../actions/dashboardActions'
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
@@ -11,15 +11,18 @@ import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 
-
-const Orden = (props) => {
+  const Orden = (props) => {
 
 
   const [ordenes, setOrdenes] = useState([]);
   const [vacio, setVacio] = useState(0);
-  const [fechaFinal, setFechaFinal] = useState();
 
-
+  let fecha = new Date();
+  let date = fecha.getDate() < 10 ? ("0" + fecha.getDate()) : fecha.getDate();
+  let month = fecha.getMonth() + 1;
+  let year = fecha.getFullYear();
+  fecha = (year + "-" + month + "-" + date)
+  const [fechaFinal, setFechaFinal] = useState(localStorage.getItem("fechaFinal") || fecha);
 
   const deleteOrdenes = (id_sub, e) => {
     e.preventDefault();
@@ -49,7 +52,7 @@ const Orden = (props) => {
     setModal(!modal);
 
   }
-
+ 
   const loadOrdenes = () => {
     fetch(
       global.api.dashboard.getordenes,
@@ -59,12 +62,14 @@ const Orden = (props) => {
           "content-type": "application/json",
           "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
         },
-        body: false,
+        body: JSON.stringify({
+          fecha: localStorage.getItem("fechaFinal"),
+        }),
       }
     )
       .then((response) => response.json())
       .then((result) => {
-
+        setVacio(0)
 
         result[0].id_sub_orden === null ? setVacio(1) : setOrdenes(result)
         if (result[1].id_sub_orden != null) {
@@ -77,15 +82,12 @@ const Orden = (props) => {
       });
   };
 
-  useEffect(() => {
-    let fecha = new Date();
-    let date = fecha.getDate() < 10 ? ("0" + fecha.getDate()) : fecha.getDate();
-    let month = fecha.getMonth() + 1;
-    let year = fecha.getFullYear();
-    fecha = (year + "-" + month + "-" + date)
-    setFechaFinal(fecha)
-    loadOrdenes();
+  const fechaChange = (e) => {
+    setFechaFinal(e.target.value)
+    localStorage.setItem("fechaFinal",e.target.value)
+  }
 
+  useEffect(() => {
   }, []);
   useEffect(() => {
     loadOrdenes();
@@ -94,21 +96,35 @@ const Orden = (props) => {
 
   /* useEffect(() => {
     const interval = setInterval(() => {
-      loadOrdenes();
+      loadOrdenes()
     }, 6000);
     return () => clearInterval(interval);
   }, []); */
+
+  useEffect(() => {
+    loadOrdenes();
+  }, [localStorage.getItem("fechaFinal")]);
 
   return (
     <div>
       <Row>
         <Col align="left">
-          <div className="text-uppercase font-weight-bold title1orange ml-3">Producción en línea</div>
+          <div className="text-uppercase font-weight-bold title1orange ml-3 mt-1">Producción en línea</div>
 
         </Col>
-        <Col align="left">
-          <div className="text-uppercase font-weight-bold title1orange ml-3">{fechaFinal}</div>
-        </Col>
+
+        <Row>
+          <Col className="mt-4 mr-0 "><div>Seleccione fecha</div></Col>
+          <Col className="mt-3 mb-0 ml-0 mr-4">
+            <Input
+              type="date"
+              name="tiempo"
+              id="tiempo"
+              value={localStorage.getItem("fechaFinal")}
+              onChange={fechaChange}
+            /></Col>
+        </Row>
+
       </Row>
       <br />{vacio === 1 ?
         <Alert color="warning" className="mb-0">
