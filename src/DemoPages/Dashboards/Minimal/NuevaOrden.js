@@ -28,6 +28,7 @@ class NuevaOrden extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    var isTrueSet = (localStorage.getItem("refresh") === 'true');
     fetch(
       global.api.dashboard.insertsuborder,
       {
@@ -47,10 +48,17 @@ class NuevaOrden extends Component {
       }
     )
       .then((res) => res.json())
-      .then(this.limpiarForm(), localStorage.setItem("refresh", !localStorage.getItem("refresh")))
+      .then(this.limpiarForm(),
+      
+        localStorage.setItem("refresh", !isTrueSet)
+      
+       
+     
+      )
       .catch((err) => {
         console.error(err);
       });
+     
   }
 
   loadProductos() {
@@ -109,6 +117,7 @@ class NuevaOrden extends Component {
 
   componentDidMount() {
     this.loadProductos();
+    localStorage.setItem("refresh", false)
   }
 
   changePrioridad(e) {

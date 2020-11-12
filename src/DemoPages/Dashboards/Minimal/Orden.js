@@ -92,12 +92,12 @@ const Orden = (props) => {
 
   }, [localStorage.getItem("refresh")]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     const interval = setInterval(() => {
       loadOrdenes();
     }, 6000);
     return () => clearInterval(interval);
-  }, []);
+  }, []); */
 
   return (
     <div>
