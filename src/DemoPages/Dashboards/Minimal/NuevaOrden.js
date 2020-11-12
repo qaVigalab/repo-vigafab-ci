@@ -27,7 +27,7 @@ class NuevaOrden extends Component {
   handleSubmit(event) {
     event.preventDefault();
     fetch(
-      "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/insertsuborder",
+      global.api.dashboard.insertsuborder,
       {
         method: "POST",
         headers: {
@@ -44,7 +44,7 @@ class NuevaOrden extends Component {
       }
     )
       .then((res) => res.json())
-      .then(this.limpiarForm())
+      .then(this.limpiarForm(), localStorage.setItem("refresh", !localStorage.getItem("refresh")))
       .catch((err) => {
         console.error(err);
       });
@@ -52,7 +52,7 @@ class NuevaOrden extends Component {
 
   loadProductos() {
     fetch(
-      "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getproducto",
+      global.api.dashboard.getproducto,
       {
         method: "POST",
         headers: {

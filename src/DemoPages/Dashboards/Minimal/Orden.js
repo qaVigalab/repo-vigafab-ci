@@ -18,7 +18,7 @@ const Orden = (props) => {
   const deleteOrdenes = (id_sub, e) => {
     e.preventDefault();
 
-    fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/deletesuborden", {
+    fetch(global.api.dashboard.deletesuborden, {
       "method": "POST",
       "headers": {
         "Content-Type": "application/json",
@@ -49,7 +49,7 @@ const Orden = (props) => {
 
   const loadOrdenes = () => {
     fetch(
-      "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getordenes",
+      global.api.dashboard.getordenes,
       {
         method: "POST",
         headers: {
@@ -76,6 +76,10 @@ const Orden = (props) => {
     loadOrdenes();
 
   }, []);
+  useEffect(() => {
+    loadOrdenes();
+
+  }, [localStorage.getItem("refresh")]);
 
   useEffect(() => {
     const interval = setInterval(() => {
