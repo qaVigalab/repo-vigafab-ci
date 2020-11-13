@@ -310,6 +310,20 @@
     border: 0px;
     
   }
+  .buttonGray{
+    background-color: #13395E;
+    color:#ffffff;
+    border: 0px;
+    
+  }
+  .buttonGray:hover{
+    background-color: #0F2E4B;
+    color:#ffffff;
+
+    border: 0px;
+    
+  }
+
   .buttonBlue{
     background-color: #2264A7;
     color:#ffffff;

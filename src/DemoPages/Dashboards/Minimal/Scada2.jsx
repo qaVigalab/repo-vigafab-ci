@@ -49,8 +49,6 @@ const Scada2 = (props) => {
     fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getscada", requestOptions)
       .then(response => response.json())
       .then(result => {
-
-        console.log(result[0])
         setFormadoraTemperaturaSalida(result[0].formadora_temp)
         setHamburguesasFormadas(result[0].formadora_rmp)
         setIqfTemperaturaSalida(result[0].iqf_temp)
