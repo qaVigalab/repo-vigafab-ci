@@ -21,6 +21,7 @@ import TotalEnvasadoras from "./TotalEnvasadoras";
 import Empaque from "./Empaque";
 import AddIcon from '@material-ui/icons/Add';
 import GetAppIcon from '@material-ui/icons/GetApp';
+import moment from 'moment'
 const data = {
   legend: [
     {
@@ -130,6 +131,7 @@ class MinimalDashboard1 extends Component {
       maquinas: [],
     });
     this.getMaquinas("envasadora");
+    localStorage.setItem("fechaFinal", moment().format('YYYY-MM-DD'))
   }
   render() {
     return (
@@ -185,12 +187,14 @@ class MinimalDashboard1 extends Component {
           <Row>
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
-                <Orden />
+                
+                  <Orden id_orden={this.props.id_orden}/>
+                
               </Card>
             </Col>
           </Row>
 
-          <Row>
+      {/*    <Row>
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
                 <Produciendo estado={1} />
@@ -213,8 +217,9 @@ class MinimalDashboard1 extends Component {
                   <Iqf2 estado={1} />
                 </Card>
               </Col>
-            </Row>
+            </Row>*/}
 
+            <div class="columns-parent"> {/* solo por mientras, borrar despues, agregado arriba*/}
             {this.state.modo === 2 || this.state.modo === 0 ? (
               <Row>
                 {this.state.maquinas.map((maquina) => (

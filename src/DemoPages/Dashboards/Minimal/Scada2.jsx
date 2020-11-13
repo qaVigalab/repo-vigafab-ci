@@ -65,7 +65,7 @@ const Scada2 = (props) => {
         setColorTechoEnvasadora1(result[0].est_env1==2 ? "#2264A7" :"#F7431E")
         setColorTechoEnvasadora2(result[0].est_env2==2 ? "#2264A7" :"#F7431E")
         setColorTechoEnvasadora3(result[0].est_env3==2 ? "#2264A7" :"#F7431E")
-        setColorTechoEnvasadora4(result[0].est_env3==2 ? "#2264A7" :"#F7431E")
+        setColorTechoEnvasadora4(result[0].est_env4==2 ? "#2264A7" :"#F7431E")
         setColorTechoEmpaquetadora(result[0].est_emp==2 ? "#2264A7" :"#F7431E")
         var myHeaders = new Headers();
       })
