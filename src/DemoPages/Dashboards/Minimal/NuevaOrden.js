@@ -2,7 +2,7 @@ import { FormGroup} from "@material-ui/core";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Button, Col, Container, Form, Input, Label, Row } from "reactstrap";
-
+import{setIdOrden} from '../../../actions/dashboardActions'
 class NuevaOrden extends Component {
   constructor(props) {
     super(props);
@@ -29,7 +29,7 @@ class NuevaOrden extends Component {
   handleSubmit(event) {
     event.preventDefault();
     fetch(
-      "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/insertsuborder",
+      global.api.dashboard.insertsuborder,
       {
         method: "POST",
         headers: {
@@ -47,15 +47,21 @@ class NuevaOrden extends Component {
       }
     )
       .then((res) => res.json())
-      .then(this.limpiarForm())
+      .then(this.limpiarForm(),
+      
+      this.props.setIdOrden(!this.props.id_orden),
+      console.log(this.props.id_orden)
+
+      )
       .catch((err) => {
         console.error(err);
       });
+     
   }
 
   loadProductos() {
     fetch(
-      "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getproducto",
+      global.api.dashboard.getproducto,
       {
         method: "POST",
         headers: {
@@ -109,6 +115,7 @@ class NuevaOrden extends Component {
 
   componentDidMount() {
     this.loadProductos();
+    localStorage.setItem("refresh", "NO")
   }
 
   changePrioridad(e) {
@@ -261,7 +268,11 @@ class NuevaOrden extends Component {
 const mapStateToProps = (state) => ({
   id_orden: state.dashboardReducers.id_orden,
 });
+const mapDispatchToProps = dispatch => ({
 
+  setIdOrden: data => dispatch(setIdOrden(data)),
+
+});
 //export default MinimalDashboard1;
-//export default connect(mapStateToProps,  mapDispatchToProps )(MinimalDashboard1);
-export default connect(mapStateToProps)(NuevaOrden);
+export default connect(mapStateToProps,  mapDispatchToProps )(NuevaOrden);
+//export default connect(mapStateToProps)(NuevaOrden);
