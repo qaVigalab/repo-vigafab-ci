@@ -1,80 +1,103 @@
 import React, { useEffect, useState } from "react";
-import { Container, Col, Table, Button, Modal, ModalHeader, ModalBody, ModalFooter, Alert, Row, Input, Label } from "reactstrap";
+import {
+  Container,
+  Col,
+  Table,
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Alert,
+  Row,
+  Input,
+  Label,
+} from "reactstrap";
 import { connect } from "react-redux";
-import { setIdOrden } from '../../../actions/dashboardActions'
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import { green } from '@material-ui/core/colors';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import { setIdOrden } from "../../../actions/dashboardActions";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import { green } from "@material-ui/core/colors";
+import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
+import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
+import IconButton from "@material-ui/core/IconButton";
+import DeleteIcon from "@material-ui/icons/Delete";
+import { set } from "date-fns";
 
-
-import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete';
-
-  const Orden = (props) => {
-
-
+const Orden = (props) => {
   const [ordenes, setOrdenes] = useState([]);
   const [vacio, setVacio] = useState(0);
-
+  const [sku, setSku] = useState("")
+  const [cajas, setCajas] = useState("")
+  const [producto, setProducto] = useState("")
+  const [idSubOrden, setIdSubOrden] = useState("")
   let fecha = new Date();
-  let date = fecha.getDate() < 10 ? ("0" + fecha.getDate()) : fecha.getDate();
+  let date = fecha.getDate() < 10 ? "0" + fecha.getDate() : fecha.getDate();
   let month = fecha.getMonth() + 1;
   let year = fecha.getFullYear();
-  fecha = (year + "-" + month + "-" + date)
-  const [fechaFinal, setFechaFinal] = useState(localStorage.getItem("fechaFinal") || fecha);
-
-  const deleteOrdenes = (id_sub, e) => {
+  fecha = year + "-" + month + "-" + date;
+  const [fechaFinal, setFechaFinal] = useState(
+    localStorage.getItem("fechaFinal") || fecha
+  );
+  const [refresh, setRefresh] = useState(localStorage.getItem("refresh"));
+  const deleteOrdenes = async(id_sub, e) => {
     e.preventDefault();
 
-    fetch(global.api.dashboard.deletesuborden, {
-      "method": "POST",
-      "headers": {
+    await fetch(global.api.dashboard.deletesuborden, {
+      method: "POST",
+      headers: {
         "Content-Type": "application/json",
-        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
       },
       body: JSON.stringify({
         id: id_sub,
       }),
-    }
-    )
-      .then((res) => res.json())
+    })
+      .then(
+        
+        console.log("Borrado ok")
+      )
       .catch((err) => {
         console.error(err);
       });
-    setModal(!modal);
-    loadOrdenes();
-  }
+    
+      
+      setModal(!modal)
+      loadOrdenes()
+  };
 
   const [modal, setModal] = useState(false);
 
-  const toggle = () => {
+  const toggle = (cajas, id_sub_orden, sku, producto) => {
+
+    setCajas(cajas);
+    setIdSubOrden(id_sub_orden);
+    setSku(sku);
+    setProducto(producto);
+
+    
     setModal(!modal);
 
-  }
- 
+  };
+
   const loadOrdenes = () => {
-    fetch(
-      global.api.dashboard.getordenes,
-      {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
-        },
-        body: JSON.stringify({
-          fecha: localStorage.getItem("fechaFinal"),
-        }),
-      }
-    )
+    fetch(global.api.dashboard.getordenes, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
+      },
+      body: JSON.stringify({
+        fecha: localStorage.getItem("fechaFinal"),
+      }),
+    })
       .then((response) => response.json())
       .then((result) => {
-        setVacio(0)
+        setVacio(0);
 
-        result[0].id_sub_orden === null ? setVacio(1) : setOrdenes(result)
+        result[0].id_sub_orden === null ? setVacio(1) : setOrdenes(result);
         if (result[1].id_sub_orden != null) {
-          setVacio(2)
-          setOrdenes(result)
+          setVacio(2);
+          setOrdenes(result);
         }
       })
       .catch((err) => {
@@ -83,38 +106,38 @@ import DeleteIcon from '@material-ui/icons/Delete';
   };
 
   const fechaChange = (e) => {
-    setFechaFinal(e.target.value)
-    localStorage.setItem("fechaFinal",e.target.value)
-  }
+    setFechaFinal(e.target.value);
+    localStorage.setItem("fechaFinal", e.target.value);
+  };
 
   useEffect(() => {
-  }, []);
-  useEffect(() => {
-    loadOrdenes();
-
-  }, [localStorage.getItem("refresh")]);
-
-  /* useEffect(() => {
     const interval = setInterval(() => {
-      loadOrdenes()
-    }, 6000);
+      loadOrdenes();
+    }, 60000);
     return () => clearInterval(interval);
-  }, []); */
+  }, []);
 
   useEffect(() => {
     loadOrdenes();
   }, [localStorage.getItem("fechaFinal")]);
 
+  useEffect(() => {
+    loadOrdenes();
+  }, [props.id_orden]);
+
   return (
     <div>
       <Row>
         <Col align="left">
-          <div className="text-uppercase font-weight-bold title1orange ml-3 mt-1">Producción en línea</div>
-
+          <div className="text-uppercase font-weight-bold title1orange ml-3 mt-1">
+            Producción en línea
+          </div>
         </Col>
 
         <Row>
-          <Col className="mt-4 mr-0 "><div>Seleccione fecha</div></Col>
+          <Col className="mt-4 mr-0 ">
+            <div>Seleccione fecha</div>
+          </Col>
           <Col className="mt-3 mb-0 ml-0 mr-4">
             <Input
               type="date"
@@ -122,14 +145,18 @@ import DeleteIcon from '@material-ui/icons/Delete';
               id="tiempo"
               value={localStorage.getItem("fechaFinal")}
               onChange={fechaChange}
-            /></Col>
+            />
+          </Col>
         </Row>
-
       </Row>
-      <br />{vacio === 1 ?
+      <br />
+      {vacio === 1 ? (
         <Alert color="warning" className="mb-0">
           <a className="alert-link">No existen ordenes para mostrar</a>.
-      </Alert> : ""}
+        </Alert>
+      ) : (
+        ""
+      )}
       <Table striped className="mt-0">
         <thead className="theadBlue">
           <tr className="text-center">
@@ -149,40 +176,37 @@ import DeleteIcon from '@material-ui/icons/Delete';
             <th>
               <DeleteIcon />
             </th>
-
           </tr>
         </thead>
         <tbody>
           {/**PRUEBA COMMIT RAMA DAVID --> DEV */}
-          {vacio === 1 ? <tr className="text-center">
-            <td>---</td>
-            <td>---</td>
-            <td>---</td>
-            <td>---</td>
-            <td>---</td>
-            <td>
-              ---
+          {vacio === 1 ? (
+            <tr className="text-center">
+              <td>---</td>
+              <td>---</td>
+              <td>---</td>
+              <td>---</td>
+              <td>---</td>
+              <td>---</td>
+              <td>---</td>
+              <td>---</td>
+              <td>---</td>
+              <td>---</td>
+              <td>
+                <RadioButtonUncheckedIcon />
               </td>
-            <td>---</td>
-            <td>---</td>
-            <td>---</td>
-            <td>
-              ---
+              <td>
+                <IconButton aria-label="delete">
+                  <DeleteIcon />
+                </IconButton>
               </td>
-            <td>
-              <RadioButtonUncheckedIcon />
-            </td>
-            <td>
-              <IconButton aria-label="delete" >
-                <DeleteIcon />
-              </IconButton>
-            </td>
-
-          </tr>
-
-            : ordenes.map((orden, i) => (
-              orden.id_sub_orden ?
-                <tr className={orden.id_estado == 1 ? "orangeRow" : "text-center"}>
+            </tr>
+          ) : (
+            ordenes.map((orden, i) =>
+              orden.id_sub_orden ? (
+                <tr
+                  className={orden.id_estado == 1 ? "orangeRow" : "text-center"}
+                >
                   <td>{orden.prioridad}</td>
                   <td>{orden.id_sub_orden}</td>
                   <td>{orden.sku}</td>
@@ -191,44 +215,66 @@ import DeleteIcon from '@material-ui/icons/Delete';
                   <td>
                     {Math.round(orden.productividad * 100) / 100 + " ham/min"}
                   </td>
-                  <td>{Math.round(orden.tiempo_estimado * 100) / 100 + " hrs"}</td>
+                  <td>
+                    {Math.round(orden.tiempo_estimado * 100) / 100 + " hrs"}
+                  </td>
                   <td>{orden.kg_solicitados + " Kg"}</td>
                   <td>{orden.real_kg + " Kg"}</td>
                   <td>
                     {orden.kg_porcentual == null
                       ? "0 %"
                       : orden.kg_porcentual > 100
-                        ? "100%"
-                        : orden.kg_porcentual + " %"}
+                      ? "100%"
+                      : orden.kg_porcentual + " %"}
                   </td>
                   <td>
-                    {orden.id_estado == 3 ? <CheckCircleIcon style={{ color: green[500] }} /> : <RadioButtonUncheckedIcon />}
+                    {orden.id_estado == 3 ? (
+                      <CheckCircleIcon style={{ color: green[500] }} />
+                    ) : (
+                      <RadioButtonUncheckedIcon />
+                    )}
                   </td>
                   <td>
-                    <IconButton aria-label="delete" style={orden.id_estado == 1 ? { color: "#ffebee" } : {}} onClick={toggle}>
+                    <IconButton
+                      aria-label="delete"
+                      style={orden.id_estado == 1 ? { color: "#ffebee" } : {}}
+                      onClick={()=>toggle( orden.cajas, orden.id_sub_orden, orden.sku, orden.producto )}
+                    >
                       <DeleteIcon />
                     </IconButton>
-                    <Modal isOpen={modal} toggle={toggle}>
-                      <ModalHeader toggle={toggle}>{"Desea eliminar la orden n° " + orden.id_sub_orden}</ModalHeader>
+                    
+                  </td>
+                </tr>
+              ) : (
+                ""
+              )
+            )
+          )}
+        </tbody>
+      </Table>
+      <Modal isOpen={modal} toggle={toggle}>
+                      <ModalHeader toggle={toggle}>
+                        {"Desea eliminar la orden n° " + idSubOrden}
+                      </ModalHeader>
                       <ModalBody>
                         <Container>
-                          Sku: {orden.sku} <br />
-                      Producto: {orden.producto} <br />
-                      Cajas : {orden.cajas} <br />
+                          Sku: {sku} <br />
+                          Producto: {producto} <br />
+                          Cajas : {cajas} <br /> 
                         </Container>
                       </ModalBody>
                       <ModalFooter>
-                        <Button color="danger" onClick={(e) => deleteOrdenes(orden.id_sub_orden, e)}>Eliminar</Button>{' '}
-                        <Button color="secondary" onClick={toggle}>Cancelar</Button>
+                        <Button
+                          color="danger"
+                          onClick={(e) => deleteOrdenes(idSubOrden, e)}
+                        >
+                          Eliminar
+                        </Button>{" "}
+                        <Button color="secondary" onClick={()=>toggle(0,0,0,0)}>
+                          Cancelar
+                        </Button>
                       </ModalFooter>
                     </Modal>
-                  </td>
-
-                </tr>
-                : ""))}
-        </tbody>
-      </Table>
-
     </div>
   );
 };
@@ -240,10 +286,11 @@ const mapStateToProps = (state) => ({
 //export default MinimalDashboard1;
 //export default connect(mapStateToProps,  mapDispatchToProps )(MinimalDashboard1);
 
-const mapDispatchToProps = dispatch => ({
-
-  setIdOrden: data => dispatch(setIdOrden(data)),
-
+const mapDispatchToProps = (dispatch) => ({
+  setIdOrden: (data) => dispatch(setIdOrden(data)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Orden);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Orden);
