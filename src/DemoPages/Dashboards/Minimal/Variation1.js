@@ -187,7 +187,9 @@ class MinimalDashboard1 extends Component {
           <Row>
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
-                <Orden />
+                
+                  <Orden id_orden={this.props.id_orden}/>
+                
               </Card>
             </Col>
           </Row>

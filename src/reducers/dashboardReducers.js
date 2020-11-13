@@ -12,7 +12,7 @@ const INITIAL_STATE = {
     userLogin: { Token: "1" },
     seleccionados: [],
     actualizar: "0",
-    id_orden:0
+    id_orden:false
 };
 export default function reducer(state = INITIAL_STATE, action) {
     switch (action.type) {
