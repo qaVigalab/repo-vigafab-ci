@@ -167,7 +167,6 @@ const Empaque = (props) => {
         })
             .then((response) => response.json())
             .then((r) => {
-                console.log(r)
                 var objeto = {};
                 var objetos = [
                     {
