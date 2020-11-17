@@ -65,6 +65,24 @@ const Orden = (props) => {
     loadOrdenes()
   };
 
+  const partirOrden =() => {
+    fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/nextorden", {
+  "method": "POST",
+  "headers": {
+    "Content-Type": "application/json",
+    "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+  },
+  "body": false
+})
+.then(response => {
+  console.log(response);
+})
+.catch(err => {
+  console.error(err);
+});
+     
+  }
+
   const [modal, setModal] = useState(false);
 
   const toggle = (cajas, id_sub_orden, sku, producto) => {
@@ -132,6 +150,11 @@ const Orden = (props) => {
           <div className="text-uppercase font-weight-bold title1orange ml-3 mt-1">
             Producción en línea
           </div>
+        </Col>
+        <Col>
+          <Button className="buttonOrange" size="lg" onClick={partirOrden}>
+            Partir Orden
+          </Button>
         </Col>
 
         <Row>
@@ -255,7 +278,7 @@ const Orden = (props) => {
       <Modal isOpen={modal} toggle={() => toggle(0, 0, 0, 0)}>
         <ModalHeader className="orangeRow" >
           <Col className="ml-5">{"¿Desea eliminar la orden n° " + idSubOrden + "?"}</Col>
-          
+
         </ModalHeader>
         <ModalBody>
           <Container align="center">
@@ -264,20 +287,20 @@ const Orden = (props) => {
             Cajas : {cajas} <br />
           </Container>
           <Row className="mt-4 pr-0">
-              <Col align="right" md={{size: 4, offset: 2 }} sm="6" >
-                <Button block
-                  className="buttonOrange2" 
-                  onClick={(e) => deleteOrdenes(idSubOrden, e)}
-                >
-                  Eliminar
+            <Col align="right" md={{ size: 4, offset: 2 }} sm="6" >
+              <Button block
+                className="buttonOrange2"
+                onClick={(e) => deleteOrdenes(idSubOrden, e)}
+              >
+                Eliminar
                 </Button>
-              </Col>
-              <Col md="4" sm="6">
-                <Button block className="buttonGray"  onClick={() => toggle(0, 0, 0, 0)}>
-                  Cancelar
+            </Col>
+            <Col md="4" sm="6">
+              <Button block className="buttonGray" onClick={() => toggle(0, 0, 0, 0)}>
+                Cancelar
                 </Button>
-              </Col>
-            </Row>
+            </Col>
+          </Row>
         </ModalBody>
       </Modal>
     </div>
