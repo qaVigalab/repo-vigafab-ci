@@ -3,8 +3,9 @@ import { Row, Col } from "reactstrap";
 import Chart from 'react-apexcharts'
 import Circle from "react-circle";
 import ReactApexChart from "react-apexcharts";
+import { connect } from "react-redux";
 
-const Iqf2 = () => {
+const Iqf2 = (props) => {
     const id_vibot = 38058;
     var temperatura = [];
     var fecha = [];
@@ -360,6 +361,10 @@ const Iqf2 = () => {
         return () => clearInterval(interval);
     }, []);
 
+    useEffect(() => {
+        console.log("cambio en iqf: "+ localStorage.getItem("id_orden"));
+      }, [props.id_orden]);
+
     return (
 
         <div>
@@ -497,4 +502,8 @@ const Iqf2 = () => {
     )
 }
 
-export default Iqf2
+const mapStateToProps = (state) => ({
+    id_orden: state.dashboardReducers.id_orden,
+  });
+
+  export default connect(mapStateToProps )(Iqf2);

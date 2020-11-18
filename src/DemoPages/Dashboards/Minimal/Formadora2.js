@@ -3,7 +3,7 @@ import { Row, Col } from "reactstrap";
 
 import { Doughnut } from "react-chartjs-2";
 import Chart from 'react-apexcharts'
-
+import { connect } from "react-redux";
 import Circle from "react-circle";
 
 
@@ -276,6 +276,10 @@ const Formadora2 = (props) => {
     });
     }
     
+    useEffect(() => {
+        console.log("cambio en formadora: "+ localStorage.getItem("id_orden"));
+      }, [props.id_orden]);
+
 useEffect(() => {
     loadGraphTemp()
     loadResumen()
@@ -442,4 +446,8 @@ return (
 )
 }
 
-export default Formadora2
+const mapStateToProps = (state) => ({
+    id_orden: state.dashboardReducers.id_orden,
+  });
+
+  export default connect(mapStateToProps )(Formadora2);

@@ -7,11 +7,9 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   Alert,
   Row,
   Input,
-  Label,
 } from "reactstrap";
 import { connect } from "react-redux";
 import { setIdOrden } from "../../../actions/dashboardActions";
@@ -21,7 +19,7 @@ import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { set } from "date-fns";
+
 
 const Orden = (props) => {
   const [ordenes, setOrdenes] = useState([]);
@@ -30,6 +28,7 @@ const Orden = (props) => {
   const [cajas, setCajas] = useState("")
   const [producto, setProducto] = useState("")
   const [idSubOrden, setIdSubOrden] = useState("")
+  const [recarga, setRecarga] = useState(1)
   let fecha = new Date();
   let date = fecha.getDate() < 10 ? "0" + fecha.getDate() : fecha.getDate();
   let month = fecha.getMonth() + 1;
@@ -65,6 +64,13 @@ const Orden = (props) => {
     loadOrdenes()
   };
 
+  const verOrden = (e,id_orden) =>{
+    e.preventDefault();
+    console.log("setorden")
+    localStorage.setItem("id_orden",id_orden)
+    props.setIdOrden(!props.id_orden)
+  }
+
   const partirOrden =() => {
     fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/nextorden", {
   "method": "POST",
@@ -86,15 +92,11 @@ const Orden = (props) => {
   const [modal, setModal] = useState(false);
 
   const toggle = (cajas, id_sub_orden, sku, producto) => {
-
     setCajas(cajas);
     setIdSubOrden(id_sub_orden);
     setSku(sku);
     setProducto(producto);
-
-
     setModal(!modal);
-
   };
 
   const loadOrdenes = () => {
@@ -110,12 +112,15 @@ const Orden = (props) => {
     })
       .then((response) => response.json())
       .then((result) => {
+        console.log("cargando ordenes")
         setVacio(0);
 
         result[0].id_sub_orden === null ? setVacio(1) : setOrdenes(result);
         if (result[1].id_sub_orden != null) {
           setVacio(2);
           setOrdenes(result);
+            localStorage.setItem("id_orden",result.find(e => e.id_estado === 1).id_sub_orden)
+
         }
       })
       .catch((err) => {
@@ -227,7 +232,7 @@ const Orden = (props) => {
           ) : (
               ordenes.map((orden, i) =>
                 orden.id_sub_orden ? (
-                  <tr
+                  <tr onClick={ (e) => verOrden(e,orden.id_sub_orden)}
                     className={orden.id_estado == 1 ? "orangeRow" : "text-center"}
                   >
                     <td>{orden.prioridad}</td>
@@ -311,14 +316,8 @@ const mapStateToProps = (state) => ({
   id_orden: state.dashboardReducers.id_orden,
 });
 
-//export default MinimalDashboard1;
-//export default connect(mapStateToProps,  mapDispatchToProps )(MinimalDashboard1);
-
 const mapDispatchToProps = (dispatch) => ({
   setIdOrden: (data) => dispatch(setIdOrden(data)),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Orden);
+export default connect(mapStateToProps, mapDispatchToProps )(Orden);
