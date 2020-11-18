@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
 import Circle from "react-circle";
 import { Card, Col, Container, Row } from "reactstrap";
-
+import { connect } from "react-redux";
 import ReactApexChart from "react-apexcharts";
 const CialWidget = (props) => {
 
@@ -211,6 +211,10 @@ const CialWidget = (props) => {
   }, [])
 
   useEffect(() => {
+    console.log("cambio en "+ props.nombre+ " "+ localStorage.getItem("id_orden"));
+  }, [props.id_orden]);
+
+  useEffect(() => {
     const interval = setInterval(() => {
 
       loadResumen();
@@ -373,4 +377,9 @@ const CialWidget = (props) => {
     </Col>
   );
 }
-export default CialWidget
+
+const mapStateToProps = (state) => ({
+  id_orden: state.dashboardReducers.id_orden,
+});
+
+export default connect(mapStateToProps)(CialWidget);

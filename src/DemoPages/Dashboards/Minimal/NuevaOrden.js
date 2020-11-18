@@ -48,10 +48,7 @@ class NuevaOrden extends Component {
     )
       .then((res) => res.json())
       .then(this.limpiarForm(),
-      
-      this.props.setIdOrden(!this.props.id_orden),
-      console.log(this.props.id_orden)
-
+      this.props.setIdOrden(!this.props.id_orden)
       )
       .catch((err) => {
         console.error(err);
@@ -269,10 +266,9 @@ const mapStateToProps = (state) => ({
   id_orden: state.dashboardReducers.id_orden,
 });
 const mapDispatchToProps = dispatch => ({
-
   setIdOrden: data => dispatch(setIdOrden(data)),
-
 });
+
 //export default MinimalDashboard1;
 export default connect(mapStateToProps,  mapDispatchToProps )(NuevaOrden);
 //export default connect(mapStateToProps)(NuevaOrden);

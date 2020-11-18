@@ -3,7 +3,7 @@ import { Row, Col, Container } from "reactstrap";
 
 import { Doughnut } from "react-chartjs-2";
 import ReactApexChart from "react-apexcharts";
-
+import { connect } from "react-redux";
 import Circle from "react-circle";
 
 
@@ -213,6 +213,10 @@ const Empaque = (props) => {
     }, [])
 
     useEffect(() => {
+        console.log("cambio en empaque: "+ localStorage.getItem("id_orden"));
+      }, [props.id_orden]);
+
+    useEffect(() => {
         const interval = setInterval(() => {
 
             loadResumen();
@@ -369,4 +373,8 @@ const Empaque = (props) => {
     )
 }
 
-export default Empaque
+const mapStateToProps = (state) => ({
+    id_orden: state.dashboardReducers.id_orden,
+  });
+
+  export default connect(mapStateToProps)(Empaque);
