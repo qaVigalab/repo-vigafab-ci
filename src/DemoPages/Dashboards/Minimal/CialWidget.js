@@ -117,6 +117,7 @@ const CialWidget = (props) => {
 
       body: JSON.stringify({
         id_vibot: id_vibot,
+        id_orden: localStorage.getItem("id_orden")
       }),
     })
       .then(response => response.json())
@@ -183,7 +184,7 @@ const CialWidget = (props) => {
             for (let i = 0; i < r.length; i++) {
 
                 objeto = {
-                    x: r[i].id_tipo == 2 ? 'Prod' : 'Paro',
+                    x: r[i].id_tipo == 2 ? 'Prod' : 'Paro', 
                     y: [
                         new Date(r[i].hora_inicio).getTime(),
                         new Date(r[i].hora_termino).getTime()
@@ -211,7 +212,7 @@ const CialWidget = (props) => {
   }, [])
 
   useEffect(() => {
-    console.log("cambio en "+ props.nombre+ " "+ localStorage.getItem("id_orden"));
+    loadResumen()
   }, [props.id_orden]);
 
   useEffect(() => {

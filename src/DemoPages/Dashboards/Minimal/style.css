@@ -393,6 +393,11 @@
     color: #fff;
     text-align: center;
   }
+  .grayRow{
+    background : #606060 !important;
+    color: #fff;
+    text-align: center;
+  }
   .blueRow{
     background : #13395E !important;
     color: #fff;

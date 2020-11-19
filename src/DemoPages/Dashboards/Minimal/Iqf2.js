@@ -232,6 +232,7 @@ const Iqf2 = (props) => {
 
             body: JSON.stringify({
                 id_vibot: id_vibot,
+                id_orden: localStorage.getItem("id_orden")
             }),
         })
             .then(response => response.json())
@@ -362,7 +363,7 @@ const Iqf2 = (props) => {
     }, []);
 
     useEffect(() => {
-        console.log("cambio en iqf: "+ localStorage.getItem("id_orden"));
+        loadKpi()
       }, [props.id_orden]);
 
     return (
