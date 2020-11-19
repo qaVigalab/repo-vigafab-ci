@@ -132,6 +132,7 @@ class MinimalDashboard1 extends Component {
     });
     this.getMaquinas("envasadora");
     localStorage.setItem("fechaFinal", moment().format('YYYY-MM-DD'))
+    localStorage.setItem("recarga_orden", 0)
   }
   render() {
     return (

@@ -28,6 +28,7 @@ const Orden = (props) => {
   const [producto, setProducto] = useState("")
   const [idSubOrden, setIdSubOrden] = useState("")
   const [select, setSelect] = useState(0)
+  const [recarga, setRecarga] = useState()
   let fecha = new Date();
   let date = fecha.getDate() < 10 ? "0" + fecha.getDate() : fecha.getDate();
   let month = fecha.getMonth() + 1;
@@ -36,7 +37,6 @@ const Orden = (props) => {
   const [fechaFinal, setFechaFinal] = useState(
     localStorage.getItem("fechaFinal") || fecha
   );
-  const [refresh, setRefresh] = useState(localStorage.getItem("refresh"));
   const deleteOrdenes = async (id_sub, e) => {
     e.preventDefault();
 
@@ -124,9 +124,15 @@ const Orden = (props) => {
         if (result[1].id_sub_orden != null) {
           setVacio(2);
           setOrdenes(result);
-          localStorage.setItem("id_orden", result.find(e => e.id_estado === 1).id_sub_orden)
+          if (localStorage.getItem("recarga_orden") === "0"){
+            localStorage.setItem("id_orden", result.find(e => e.id_estado === 1).id_sub_orden)
+            localStorage.setItem("recarga_orden",1)
+            setSelect(0)
+          }
           localStorage.setItem("id_ordenA", result.find(e => e.id_estado === 1).id_sub_orden)
         }
+
+        
       })
       .catch((err) => {
         console.error(err);
@@ -141,10 +147,17 @@ const Orden = (props) => {
   useEffect(() => {
     const interval = setInterval(() => {
       loadOrdenes();
-      setSelect(0)
+      
     }, 60000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      localStorage.setItem("recarga_orden",0)
+    }, 300000);
+    return () => clearInterval(interval);
+  }, [])
 
   useEffect(() => {
     loadOrdenes();
