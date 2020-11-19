@@ -203,6 +203,7 @@ const Formadora2 = (props) => {
 
             body: JSON.stringify({
                 id_vibot: id_vibot,
+                id_orden: localStorage.getItem("id_orden")
             }),
         })
             .then(response => response.json())
@@ -277,7 +278,7 @@ const Formadora2 = (props) => {
     }
     
     useEffect(() => {
-        console.log("cambio en formadora: "+ localStorage.getItem("id_orden"));
+        loadResumen()
       }, [props.id_orden]);
 
 useEffect(() => {

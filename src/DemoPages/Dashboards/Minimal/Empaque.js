@@ -118,6 +118,7 @@ const Empaque = (props) => {
 
             body: JSON.stringify({
                 id_vibot: id_vibot,
+                id_orden: localStorage.getItem("id_orden")
             }),
         })
             .then(response => response.json())
@@ -213,7 +214,7 @@ const Empaque = (props) => {
     }, [])
 
     useEffect(() => {
-        console.log("cambio en empaque: "+ localStorage.getItem("id_orden"));
+        loadResumen()
       }, [props.id_orden]);
 
     useEffect(() => {

@@ -20,7 +20,6 @@ import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 
-
 const Orden = (props) => {
   const [ordenes, setOrdenes] = useState([]);
   const [vacio, setVacio] = useState(0);
@@ -28,7 +27,7 @@ const Orden = (props) => {
   const [cajas, setCajas] = useState("")
   const [producto, setProducto] = useState("")
   const [idSubOrden, setIdSubOrden] = useState("")
-  const [recarga, setRecarga] = useState(1)
+  const [select, setSelect] = useState(0)
   let fecha = new Date();
   let date = fecha.getDate() < 10 ? "0" + fecha.getDate() : fecha.getDate();
   let month = fecha.getMonth() + 1;
@@ -64,29 +63,35 @@ const Orden = (props) => {
     loadOrdenes()
   };
 
-  const verOrden = (e,id_orden) =>{
+  const verOrden = (e, id_orden) => {
     e.preventDefault();
-    console.log("setorden")
-    localStorage.setItem("id_orden",id_orden)
+    if(select === id_orden){
+      let id = localStorage.getItem("id_ordenA")
+      setSelect(0)
+      localStorage.setItem("id_orden", id) 
+    }else {
+      setSelect(id_orden)
+      localStorage.setItem("id_orden", id_orden)
+    }
     props.setIdOrden(!props.id_orden)
   }
 
-  const partirOrden =() => {
+  const partirOrden = () => {
     fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/nextorden", {
-  "method": "POST",
-  "headers": {
-    "Content-Type": "application/json",
-    "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
-  },
-  "body": false
-})
-.then(response => {
-  console.log(response);
-})
-.catch(err => {
-  console.error(err);
-});
-     
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+      },
+      "body": false
+    })
+      .then(response => {
+        console.log(response);
+      })
+      .catch(err => {
+        console.error(err);
+      });
+
   }
 
   const [modal, setModal] = useState(false);
@@ -119,8 +124,8 @@ const Orden = (props) => {
         if (result[1].id_sub_orden != null) {
           setVacio(2);
           setOrdenes(result);
-            localStorage.setItem("id_orden",result.find(e => e.id_estado === 1).id_sub_orden)
-
+          localStorage.setItem("id_orden", result.find(e => e.id_estado === 1).id_sub_orden)
+          localStorage.setItem("id_ordenA", result.find(e => e.id_estado === 1).id_sub_orden)
         }
       })
       .catch((err) => {
@@ -136,6 +141,7 @@ const Orden = (props) => {
   useEffect(() => {
     const interval = setInterval(() => {
       loadOrdenes();
+      setSelect(0)
     }, 60000);
     return () => clearInterval(interval);
   }, []);
@@ -207,7 +213,6 @@ const Orden = (props) => {
           </tr>
         </thead>
         <tbody>
-          {/**PRUEBA COMMIT RAMA DAVID --> DEV */}
           {vacio === 1 ? (
             <tr className="text-center">
               <td>---</td>
@@ -232,8 +237,10 @@ const Orden = (props) => {
           ) : (
               ordenes.map((orden, i) =>
                 orden.id_sub_orden ? (
-                  <tr onClick={ (e) => verOrden(e,orden.id_sub_orden)}
-                    className={orden.id_estado == 1 ? "orangeRow" : "text-center"}
+                  <tr onClick={(e) => verOrden(e, orden.id_sub_orden)}
+                    className={orden.id_estado == 1 ? "orangeRow" :
+                      select == orden.id_sub_orden ? "grayRow" :
+                        "text-center"}
                   >
                     <td>{orden.prioridad}</td>
                     <td>{orden.id_sub_orden}</td>
@@ -320,4 +327,4 @@ const mapDispatchToProps = (dispatch) => ({
   setIdOrden: (data) => dispatch(setIdOrden(data)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps )(Orden);
+export default connect(mapStateToProps, mapDispatchToProps)(Orden);

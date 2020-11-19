@@ -58,7 +58,9 @@ const TotalEnvasadoras = (props) => {
                 "Content-Type": "application/json",
                 "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
             },
-            "body": false
+            body: JSON.stringify({
+                id_orden: localStorage.getItem("id_orden"),
+              }),
         })
             .then(response => response.json())
             .then(result => {
@@ -106,7 +108,7 @@ const TotalEnvasadoras = (props) => {
     }, []);
     
   useEffect(() => {
-    console.log("cambio en total envasadoras: "+ localStorage.getItem("id_orden"));
+    loadResumen()
   }, [props.id_orden]);
 
 
