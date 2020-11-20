@@ -7,7 +7,7 @@
   "homepage": "https://localhost",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eduardoh89/vigafab"
+    "url": "git+https://github.com/vigalab/vigafab"
   },
   "dependencies": {
     "@fortawesome/fontawesome": "^1.1.8",
