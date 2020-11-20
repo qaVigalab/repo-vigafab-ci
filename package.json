@@ -4,7 +4,7 @@
   "private": true,
   "description": "vigalab vibots",
   "author": "vigalab.com",
-  "homepage": "https://localhost",
+  "homepage": "https://dev.agrosuper.vigalab.cl",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vigalab/vigafab"
