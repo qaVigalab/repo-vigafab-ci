@@ -132,6 +132,7 @@ class MinimalDashboard1 extends Component {
     });
     this.getMaquinas("envasadora");
     localStorage.setItem("fechaFinal", moment().format('YYYY-MM-DD'))
+    localStorage.setItem("recarga_orden", 0)
   }
   render() {
     return (
@@ -194,7 +195,7 @@ class MinimalDashboard1 extends Component {
             </Col>
           </Row>
 
-      {/*    <Row>
+          <Row>
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
                 <Produciendo estado={1} />
@@ -217,9 +218,9 @@ class MinimalDashboard1 extends Component {
                   <Iqf2 estado={1} />
                 </Card>
               </Col>
-            </Row>*/}
+            </Row>
 
-            <div class="columns-parent"> {/* solo por mientras, borrar despues, agregado arriba*/}
+             {/* <div class="columns-parent"> Agregar al borrar */}
             {this.state.modo === 2 || this.state.modo === 0 ? (
               <Row>
                 {this.state.maquinas.map((maquina) => (

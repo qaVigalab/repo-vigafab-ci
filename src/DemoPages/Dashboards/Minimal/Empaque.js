@@ -3,7 +3,7 @@ import { Row, Col, Container } from "reactstrap";
 
 import { Doughnut } from "react-chartjs-2";
 import ReactApexChart from "react-apexcharts";
-
+import { connect } from "react-redux";
 import Circle from "react-circle";
 
 
@@ -118,6 +118,7 @@ const Empaque = (props) => {
 
             body: JSON.stringify({
                 id_vibot: id_vibot,
+                id_orden: localStorage.getItem("id_orden")
             }),
         })
             .then(response => response.json())
@@ -167,7 +168,6 @@ const Empaque = (props) => {
         })
             .then((response) => response.json())
             .then((r) => {
-                console.log(r)
                 var objeto = {};
                 var objetos = [
                     {
@@ -212,6 +212,10 @@ const Empaque = (props) => {
         loadTimeLine()
         loadResumen()
     }, [])
+
+    useEffect(() => {
+        loadResumen()
+      }, [props.id_orden]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -370,4 +374,8 @@ const Empaque = (props) => {
     )
 }
 
-export default Empaque
+const mapStateToProps = (state) => ({
+    id_orden: state.dashboardReducers.id_orden,
+  });
+
+  export default connect(mapStateToProps)(Empaque);

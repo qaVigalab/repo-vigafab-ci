@@ -7,11 +7,9 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   Alert,
   Row,
   Input,
-  Label,
 } from "reactstrap";
 import { connect } from "react-redux";
 import { setIdOrden } from "../../../actions/dashboardActions";
@@ -21,7 +19,6 @@ import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { set } from "date-fns";
 
 const Orden = (props) => {
   const [ordenes, setOrdenes] = useState([]);
@@ -30,6 +27,8 @@ const Orden = (props) => {
   const [cajas, setCajas] = useState("")
   const [producto, setProducto] = useState("")
   const [idSubOrden, setIdSubOrden] = useState("")
+  const [select, setSelect] = useState(0)
+  const [recarga, setRecarga] = useState()
   let fecha = new Date();
   let date = fecha.getDate() < 10 ? "0" + fecha.getDate() : fecha.getDate();
   let month = fecha.getMonth() + 1;
@@ -38,8 +37,7 @@ const Orden = (props) => {
   const [fechaFinal, setFechaFinal] = useState(
     localStorage.getItem("fechaFinal") || fecha
   );
-  const [refresh, setRefresh] = useState(localStorage.getItem("refresh"));
-  const deleteOrdenes = async(id_sub, e) => {
+  const deleteOrdenes = async (id_sub, e) => {
     e.preventDefault();
 
     await fetch(global.api.dashboard.deletesuborden, {
@@ -53,30 +51,57 @@ const Orden = (props) => {
       }),
     })
       .then(
-        
+
         console.log("Borrado ok")
       )
       .catch((err) => {
         console.error(err);
       });
-    
-      
-      setModal(!modal)
-      loadOrdenes()
+
+
+    setModal(!modal)
+    loadOrdenes()
   };
+
+  const verOrden = (e, id_orden) => {
+    e.preventDefault();
+    if(select === id_orden){
+      let id = localStorage.getItem("id_ordenA")
+      setSelect(0)
+      localStorage.setItem("id_orden", id) 
+    }else {
+      setSelect(id_orden)
+      localStorage.setItem("id_orden", id_orden)
+    }
+    props.setIdOrden(!props.id_orden)
+  }
+
+  const partirOrden = () => {
+    fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/nextorden", {
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+      },
+      "body": false
+    })
+      .then(response => {
+        console.log(response);
+      })
+      .catch(err => {
+        console.error(err);
+      });
+
+  }
 
   const [modal, setModal] = useState(false);
 
   const toggle = (cajas, id_sub_orden, sku, producto) => {
-
     setCajas(cajas);
     setIdSubOrden(id_sub_orden);
     setSku(sku);
     setProducto(producto);
-
-    
     setModal(!modal);
-
   };
 
   const loadOrdenes = () => {
@@ -92,13 +117,22 @@ const Orden = (props) => {
     })
       .then((response) => response.json())
       .then((result) => {
+        console.log("cargando ordenes")
         setVacio(0);
 
         result[0].id_sub_orden === null ? setVacio(1) : setOrdenes(result);
         if (result[1].id_sub_orden != null) {
           setVacio(2);
           setOrdenes(result);
+          if (localStorage.getItem("recarga_orden") === "0"){
+            localStorage.setItem("id_orden", result.find(e => e.id_estado === 1).id_sub_orden)
+            localStorage.setItem("recarga_orden",1)
+            setSelect(0)
+          }
+          localStorage.setItem("id_ordenA", result.find(e => e.id_estado === 1).id_sub_orden)
         }
+
+        
       })
       .catch((err) => {
         console.error(err);
@@ -113,9 +147,17 @@ const Orden = (props) => {
   useEffect(() => {
     const interval = setInterval(() => {
       loadOrdenes();
+      
     }, 60000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      localStorage.setItem("recarga_orden",0)
+    }, 300000);
+    return () => clearInterval(interval);
+  }, [])
 
   useEffect(() => {
     loadOrdenes();
@@ -132,6 +174,11 @@ const Orden = (props) => {
           <div className="text-uppercase font-weight-bold title1orange ml-3 mt-1">
             Producción en línea
           </div>
+        </Col>
+        <Col>
+          <Button className="buttonOrange" size="lg" onClick={partirOrden}>
+            Partir Orden
+          </Button>
         </Col>
 
         <Row>
@@ -155,8 +202,8 @@ const Orden = (props) => {
           <a className="alert-link">No existen ordenes para mostrar</a>.
         </Alert>
       ) : (
-        ""
-      )}
+          ""
+        )}
       <Table striped className="mt-0">
         <thead className="theadBlue">
           <tr className="text-center">
@@ -179,7 +226,6 @@ const Orden = (props) => {
           </tr>
         </thead>
         <tbody>
-          {/**PRUEBA COMMIT RAMA DAVID --> DEV */}
           {vacio === 1 ? (
             <tr className="text-center">
               <td>---</td>
@@ -202,79 +248,86 @@ const Orden = (props) => {
               </td>
             </tr>
           ) : (
-            ordenes.map((orden, i) =>
-              orden.id_sub_orden ? (
-                <tr
-                  className={orden.id_estado == 1 ? "orangeRow" : "text-center"}
-                >
-                  <td>{orden.prioridad}</td>
-                  <td>{orden.id_sub_orden}</td>
-                  <td>{orden.sku}</td>
-                  <td>{orden.producto}</td>
-                  <td>{orden.cajas}</td>
-                  <td>
-                    {Math.round(orden.productividad * 100) / 100 + " ham/min"}
-                  </td>
-                  <td>
-                    {Math.round(orden.tiempo_estimado * 100) / 100 + " hrs"}
-                  </td>
-                  <td>{orden.kg_solicitados + " Kg"}</td>
-                  <td>{orden.real_kg + " Kg"}</td>
-                  <td>
-                    {orden.kg_porcentual == null
-                      ? "0 %"
-                      : orden.kg_porcentual > 100
-                      ? "100%"
-                      : orden.kg_porcentual + " %"}
-                  </td>
-                  <td>
-                    {orden.id_estado == 3 ? (
-                      <CheckCircleIcon style={{ color: green[500] }} />
-                    ) : (
-                      <RadioButtonUncheckedIcon />
-                    )}
-                  </td>
-                  <td>
-                    <IconButton
-                      aria-label="delete"
-                      style={orden.id_estado == 1 ? { color: "#ffebee" } : {}}
-                      onClick={()=>toggle( orden.cajas, orden.id_sub_orden, orden.sku, orden.producto )}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                    
-                  </td>
-                </tr>
-              ) : (
-                ""
+              ordenes.map((orden, i) =>
+                orden.id_sub_orden ? (
+                  <tr onClick={(e) => verOrden(e, orden.id_sub_orden)}
+                    className={orden.id_estado == 1 ? "orangeRow" :
+                      select == orden.id_sub_orden ? "grayRow" :
+                        "text-center"}
+                  >
+                    <td>{orden.prioridad}</td>
+                    <td>{orden.id_sub_orden}</td>
+                    <td>{orden.sku}</td>
+                    <td>{orden.producto}</td>
+                    <td>{orden.cajas}</td>
+                    <td>
+                      {Math.round(orden.productividad * 100) / 100 + " ham/min"}
+                    </td>
+                    <td>
+                      {Math.round(orden.tiempo_estimado * 100) / 100 + " hrs"}
+                    </td>
+                    <td>{orden.kg_solicitados + " Kg"}</td>
+                    <td>{orden.real_kg + " Kg"}</td>
+                    <td>
+                      {orden.kg_porcentual == null
+                        ? "0 %"
+                        : orden.kg_porcentual > 100
+                          ? "100%"
+                          : orden.kg_porcentual + " %"}
+                    </td>
+                    <td>
+                      {orden.id_estado == 3 ? (
+                        <CheckCircleIcon style={{ color: green[500] }} />
+                      ) : (
+                          <RadioButtonUncheckedIcon />
+                        )}
+                    </td>
+                    <td>
+                      <IconButton
+                        aria-label="delete"
+                        style={orden.id_estado == 1 ? { color: "#ffebee" } : {}}
+                        onClick={() => toggle(orden.cajas, orden.id_sub_orden, orden.sku, orden.producto)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+
+                    </td>
+                  </tr>
+                ) : (
+                    ""
+                  )
               )
-            )
-          )}
+            )}
         </tbody>
       </Table>
-      <Modal isOpen={modal} toggle={toggle}>
-                      <ModalHeader toggle={toggle}>
-                        {"Desea eliminar la orden n° " + idSubOrden}
-                      </ModalHeader>
-                      <ModalBody>
-                        <Container>
-                          Sku: {sku} <br />
-                          Producto: {producto} <br />
-                          Cajas : {cajas} <br /> 
-                        </Container>
-                      </ModalBody>
-                      <ModalFooter>
-                        <Button
-                          color="danger"
-                          onClick={(e) => deleteOrdenes(idSubOrden, e)}
-                        >
-                          Eliminar
-                        </Button>{" "}
-                        <Button color="secondary" onClick={()=>toggle(0,0,0,0)}>
-                          Cancelar
-                        </Button>
-                      </ModalFooter>
-                    </Modal>
+      <Modal isOpen={modal} toggle={() => toggle(0, 0, 0, 0)}>
+        <ModalHeader className="orangeRow" >
+          <Col className="ml-5">{"¿Desea eliminar la orden n° " + idSubOrden + "?"}</Col>
+
+        </ModalHeader>
+        <ModalBody>
+          <Container align="center">
+            Sku: {sku} <br />
+            Producto: {producto} <br />
+            Cajas : {cajas} <br />
+          </Container>
+          <Row className="mt-4 pr-0">
+            <Col align="right" md={{ size: 4, offset: 2 }} sm="6" >
+              <Button block
+                className="buttonOrange2"
+                onClick={(e) => deleteOrdenes(idSubOrden, e)}
+              >
+                Eliminar
+                </Button>
+            </Col>
+            <Col md="4" sm="6">
+              <Button block className="buttonGray" onClick={() => toggle(0, 0, 0, 0)}>
+                Cancelar
+                </Button>
+            </Col>
+          </Row>
+        </ModalBody>
+      </Modal>
     </div>
   );
 };
@@ -283,14 +336,8 @@ const mapStateToProps = (state) => ({
   id_orden: state.dashboardReducers.id_orden,
 });
 
-//export default MinimalDashboard1;
-//export default connect(mapStateToProps,  mapDispatchToProps )(MinimalDashboard1);
-
 const mapDispatchToProps = (dispatch) => ({
   setIdOrden: (data) => dispatch(setIdOrden(data)),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Orden);
+export default connect(mapStateToProps, mapDispatchToProps)(Orden);

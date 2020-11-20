@@ -74,7 +74,9 @@ const Produciendo = (props) => {
                 "Content-Type": "application/json",
                 "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
             },
-            "body": false
+            body: JSON.stringify({
+                id_orden: localStorage.getItem("id_orden")
+              }),
         })
             .then(response => response.json())
             .then(result => {
@@ -141,6 +143,10 @@ const Produciendo = (props) => {
         loadTorta()
 
     }, [])
+
+    useEffect(() => {
+        loadResumen()
+      }, [props.id_orden]);
 
     useEffect(() => {
         const interval = setInterval(() => {

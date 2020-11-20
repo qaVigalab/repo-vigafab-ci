@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
 import Circle from "react-circle";
 import { Card, Col, Container, Row } from "reactstrap";
-
+import { connect } from "react-redux";
 import ReactApexChart from "react-apexcharts";
 const CialWidget = (props) => {
 
@@ -117,6 +117,7 @@ const CialWidget = (props) => {
 
       body: JSON.stringify({
         id_vibot: id_vibot,
+        id_orden: localStorage.getItem("id_orden")
       }),
     })
       .then(response => response.json())
@@ -183,7 +184,7 @@ const CialWidget = (props) => {
             for (let i = 0; i < r.length; i++) {
 
                 objeto = {
-                    x: r[i].id_tipo == 2 ? 'Prod' : 'Paro',
+                    x: r[i].id_tipo == 2 ? 'Prod' : 'Paro', 
                     y: [
                         new Date(r[i].hora_inicio).getTime(),
                         new Date(r[i].hora_termino).getTime()
@@ -209,6 +210,10 @@ const CialWidget = (props) => {
     loadTimeLine()
     loadResumen()
   }, [])
+
+  useEffect(() => {
+    loadResumen()
+  }, [props.id_orden]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -373,4 +378,9 @@ const CialWidget = (props) => {
     </Col>
   );
 }
-export default CialWidget
+
+const mapStateToProps = (state) => ({
+  id_orden: state.dashboardReducers.id_orden,
+});
+
+export default connect(mapStateToProps)(CialWidget);
