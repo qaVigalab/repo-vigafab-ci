@@ -5,6 +5,7 @@ import Circle from "react-circle";
 import { Card, Col, Container, Row } from "reactstrap";
 import { connect } from "react-redux";
 import ReactApexChart from "react-apexcharts";
+import _ from "lodash";
 const CialWidget = (props) => {
 
     const [hacumuladas, setHacumuladas] = useState(0)
@@ -133,7 +134,7 @@ const CialWidget = (props) => {
         setEstado(result[0].estado)
         setHacumuladas(result[0].hamburguesas_acumuladas)
         setKgacumulados(result[0].real_kg)
-        setHsolicitadas(result[0].cajas)
+        setHsolicitadas(result[0].hamburguesas_solicitadas)
         setKgsolicitados(result[0].kg_solicitados)
         setCapacidad(result[0].kg_hora)
         setDataTorta(
@@ -205,19 +206,17 @@ const CialWidget = (props) => {
             console.error(err);
         });
 }
-
-  useEffect(() => {
-    loadTimeLine()
-    loadResumen()
-  }, [])
-
   useEffect(() => {
     loadResumen()
   }, [props.id_orden]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    setTimeout(() => {
+      loadTimeLine()
+      loadResumen()
+  }, 2000);
 
+    const interval = setInterval(() => {
       loadResumen();
     }, 30000);
     return () => clearInterval(interval);
@@ -245,13 +244,13 @@ const CialWidget = (props) => {
 
                  <div  className="ml-4 font2gray">{Intl.NumberFormat().format(hacumuladas)}</div>
 
-                  <div  className="ml-2">de {Intl.NumberFormat().format(hsolicitadas)} F.Packs </div>
+                  <div  className="ml-2">de {Intl.NumberFormat().format(_.round(hsolicitadas/3))} F.Packs</div>
                   
               </Row>
               <Row className="mb-4" align="left"> 
                   <div  className="ml-4 font2gray">{Intl.NumberFormat().format(kgacumulados)}</div>
 
-                <div align="center" className=" ml-2 mr-auto"> de {Intl.NumberFormat().format(kgsolicitados)} Kgs</div>
+                <div align="center" className=" ml-2 mr-auto"> de {Intl.NumberFormat().format(_.round(kgsolicitados/3))} Kgs</div>
 
               </Row>
             </Col>

@@ -349,12 +349,10 @@ const Iqf2 = (props) => {
     }
 
     useEffect(() => {
-        loadGraphs()
-        //loadTimeLine()
-        loadKpi()
-    }, [])
-
-    useEffect(() => {
+        setTimeout(() => {
+            loadGraphs()
+            loadKpi()
+        }, 2000);
         const interval = setInterval(() => {
             loadGraphs()
             loadKpi()
@@ -364,7 +362,7 @@ const Iqf2 = (props) => {
 
     useEffect(() => {
         loadKpi()
-      }, [props.id_orden]);
+    }, [props.id_orden]);
 
     return (
 
@@ -380,10 +378,10 @@ const Iqf2 = (props) => {
                     <Col  >
                         <Row >
                             <Col align="right">
-                            <div className="font2  my-4 ">Estado</div></Col>
+                                <div className="font2  my-4 ">Estado</div></Col>
                             <div className={estado == 1 ? "font2gray  my-4" : "font2Blue my-4"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
                             <div className="font2 ml-3 my-4">Tiempo de Actividad</div>
-                            <div  className="font2Blue ml-2 my-4 mr-5">{Math.round(tActivo / 60 * 100) / 100} hrs</div>
+                            <div className="font2Blue ml-2 my-4 mr-5">{Math.round(tActivo / 60 * 100) / 100} hrs</div>
 
                         </Row>
 
@@ -473,7 +471,7 @@ const Iqf2 = (props) => {
                         </Col>
                         <Col md="6">
                             <div className="mr-5 my-4">
-                                <Chart 
+                                <Chart
                                     options={options2}
                                     series={series2}
                                     type="line"
@@ -495,7 +493,7 @@ const Iqf2 = (props) => {
                 </Col>
             </Row>
             */}
-            
+
             {
                 //<div className="bot-description">Receta actual: {" " + producto}</div>
             }
@@ -505,6 +503,6 @@ const Iqf2 = (props) => {
 
 const mapStateToProps = (state) => ({
     id_orden: state.dashboardReducers.id_orden,
-  });
+});
 
-  export default connect(mapStateToProps )(Iqf2);
+export default connect(mapStateToProps)(Iqf2);

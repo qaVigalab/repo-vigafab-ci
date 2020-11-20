@@ -208,16 +208,16 @@ const Empaque = (props) => {
             });
     }
 
-    useEffect(() => {
-        loadTimeLine()
-        loadResumen()
-    }, [])
 
     useEffect(() => {
         loadResumen()
-      }, [props.id_orden]);
+    }, [props.id_orden]);
 
     useEffect(() => {
+        setTimeout(() => {
+            loadTimeLine()
+            loadResumen()
+        }, 2000);
         const interval = setInterval(() => {
 
             loadResumen();
@@ -357,15 +357,15 @@ const Empaque = (props) => {
                 </Row>
             </div>
             <Row>
-                
+
                 <Col xs="12">
                     <div id="chart" className="m-3">
-                    
+
                         <ReactApexChart options={optionsTimeLine} series={seriesTimeLine} type="rangeBar" height={150} />
-                        
+
                     </div>
                 </Col>
-               
+
             </Row>
             {
                 //<div className="bot-description">Receta actual: {" " + producto}</div>
@@ -376,6 +376,6 @@ const Empaque = (props) => {
 
 const mapStateToProps = (state) => ({
     id_orden: state.dashboardReducers.id_orden,
-  });
+});
 
-  export default connect(mapStateToProps)(Empaque);
+export default connect(mapStateToProps)(Empaque);

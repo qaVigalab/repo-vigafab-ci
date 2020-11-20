@@ -22,7 +22,7 @@ class NuevaOrden extends Component {
       productos: [],
       producto: {},
       prioridad: 5,
-      fecha: ""
+      fecha: localStorage.getItem("fechaFinal")
     };
   }
 
@@ -235,7 +235,7 @@ class NuevaOrden extends Component {
                 </Col>
                 <Col md="3">
                   <FormGroup>
-                    <Label>Tiempo Estimado</Label>
+                    <Label>Fecha</Label>
                     <Input
                       type="date"
                       name="tiempo"

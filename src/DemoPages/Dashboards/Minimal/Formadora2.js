@@ -282,11 +282,10 @@ const Formadora2 = (props) => {
       }, [props.id_orden]);
 
 useEffect(() => {
-    loadGraphTemp()
-    loadResumen()
-}, [])
-
-useEffect(() => {
+    setTimeout(() => {
+        loadGraphTemp()
+        loadResumen()
+    }, 2000);
     const interval = setInterval(() => {
         loadGraphTemp();
         loadResumen();

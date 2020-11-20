@@ -9,6 +9,7 @@ import G4 from './svgs/g4';
 import G5 from './svgs/g5';
 import G6 from './svgs/g6';
 import TimeLineScada from "./TimeLineScada";
+import _ from "lodash";
 const Scada2 = (props) => {
 
 
@@ -51,7 +52,7 @@ const Scada2 = (props) => {
       .then(result => {
         setFormadoraTemperaturaSalida(result[0].formadora_temp)
         setHamburguesasFormadas(result[0].formadora_rmp)
-        setIqfTemperaturaSalida(result[0].iqf_temp)
+        setIqfTemperaturaSalida(_.round(result[0].iqf_temp , 2))
         setIqfVelocidadGiro(result[0].iqf_vel)
         setEnvasadora1Conteo(result[0].envasadora1)
         setEnvasadora2Conteo(result[0].envasadora2)

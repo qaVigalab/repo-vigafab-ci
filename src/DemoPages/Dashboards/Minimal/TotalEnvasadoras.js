@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { Doughnut } from "react-chartjs-2";
 
 import Circle from "react-circle";
+import _ from "lodash";
 
 
 const TotalEnvasadoras = (props) => {
@@ -42,6 +43,15 @@ const TotalEnvasadoras = (props) => {
             ],
         }
     )
+    const [optionTorta, setOptionTorta] = useState(
+        {
+            legend: {
+                display: false,
+            },
+            responsive: true,
+            maintainAspectRatio: true,
+        }
+    )
     const [hacumuladas, setHacumuladas] = useState(0)
     const [tActivo, setTActivo] = useState(0)
     const [tInactivo, setTInactivo] = useState(0)
@@ -60,7 +70,7 @@ const TotalEnvasadoras = (props) => {
             },
             body: JSON.stringify({
                 id_orden: localStorage.getItem("id_orden"),
-              }),
+            }),
         })
             .then(response => response.json())
             .then(result => {
@@ -71,7 +81,7 @@ const TotalEnvasadoras = (props) => {
                     data = [0, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
                 }
                 setTActivo(result[0].tiempo_actividad)
-                setTInactivo(result[0].tiempo_inactivo == 0 ? 1 :result[0].tiempo_inactivo)
+                setTInactivo(result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo)
                 setEstado(result[0].estado)
                 setHacumuladas(result[0].hamburguesas_acumuladas)
                 setKgacumulados(result[0].real_kg)
@@ -100,16 +110,19 @@ const TotalEnvasadoras = (props) => {
     }, [])
 
     useEffect(() => {
-        const interval = setInterval(() => {
+        setTimeout(() => {
+            loadResumen()
+        }, 2000);
 
+        const interval = setInterval(() => {
             loadResumen();
         }, 30000);
         return () => clearInterval(interval);
     }, []);
-    
-  useEffect(() => {
-    loadResumen()
-  }, [props.id_orden]);
+
+    useEffect(() => {
+        loadResumen()
+    }, [props.id_orden]);
 
 
 
@@ -134,7 +147,7 @@ const TotalEnvasadoras = (props) => {
                     <Col md="4">
                         <Row align="right">
                             <div className="font2 ml-3 my-4">Tiempo de Actividad</div>
-                            <div className="font2Blue ml-1 my-4">{Math.round(tActivo / 60 * 100) / 100} hrs</div>
+                            <div className="font2Blue ml-1 my-4">{_.round((tActivo/180),2)} hrs</div> {/* tiempo activo/(60*3)*/}
                         </Row>
 
                     </Col>
@@ -198,7 +211,7 @@ const TotalEnvasadoras = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (kgacumulados / (capacidad*3 * ((tActivo + tInactivo) / 60))) * 100 //(totalKG/capacidad*tiempo que se demoro)
+                                                (kgacumulados / (capacidad * ((tActivo + tInactivo) / 60))) * 100 //(totalKG/capacidad*tiempo que se demoro)
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -228,26 +241,18 @@ const TotalEnvasadoras = (props) => {
                                     width="12"
                                     height="12"
                                     align="center"
-                                    options={{
-                                        legend: {
-                                            display: false,
-                                        },
-                                        responsive: true,
-                                        maintainAspectRatio: true,
-                                    }} /></div>
+                                    options={optionTorta}
+                                /></div>
                         </Col>
                     </Row>
                 </Col>
             </Row>
-            {
-                //<div className="bot-description">Receta actual: {" " + producto}</div>
-            }
         </div>
     )
 }
 
 const mapStateToProps = (state) => ({
     id_orden: state.dashboardReducers.id_orden,
-  });
+});
 
-  export default connect(mapStateToProps )(TotalEnvasadoras);
+export default connect(mapStateToProps)(TotalEnvasadoras);
