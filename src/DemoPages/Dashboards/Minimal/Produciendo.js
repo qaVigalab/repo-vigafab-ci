@@ -85,7 +85,7 @@ const Produciendo = (props) => {
                 setSku(result[0].sku)
                 setProducto(result[0].producto)
                 setProductividad(result[0].productividad)
-                setTiempo(result[0].tiempo_actividad)
+                setTiempo(result[0].tiempo)
                 setKg_acumulado(result[0].real_kg)
                 setH_acumulado(result[0].hamburguesas_acumuladas)
                 setCajas_acumuladas(result[0].cajas_acumuladas)
@@ -94,9 +94,8 @@ const Produciendo = (props) => {
                 setcajas_solicitadas(result[0].cajas)
                 setKgcaja(result[0].kg_caja)
                 setCapacidad(result[0].kg_hora)
-                setTInactivo(result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo)
                 setCalidad((result[0].cajas_acumuladas * result[0].kg_caja) / (result[0].real_kg == 0 ? 1 : result[0].real_kg))
-                setEficiencia((result[0].real_kg / (result[0].kg_hora * ((result[0].tiempo_actividad + (result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo)) / 60))))
+                setEficiencia(((result[0].cajas_acumuladas * result[0].kg_caja) / (result[0].kg_hora * ( (result[0].tiempo == 0 ? 1 : result[0].tiempo)) / 60)))
                 setDisponibilidad((result[0].tiempo_actividad / ((result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo) + result[0].tiempo_actividad)))
             }
             )
@@ -138,20 +137,21 @@ const Produciendo = (props) => {
                 console.error(err);
             });
     }
-    useEffect(() => {
-        loadResumen()
-        loadTorta()
-
-    }, [])
 
     useEffect(() => {
         loadResumen()
       }, [props.id_orden]);
 
     useEffect(() => {
+        setTimeout(() => {
+            console.log(localStorage.getItem("id_orden"))
+            loadResumen()
+            loadTorta()
+          }, 2000);
+        
         const interval = setInterval(() => {
             loadResumen();
-
+            console.log("recargando produciendo")
         }, 30000);
         return () => clearInterval(interval);
     }, []);
@@ -161,7 +161,7 @@ const Produciendo = (props) => {
         <div>
 
             <div className="title2Orange">
-                <Row>
+                <Row className= 'sticky-row'>
                     <br />
                     <Col md="2">
                         <div align="left" className="text-uppercase font-weight-bold my-1 ml-4">{estado == 1 ? "Detenida" : "Produciendo"}</div>
@@ -205,7 +205,7 @@ const Produciendo = (props) => {
                             <Col align="right">
                                 <div className="font2  my-1">Estado</div></Col>
                             <div className={estado == 1 ? "font2White  my-1" : "font2White my-1"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
-                            <div className="font2 ml-3 my-1">Tiempo de Actividad</div>
+                            <div className="font2 ml-3 my-1">Tiempo Total</div>
                             <div align="right" className="font2White ml-1 mr-5 my-1">{Math.round(tiempo / 60 * 100) / 100} hrs</div>
 
                         </Row>
@@ -271,7 +271,7 @@ const Produciendo = (props) => {
                                     size="100" // String: Defines the size of the circle.
                                     lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                     progress={(
-                                        disponibilidad * 100
+                                        disponibilidad>100 ? 100 : disponibilidad * 100
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
                                     progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -296,7 +296,7 @@ const Produciendo = (props) => {
                                     size="100" // String: Defines the size of the circle.
                                     lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                     progress={(
-                                        eficiencia * 100 //(totalKG/capacidad*tiempo que se demoro)
+                                        eficiencia>100 ? 100 : eficiencia * 100 //(totalKG/capacidad*tiempo que se demoro)
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
                                     progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -321,7 +321,7 @@ const Produciendo = (props) => {
                                     size="100" // String: Defines the size of the circle.
                                     lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                     progress={(
-                                        calidad * 100
+                                     calidad>100 ? 100 : calidad * 100 
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
                                     progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
