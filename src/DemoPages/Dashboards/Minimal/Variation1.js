@@ -211,16 +211,17 @@ class MinimalDashboard1 extends Component {
             </Col>
           </Row>
 
-          <div class="columns-parent">
+          {/*<div class="columns-parent">
             <Row>
               <Col xs="12" xl="12">
                 <Card className="main-card mb-3">
                   <Iqf2 estado={1} />
                 </Card>
               </Col>
-            </Row>
+            </Row>*/}
 
-             {/* <div class="columns-parent"> Agregar al borrar */}
+            
+             <div class="columns-parent"> {/* sacar al agregar iqf */}
             {this.state.modo === 2 || this.state.modo === 0 ? (
               <Row>
                 {this.state.maquinas.map((maquina) => (
