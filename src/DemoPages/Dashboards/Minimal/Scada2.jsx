@@ -52,7 +52,7 @@ const Scada2 = (props) => {
       .then(result => {
         setFormadoraTemperaturaSalida(result[0].formadora_temp)
         setHamburguesasFormadas(result[0].formadora_rmp)
-        setIqfTemperaturaSalida(_.round(result[0].iqf_temp , 2))
+        setIqfTemperaturaSalida(result[0].iqf_temp)
         setIqfVelocidadGiro(result[0].iqf_vel)
         setEnvasadora1Conteo(result[0].envasadora1)
         setEnvasadora2Conteo(result[0].envasadora2)

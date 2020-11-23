@@ -1,8 +1,8 @@
-import { FormGroup} from "@material-ui/core";
+import { FormGroup } from "@material-ui/core";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Button, Col, Container, Form, Input, Label, Row } from "reactstrap";
-import{setIdOrden} from '../../../actions/dashboardActions'
+import { setIdOrden } from '../../../actions/dashboardActions'
 class NuevaOrden extends Component {
   constructor(props) {
     super(props);
@@ -48,12 +48,12 @@ class NuevaOrden extends Component {
     )
       .then((res) => res.json())
       .then(this.limpiarForm(),
-      this.props.setIdOrden(!this.props.id_orden)
+        this.props.setIdOrden(!this.props.id_orden)
       )
       .catch((err) => {
         console.error(err);
       });
-     
+
   }
 
   loadProductos() {
@@ -90,8 +90,8 @@ class NuevaOrden extends Component {
     );
   }
 
-  fechaChange(event){
-    this.setState({fecha: event.target.value})
+  fechaChange(event) {
+    this.setState({ fecha: event.target.value })
   }
 
   cajasChange(event) {
@@ -201,6 +201,7 @@ class NuevaOrden extends Component {
                       type="number"
                       name="cajas"
                       id="cajas"
+                      min="1"
                       placeholder="Numero"
                       value={this.state.cajas}
                       onChange={this.cajasChange}
@@ -235,7 +236,7 @@ class NuevaOrden extends Component {
                 </Col>
                 <Col md="3">
                   <FormGroup>
-                    <Label>Fecha</Label>
+                    <Label>Fecha de la Orden</Label>
                     <Input
                       type="date"
                       name="tiempo"
@@ -270,5 +271,5 @@ const mapDispatchToProps = dispatch => ({
 });
 
 //export default MinimalDashboard1;
-export default connect(mapStateToProps,  mapDispatchToProps )(NuevaOrden);
+export default connect(mapStateToProps, mapDispatchToProps)(NuevaOrden);
 //export default connect(mapStateToProps)(NuevaOrden);

@@ -244,7 +244,9 @@ const Formadora2 = (props) => {
                 "content-type": "application/json",
                 "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
             },
-            "body": false
+            body: JSON.stringify({
+                id_orden: localStorage.getItem("id_orden")
+              }),
         })
             .then(response => response.json())
             .then(result => {
@@ -279,6 +281,7 @@ const Formadora2 = (props) => {
     
     useEffect(() => {
         loadResumen()
+        loadGraphTemp()
       }, [props.id_orden]);
 
 useEffect(() => {
@@ -287,7 +290,6 @@ useEffect(() => {
         loadResumen()
     }, 2000);
     const interval = setInterval(() => {
-        loadGraphTemp();
         loadResumen();
     }, 30000);
     return () => clearInterval(interval);

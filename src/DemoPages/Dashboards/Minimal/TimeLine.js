@@ -1,6 +1,7 @@
 
 import React,{useEffect, useState} from "react";
 import ReactApexChart from "react-apexcharts";
+import { connect } from "react-redux";
 
 const TimeLine = (props) => {
 
@@ -65,9 +66,14 @@ const TimeLine = (props) => {
     
     
     useEffect(() => {
-      loadTimeLine()
-
+      setTimeout(() => {
+        loadTimeLine()
+    }, 2000);
   }, [])
+
+  useEffect(() => {
+    loadTimeLine()
+  }, [props.id_orden]);
 
 
   
@@ -80,7 +86,9 @@ const TimeLine = (props) => {
         "Content-Type": "application/json",
         "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
       },
-      "body": false
+      body: JSON.stringify({
+        id_orden: localStorage.getItem("id_orden")
+      }),
     })
       .then((response) => response.json())
       .then((r) => {
@@ -102,29 +110,32 @@ const TimeLine = (props) => {
           }
         ];
         for (let i = 0; i < r.length; i++) {
-
-          if (i == r.length - 1) {
             objeto = {
               x: r[i].id_tipo_reporte == 1 ? 'En Producción' : 'En Paro' ,
               y: [
                 new Date(r[i].fecha_inicio).getTime(),
-                fecha_final,
+                  new Date(r[i].fecha_termino).getTime()
               ],
               fillColor: r[i].id_tipo_reporte == 1 ? '#2264A7' : '#F7431E'
             }
-
-          }
-          else {
-            objeto = {
-              x: r[i].id_tipo_reporte == 1 ? 'En Producción' : 'En Paro' ,
-              y: [
-                new Date(r[i].fecha_inicio).getTime(),
-                  new Date(r[i + 1].fecha_inicio).getTime()
-              ],
-              fillColor: r[i].id_tipo_reporte == 1 ? '#2264A7' : '#F7431E'
+            objetos.push(objeto)
+            if (i == r.length - 1) {
+              if (localStorage.getItem("id_ordenA") === localStorage.getItem("id_orden")){
+                objeto = {
+                  x: r[i].id_tipo_reporte == 2 ? 'En Producción' : 'En Paro' ,
+                  y: [
+                    new Date(r[i].fecha_termino).getTime(),
+                    new Date().getTime()-10800000, //menos 3 horas
+                  ],
+                  fillColor: r[i].id_tipo_reporte == 2 ? '#2264A7' : '#F7431E'
+                  
+                }
+                objetos.push(objeto)
+              }
+  
             }
-          }
-          objetos.push(objeto)
+          
+          
         }
         setSeries2([{
           data:objetos
@@ -150,5 +161,8 @@ const TimeLine = (props) => {
     );
   }
 
-
-export default TimeLine;
+  const mapStateToProps = (state) => ({
+    id_orden: state.dashboardReducers.id_orden,
+  });
+  
+  export default connect(mapStateToProps)(TimeLine);

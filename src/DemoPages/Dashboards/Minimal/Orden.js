@@ -117,7 +117,6 @@ const Orden = (props) => {
     })
       .then((response) => response.json())
       .then((result) => {
-        console.log("cargando ordenes")
         setVacio(0);
 
         result[0].id_sub_orden === null ? setVacio(1) : setOrdenes(result);
