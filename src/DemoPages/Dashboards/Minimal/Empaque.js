@@ -164,6 +164,7 @@ const Empaque = (props) => {
             },
             body: JSON.stringify({
                 id_vibot: id_vibot,
+                id_orden: localStorage.getItem("id_orden")
             }),
         })
             .then((response) => response.json())

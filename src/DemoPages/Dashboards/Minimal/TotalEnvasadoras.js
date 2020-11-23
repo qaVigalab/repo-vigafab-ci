@@ -211,7 +211,7 @@ const TotalEnvasadoras = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (kgacumulados / (capacidad * ((tActivo + tInactivo) / 60))) * 100 //(totalKG/capacidad*tiempo que se demoro)
+                                                (kgacumulados / (capacidad * ((tActivo) / 180))) * 100 //(totalKG/capacidad*tiempo que se demoro)
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
