@@ -162,7 +162,8 @@ const CialWidget = (props) => {
             "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
         },
         body: JSON.stringify({
-            id_vibot: id_vibot,
+          id_vibot: id_vibot,
+          id_orden: localStorage.getItem("id_orden")
         }),
     })
         .then((response) => response.json())
@@ -195,11 +196,9 @@ const CialWidget = (props) => {
                 }
                 objetos.push(objeto)
             }
-            //console.log(objetos)
             setSeriesTimeLine([{
                 data: objetos
             }]);
-            //console.log(objetos)
         })
 
         .catch((err) => {
@@ -208,6 +207,7 @@ const CialWidget = (props) => {
 }
   useEffect(() => {
     loadResumen()
+    loadTimeLine()
   }, [props.id_orden]);
 
   useEffect(() => {
@@ -340,7 +340,7 @@ const CialWidget = (props) => {
                     size="50" // String: Defines the size of the circle.
                     lineWidth="30" // String: Defines the thickness of the circle's stroke.
                     progress={(
-                      (kgacumulados/ (capacidad *((tActivo + tInactivo)/60))) * 100 //(totalKG/capacidad*tiempo que se demoro)
+                      (kgacumulados/ ((capacidad/3) *((tActivo )/60))) * 100 //(totalKG/capacidad*tiempo que se demoro)
                     ).toFixed(0)} // String: Update to change the progress and percentage.
                     progressColor="#02c39a" // String: Color of "progress" portion of circle.
                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.

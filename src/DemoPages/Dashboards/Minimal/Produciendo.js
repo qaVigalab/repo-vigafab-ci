@@ -144,14 +144,12 @@ const Produciendo = (props) => {
 
     useEffect(() => {
         setTimeout(() => {
-            console.log(localStorage.getItem("id_orden"))
             loadResumen()
             loadTorta()
           }, 2000);
         
         const interval = setInterval(() => {
             loadResumen();
-            console.log("recargando produciendo")
         }, 30000);
         return () => clearInterval(interval);
     }, []);
@@ -266,12 +264,12 @@ const Produciendo = (props) => {
                             <div className="circle">
                                 <Circle
                                     animate={true} // Boolean: Animated/Static progress
-                                    animationDuration="10s" // String: Length of animation
+                                    animationDuration="3s" // String: Length of animation
                                     responsive={true} // Boolean: Make SVG adapt to parent size
                                     size="100" // String: Defines the size of the circle.
                                     lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                     progress={(
-                                        disponibilidad>100 ? 100 : disponibilidad * 100
+                                        disponibilidad>1 ? 100 : disponibilidad * 100
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
                                     progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -291,12 +289,12 @@ const Produciendo = (props) => {
                             <div className="circle">
                                 <Circle
                                     animate={true} // Boolean: Animated/Static progress
-                                    animationDuration="10s" // String: Length of animation
+                                    animationDuration="3s" // String: Length of animation
                                     responsive={true} // Boolean: Make SVG adapt to parent size
                                     size="100" // String: Defines the size of the circle.
                                     lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                     progress={(
-                                        eficiencia>100 ? 100 : eficiencia * 100 //(totalKG/capacidad*tiempo que se demoro)
+                                        eficiencia>1 ? 100 : eficiencia * 100 //(totalKG/capacidad*tiempo que se demoro)
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
                                     progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -316,12 +314,12 @@ const Produciendo = (props) => {
                             <div className="circle">
                                 <Circle
                                     animate={true} // Boolean: Animated/Static progress
-                                    animationDuration="10s" // String: Length of animation
+                                    animationDuration="3s" // String: Length of animation
                                     responsive={true} // Boolean: Make SVG adapt to parent size
                                     size="100" // String: Defines the size of the circle.
                                     lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                     progress={(
-                                     calidad>100 ? 100 : calidad * 100 
+                                     calidad>1 ? 100 : calidad * 100 
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
                                     progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -341,12 +339,12 @@ const Produciendo = (props) => {
                             <div className="circle">
                                 <Circle
                                     animate={true} // Boolean: Animated/Static progress
-                                    animationDuration="10s" // String: Length of animation
+                                    animationDuration="3s" // String: Length of animation
                                     responsive={true} // Boolean: Make SVG adapt to parent size
                                     size="100" // String: Defines the size of the circle.
                                     lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                     progress={(
-                                        eficiencia * disponibilidad * calidad * 100
+                                        (eficiencia * disponibilidad * calidad) > 1 ? 100 : eficiencia * disponibilidad * calidad *100
                                     ).toFixed(0)} // String: Update to change the progress and percentage.
                                     progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
