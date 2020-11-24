@@ -166,6 +166,7 @@ class MinimalDashboard1 extends Component {
                 </Button>
               </div>
             </Col>
+            
             <div align="right">
               <Button className=" buttonBlue mr-4" size="">
                 <Row>
