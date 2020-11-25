@@ -154,7 +154,7 @@ const Orden = (props) => {
   useEffect(() => {
     const interval = setInterval(() => {
       localStorage.setItem("recarga_orden", 0)
-    }, 300000);
+    }, 600000);
     return () => clearInterval(interval);
   }, [])
 
