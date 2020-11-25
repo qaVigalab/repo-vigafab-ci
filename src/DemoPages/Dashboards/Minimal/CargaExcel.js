@@ -9,7 +9,7 @@ class CargaExcel extends Component {
       isOpen: false,
       dataLoaded: false,
       isFormInvalid: false,
-      visible: true,
+      visible: false,
     }
 
     this.fileHandler = this.fileHandler.bind(this);
