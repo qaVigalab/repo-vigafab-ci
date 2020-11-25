@@ -65,11 +65,11 @@ const Orden = (props) => {
 
   const verOrden = (e, id_orden) => {
     e.preventDefault();
-    if(select === id_orden){
+    if (select === id_orden) {
       let id = localStorage.getItem("id_ordenA")
       setSelect(0)
-      localStorage.setItem("id_orden", id) 
-    }else {
+      localStorage.setItem("id_orden", id)
+    } else {
       setSelect(id_orden)
       localStorage.setItem("id_orden", id_orden)
     }
@@ -123,15 +123,15 @@ const Orden = (props) => {
         if (result[1].id_sub_orden != null) {
           setVacio(2);
           setOrdenes(result);
-          if (localStorage.getItem("recarga_orden") === "0"){
+          if (localStorage.getItem("recarga_orden") === "0") {
             localStorage.setItem("id_orden", result.find(e => e.id_estado === 1).id_sub_orden)
-            localStorage.setItem("recarga_orden",1)
+            localStorage.setItem("recarga_orden", 1)
             setSelect(0)
           }
           localStorage.setItem("id_ordenA", result.find(e => e.id_estado === 1).id_sub_orden)
         }
 
-        
+
       })
       .catch((err) => {
         console.error(err);
@@ -146,15 +146,15 @@ const Orden = (props) => {
   useEffect(() => {
     const interval = setInterval(() => {
       loadOrdenes();
-      
+
     }, 60000);
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      localStorage.setItem("recarga_orden",0)
-    }, 300000);
+      localStorage.setItem("recarga_orden", 0)
+    }, 600000);
     return () => clearInterval(interval);
   }, [])
 
@@ -174,11 +174,12 @@ const Orden = (props) => {
             Producción en línea
           </div>
         </Col>
+        {/*}
         <Col>
           <Button className="buttonOrange" size="lg" onClick={partirOrden}>
             Partir Orden
           </Button>
-        </Col>
+        </Col>{*/}
 
         <Row>
           <Col className="mt-4 mr-0 ">
