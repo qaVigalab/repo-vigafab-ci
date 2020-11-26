@@ -56,6 +56,7 @@ export const userLoginFetch = (user) =>{
             localStorage.setItem("empresa", result[0].Empresa)
             localStorage.setItem("perfil", result[0].Perfil )
             localStorage.setItem("img", result[0].img)
+            localStorage.setItem("username", result[0].nom)
             dispatch(setUserLogin(result[0]))
         }
     })

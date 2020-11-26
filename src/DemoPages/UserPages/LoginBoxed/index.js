@@ -15,8 +15,6 @@ import {
 import TransitionAlerts from './Alerta/view';
 import './css/login.scss';
 import img1 from "./img/foto-agrosuper-login2.png";
-import img2 from "./img/img02.png";
-import img3 from "./img/img03.png";
 import vigalablogo from "./img/vigalablogo.png";
 import agrologo from "./img/logo-header.png";
 
@@ -135,10 +133,9 @@ const LoginBoxed = (props) => {
 
     if (autenticated === 1) {
         props.setOpenAlert(false)
-        return <Redirect to='/dashboards/Scada2' />;
+        return <Redirect to='/dashboards/minimal-dashboard-1' />;
     } else {
-        console.log("Se queda")
-
+        
     }
 
 

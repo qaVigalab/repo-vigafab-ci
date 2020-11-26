@@ -136,17 +136,17 @@ class NuevaOrden extends Component {
           <Col align="left">
             <div className="ml-3 mt-1 text-uppercase font-weight-bold title1orange">Nueva Orden De Produccion</div>
           </Col>
-          {/*} <Col align="right">
+           {/* <Col align="right">
             <div className="mr-4 cerrarO ">Cerrar</div>
-          </Col>{*/}
-          <Col align="right">
+          </Col> */}
+          {/* <Col align="right">
             <Button className="mt-3 mr-4" size="">
               <Row>
                 <GridOnIcon className="ml-3 mt-1" fontSize="small" />
                 <div className="ml-2 mr-4 mt-1">Importar ordenes desde excel</div>
               </Row>
             </Button>
-          </Col>
+          </Col> */}
         </Row>
         <hr />
         <Form className="ml-4 mr-4" onSubmit={this.handleSubmit}>

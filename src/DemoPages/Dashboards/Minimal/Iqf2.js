@@ -476,7 +476,7 @@ const Iqf2 = (props) => {
                     </Row>
                 </Col>
             </Row>
-            {/*
+            
             <Row>
                 <Col xs="12">
                     <div id="chart">
@@ -485,7 +485,7 @@ const Iqf2 = (props) => {
                     </div>
                 </Col>
             </Row>
-            */}
+            
 
             {
                 //<div className="bot-description">Receta actual: {" " + producto}</div>
