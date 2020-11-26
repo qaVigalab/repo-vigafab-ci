@@ -4,6 +4,7 @@ import { Doughnut } from "react-chartjs-2";
 import Chart from 'react-apexcharts'
 import { connect } from "react-redux";
 import Circle from "react-circle";
+import ReactApexChart from "react-apexcharts";
 import "moment/locale/es";
 
 
@@ -11,7 +12,25 @@ const Formadora2 = (props) => {
     const id_vibot = 6296;
     var temperatura = [];
     var fecha = [];
+    const labels = {
+        enabled: false
+    };
+    const markers = {
+        size: 0
+    };
+    const tooltips = {
 
+        x: {
+            format: 'dd/MM/yy HH:mm',
+
+        },
+        y: {
+            formatter: undefined,
+            title: {
+                formatter: '',
+            },
+        },
+    };
 
     const [dataTorta, setDataTorta] = useState(
         {
@@ -118,6 +137,42 @@ const Formadora2 = (props) => {
 
         },]
     )
+    const [seriesTimeLine, setSeriesTimeLine] = useState([])
+    const [optionsTimeLine, setOptionsTimeLine] = useState(
+
+        {
+
+            dataLabels: labels,
+            markers: markers,
+            tooltip: tooltips,
+
+            chart: {
+                type: 'rangeBar',
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                    distributed: false,
+                    dataLabels: {
+                        hideOverflowingLabels: false
+                    }
+                }
+            },
+
+            xaxis: {
+                type: 'datetime',
+                labels: {
+                }
+            },
+
+            grid: {
+                row: {
+                    colors: ['#f3f4f5', '#fff'],
+                    opacity: 1
+                }
+            }
+        }
+    )
 
     const [hacumuladas, setHacumuladas] = useState(0)
     const [tActivo, setTActivo] = useState(0)
@@ -202,15 +257,70 @@ const Formadora2 = (props) => {
             });
     }
 
+    const loadTimeLine = () => {
+
+        fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/gettimelinemaquina", {
+            "method": "POST",
+            "headers": {
+                "Content-Type": "application/json",
+                "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+            },
+            body: JSON.stringify({
+                id_vibot: id_vibot,
+                id_orden: localStorage.getItem("id_orden")
+            }),
+        })
+            .then((response) => response.json())
+            .then((r) => {
+                var objeto = {};
+                var objetos = [
+                    {
+                        x: 'Prod',
+                        y: [new Date(r[0].hora_inicio).getTime(),
+                        new Date(r[0].hora_inicio).getTime()],
+                        fillColor: '#2264A7'
+                    },
+                    {
+                        x: 'Paro',
+                        y: [new Date(r[0].hora_inicio).getTime(),
+                        new Date(r[0].hora_inicio).getTime()],
+                        fillColor: '#F7431E'
+                    }
+                ];
+                for (let i = 0; i < r.length; i++) {
+
+                    objeto = {
+                        x: r[i].id_tipo == 2 ? 'Prod' : 'Paro',
+                        y: [
+                            new Date(r[i].hora_inicio).getTime(),
+                            new Date(r[i].hora_termino).getTime()
+                        ],
+                        fillColor: r[i].id_tipo == 2 ? '#2264A7' : '#F7431E'
+
+                    }
+                    objetos.push(objeto)
+                }
+                setSeriesTimeLine([{
+                    data: objetos
+                }]);
+            })
+
+            .catch((err) => {
+                console.error(err);
+            });
+    }
+
     useEffect(() => {
         loadResumen()
         loadGraphTemp()
+        loadTimeLine()
     }, [props.id_orden]);
 
     useEffect(() => {
         setTimeout(() => {
             loadGraphTemp()
             loadResumen()
+            loadTimeLine()
         }, 2000);
         const interval = setInterval(() => {
             loadResumen();
@@ -334,7 +444,7 @@ const Formadora2 = (props) => {
                 </Col>
                 <Col md="9">
                     <Row>
-                         <Col md="4">
+                        <Col md="4">
                             <div className="centralbodydetail" style={{ paddingBottom: '10px' }}>
                                 <Doughnut
                                     data={dataTorta}
@@ -348,7 +458,7 @@ const Formadora2 = (props) => {
                                         responsive: true,
                                         maintainAspectRatio: true,
                                     }} /></div>
-                        </Col> 
+                        </Col>
                         <Col md="8">
                             <div className="mt-5 mr-3">
                                 <Chart
@@ -367,6 +477,14 @@ const Formadora2 = (props) => {
             {
                 //<div className="bot-description">Receta actual: {" " + producto}</div>
             }
+            <Row>
+                <Col xs="12">
+                    <div id="chart" className="m-3">
+                        <ReactApexChart options={optionsTimeLine} series={seriesTimeLine} type="rangeBar" height={150} />
+
+                    </div>
+                </Col>
+            </Row>
         </div>
     )
 }

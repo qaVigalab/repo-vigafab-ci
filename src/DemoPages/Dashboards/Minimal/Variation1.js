@@ -156,7 +156,7 @@ class MinimalDashboard1 extends Component {
                 menu_actual="Scada"
               />
             </Col>
-            <Col>
+            {/* <Col>
               <div align="right">
                 <Button className="buttonOrange2 mr-2" size="">
                   <Row>
@@ -174,7 +174,7 @@ class MinimalDashboard1 extends Component {
                   <div className="ml-2 mr-4 mt-1">Descargar como Reporte</div>
                 </Row>
               </Button>
-            </div>
+            </div> */}
 
           </Row>
 
