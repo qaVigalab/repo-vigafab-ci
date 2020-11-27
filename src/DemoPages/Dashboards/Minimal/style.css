@@ -133,8 +133,6 @@
     align-content: flex-end;
     text-align: right;
     
-    padding-top: 60px;
-    padding-bottom: 30px
   }
 
   .Kg {
@@ -415,9 +413,12 @@
     color: #fff;
     padding:10px;
   }
+  .divP10{
+    padding-left: 15px;
+    padding-right: 15px;
+  }
   .bigFont{
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 25px;
+      font-size: 30px;
       color: #fff;
       font-weight: bold;
   }

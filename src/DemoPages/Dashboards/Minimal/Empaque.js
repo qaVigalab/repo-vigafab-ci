@@ -5,7 +5,7 @@ import { Doughnut } from "react-chartjs-2";
 import ReactApexChart from "react-apexcharts";
 import { connect } from "react-redux";
 import Circle from "react-circle";
-
+import _ from "lodash";
 
 const Empaque = (props) => {
     const id_vibot = 23643;
@@ -107,6 +107,26 @@ const Empaque = (props) => {
     const [kgsolicitados, setKgsolicitados] = useState(0)
     const [hsolicitadas, setHsolicitadas] = useState(0)
     const [capacidad, setCapacidad] = useState(0)
+
+    var formatNumber = {
+        separador: ".", // separador para los miles
+        sepDecimal: ',', // separador para los decimales
+        formatear: function (num) {
+          num += '';
+          var splitStr = num.split('.');
+          var splitLeft = splitStr[0];
+          var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
+          var regx = /(\d+)(\d{3})/;
+          while (regx.test(splitLeft)) {
+            splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
+          }
+          return this.simbol + splitLeft + splitRight;
+        },
+        new: function (num, simbol) {
+          this.simbol = simbol || '';
+          return this.formatear(num);
+        }
+      }
 
     const loadResumen = () => {
         fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenmaquina", {
@@ -249,7 +269,7 @@ const Empaque = (props) => {
                     <Col md="4">
                         <Row align="right">
                             <div className="font2 ml-3 my-4">Tiempo de Actividad</div>
-                            <div className="font2Blue ml-1 my-4">{Math.round(tActivo / 60 * 100) / 100} hrs</div>
+                            <div className="font2Blue ml-1 my-4">{formatNumber.new(_.round(tActivo/60 ,2 ))} hrs</div>
                         </Row>
 
                     </Col>
@@ -265,13 +285,13 @@ const Empaque = (props) => {
                                 <Row className="mt-4">
 
 
-                                    <div align="center" className="ml-auto indi">{Intl.NumberFormat().format(hacumuladas)}</div>
-                                    <div align="center" className="font2 mt-3 ml-2 mr-auto">de {Intl.NumberFormat().format(hsolicitadas)} Cajas </div>
+                                    <div align="center" className="ml-auto indi">{formatNumber.new(_.round(hacumuladas))}</div>
+                                    <div align="center" className="font2 mt-3 ml-2 mr-auto">de {formatNumber.new(_.round(hsolicitadas))} Cajas </div>
 
                                 </Row>
                                 <Row className="mt-1 mb-4">
-                                    <div align="left" className="ml-auto indi">{Intl.NumberFormat().format(kgacumulados)}</div>
-                                    <div align="center" className="font2 mt-3 ml-2 mr-auto"> de {Intl.NumberFormat().format(kgsolicitados)} Kgs</div>
+                                    <div align="left" className="ml-auto indi">{formatNumber.new(_.round(kgacumulados))}</div>
+                                    <div align="center" className="font2 mt-3 ml-2 mr-auto"> de {formatNumber.new(_.round(kgsolicitados))} Kgs</div>
 
                                 </Row>
 

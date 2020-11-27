@@ -6,6 +6,8 @@ import { connect } from "react-redux";
 import Circle from "react-circle";
 import ReactApexChart from "react-apexcharts";
 import "moment/locale/es";
+import _ from "lodash";
+
 
 
 const Formadora2 = (props) => {
@@ -181,6 +183,26 @@ const Formadora2 = (props) => {
     const [estado, setEstado] = useState(0)
     const [capacidad, setCapacidad] = useState(0)
 
+    var formatNumber = {
+        separador: ".", // separador para los miles
+        sepDecimal: ',', // separador para los decimales
+        formatear:function (num){
+        num +='';
+        var splitStr = num.split('.');
+        var splitLeft = splitStr[0];
+        var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
+        var regx = /(\d+)(\d{3})/;
+        while (regx.test(splitLeft)) {
+        splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
+        }
+        return this.simbol + splitLeft +splitRight;
+        },
+        new:function(num, simbol){
+        this.simbol = simbol ||'';
+        return this.formatear(num);
+        }
+       }
+
     const loadResumen = () => {
         fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenmaquina", {
             "method": "POST",
@@ -347,7 +369,7 @@ const Formadora2 = (props) => {
                                 <div className="font2  my-4 ">Estado</div></Col>
                             <div className={estado == 1 ? "font2gray  my-4" : "font2Blue my-4"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
                             <div className="font2 ml-3 my-4">Tiempo de Actividad</div>
-                            <div className="font2Blue ml-1 mr-5 my-4">{Math.round(tActivo / 60 * 100) / 100} hrs</div>
+                            <div className="font2Blue ml-1 mr-5 my-4">{formatNumber.new(_.round(tActivo/60,2))} hrs</div>
 
                         </Row>
 
@@ -365,7 +387,7 @@ const Formadora2 = (props) => {
                             <Row className="my-4">
 
 
-                                <div align="center" className="ml-auto indi">{Intl.NumberFormat().format(kgacumulados)}</div>
+                                <div align="center" className="ml-auto indi">{formatNumber.new(_.round(kgacumulados))}</div>
                                 <div align="center" className="font2 mt-3 ml-2 mr-auto">     Kg </div>
 
                             </Row>
@@ -375,7 +397,7 @@ const Formadora2 = (props) => {
                             <Row className="" >
 
                                 <Col md="12">
-                                    <div align="center" className="indi mt-3 ">{Intl.NumberFormat().format(hacumuladas)}</div>
+                                    <div align="center" className="indi mt-3 ">{formatNumber.new(_.round(hacumuladas))}</div>
                                     <div align="left" className="font2 mb-3 ">Hamburguesas formadas</div>
                                 </Col>
 
