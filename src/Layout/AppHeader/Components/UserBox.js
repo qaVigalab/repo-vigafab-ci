@@ -2,22 +2,13 @@ import { faAngleDown, faAlignCenter } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import React, { Fragment } from 'react';
-import { Bounce, toast } from 'react-toastify';
 import {
     Button, DropdownMenu, DropdownToggle,
     UncontrolledButtonDropdown
 } from 'reactstrap';
-import  { Redirect, withRouter, Link } from 'react-router-dom'
-import {
-    UncontrolledDropdown,
-    Nav, NavItem, DropdownItem, Col, Row
-} from 'reactstrap';
-import Ionicon from 'react-ionicons';
-import Tabs from 'react-responsive-tabs';
-import InfoIcon from '@material-ui/icons/Info';
 import TimelineEx from './TabsContent/TimelineExample';
-import TimelineExNew from './TabsContent/TimelineExample2';
 
+import _ from "lodash";
 
 const tabsContent = [
    
@@ -129,11 +120,11 @@ const UserBox = (props) => {
                                                     </div>
                                                     <div className="widget-content-left">
                                                         <div className="widget-heading">
-                                                            Admin
+                                                            {_.capitalize(localStorage.getItem("username"))}
                                                         </div>
-                                                        <div className="widget-subheading opacity-8">
-                                                            Admin
-                                                        </div>
+                                                        {/* <div className="widget-subheading opacity-8">
+                                                            Admin2
+                                                        </div> */}
                                                     </div>
                                                     <div className="widget-content-right mr-2">
                                                         <Button className="btn-pill"
@@ -154,11 +145,11 @@ const UserBox = (props) => {
                     </div>
                     <div className="widget-content-left  ml-3 header-user-info">
                         <div className="widget-heading">
-                            Admin
+                        {_.capitalize(localStorage.getItem("username"))}
                         </div>
-                        <div className="widget-subheading">
-                            Admin
-                        </div>
+                        {/* <div className="widget-subheading">
+                            Admin4
+                        </div> */}
                     </div>
 
                     

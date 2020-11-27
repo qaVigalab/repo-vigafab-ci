@@ -3,6 +3,8 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Button, Col, Container, Form, Input, Label, Row } from "reactstrap";
 import { setIdOrden } from '../../../actions/dashboardActions'
+import GridOnIcon from '@material-ui/icons/GridOn';
+import CargaExcel from "./CargaExcel";
 class NuevaOrden extends Component {
   constructor(props) {
     super(props);
@@ -132,11 +134,19 @@ class NuevaOrden extends Component {
       <div>
         <Row>
           <Col align="left">
-            <div className="ml-3 text-uppercase font-weight-bold title1orange">Nueva Orden De Produccion</div>
+            <div className="ml-3 mt-1 text-uppercase font-weight-bold title1orange">Nueva Orden De Produccion</div>
           </Col>
-          <Col align="right">
+           {/* <Col align="right">
             <div className="mr-4 cerrarO ">Cerrar</div>
-          </Col>
+          </Col> */}
+          {/* <Col align="right">
+            <Button className="mt-3 mr-4" size="">
+              <Row>
+                <GridOnIcon className="ml-3 mt-1" fontSize="small" />
+                <div className="ml-2 mr-4 mt-1">Importar ordenes desde excel</div>
+              </Row>
+            </Button>
+          </Col> */}
         </Row>
         <hr />
         <Form className="ml-4 mr-4" onSubmit={this.handleSubmit}>
@@ -257,6 +267,8 @@ class NuevaOrden extends Component {
             </Col>
           </Row>
         </Form>
+        <hr />
+        <CargaExcel />
 
       </div>
     );

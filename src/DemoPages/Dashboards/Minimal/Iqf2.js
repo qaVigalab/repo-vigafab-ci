@@ -30,7 +30,7 @@ const Iqf2 = (props) => {
                 type: 'datetime',
                 categories: fecha,
                 labels: {
-                    datetimeUTC: false
+                    datetimeUTC: true
                 }
 
             },
@@ -103,7 +103,7 @@ const Iqf2 = (props) => {
                 type: 'datetime',
                 categories: fecha,
                 labels: {
-                    datetimeUTC: false
+                    datetimeUTC: true
                 }
 
             },
@@ -264,16 +264,7 @@ const Iqf2 = (props) => {
             .then(response => response.json())
             .then(result => {
                 result.map(r => (
-                    newDate = new Date(r.fecha),
-                    newDate.setHours(newDate.getHours() + 3),
-                    date =
-                    ("00" + (newDate.getMonth() + 1)).slice(-2) + "-" +
-                    ("00" + newDate.getDate()).slice(-2) + "-" +
-                    newDate.getFullYear() + " " +
-                    ("00" + newDate.getHours()).slice(-2) + ":" +
-                    ("00" + newDate.getMinutes()).slice(-2) + ":" +
-                    ("00" + newDate.getSeconds()).slice(-2),
-                    fecha.push(date),
+                    fecha.push(r.fecha),
                     temperatura.push(r.temperatura),
                     velocidad.push(r.velocidad)
 
@@ -485,7 +476,7 @@ const Iqf2 = (props) => {
                     </Row>
                 </Col>
             </Row>
-            {/*
+            
             <Row>
                 <Col xs="12">
                     <div id="chart">
@@ -494,7 +485,7 @@ const Iqf2 = (props) => {
                     </div>
                 </Col>
             </Row>
-            */}
+            
 
             {
                 //<div className="bot-description">Receta actual: {" " + producto}</div>

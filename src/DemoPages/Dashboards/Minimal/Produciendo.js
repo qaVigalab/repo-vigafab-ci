@@ -13,7 +13,6 @@ const Produciendo = (props) => {
     const [calidad, setCalidad] = useState(0)
     const [eficiencia, setEficiencia] = useState(0)
     const [disponibilidad, setDisponibilidad] = useState(0)
-    const [capacidad, setCapacidad] = useState(0)
     const [estado, setEstado] = useState(0)
     const [nOrden, setnOrden] = useState(0)
     const [sku, setSku] = useState("")
@@ -26,8 +25,9 @@ const Produciendo = (props) => {
     const [kg_solicitado, setKg_solicitado] = useState(0)
     const [h_solicitado, setH_solicitado] = useState(0)
     const [cajas_solicitadas, setcajas_solicitadas] = useState(0)
-    const [tInactivo, setTInactivo] = useState(0)
-    const [kg_caja, setKgcaja] = useState(0)
+    const [perdidaEnvasado, setPerdidaEnvasado] = useState(0)
+    const [perdidaEmpaquetadora, setPerdidaEmpaquetadora] = useState(0)
+    const [perdidaTotal, setPerdidaTotal] = useState(0)
     const [dataTorta, setDataTorta] = useState(
         {
             legend: [
@@ -86,17 +86,19 @@ const Produciendo = (props) => {
                 setProducto(result[0].producto)
                 setProductividad(result[0].productividad)
                 setTiempo(result[0].tiempo)
-                setKg_acumulado(result[0].real_kg)
-                setH_acumulado(result[0].hamburguesas_acumuladas)
+                setKg_acumulado(result[0].real_kg) 
+                setH_acumulado(result[0].hamburguesas_acumuladas) 
                 setCajas_acumuladas(result[0].cajas_acumuladas)
                 setKg_solicitado(result[0].kg_solicitados)
                 setH_solicitado(result[0].hamburguesas_solicitadas)
                 setcajas_solicitadas(result[0].cajas)
-                setKgcaja(result[0].kg_caja)
-                setCapacidad(result[0].kg_hora)
                 setCalidad((result[0].cajas_acumuladas * result[0].kg_caja) / (result[0].real_kg == 0 ? 1 : result[0].real_kg))
                 setEficiencia(((result[0].cajas_acumuladas * result[0].kg_caja) / (result[0].kg_hora * ( (result[0].tiempo == 0 ? 1 : result[0].tiempo)) / 60)))
                 setDisponibilidad((result[0].tiempo_actividad / ((result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo) + result[0].tiempo_actividad)))
+                setPerdidaEnvasado(1-(((result[0].hamburguesas_acumuladas*result[0].g_hamburguesa)/1000)/result[0].real_kg))
+                setPerdidaEmpaquetadora(1-((result[0].cajas_acumuladas*result[0].kg_caja)/((result[0].hamburguesas_acumuladas*result[0].g_hamburguesa)/1000)))
+                setPerdidaTotal(1-((result[0].cajas_acumuladas*result[0].kg_caja)/result[0].real_kg))
+
             }
             )
             .catch(err => {
@@ -111,7 +113,9 @@ const Produciendo = (props) => {
                 "Content-Type": "application/json",
                 "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
             },
-            "body": false
+            body: JSON.stringify({
+                id_orden: localStorage.getItem("id_orden")
+              }),
         })
             .then(response => response.json())
             .then(r => {
@@ -140,6 +144,7 @@ const Produciendo = (props) => {
 
     useEffect(() => {
         loadResumen()
+        loadTorta()
       }, [props.id_orden]);
 
     useEffect(() => {
