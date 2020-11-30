@@ -343,7 +343,7 @@ const Formadora2 = (props) => {
             loadGraphTemp()
             loadResumen()
             loadTimeLine()
-        }, 2000);
+        }, 3000);
         const interval = setInterval(() => {
             loadResumen();
         }, 30000);

@@ -232,6 +232,7 @@ const Empaque = (props) => {
 
     useEffect(() => {
         loadResumen()
+        loadTimeLine()
     }, [props.id_orden]);
 
     useEffect(() => {
