@@ -19,6 +19,7 @@ import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
+import _ from "lodash";
 
 const Orden = (props) => {
   const [ordenes, setOrdenes] = useState([]);
@@ -37,6 +38,27 @@ const Orden = (props) => {
   const [fechaFinal, setFechaFinal] = useState(
     localStorage.getItem("fechaFinal") || fecha
   );
+
+  var formatNumber = {
+    separador: ".", // separador para los miles
+    sepDecimal: ',', // separador para los decimales
+    formatear:function (num){
+    num +='';
+    var splitStr = num.split('.');
+    var splitLeft = splitStr[0];
+    var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
+    var regx = /(\d+)(\d{3})/;
+    while (regx.test(splitLeft)) {
+    splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
+    }
+    return this.simbol + splitLeft +splitRight;
+    },
+    new:function(num, simbol){
+    this.simbol = simbol ||'';
+    return this.formatear(num);
+    }
+   }
+
   const deleteOrdenes = async (id_sub, e) => {
     e.preventDefault();
 
@@ -259,21 +281,21 @@ const Orden = (props) => {
                     <td>{orden.id_sub_orden}</td>
                     <td>{orden.sku}</td>
                     <td>{orden.producto}</td>
-                    <td>{orden.cajas}</td>
+                    <td>{formatNumber.new(orden.cajas)}</td>
                     <td>
-                      {Math.round(orden.productividad * 100) / 100 + " ham/min"}
+                      {formatNumber.new(_.round(orden.productividad,2)) + " ham/min"}
                     </td>
                     <td>
-                      {Math.round(orden.tiempo_estimado * 100) / 100 + " hrs"}
+                      {formatNumber.new(_.round(orden.tiempo_estimado,2))+ " hrs"}
                     </td>
-                    <td>{orden.kg_solicitados + " Kg"}</td>
-                    <td>{orden.real_kg + " Kg"}</td>
+                    <td>{formatNumber.new(_.round(orden.kg_solicitados)) + " Kg"}</td>
+                    <td>{formatNumber.new(_.round(orden.real_kg ))+ " Kg"}</td>
                     <td>
                       {orden.kg_porcentual == null
                         ? "0 %"
                         : orden.kg_porcentual > 100
                           ? "100%"
-                          : orden.kg_porcentual + " %"}
+                          : formatNumber.new(_.round(orden.kg_porcentual,2))+ " %"}
                     </td>
                     <td>
                       {orden.id_estado == 3 ? (

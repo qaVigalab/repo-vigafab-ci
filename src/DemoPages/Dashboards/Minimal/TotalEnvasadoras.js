@@ -61,6 +61,26 @@ const TotalEnvasadoras = (props) => {
     const [estado, setEstado] = useState(0)
     const [capacidad, setCapacidad] = useState(0)
 
+    var formatNumber = {
+        separador: ".", // separador para los miles
+        sepDecimal: ',', // separador para los decimales
+        formatear: function (num) {
+          num += '';
+          var splitStr = num.split('.');
+          var splitLeft = splitStr[0];
+          var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
+          var regx = /(\d+)(\d{3})/;
+          while (regx.test(splitLeft)) {
+            splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
+          }
+          return this.simbol + splitLeft + splitRight;
+        },
+        new: function (num, simbol) {
+          this.simbol = simbol || '';
+          return this.formatear(num);
+        }
+      }
+
     const loadResumen = () => {
         fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenenvasadoras", {
             "method": "POST",
@@ -147,7 +167,7 @@ const TotalEnvasadoras = (props) => {
                     <Col md="4">
                         <Row align="right">
                             <div className="font2 ml-3 my-4">Tiempo de Actividad</div>
-                            <div className="font2Blue ml-1 my-4">{_.round((tActivo/180),2)} hrs</div> {/* tiempo activo/(60*3)*/}
+                            <div className="font2Blue ml-1 my-4">{formatNumber.new(_.round((tActivo/180),2))} hrs</div> {/* tiempo activo/(60*3)*/}
                         </Row>
 
                     </Col>
@@ -162,13 +182,13 @@ const TotalEnvasadoras = (props) => {
                             <Row className="mt-4">
 
 
-                                <div align="center" className="ml-auto indi">{Intl.NumberFormat().format(hacumuladas)}</div>
-                                <div align="center" className="font2 mt-3 ml-2 mr-auto">de {Intl.NumberFormat().format(hsolicitadas)} F.Packs</div>
+                                <div align="center" className="ml-auto indi">{formatNumber.new(_.round(hacumuladas))}</div>
+                                <div align="center" className="font2 mt-3 ml-2 mr-auto">de {formatNumber.new(_.round(hsolicitadas))} F.Packs</div>
 
                             </Row>
                             <Row className="mt-1 mb-4">
-                                <div align="left" className="ml-auto indi">{Intl.NumberFormat().format(kgacumulados)}</div>
-                                <div align="center" className="font2 mt-3 ml-2 mr-auto"> de {Intl.NumberFormat().format(kgsolicitados)} Kgs</div>
+                                <div align="left" className="ml-auto indi">{formatNumber.new(_.round(kgacumulados))}</div>
+                                <div align="center" className="font2 mt-3 ml-2 mr-auto"> de {formatNumber.new(_.round(kgsolicitados))} Kgs</div>
 
                             </Row>
 
