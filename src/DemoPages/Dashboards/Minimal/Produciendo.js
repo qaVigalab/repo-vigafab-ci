@@ -106,6 +106,8 @@ const Produciendo = (props) => {
                 const h_acumu = result[0].hamburguesas_acumuladas == 0 ? 1 : result[0].hamburguesas_acumuladas
                 const g_ham = result[0].g_hamburguesa == 0 ? 1 : result[0].g_hamburguesa
                 const tinac = result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo
+                const kg_emp = result[0].cajas_acumuladas*result[0].kg_caja
+                const kg_env = h_acumu*g_ham/1000
                 setEstado(result[0].estado)
                 setnOrden(result[0].id_sub_orden)
                 setSku(result[0].sku)
@@ -118,15 +120,17 @@ const Produciendo = (props) => {
                 setKg_solicitado(result[0].kg_solicitados)
                 setH_solicitado(result[0].hamburguesas_solicitadas)
                 setcajas_solicitadas(result[0].cajas)
+
                 setCalidad((result[0].cajas_acumuladas * result[0].kg_caja) / real_kg)
                 setEficiencia(((result[0].cajas_acumuladas * result[0].kg_caja) / (result[0].kg_hora * tiempo / 60)))
                 setDisponibilidad((result[0].tiempo_actividad / (tinac + result[0].tiempo_actividad)))
-                setPerdidaEnvasado(1 - (((result[0].hamburguesas_acumuladas * result[0].g_hamburguesa) / 1000) / real_kg))
-                setPerdidaEmpaquetadora(1 - ((result[0].cajas_acumuladas * result[0].kg_caja) / ((h_acumu * g_ham) / 1000)))
-                setPerdidaTotal(1 - ((result[0].cajas_acumuladas * result[0].kg_caja) / real_kg))
-                setPerdidaTotalKg(real_kg-(result[0].cajas_acumuladas*result[0].kg_caja))
-                setPerdidaEnvasadoKg(real_kg-(h_acumu*g_ham/1000))
-                setPerdidaEmpaquetadoraKg((h_acumu*g_ham/1000)-(result[0].cajas_acumuladas*result[0].kg_caja) )
+
+                setPerdidaEnvasado((real_kg - kg_env)/real_kg)
+                setPerdidaEmpaquetadora((kg_env - kg_emp) / kg_env)
+                setPerdidaTotal((real_kg - kg_emp)/ real_kg)
+                setPerdidaTotalKg(real_kg - kg_emp)
+                setPerdidaEnvasadoKg(real_kg - kg_env)
+                setPerdidaEmpaquetadoraKg(kg_env - kg_emp)
             }
             )
             .catch(err => {
@@ -429,7 +433,7 @@ const Produciendo = (props) => {
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
                                                 perdidaEnvasado * 100
-                                            ).toFixed(0)} // String: Update to change the progress and percentage.
+                                            ).toFixed(1)} // String: Update to change the progress and percentage.
                                             progressColor="#F7431E" // String: Color of "progress" portion of circle.
                                             bgColor="#6b778c" // String: Color of "empty" portion of circle.
                                             textColor="#ecedf0" // String: Color of percentage text color.
@@ -467,7 +471,7 @@ const Produciendo = (props) => {
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
                                                 perdidaEmpaquetadora * 100
-                                            ).toFixed(0)} // String: Update to change the progress and percentage.
+                                            ).toFixed(1)} // String: Update to change the progress and percentage.
                                             progressColor="#F7431E" // String: Color of "progress" portion of circle.
                                             bgColor="#6b778c" // String: Color of "empty" portion of circle.
                                             textColor="#ecedf0" // String: Color of percentage text color.
@@ -505,7 +509,7 @@ const Produciendo = (props) => {
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
                                                 perdidaTotal * 100
-                                            ).toFixed(0)} // String: Update to change the progress and percentage.
+                                            ).toFixed(1)} // String: Update to change the progress and percentage.
                                             progressColor="#F7431E" // String: Color of "progress" portion of circle.
                                             bgColor="#6b778c" // String: Color of "empty" portion of circle.
                                             textColor="#ecedf0" // String: Color of percentage text color.
