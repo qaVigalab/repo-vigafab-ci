@@ -9,6 +9,7 @@ import _ from "lodash";
 
 const Empaque = (props) => {
     const id_vibot = 23643;
+    const [productividad, setProductividad] = useState(0)
     const [dataTorta, setDataTorta] = useState(
         {
             legend: [
@@ -150,6 +151,7 @@ const Empaque = (props) => {
                     data = [0, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
                 }
                 setTActivo(result[0].tiempo_actividad)
+                setProductividad(result[0].productividad)
                 setTInactivo(result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo)
                 setEstado(result[0].estado)
                 setHacumuladas(result[0].hamburguesas_acumuladas)
@@ -256,10 +258,10 @@ const Empaque = (props) => {
             <div className="blackBorder2" >
                 <Row>
                     <br />
-                    <Col align="left" md="4">
-                        <div className="text-uppercase font-weight-bold title1orange my-1 ml-3">Empaque</div>
+                    <Col align="left" xl="2" md="6">
+                        <div className="text-uppercase font-weight-bold title1orange my-1">Empaque</div>
                     </Col>
-                    <Col md="4">
+                    <Col xl="3" md="6">
                         <Row align="right">
                             <div className="font2 ml-3 my-4">Estado</div>
                             <div className={estado == 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
@@ -267,10 +269,18 @@ const Empaque = (props) => {
                     </Col>
 
 
-                    <Col md="4">
+                    <Col xl="4" md="6">
                         <Row align="right">
                             <div className="font2 ml-3 my-4">Tiempo de Actividad</div>
                             <div className="font2Blue ml-1 my-4">{formatNumber.new(_.round(tActivo/60 ,2 ))} hrs</div>
+                        </Row>
+
+                    </Col>
+                    
+                    <Col xl="3" md="6" >
+                        <Row align="right">
+                            <div className="font2 my-4">Productividad</div>
+                            <div className="font2Blue ml-1 my-4">{formatNumber.new(_.round(productividad))+ " caj/min"}</div>
                         </Row>
 
                     </Col>

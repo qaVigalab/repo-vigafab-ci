@@ -8,6 +8,7 @@ import ReactApexChart from "react-apexcharts";
 import _ from "lodash";
 const CialWidget = (props) => {
 
+  const [productividad, setProductividad] = useState(0)
   const [hacumuladas, setHacumuladas] = useState(0)
   const [tActivo, setTActivo] = useState(0)
   const [tInactivo, setTInactivo] = useState(0)
@@ -148,6 +149,8 @@ const CialWidget = (props) => {
         } else {
           data = [0, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
         }
+
+        setProductividad(result[0].productividad)
         setTActivo(result[0].tiempo_actividad)
         setTInactivo(result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo)
         setEstado(result[0].estado)
