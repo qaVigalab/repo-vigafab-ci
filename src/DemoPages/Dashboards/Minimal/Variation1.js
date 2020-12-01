@@ -69,6 +69,8 @@ class MinimalDashboard1 extends Component {
           nombre: "",
         },
       ],
+      perfil: localStorage.getItem("perfil")
+
     };
     this.onDismiss = this.onDismiss.bind(this);
     this.getMaquinas = this.getMaquinas.bind(this);
@@ -133,6 +135,8 @@ class MinimalDashboard1 extends Component {
     this.getMaquinas("envasadora");
     localStorage.setItem("fechaFinal", moment().format('YYYY-MM-DD'))
     localStorage.setItem("recarga_orden", 0)
+
+
   }
   render() {
     return (
@@ -178,20 +182,24 @@ class MinimalDashboard1 extends Component {
 
           </Row>
 
-          <Row>
-            <Col md="12" xl="12">
-              <Card className="main-card mb-3">
-                <NuevaOrden />
-              </Card>
-            </Col>
-          </Row>
+          {this.state.perfil == 1 || this.state.perfil == 2 ? (
+            <Row>
+              <Col md="12" xl="12">
+                <Card className="main-card mb-3">
+                  <NuevaOrden />
+                </Card>
+              </Col>
+            </Row>
+          ) : (
+              ""
+            )}
 
           <Row>
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
-                
-                  <Orden id_orden={this.props.id_orden}/>
-                
+
+                <Orden id_orden={this.props.id_orden} />
+
               </Card>
             </Col>
           </Row>
@@ -221,8 +229,8 @@ class MinimalDashboard1 extends Component {
               </Col>
             </Row>*/}
 
-            
-             <div class="columns-parent"> {/* sacar al agregar iqf */}
+
+          <div class="columns-parent"> {/* sacar al agregar iqf */}
             {this.state.modo === 2 || this.state.modo === 0 ? (
               <Row>
                 {this.state.maquinas.map((maquina) => (

@@ -99,7 +99,7 @@ const LoginBoxed = (props) => {
         myHeaders.append("x-api-key", `${process.env.REACT_APP_DASHBOARD_API_KEY}`);
         myHeaders.append("Content-Type", "application/json");
         var raw = ""
-        if (localStorage.getItem("perfil") == "1" || localStorage.getItem("perfil") == "2") {
+        if (localStorage.getItem("perfil") == "1" || localStorage.getItem("perfil") == "2" || localStorage.getItem("perfil") == "3") {
             raw = JSON.stringify({
                 "id": localStorage.getItem("id_user"),
                 "token": localStorage.getItem("token")
