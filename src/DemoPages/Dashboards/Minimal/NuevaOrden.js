@@ -10,12 +10,13 @@ class NuevaOrden extends Component {
     super(props);
 
     this.loadProductos = this.loadProductos.bind(this);
-    this.selectProducto = this.selectProducto.bind(this);
     this.cajasChange = this.cajasChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.changePrioridad = this.changePrioridad.bind(this);
     this.limpiarForm = this.limpiarForm.bind(this);
     this.fechaChange = this.fechaChange.bind(this);
+    this.changeSku = this.changeSku.bind(this);
+
 
     this.state = {
       kg: 0,
@@ -24,6 +25,7 @@ class NuevaOrden extends Component {
       productos: [],
       producto: {},
       prioridad: 5,
+      nombre: "",
       fecha: localStorage.getItem("fechaFinal")
     };
   }
@@ -79,7 +81,7 @@ class NuevaOrden extends Component {
       });
   }
 
-  selectProducto(event) {
+  /* selectProducto(event) {
     const prod_id = event.target.value;
     const prod_sku = this.state.productos.find((p) => p.id == prod_id);
     this.setState(
@@ -90,7 +92,7 @@ class NuevaOrden extends Component {
         this.cajasChange2();
       }
     );
-  }
+  } */
 
   fechaChange(event) {
     this.setState({ fecha: event.target.value })
@@ -105,10 +107,12 @@ class NuevaOrden extends Component {
     });
   }
   cajasChange2() {
+
     var caja = this.state.cajas;
+    this.setState({ nombre: this.state.producto.producto })
     this.setState({ kg: caja * this.state.producto.kg_caja });
     this.setState({
-      tiempo: (caja * this.state.producto.kg_caja / this.state.producto.kg_hora),
+      tiempo: (caja * this.state.producto.kg_caja / this.state.producto.kg_hora)
     });
   }
 
@@ -121,11 +125,36 @@ class NuevaOrden extends Component {
     this.setState({ prioridad: e.target.value });
   }
 
+  changeSku(event) {
+    if (event.target.value.length === 0) {
+      this.limpiarForm()
+    } else {
+      const sku = event.target.value;
+      const prod_sku = this.state.productos.find((p) => p.sku.includes(sku)
+      );
+      if (prod_sku !== undefined) {
+        this.setState(
+          {
+            producto: prod_sku,
+          },
+          () => {
+            this.cajasChange2();
+          }
+        );
+      } else {
+        this.limpiarForm()
+        this.setState({ producto: [] })
+        this.setState({ nombre: "No Existe SKU" })
+      }
+    }
+  }
+
   limpiarForm() {
     this.setState({
       cajas: 0,
       kg: 0,
       tiempo: 0,
+      nombre: "Producto"
     });
   }
 
@@ -136,7 +165,7 @@ class NuevaOrden extends Component {
           <Col align="left">
             <div className="ml-3 mt-1 text-uppercase font-weight-bold title1orange">Nueva Orden De Produccion</div>
           </Col>
-           {/* <Col align="right">
+          {/* <Col align="right">
             <div className="mr-4 cerrarO ">Cerrar</div>
           </Col> */}
           {/* <Col align="right">
@@ -153,23 +182,6 @@ class NuevaOrden extends Component {
           <Row>
             <Col md="5">
               <Row>
-                <Col md="6">
-                  <FormGroup>
-                    <Label>Producto</Label>
-                    <Input
-                      type="select"
-                      name="select"
-                      id="prod_select"
-                      onChange={this.selectProducto}
-                    >
-                      {this.state.productos.map((producto, i) => (
-                        <option key={i} value={producto.id}>
-                          {producto.producto}
-                        </option>
-                      ))}
-                    </Input>
-                  </FormGroup>
-                </Col>
                 <Col md="4">
                   <FormGroup>
                     <Label>SKU</Label>
@@ -177,10 +189,25 @@ class NuevaOrden extends Component {
                       type="text"
                       name="sku"
                       id="sku"
-                      value={this.state.producto.sku}
+                      onChange={this.changeSku}
+                      placeholder="SKU"
                     />
                   </FormGroup>
                 </Col>
+                <Col md="6">
+                  <FormGroup>
+                    <Label>Producto</Label>
+                    <Input
+                      type="text"
+                      name="prod"
+                      id="prod"
+                      value={this.state.nombre}
+                      placeholder="Producto"
+                    >
+                    </Input>
+                  </FormGroup>
+                </Col>
+
                 <Col md="2">
                   <FormGroup>
                     <Label>Prioridad</Label>
