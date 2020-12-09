@@ -99,8 +99,13 @@ const Orden = (props) => {
     props.setIdOrden(!props.id_orden)
   }
 
-  const partirOrden = () => {
-    fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/nextorden", {
+  const cambiarOrden = (opcion,e) => {
+    e.preventDefault();
+    let api = ""
+     if(opcion === 1) api="https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/nextorden" 
+    else if(opcion === 2) api="https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/siguienteordenenvasadoras" 
+    else if(opcion === 3) api="https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/siguienteordenempaque" 
+    fetch(api, {
       "method": "POST",
       "headers": {
         "Content-Type": "application/json",
@@ -192,7 +197,7 @@ const Orden = (props) => {
   return (
     <div>
       <Row>
-        <Col align="left">
+        <Col align="left" md="4" xl="3">
           <div className="text-uppercase font-weight-bold title1orange ml-3 mt-1">
             Producción en línea
           </div>
@@ -203,7 +208,19 @@ const Orden = (props) => {
             Partir Orden
           </Button>
         </Col>{*/}
-
+       
+          <Col align="left">
+            <Button className="buttonOrange2 ml-3 mt-3" size="lg" onClick={(e) => cambiarOrden(1, e)}>
+              Cambiar Formadora
+             </Button>
+             <Button className="buttonOrange2 ml-3 mt-3" size="lg" onClick={(e) => cambiarOrden(2, e)}>
+              Cambiar Envasadoras
+             </Button>
+             <Button className="buttonOrange2 ml-3 mt-3" size="lg" onClick={(e) => cambiarOrden(3, e)}>
+              Cambiar Empaque
+             </Button>
+          </Col>
+        
         <Row>
           <Col className="mt-4 mr-0 ">
             <div>Seleccione fecha</div>
