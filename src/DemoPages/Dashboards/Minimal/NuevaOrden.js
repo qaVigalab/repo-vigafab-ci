@@ -19,6 +19,7 @@ class NuevaOrden extends Component {
 
 
     this.state = {
+      existeSku: "",
       kg: 0,
       tiempo: 0,
       cajas: 0,
@@ -32,32 +33,36 @@ class NuevaOrden extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    fetch(
-      global.api.dashboard.insertsuborder,
-      {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
-        },
-        body: JSON.stringify({
-          prioridad: this.state.prioridad,
-          cajas: this.state.cajas,
-          kg_solicitados: this.state.kg,
-          id_producto: this.state.producto.id,
-          tiempo_estimado: this.state.tiempo,
-          fecha2: this.state.fecha
-        }),
-      }
-    )
-      .then((res) => res.json())
-      .then(this.limpiarForm(),
-        this.props.setIdOrden(!this.props.id_orden)
+    if (this.state.existeSku === true) {
+      fetch(
+        global.api.dashboard.insertsuborder,
+        {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
+          },
+          body: JSON.stringify({
+            prioridad: this.state.prioridad,
+            cajas: this.state.cajas,
+            kg_solicitados: this.state.kg,
+            id_producto: this.state.producto.id,
+            tiempo_estimado: this.state.tiempo,
+            fecha2: this.state.fecha
+          }),
+        }
       )
-      .catch((err) => {
-        console.error(err);
-      });
-
+        .then((res) => res.json())
+        .then(this.limpiarForm(),
+          this.props.setIdOrden(!this.props.id_orden)
+        )
+        .catch((err) => {
+          console.error(err);
+        });
+    } else {
+      this.props.setIdOrden(!this.props.id_orden)
+      this.setState({existeSku:false})
+    }
   }
 
   loadProductos() {
@@ -136,6 +141,7 @@ class NuevaOrden extends Component {
         this.setState(
           {
             producto: prod_sku,
+            existeSku: true
           },
           () => {
             this.cajasChange2();
@@ -144,7 +150,7 @@ class NuevaOrden extends Component {
       } else {
         this.limpiarForm()
         this.setState({ producto: [] })
-        this.setState({ nombre: "No Existe SKU" })
+        this.setState({ nombre: "No Existe SKU", existeSku: false })
       }
     }
   }
@@ -178,20 +184,28 @@ class NuevaOrden extends Component {
           </Col> */}
         </Row>
         <hr />
-        <Form className="ml-4 mr-4" onSubmit={this.handleSubmit}>
+        <Form className="ml-4 mr-4" onSubmit={this.state.existeSku === false ? "" : this.handleSubmit}>
           <Row>
             <Col md="5">
               <Row>
                 <Col md="4">
                   <FormGroup>
                     <Label>SKU</Label>
-                    <Input
-                      type="text"
-                      name="sku"
-                      id="sku"
-                      onChange={this.changeSku}
-                      placeholder="SKU"
-                    />
+                    {this.state.existeSku === false ? (
+                      <Input invalid
+                        type="text"
+                        name="sku"
+                        id="sku"
+                        onChange={this.changeSku}
+                        placeholder="SKU"
+                      />
+                    ) : <Input
+                        type="text"
+                        name="sku"
+                        id="sku"
+                        onChange={this.changeSku}
+                        placeholder="SKU"
+                      />}
                   </FormGroup>
                 </Col>
                 <Col md="6">
