@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import cx from 'classnames';
 
 import TitleComponent1 from './PageTitleExamples/Variation1'
-import TitleComponent2 from './PageTitleExamples/Variation2'
+// import TitleComponent2 from './PageTitleExamples/Variation2'
 import TitleComponent3 from './PageTitleExamples/Variation3'
 
 class PageTitle extends Component {
@@ -21,7 +21,7 @@ class PageTitle extends Component {
             subheading
         } = this.props;
 
-        var arr = [<TitleComponent1 />, <TitleComponent2 />, <TitleComponent3 />]
+        // var arr = [<TitleComponent1 />, <TitleComponent2 />, <TitleComponent3 />]
 
         return (
 
@@ -40,9 +40,9 @@ class PageTitle extends Component {
                             </div>
                         </div>
                     </div>
-                    <div className="page-title-actions">
+                    {/* <div className="page-title-actions">
                         {this.randomize(arr)}
-                    </div>
+                    </div> */}
                 </div>
             </div>
         );
