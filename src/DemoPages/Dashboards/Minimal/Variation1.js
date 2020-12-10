@@ -19,6 +19,7 @@ import Orden from "./Orden";
 import Produciendo from "./Produciendo";
 import TotalEnvasadoras from "./TotalEnvasadoras";
 import Empaque from "./Empaque";
+import FullScreen from "./FullScreen"
 import AddIcon from '@material-ui/icons/Add';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import moment from 'moment'
@@ -282,6 +283,10 @@ class MinimalDashboard1 extends Component {
               </Card>
             </Col>
           </Row>
+
+          {/* <Row>
+         < FullScreen/>
+          </Row> */}
         </ReactCSSTransitionGroup>
       </Fragment>
     );
