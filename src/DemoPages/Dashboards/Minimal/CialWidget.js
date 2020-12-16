@@ -129,7 +129,11 @@ const CialWidget = (props) => {
   }
 
   const loadResumen = () => {
-    fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenmaquina", {
+    let link
+    localStorage.getItem("id_orden") === localStorage.getItem("id_ordenA")
+      ? link = "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenmaquina"
+      : link = "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenhistorico"
+    fetch(link, {
       "method": "POST",
       "headers": {
         "content-type": "application/json",
@@ -284,7 +288,7 @@ const CialWidget = (props) => {
               </Row>
               <Row >
                 <Col align="right">
-                  <div className="font2Blue mr-2 ">{formatNumber.new(_.round(tActivo/60 ,2))} hrs</div></Col>
+                  <div className="font2Blue mr-2 ">{formatNumber.new(_.round(tActivo / 60, 2))} hrs</div></Col>
               </Row>
               <Row className=" mb-4">
                 <Col align="right">
