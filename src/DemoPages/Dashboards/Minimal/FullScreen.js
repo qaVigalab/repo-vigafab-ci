@@ -1,25 +1,23 @@
-import React, { useState } from "react";
-import Fullscreen from "fullscreen-react";
-import Empaque from "./Empaque";
- 
+import React, {useCallback} from 'react';
+import { FullScreen, useFullScreenHandle } from "react-full-screen";
+import { Button, Col, Container, Form, Input, Label, Row } from "reactstrap";
+
 function FullSceen() {
-  const [isEnter, setIsEnter] = useState(false);
- 
+  const handle = useFullScreenHandle();
+
   return (
     <div>
-      <button
-        onClick={() => {
-          setIsEnter(true);
-        }}
-      >
-        Go Fullscreen
+      <button onClick={handle.enter}>
+        Enter fullscreen
       </button>
- 
-      <Fullscreen isEnter={isEnter} onChange={setIsEnter}>
-        <div className="full-screenable-node">
-          <Empaque/>
-        </div>
-      </Fullscreen>
+
+      <FullScreen handle={handle}>
+      <Row className="fullscreen-nav">
+        agrosuper, 21-12-2020, 15:06
+
+
+      </Row>
+      </FullScreen>
     </div>
   );
 }
