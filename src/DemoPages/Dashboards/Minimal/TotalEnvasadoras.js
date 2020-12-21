@@ -82,7 +82,11 @@ const TotalEnvasadoras = (props) => {
       }
 
     const loadResumen = () => {
-        fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenenvasadoras", {
+        let link
+        localStorage.getItem("id_orden") === localStorage.getItem("id_ordenA") 
+        ? link = "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenenvasadoras" 
+        : link = "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenhistoricoEnv"
+        fetch(link, {
             "method": "POST",
             "headers": {
                 "Content-Type": "application/json",
