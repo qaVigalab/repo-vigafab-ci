@@ -31,6 +31,9 @@ const Produciendo = (props) => {
     const [perdidaEnvasadoKg, setPerdidaEnvasadoKg] = useState(0)
     const [perdidaEmpaquetadoraKg, setPerdidaEmpaquetadoraKg] = useState(0)
     const [perdidaTotal, setPerdidaTotal] = useState(0)
+    const [TiempoActivo, setTiempoActivo] = useState(0)
+    const [TiempoInactivo, setTiempoInactivo] = useState(0)
+    const [TiempoDesconectado, setTiempoDesconectado] = useState(0)
     const [dataTorta, setDataTorta] = useState(
         {
             legend: [
@@ -88,8 +91,12 @@ const Produciendo = (props) => {
         }
        }
 
-    const loadResumen = () => {
-        fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenlinea", {
+    const loadResumen =  () => {
+        let link
+        localStorage.getItem("id_orden") === localStorage.getItem("id_ordenA") 
+        ? link = "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenlinea" 
+        : link = "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getreportehistoricolinea"
+         fetch(link, {
             "method": "POST",
             "headers": {
                 "Content-Type": "application/json",
@@ -120,10 +127,13 @@ const Produciendo = (props) => {
                 setKg_solicitado(result[0].kg_solicitados)
                 setH_solicitado(result[0].hamburguesas_solicitadas)
                 setcajas_solicitadas(result[0].cajas)
-
+                setTiempoActivo(result[0].tiempo_actividad)
+                setTiempoInactivo(result[0].tiempo_inactivo)
+                setTiempoDesconectado(result[0].tiempo_desconectado)
                 setCalidad((result[0].cajas_acumuladas * result[0].kg_caja) / real_kg)
                 setEficiencia(((result[0].cajas_acumuladas * result[0].kg_caja) / (result[0].kg_hora * tiempo / 60)))
                 setDisponibilidad((result[0].tiempo_actividad / (tinac + result[0].tiempo_actividad)))
+                
 
                 setPerdidaEnvasado((real_kg - kg_env)/real_kg)
                 setPerdidaEmpaquetadora((kg_env - kg_emp) / kg_env)
@@ -131,14 +141,29 @@ const Produciendo = (props) => {
                 setPerdidaTotalKg(real_kg - kg_emp)
                 setPerdidaEnvasadoKg(real_kg - kg_env)
                 setPerdidaEmpaquetadoraKg(kg_env - kg_emp)
+                if(localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ){
+                    setDataTorta(
+                        {
+                            
+                            datasets: [
+                                {
+                                    data: [Math.round( 0 / 60 * 100) / 100, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, Math.round(0 / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
+                                }
+                            ],
+                        }
+                    )
+                }
             }
             )
+            
+            
             .catch(err => {
                 console.error(err);
             });
     }
 
     const loadTorta = () => {
+        if(localStorage.getItem("id_orden") === localStorage.getItem("id_ordenA") ){
         fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getparosgeneral", {
             "method": "POST",
             "headers": {
@@ -172,6 +197,7 @@ const Produciendo = (props) => {
             .catch(err => {
                 console.error(err);
             });
+        }
     }
 
     useEffect(() => {
