@@ -197,6 +197,7 @@ function FullSceen() {
   const [TiEmp, setTiEmp] = useState()
   const [TaLinea, setTaLinea] = useState()
   const [TiLinea, setTiLinea] = useState()
+  const [TempFor, setTempFor] = useState()
 
   const loadData = () => {
     fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getfullscreen", {
@@ -245,10 +246,10 @@ function FullSceen() {
         setTiEmp(result[0].ti_emp)
         setTaLinea(result[0].ta_linea)
         setTiLinea(result[0].ti_linea)
+        setTempFor(result[0].temp_for)
         setCalidad((result[0].h_acum_emp * result[0].kg_caja) / result[0].kg_acum_for)
         setEficiencia((result[0].kg_acum_emp / (result[0].kg_hora * (result[0].ta_linea+result[0].ti_linea) / 60)))
         setDisponibilidad((result[0].ta_linea / (result[0].ti_linea + result[0].ta_linea)))
-
 
         setDataTortaFor({
           datasets: [
@@ -347,11 +348,28 @@ function FullSceen() {
   };
 
   useEffect(() => {
+    loadOrdenes();
+      loadData();
+  
+    const interval = setInterval(() => {
+      loadOrdenes();
+      loadData();
+      console.log("recargando")
+    }, 600000);
+    return () => clearInterval(interval);
+  }, [])
 
+  useEffect(() => {
     loadOrdenes();
     loadData();
+    const interval = setInterval(() => {
+      loadOrdenes();
+      loadData();
+      console.log("recargando")
+    }, 60000);
+    return () => clearInterval(interval);
+}, []);
 
-  }, []);
 
   return (
     <div>
@@ -585,7 +603,7 @@ function FullSceen() {
                   <Col className="p-0 fullscreen-centerMaquina">
                     <div align="center" className="text-uppercase font-weight-bold title1orange2 mr-2 mt-2">Iqf</div>
 
-                    <div align="center" className="bigFontGreen">-2°C</div>
+                    <div align="center" className="bigFontGreen">{formatNumber.new(_.round(TempFor, 2))}°C</div>
                     <div align="center" className="littleFontGreen mb-3">Temp. Entrada</div>
                     <div align="center" className="bigFontGreen blackBorderTop pt-2">-18°C</div>
                     <div align="center" className="littleFontGreen">Temp. Salida</div>
