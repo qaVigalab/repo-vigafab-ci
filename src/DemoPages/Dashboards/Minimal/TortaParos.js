@@ -5,6 +5,8 @@ import Circle from "react-circle";
 import { Card, Col, Container, Row } from "reactstrap";
 import { connect } from "react-redux";
 import _ from "lodash";
+import moment from 'moment'
+import Brightness1Icon from "@material-ui/icons/Brightness1";
 const CialWidget = (props) => {
 
   const id_vibot = props.id_vibot
@@ -13,49 +15,22 @@ const CialWidget = (props) => {
   var formatNumber = {
     separador: ".", // separador para los miles
     sepDecimal: ',', // separador para los decimales
-    formatear:function (num){
-    num +='';
-    var splitStr = num.split('.');
-    var splitLeft = splitStr[0];
-    var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
-    var regx = /(\d+)(\d{3})/;
-    while (regx.test(splitLeft)) {
-    splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
-    }
-    return this.simbol + splitLeft +splitRight;
+    formatear: function (num) {
+      num += '';
+      var splitStr = num.split('.');
+      var splitLeft = splitStr[0];
+      var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
+      var regx = /(\d+)(\d{3})/;
+      while (regx.test(splitLeft)) {
+        splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
+      }
+      return this.simbol + splitLeft + splitRight;
     },
-    new:function(num, simbol){
-    this.simbol = simbol ||'';
-    return this.formatear(num);
+    new: function (num, simbol) {
+      this.simbol = simbol || '';
+      return this.formatear(num);
     }
-   }
-// some of this code is a variation on https://jsfiddle.net/cmyker/u6rr5moq/
-var originalDoughnutDraw = Chart.controllers.doughnut.prototype.draw;
-Chart.helpers.extend(Chart.controllers.doughnut.prototype, {
-  draw: function() {
-    originalDoughnutDraw.apply(this, arguments);
-    
-    var chart = this.chart;
-    var width = chart.chart.width,
-        height = chart.chart.height,
-        ctx = chart.chart.ctx;
-
-    var fontSize = (height / 114).toFixed(2);
-    ctx.font = fontSize + "em sans-serif";
-    ctx.textBaseline = "middle";
-
-    var sum = 0;
-    for (var i = 0; i < chart.config.data.datasets[0].data.length; i++) {
-      sum += chart.config.data.datasets[0].data[i];
-    }
-
-    let texto = "",
-        textX = Math.round((width - ctx.measureText(texto).width) / 2),
-        textY = height / 2;
-console.log(Math.round((width - ctx.measureText(texto).width) / 2))
-    ctx.fillText(texto, textX, textY);
   }
-});
   const [dataTorta, setDataTorta] = useState(
     {
       legend: [
@@ -90,16 +65,27 @@ console.log(Math.round((width - ctx.measureText(texto).width) / 2))
           ],
         },
       ],
-      
+
     }
   )
- 
-  const [nombre,setNombre] = useState()
-  const [tActivo,setTActivo] = useState()
-  const [tTotal,setTTotal] = useState()
+
+  const [nombre, setNombre] = useState()
+  const [tActivo, setTActivo] = useState()
+  const [tNoJustificado, setTNoJustificado] = useState()
+  const [tJustificado, setTJustificado] = useState()
+  
+  const formatHour = (min) =>{
+    let horas = min/60;
+    horas= Math.trunc(horas)
+    let minutos = min-(60*horas) 
+    return horas===0 ? minutos + " Min" : horas+" Hrs " + minutos + " Min"
+  }
 
   const loadData = () => {
-
+    var m = moment();
+    m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
+    m.toISOString()
+    m.format()
     fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getparosmaquina", {
       "method": "POST",
       "headers": {
@@ -109,38 +95,41 @@ console.log(Math.round((width - ctx.measureText(texto).width) / 2))
 
       body: JSON.stringify({
         id_vibot: id_vibot,
-        ini: props.ini,
-        ter: props.ter
+        ini: props.ini === undefined ? m : props.ini,
+        ter: props.ter === undefined ? m : props.ter
       }),
     })
       .then(response => response.json())
       .then(result => {
+        console.log(result)
         setTActivo(result[0].t_activo)
-        setTTotal(result[0].t_total)
+        setTNoJustificado(result[0].t_noJustificado)
+        setTJustificado(result[0].t_justificado)
         setNombre(result[0].maquina)
-                let data = [];
-                   /*  if (result[0].tiempo_inactivo == 0 && result[0].tiempo_actividad == 0) {
-                        data = [1, 0, 0]
-                    } else {
-                        data = [0, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
-                    } */
-                    data =[0,result[0].t_noJustificado,result[0].t_justificado,result[0].t_activo]
-                    setDataTorta(
-                        {
-                            datasets: [
-                                {
-                                    data: data
-                                }
-                            ],
-                        }
-                    ) 
+        setNombre(result[0].maquina)
+        let data = [];
+        /*  if (result[0].tiempo_inactivo == 0 && result[0].tiempo_actividad == 0) {
+             data = [1, 0, 0]
+         } else {
+             data = [0, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
+         } */
+        data = [0, result[0].t_noJustificado, result[0].t_justificado, result[0].t_activo]
+        setDataTorta(
+          {
+            datasets: [
+              {
+                data: data
+              }
+            ],
+          }
+        )
       }
       )
       .catch(err => {
         console.error(err);
       });
   }
-  
+
   useEffect(() => {
     loadData()
   }, []);
@@ -149,7 +138,7 @@ console.log(Math.round((width - ctx.measureText(texto).width) / 2))
   }, [props.ter]);
 
   return (
-    <Col md="6" xl="3" lg="6" xs="12">
+    <Col md="6" xl="4" lg="6" xs="12">
       <Card className="main-card mb-3">
         {/* header */}
 
@@ -163,11 +152,9 @@ console.log(Math.round((width - ctx.measureText(texto).width) / 2))
         </div >
 
         <div className="space5px ">
-
-
           <Row >
-            <Col xs="9" className="ml-5">
-              <div className="space5px">
+            <Col xs="8" className="">
+              <div className="">
                 <Container>
                   <Doughnut
                     id="1"
@@ -178,6 +165,7 @@ console.log(Math.round((width - ctx.measureText(texto).width) / 2))
                     options={{
                       legend: {
                         display: false,
+
                       },
                       responsive: true,
                       maintainAspectRatio: true,
@@ -193,8 +181,50 @@ console.log(Math.round((width - ctx.measureText(texto).width) / 2))
                 </Container>
               </div>
             </Col>
+            <Col xs="4">
+              <div className="mt-5 mr-3">
+                <Circle
+                  animate={true} // Boolean: Animated/Static progress
+                  animationDuration="3s" // String: Length of animation
+                  responsive={true} // Boolean: Make SVG adapt to parent size
+                  size="100" // String: Defines the size of the circle.
+                  lineWidth="30" // String: Defines the thickness of the circle's stroke.
+                  progress={(
+                    (tActivo / (tActivo + tNoJustificado + tJustificado)) * 100
+                  ).toFixed(0)} // String: Update to change the progress and percentage.
+                  progressColor="#02c39a" // String: Color of "progress" portion of circle.
+                  bgColor="#ecedf0" // String: Color of "empty" portion of circle.
+                  textColor="#6b778c" // String: Color of percentage text color.
+                  textStyle={{
+                    fontSize: "5rem", // CSSProperties: Custom styling for percentage.
+                  }}
+                  percentSpacing={5} // Number: Adjust spacing of "%" symbol and number.
+                  roundedStroke={true} // Boolean: Rounded/Flat line ends
+                  showPercentage={true} // Boolean: Show/hide percentage.
+                  showPercentageSymbol={true} // Boolean: Show/hide only the "%" symbol.
+                />
+                <div align="center" className="mt-2">Disponibilidad</div>
+              </div>
+            </Col>
           </Row>
-
+          <Row className="ml-3 mt-3">
+            <Brightness1Icon style={{ color: "#2264A7" }} />
+            Tiempo Activo: {formatHour(tActivo)}
+          </Row>
+          <Row className="ml-3">
+            <Brightness1Icon style={{ color: "#FFB000" }} />
+            Tiempo Justificado: {formatHour(tJustificado) }
+          </Row>
+          <Row className="ml-3">
+            <Brightness1Icon style={{ color: "#F7431E" }} />
+            Tiempo sin Justificar: {formatHour(tNoJustificado) }
+            
+          </Row>
+          <Row className="ml-3">
+            <Brightness1Icon style={{ color: "#555" }} />
+            Tiempo Total: {formatHour(tActivo+tJustificado+tNoJustificado) }
+            
+          </Row>
         </div>
 
 

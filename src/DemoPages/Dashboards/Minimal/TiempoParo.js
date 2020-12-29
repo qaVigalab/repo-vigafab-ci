@@ -25,7 +25,7 @@ export default class TiempoParo extends Component {
   applyCallback(startDate, endDate) {
     this.setState({
       start: startDate,
-      end: endDate,
+      end: endDate
     });
   }
 
@@ -33,9 +33,11 @@ export default class TiempoParo extends Component {
     super(props);
 
     this.togglePop1 = this.togglePop1.bind(this);
+    this.verDetalle = this.verDetalle.bind(this);
 
     this.state = {
       modo: 0,
+      id_vibot:6296
     };
     this.onDismiss = this.onDismiss.bind(this);
   }
@@ -58,15 +60,10 @@ export default class TiempoParo extends Component {
   onDismiss() {
     this.setState({ visible: false });
   }
+  verDetalle = (id_vibot,e) =>{
+    console.log(id_vibot)
+  }
   componentDidMount() {
-    console.log(this.state.endDate)
-    /* this.setState({
-      startDate: moment().format('YYYY-MM-DD')
-    });
-    this.setState({
-      endDate: moment().format('YYYY-MM-DD')
-    }); */
-    console.log(moment().format('YYYY-MM-DD'))
   }
 
   render() {
@@ -95,69 +92,6 @@ export default class TiempoParo extends Component {
           </Row>
 
           <Row>
-            {/*    <Col md="6" xl="4">
-              <Card className="main-card mb-3">
-                <CardBody>
-                  <div className="titlecard">Filtrar Por</div> */}
-            {/* modo 0 */}
-
-            {/*  <Button
-                    outline={this.state.modo === 0 ? false : true}
-                    className="mb-2 mr-2"
-                    color={this.state.modo === 0 ? "primary" : "secondary"}
-                    onClick={() => {
-                      this.setState({
-                        modo: 0,
-                      });
-                    }}
-                  >
-                    Ver todos
-                  </Button> */}
-            {/* modo 1 */}
-
-            {/*   <Button
-                    outline={this.state.modo === 1 ? false : true}
-                    className="mb-2 mr-2 btn-transition"
-                    color={this.state.modo === 1 ? "primary" : "secondary"}
-                    onClick={() => {
-                      this.setState({
-                        modo: 1,
-                      });
-                    }}
-                  >
-                    Hornos
-                  </Button> */}
-            {/* modo 2 */}
-
-            {/*  <Button
-                    outline={this.state.modo === 2 ? false : true}
-                    className="mb-2 mr-2 btn-transition"
-                    color={this.state.modo === 2 ? "primary" : "secondary"}
-                    onClick={() => {
-                      this.setState({
-                        modo: 2,
-                      });
-                    }}
-                  >
-                    Envasadoras
-                  </Button> */}
-            {/* modo 5 */}
-
-            {/*  <Button
-                    outline={this.state.modo === 5 ? false : true}
-                    className="mb-2 mr-2 btn-transition"
-                    color={this.state.modo === 5 ? "primary" : "secondary"}
-                    onClick={() => {
-                      this.setState({
-                        modo: 5,
-                      });
-                    }}
-                  >
-                    Por Producto
-                  </Button> */}
-            {/*    </CardBody>
-              </Card>
-            </Col> */}
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
                 <CardBody>
@@ -182,15 +116,6 @@ export default class TiempoParo extends Component {
                           />
                         </InputGroup>
                       </Col>
-                      {/*                       <Col>
-                        <div className="titlecard">Turno</div>
-
-                        <Input type="select" name="select" id="exampleSelect">
-                          <option>SKU 1</option>
-                          <option>SKU 2</option>
-                          <option>SKU 3</option>
-                        </Input>
-                      </Col> */}
 
                       <Col>
                         <div className="titlecard">Hasta</div>
@@ -217,31 +142,7 @@ export default class TiempoParo extends Component {
                 </CardBody>
               </Card>
             </Col>
-
-            {/* <Col md="12" xl="12">
-              <Card className="main-card mb-3">
-                <Row>
-                  <Col>
-                    <div className="flechas">
-                      <div align="left">&lt;</div>
-                    </div>
-                  </Col>
-                  <Col>
-                    <div className="navegator">
-                      <div align="center">
-                        7:00 - 14:30 | TURNO 1 | 08 Ene 2020
-                      </div>
-                    </div>
-                  </Col>
-                  <Col>
-                    <div className="flechas">
-                      <div align="right">&gt;</div>
-                    </div>
-                  </Col>
-                </Row>
-              </Card>
-            </Col>
-          */} </Row>
+</Row>
 
           <Fragment>
 
@@ -251,32 +152,34 @@ export default class TiempoParo extends Component {
                   <Row>
                     <TortaParos
                         id_vibot={6296}
-                        ini={this.state.startDate === undefined ? moment().format('YYYY-MM-DD') : this.state.startDate}
-                        ter={this.state.endDate === undefined ? moment().format('YYYY-MM-DD') : this.state.endDate}
-                      />
+                        ini={this.state.startDate }
+                        ter={this.state.endDate }
+                      /> 
                       <TortaParos
                         id_vibot={34828}
-                        ini={this.state.startDate === undefined ? moment().format('YYYY-MM-DD') : this.state.startDate}
-                        ter={this.state.endDate === undefined ? moment().format('YYYY-MM-DD') : this.state.endDate}
+                        ini={this.state.startDate }
+                        ter={this.state.endDate }
+
+                        onClick={this.verDetalle(34828)}
                       />
                       <TortaParos
                         id_vibot={23608}
-                        ini={this.state.startDate === undefined ? moment().format('YYYY-MM-DD') : this.state.startDate}
-                        ter={this.state.endDate === undefined ? moment().format('YYYY-MM-DD') : this.state.endDate}
+                        ini={this.state.startDate }
+                        ter={this.state.endDate }
                       />
                       <TortaParos
                         id_vibot={30776}
-                        ini={this.state.startDate === undefined ? moment().format('YYYY-MM-DD') : this.state.startDate}
-                        ter={this.state.endDate === undefined ? moment().format('YYYY-MM-DD') : this.state.endDate}
+                        ini={this.state.startDate }
+                        ter={this.state.endDate }
                         />
                       <TortaParos
                         id_vibot={32818}
-                        ini={this.state.startDate === undefined ? moment().format('YYYY-MM-DD') : this.state.startDate}
-                        ter={this.state.endDate === undefined ? moment().format('YYYY-MM-DD') : this.state.endDate}
+                        ini={this.state.startDate }
+                        ter={this.state.endDate }
                       /><TortaParos
                       id_vibot={23643}
-                      ini={this.state.startDate === undefined ? moment().format('YYYY-MM-DD') : this.state.startDate}
-                        ter={this.state.endDate === undefined ? moment().format('YYYY-MM-DD') : this.state.endDate}
+                      ini={this.state.startDate }
+                        ter={this.state.endDate }
                     />
 
                     <Col xs="12" >

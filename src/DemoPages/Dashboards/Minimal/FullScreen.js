@@ -528,8 +528,10 @@ function FullSceen() {
 
                   <tbody>
                     {
+                      
                       ordenes.map((orden, i) =>
-                        orden.id_sub_orden ? (
+                        orden.id_sub_orden? (
+                          
                           <tr
                             className={orden.id_estado == 1 ? "orangeRow" :
                               "text-center"}
@@ -553,7 +555,7 @@ function FullSceen() {
                                   ? "100%"
                                   : formatNumber.new(_.round(orden.kg_porcentual, 2)) + " %"}
                             </td>
-
+                                
                           </tr>
                         ) : (
                             ""
