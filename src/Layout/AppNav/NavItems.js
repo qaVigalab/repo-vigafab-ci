@@ -6,7 +6,7 @@ export const General= [
 
     },
     
-    /*{
+/*     {
         icon: 'pe-7s-graph1',
         label: 'Hornos',
         content: [
@@ -46,13 +46,13 @@ export const General= [
         label: 'Análisis',
         to: '#/dashboards/analisis'
 
-    }*/,
-    /* {
+    },
+     {
         icon: 'pe-7s-network',
-        label: 'Scada',
-        to: '#/dashboards/Scada'
+        label: 'Detalle',
+        to: '#/dashboards/DetalleAvanzado'
 
-    }, */
+    },  */
     {
         icon: 'pe-7s-network',
         label: 'Scada',
@@ -65,5 +65,11 @@ export const General= [
         to: '#/dashboards/FullScreen'
 
     }, 
+/*     {
+        icon: 'pe-7s-network',
+        label: 'Paros',
+        to: '#/dashboards/TiempoParo'
+
+    },  */
 
 ]

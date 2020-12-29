@@ -1,0 +1,211 @@
+
+import React, { useEffect, useState } from "react";
+import { Doughnut } from "react-chartjs-2";
+import Circle from "react-circle";
+import { Card, Col, Container, Row } from "reactstrap";
+import { connect } from "react-redux";
+import _ from "lodash";
+const CialWidget = (props) => {
+
+  const id_vibot = props.id_vibot
+  const Chart = require('react-chartjs-2').Chart;
+
+  var formatNumber = {
+    separador: ".", // separador para los miles
+    sepDecimal: ',', // separador para los decimales
+    formatear:function (num){
+    num +='';
+    var splitStr = num.split('.');
+    var splitLeft = splitStr[0];
+    var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
+    var regx = /(\d+)(\d{3})/;
+    while (regx.test(splitLeft)) {
+    splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
+    }
+    return this.simbol + splitLeft +splitRight;
+    },
+    new:function(num, simbol){
+    this.simbol = simbol ||'';
+    return this.formatear(num);
+    }
+   }
+// some of this code is a variation on https://jsfiddle.net/cmyker/u6rr5moq/
+var originalDoughnutDraw = Chart.controllers.doughnut.prototype.draw;
+Chart.helpers.extend(Chart.controllers.doughnut.prototype, {
+  draw: function() {
+    originalDoughnutDraw.apply(this, arguments);
+    
+    var chart = this.chart;
+    var width = chart.chart.width,
+        height = chart.chart.height,
+        ctx = chart.chart.ctx;
+
+    var fontSize = (height / 114).toFixed(2);
+    ctx.font = fontSize + "em sans-serif";
+    ctx.textBaseline = "middle";
+
+    var sum = 0;
+    for (var i = 0; i < chart.config.data.datasets[0].data.length; i++) {
+      sum += chart.config.data.datasets[0].data[i];
+    }
+
+    let texto = "",
+        textX = Math.round((width - ctx.measureText(texto).width) / 2),
+        textY = height / 2;
+console.log(Math.round((width - ctx.measureText(texto).width) / 2))
+    ctx.fillText(texto, textX, textY);
+  }
+});
+  const [dataTorta, setDataTorta] = useState(
+    {
+      legend: [
+        {
+          display: false,
+          position: "top",
+          fullWidth: true,
+          reverse: true,
+        },
+      ],
+
+      labels: [
+        "Desconectado",
+        "Paro sin Justificar",
+        "Paro Justificado",
+        "Producción",
+      ],
+      datasets: [
+        {
+          data: [4, 2, 1, 1],
+          backgroundColor: [
+            "#d9d9d9",
+            "#F7431E  ",
+            "#FFB000",
+            "#2264A7",
+          ],
+          hoverBackgroundColor: [
+            "#d9d9d9",
+            "#F7431E  ",
+            "#FFB000",
+            "#2264A7 ",
+          ],
+        },
+      ],
+      
+    }
+  )
+ 
+  const [nombre,setNombre] = useState()
+  const [tActivo,setTActivo] = useState()
+  const [tTotal,setTTotal] = useState()
+
+  const loadData = () => {
+
+    fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getparosmaquina", {
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+      },
+
+      body: JSON.stringify({
+        id_vibot: id_vibot,
+        ini: props.ini,
+        ter: props.ter
+      }),
+    })
+      .then(response => response.json())
+      .then(result => {
+        setTActivo(result[0].t_activo)
+        setTTotal(result[0].t_total)
+        setNombre(result[0].maquina)
+                let data = [];
+                   /*  if (result[0].tiempo_inactivo == 0 && result[0].tiempo_actividad == 0) {
+                        data = [1, 0, 0]
+                    } else {
+                        data = [0, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
+                    } */
+                    data =[0,result[0].t_noJustificado,result[0].t_justificado,result[0].t_activo]
+                    setDataTorta(
+                        {
+                            datasets: [
+                                {
+                                    data: data
+                                }
+                            ],
+                        }
+                    ) 
+      }
+      )
+      .catch(err => {
+        console.error(err);
+      });
+  }
+  
+  useEffect(() => {
+    loadData()
+  }, []);
+  useEffect(() => {
+    loadData()
+  }, [props.ter]);
+
+  return (
+    <Col md="6" xl="3" lg="6" xs="12">
+      <Card className="main-card mb-3">
+        {/* header */}
+
+        <div className="blackBorder2" >
+          <Row>
+            <br />
+            <Col align="left" md="12">
+              <div className="text-uppercase font-weight-bold title1orange mb-3 ml-3">{nombre}</div>
+            </Col>
+          </Row>
+        </div >
+
+        <div className="space5px ">
+
+
+          <Row >
+            <Col xs="9" className="ml-5">
+              <div className="space5px">
+                <Container>
+                  <Doughnut
+                    id="1"
+                    data={dataTorta}
+                    width="10"
+                    height="10"
+                    align="center"
+                    options={{
+                      legend: {
+                        display: false,
+                      },
+                      responsive: true,
+                      maintainAspectRatio: true,
+                      plotOptions: {
+                        pie: {
+                          donut: {
+                            size: '100%'
+                          }
+                        }
+                      }
+                    }}
+                  />
+                </Container>
+              </div>
+            </Col>
+          </Row>
+
+        </div>
+
+
+
+      </Card>
+    </Col>
+  );
+}
+
+const mapStateToProps = (state) => ({
+  id_orden: state.dashboardReducers.id_orden,
+});
+
+export default connect(mapStateToProps)(CialWidget);
