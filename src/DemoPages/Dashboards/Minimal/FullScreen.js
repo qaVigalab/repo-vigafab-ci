@@ -380,7 +380,7 @@ function FullSceen() {
       <FullScreen handle={handle}>
         <div className="fullscreen-space">
           <Row className="fullscreen-nav ">
-            agrosuper, 21-12-2020, 15:06
+            
           </Row>
           <Row className="fullscreen-centerSpace ">
             <Col xl="4" className="fullscreen-center1" >
