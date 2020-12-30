@@ -182,7 +182,7 @@ export default class TiempoParo extends Component {
                         ter={this.state.endDate }
                     />
 
-                    <Col xs="12" >
+                    {/* <Col xs="12" >
                       
                       Detalle
                         <Table size="sm">
@@ -317,7 +317,7 @@ export default class TiempoParo extends Component {
                         </tbody>
                       </Table>
                     </Col>
-                  </Row>
+                 */}  </Row>
                 </Container>
               </CardBody>
             </Card>

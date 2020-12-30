@@ -65,11 +65,11 @@ export const General= [
         to: '#/dashboards/FullScreen'
 
     }, 
-/*     {
+     {
         icon: 'pe-7s-network',
         label: 'Paros',
         to: '#/dashboards/TiempoParo'
 
-    },  */
+    },  
 
 ]
