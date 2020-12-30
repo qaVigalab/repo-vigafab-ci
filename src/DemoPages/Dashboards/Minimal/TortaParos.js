@@ -2,14 +2,16 @@
 import React, { useEffect, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
 import Circle from "react-circle";
-import { Card, Col, Container, Row } from "reactstrap";
+import { Card, Col, Container, Row,Button } from "reactstrap";
 import { connect } from "react-redux";
 import _ from "lodash";
 import moment from 'moment'
 import Brightness1Icon from "@material-ui/icons/Brightness1";
-const CialWidget = (props) => {
+import { setIdVibot } from "../../../actions/dashboardActions";
 
-  const id_vibot = props.id_vibot
+const TortaParos = (props) => {
+
+  const id = props.vibot
   const Chart = require('react-chartjs-2').Chart;
 
   var formatNumber = {
@@ -94,7 +96,7 @@ const CialWidget = (props) => {
       },
 
       body: JSON.stringify({
-        id_vibot: id_vibot,
+        id_vibot: id,
         ini: props.ini === undefined ? m : props.ini,
         ter: props.ter === undefined ? m : props.ter
       }),
@@ -129,10 +131,15 @@ const CialWidget = (props) => {
         console.error(err);
       });
   }
+  const verDetalle = (e) => {
+    e.preventDefault();
+    props.setIdVibot(id)
+  }
 
   useEffect(() => {
     loadData()
   }, []);
+  
   useEffect(() => {
     loadData()
   }, [props.ter]);
@@ -147,6 +154,7 @@ const CialWidget = (props) => {
             <br />
             <Col align="left" md="12">
               <div className="text-uppercase font-weight-bold title1orange mb-3 ml-3">{nombre}</div>
+              <Button onClick={(e) => verDetalle(e)}>Ver detalle</Button>
             </Col>
           </Row>
         </div >
@@ -235,7 +243,11 @@ const CialWidget = (props) => {
 }
 
 const mapStateToProps = (state) => ({
-  id_orden: state.dashboardReducers.id_orden,
+  id_vibot: state.dashboardReducers.id_vibot,
 });
 
-export default connect(mapStateToProps)(CialWidget);
+const mapDispatchToProps = (dispatch) => ({
+  setIdVibot: (data) => dispatch(setIdVibot(data)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(TortaParos);
