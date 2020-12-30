@@ -4,10 +4,8 @@ import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 
 import { connect } from "react-redux";
 import {
-  Button,
   Card,
   Col,
-  Container,
   Row,
 } from "reactstrap";
 import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
@@ -19,35 +17,9 @@ import Orden from "./Orden";
 import Produciendo from "./Produciendo";
 import TotalEnvasadoras from "./TotalEnvasadoras";
 import Empaque from "./Empaque";
-import FullScreen from "./FullScreen"
-import AddIcon from '@material-ui/icons/Add';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import moment from 'moment'
-const data = {
-  legend: [
-    {
-      display: false,
-      position: "top",
-      fullWidth: true,
-      reverse: true,
-    },
-  ],
 
-  labels: ["Inactivo", "Inactivo", "Parada", "Parada", "Producción"],
-  datasets: [
-    {
-      data: [300, 50, 100, 50, 300],
-      backgroundColor: ["#d9d9d9", "#25a0fc", "#ffef45", "#ff4560", "#31cc54"],
-      hoverBackgroundColor: [
-        "#d9d9d9",
-        "#25a0fc",
-        "#ffef45",
-        "#ff4560",
-        "#31cc54",
-      ],
-    },
-  ],
-};
+import moment from 'moment'
+
 
 class MinimalDashboard1 extends Component {
   applyCallback(startDate, endDate) {

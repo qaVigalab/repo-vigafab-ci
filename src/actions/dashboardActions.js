@@ -4,7 +4,8 @@ import {
     SET_SELECCIONADOS,
     SET_REMOVE_SELECCIONADOS,
     SET_ACTUALIZAR,
-    SET_ID_ORDEN
+    SET_ID_ORDEN,
+    SET_ID_VIBOT
     } from '../types/dashboardTypes'
 import md5 from 'md5'
 
@@ -27,6 +28,10 @@ export  const setRemoveSeleccionados = seleccionados => ({
 export  const setIdOrden = id_orden => ({
     type: SET_ID_ORDEN,
     id_orden
+});
+export  const setIdVibot = id_vibot => ({
+    type: SET_ID_VIBOT,
+    id_vibot
 });
 
 export const userLoginFetch = (user) =>{

@@ -4,7 +4,8 @@ import {
     SET_SELECCIONADOS,
     SET_REMOVE_SELECCIONADOS,
     SET_ACTUALIZAR,
-    SET_ID_ORDEN
+    SET_ID_ORDEN,
+    SET_ID_VIBOT
 } from '../types/dashboardTypes'
 
 const INITIAL_STATE = {
@@ -12,7 +13,8 @@ const INITIAL_STATE = {
     userLogin: { Token: "1" },
     seleccionados: [],
     actualizar: "0",
-    id_orden:false
+    id_orden: false,
+    id_vibot: 0
 };
 export default function reducer(state = INITIAL_STATE, action) {
     switch (action.type) {
@@ -37,8 +39,6 @@ export default function reducer(state = INITIAL_STATE, action) {
             if (action.seleccionados === 1) {
                 state.seleccionados.splice(0, state.seleccionados.length)
             }
-
-
             return {
 
                 seleccionados: state.seleccionados
@@ -53,6 +53,11 @@ export default function reducer(state = INITIAL_STATE, action) {
             return {
                 ...state,
                 id_orden: action.id_orden
+            };
+        case SET_ID_VIBOT:
+            return {
+                ...state,
+                id_vibot: action.id_vibot
             };
     }
     return state;
