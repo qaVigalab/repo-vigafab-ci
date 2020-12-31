@@ -65,7 +65,9 @@ export const General= [
         to: '#/dashboards/FullScreen'
 
     }, 
-    {
+
+  {
+
         icon: 'pe-7s-network',
         label: 'Control de Tiempo',
         to: '#/dashboards/TiempoParo'

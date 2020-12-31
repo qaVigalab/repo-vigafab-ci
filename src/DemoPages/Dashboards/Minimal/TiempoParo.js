@@ -188,6 +188,7 @@ const TiempoParo = (props) => {
                     ter={endDate}
                   />
 
+
                   <TortaParos
                     vibot={34828}
                     ini={startDate}
@@ -216,6 +217,10 @@ const TiempoParo = (props) => {
 
                   <Col xs="12" >
                     Detalle
+                     <Col xs="12" >
+                      
+                      Detalle
+
                         <Table size="sm">
                       <tbody>
                         {
@@ -333,6 +338,7 @@ const TiempoParo = (props) => {
                             <Brightness1Icon style={{ color: "#775dd0" }} />
                                 Microparo
                               </td>
+
                           <td>
                             <Progress value="50" color="morado" max={100} />
                           </td>
@@ -350,6 +356,7 @@ const TiempoParo = (props) => {
       </ReactCSSTransitionGroup>
     </Fragment>
   );
+
 
 }
 
