@@ -14,6 +14,7 @@ import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
 import CialWidget from "./CialWidget";
 import Formadora2 from "./Formadora2";
 import Iqf2 from "./Iqf2";
+import GenerarExcel from "./GenerarExcel";
 import NuevaOrden from "./NuevaOrden";
 import Orden from "./Orden";
 import Produciendo from "./Produciendo";
@@ -180,6 +181,14 @@ class MinimalDashboard1 extends Component {
                 </Row>
               </Button>
             </div> */}
+
+          </Row>
+          <Row>
+          <Col md="12" xl="12">
+                <Card className="main-card mb-3">
+                  <GenerarExcel />
+                </Card>
+              </Col>
 
           </Row>
 
