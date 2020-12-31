@@ -144,22 +144,24 @@ const GenerarExcel = (props) => {
         <Workbook.Column label="Fecha" value={row =>new Date(row.fecha).toISOString().substr(0, 10)}/>
         <Workbook.Column label="Máquina" value="maquina"/>
         <Workbook.Column label="Disponibilidad [%]" value={row => (row.Disponibilidad * 100).toFixed(2)}/>
-        <Workbook.Column label="Calidad [%]" value={row => (row.calidad>1?100:row.calidad * 100).toFixed(2)}/>
+        <Workbook.Column label="Calidad [%]" value={row => (isNaN(row.calidad)?'':(row.calidad>1?100:row.calidad * 100).toFixed(2))}/>
         <Workbook.Column label="Eficiencia [%]" value={row => (row.eficiencia * 100).toFixed(2)}/>
-        <Workbook.Column label="OEE [%]" value={row => (row.eficiencia*row.calidad*row.Disponibilidad * 100>100?100:(row.eficiencia*row.calidad*row.Disponibilidad * 100).toFixed(2))}/>
-        <Workbook.Column label="Tiempo perdido[min]" value="tiempo_perdido" />
+        <Workbook.Column label="OEE [%]" value={row => isNaN(row.calidad)?'':(row.eficiencia*row.calidad*row.Disponibilidad * 100>100?100:(row.eficiencia*row.calidad*row.Disponibilidad * 100).toFixed(2))}/>
+        <Workbook.Column label="Tiempo perdido [min]" value="tiempo_perdido" />
         <Workbook.Column label="Cantidad de paros" value={row => (row.cantidad_paros-1)}/>
         <Workbook.Column label="Kg producidos" value="kg_producidos" value={row => (row.kg_producidos).toFixed(1)}/>
         <Workbook.Column label="Kg solicitados" value="kg_solicitados"/>
 
   
       </Workbook.Sheet>
-       <Workbook.Sheet data={paros} name="Justificacion">
-        <Workbook.Column label="Producción" value="Produccion"/>
-        <Workbook.Column label="Fecha" value="fecha"/>
-        <Workbook.Column label="Duración" value="duracion"/>
+        <Workbook.Sheet data={paros} name="Justificación">
+        <Workbook.Column label="SKU" value="sku"/>
+        <Workbook.Column label="n de orden" value="id_suborden"/>
+        <Workbook.Column label="Producto" value="Produccion"/>
+        <Workbook.Column label="Fecha de inicio" value="fecha"/>
+        <Workbook.Column label="Duración[min]" value="duracion"/>
         <Workbook.Column label="Máquina" value="Maquina" />
-        <Workbook.Column label="Justificacion" value="justificacion"/>
+        <Workbook.Column label="Justificación" value="justificacion"/>
 
 
       </Workbook.Sheet> 
