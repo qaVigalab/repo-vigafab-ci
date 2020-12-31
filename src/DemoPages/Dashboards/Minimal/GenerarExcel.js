@@ -136,7 +136,7 @@ const GenerarExcel = (props) => {
       </Col>
 
    <Col>
-      <Workbook filename="resumen_linea.xlsx" element={<button className="btn btn-lg btn-primary">Descargar</button>}>
+      <Workbook filename={'Elaborados_'+startDate.toISOString().substr(0, 10)+'_'+endDate.toISOString().substr(0, 10)+'.xlsx'} element={<button className="btn btn-lg btn-primary">Descargar</button>}>
       <Workbook.Sheet data={ordenes} name="Reporte principal">
       <Workbook.Column label="SKU" value="sku"/>
       <Workbook.Column label="n de orden" value="id_suborden"/>
