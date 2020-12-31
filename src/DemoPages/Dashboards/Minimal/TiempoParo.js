@@ -1,10 +1,12 @@
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Brightness1Icon from "@material-ui/icons/Brightness1";
-import React, { Component, Fragment } from "react";
+import React, { useState, Fragment,useEffect } from "react";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 import DatePicker from "react-datepicker";
 import moment from 'moment'
+
+import { connect } from "react-redux";
 import {
   Button,
   Card,
@@ -21,310 +23,332 @@ import {
 import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
 import TortaParos from "./TortaParos";
 
-export default class TiempoParo extends Component {
-  applyCallback(startDate, endDate) {
-    this.setState({
-      start: startDate,
-      end: endDate
-    });
-  }
+const TiempoParo = (props) => {
 
-  constructor(props) {
-    super(props);
+  /* applyCallback(startDate, endDate) {
+    setStart(startDate)
+    setEnd(endDate)
+  } */
 
-    this.togglePop1 = this.togglePop1.bind(this);
-    this.verDetalle = this.verDetalle.bind(this);
+  const [modo, setModo] = useState()
+  const [detalleParos, setDetalleParos] = useState([])
+  const [startDate,setStartDate] = useState()
+  const [endDate,setEndDate] = useState()
 
-    this.state = {
-      modo: 0,
-      id_vibot:6296
-    };
-    this.onDismiss = this.onDismiss.bind(this);
-  }
-  handleChange = date => {
-    this.setState({
-      startDate: date
-    });
+
+  const handleChange = date => {
+    setStartDate(date)
   };
-  handleChange2 = date => {
-    this.setState({
-      endDate: date
-    });
+  const handleChange2 = date => {
+    setEndDate(date)
   };
-  togglePop1() {
+ /*  const togglePop1 = () => {
     this.setState({
       popoverOpen1: !this.state.popoverOpen1,
     });
-  }
 
-  onDismiss() {
-    this.setState({ visible: false });
   }
-  verDetalle = (id_vibot,e) =>{
+  const onDismiss= () => {
+    this.setState({ visible: false });
+  }  */
+
+  const verDetalle = (e, id_vibot) => {
+    e.preventDefault();
     console.log(id_vibot)
   }
-  componentDidMount() {
+
+ const  loadDetalleParo = () => {
+    var m = moment();
+    m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
+    m.toISOString()
+    m.format()
+    fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getdetalleparo", {
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+      },
+
+      body: JSON.stringify({
+        id_vibot: props.id_vibot,
+               ini: startDate === undefined ? m : startDate,
+                ter: endDate === undefined ? m : endDate 
+      }),
+    })
+      .then(response => response.json())
+      .then(result => {
+        setDetalleParos(result)
+      }
+      )
+      .catch(err => {
+        console.error(err);
+      });
   }
+  useEffect(() => {
+    loadDetalleParo()
+  }, []);
 
-  render() {
-    return (
-      <Fragment>
-        <ReactCSSTransitionGroup
-          component="div"
-          transitionName="TabsAnimation"
-          transitionAppear={true}
-          transitionAppearTimeout={0}
-          transitionEnter={false}
-          transitionLeave={false}
-        >
-          <Row>
-            <Col>
-              <PageTitleAlt3
-                heading="ANÁLISIS"
-                subheading="This is an example dashboard created using build-in elements and components."
-                icon="lnr-apartment opacity-6"
-                empresa="Agrosuper"
-                menues={[]}
-                menu_actual="Análisis"
-              />
-            </Col>
+  useEffect(() => {
+    loadDetalleParo()
+}, [props.id_vibot]);
 
-          </Row>
+ 
+  return (
+    <Fragment>
+      <ReactCSSTransitionGroup
+        component="div"
+        transitionName="TabsAnimation"
+        transitionAppear={true}
+        transitionAppearTimeout={0}
+        transitionEnter={false}
+        transitionLeave={false}
+      >
+        <Row>
+          <Col>
+            <PageTitleAlt3
+              heading="ANÁLISIS"
+              subheading="This is an example dashboard created using build-in elements and components."
+              icon="lnr-apartment opacity-6"
+              empresa="Agrosuper"
+              menues={[]}
+              menu_actual="Análisis"
+            />
+          </Col>
 
-          <Row>
-            <Col md="12" xl="12">
-              <Card className="main-card mb-3">
-                <CardBody>
-                  <Container>
-                    <Row>
-                      <Col>
-                        <div className="titlecard">Desde</div>
+        </Row>
 
-                        <InputGroup>
-                          <InputGroupAddon addonType="prepend">
-                            <div className="input-group-text">
-                              <FontAwesomeIcon icon={faCalendarAlt} />
-                            </div>
-                          </InputGroupAddon>
-                          <DatePicker
-                            className="form-control"
-                            selected={this.state.startDate}
-                            onChange={this.handleChange}
-                            selectsStart
-                            startDate={this.state.startDate}
-                            endDate={this.state.endDate}
-                          />
-                        </InputGroup>
-                      </Col>
-
-                      <Col>
-                        <div className="titlecard">Hasta</div>
-                        <InputGroup>
-                          <InputGroupAddon addonType="prepend">
-                            <div className="input-group-text">
-                              <FontAwesomeIcon icon={faCalendarAlt} />
-                            </div>
-                          </InputGroupAddon>
-                          <DatePicker
-                            className="form-control"
-                            selected={this.state.endDate}
-                            onChange={this.handleChange2}
-                            selectsEnd
-                            startDate={this.state.startDate}
-                            endDate={this.state.endDate}
-                            minDate={this.state.startDate}
-
-                          />
-                        </InputGroup>
-                      </Col>
-                    </Row>
-                  </Container>
-                </CardBody>
-              </Card>
-            </Col>
-</Row>
-
-          <Fragment>
-
+        <Row>
+          <Col md="12" xl="12">
             <Card className="main-card mb-3">
               <CardBody>
                 <Container>
                   <Row>
-                    <TortaParos
-                        id_vibot={6296}
-                        ini={this.state.startDate }
-                        ter={this.state.endDate }
-                      /> 
-                      <TortaParos
-                        id_vibot={34828}
-                        ini={this.state.startDate }
-                        ter={this.state.endDate }
+                    <Col>
+                      <div className="titlecard">Desde</div>
 
-                        onClick={this.verDetalle(34828)}
-                      />
-                      <TortaParos
-                        id_vibot={23608}
-                        ini={this.state.startDate }
-                        ter={this.state.endDate }
-                      />
-                      <TortaParos
-                        id_vibot={30776}
-                        ini={this.state.startDate }
-                        ter={this.state.endDate }
+                      <InputGroup>
+                        <InputGroupAddon addonType="prepend">
+                          <div className="input-group-text">
+                            <FontAwesomeIcon icon={faCalendarAlt} />
+                          </div>
+                        </InputGroupAddon>
+                        <DatePicker
+                          className="form-control"
+                          selected={startDate}
+                          onChange={(e) => handleChange(e)}
+                          selectsStart
+                          startDate={startDate}
+                          endDate={endDate}
                         />
-                      <TortaParos
-                        id_vibot={32818}
-                        ini={this.state.startDate }
-                        ter={this.state.endDate }
-                      /><TortaParos
-                      id_vibot={23643}
-                      ini={this.state.startDate }
-                        ter={this.state.endDate }
-                    />
-
-                    <Col xs="12" >
-                      
-                      Detalle
-                        <Table size="sm">
-                        <tbody>
-                          <tr>
-                            <td style={{ width: "33%" }}>
-                              <Brightness1Icon style={{ color: "#31cc54" }} />
-                                Produciendo
-                              </td>
-
-                            <td style={{ width: "33%" }}>
-                              <Progress
-                                value="90"
-                                color="produccion"
-                                max={100}
-                              />
-                            </td>
-                            <td style={{ width: "33%" }}>00:01 hras</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <Brightness1Icon style={{ color: "#ff4560" }} />
-                                Paro
-                              </td>
-
-                            <td>
-                              <Progress value="15" color="rojo" max={100} />
-                            </td>
-                            <td>00:01 hras</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <Brightness1Icon style={{ color: "#feb018" }} />
-                                Paro
-                              </td>
-                            <td>
-                              <Progress
-                                value="70"
-                                color="naranjo"
-                                max={100}
-                              />
-                            </td>
-                            <td>00:01 hras</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <Brightness1Icon style={{ color: "#25a0fc" }} />
-                                Paro
-                              </td>
-                            <td>
-                              <Progress value="30" color="azul" max={100} />
-                            </td>
-                            <td>00:01 hras</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <Brightness1Icon style={{ color: "#775dd0" }} />
-                                Microparo
-                              </td>
-                            <td>
-                              <Progress value="50" color="morado" max={100} />
-                            </td>
-                            <td>00:01 hras</td>
-                          </tr>
-                        </tbody>
-                      </Table>
+                      </InputGroup>
                     </Col>
-                    <Col xs="12">
-                      Producto
-                        <Table size="sm">
-                        <tbody>
-                          <tr>
-                            <td style={{ width: "33%" }}>
-                              <Brightness1Icon style={{ color: "#31cc54" }} />
-                                Produciendo
-                              </td>
 
-                            <td style={{ width: "33%" }}>
-                              <Progress
-                                value="90"
-                                color="produccion"
-                                max={100}
-                              />
-                            </td>
-                            <td style={{ width: "33%" }}>00:01 hras</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <Brightness1Icon style={{ color: "#ff4560" }} />
-                                Paro
-                              </td>
+                    <Col>
+                      <div className="titlecard">Hasta</div>
+                      <InputGroup>
+                        <InputGroupAddon addonType="prepend">
+                          <div className="input-group-text">
+                            <FontAwesomeIcon icon={faCalendarAlt} />
+                          </div>
+                        </InputGroupAddon>
+                        <DatePicker
+                          className="form-control"
+                          selected={endDate}
+                          onChange={(e) => handleChange2(e)}
+                          selectsEnd
+                          startDate={startDate}
+                          endDate={endDate}
+                          minDate={startDate}
 
-                            <td>
-                              <Progress value="15" color="rojo" max={100} />
-                            </td>
-                            <td>00:01 hras</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <Brightness1Icon style={{ color: "#feb018" }} />
-                                Paro
-                              </td>
-                            <td>
-                              <Progress
-                                value="70"
-                                color="naranjo"
-                                max={100}
-                              />
-                            </td>
-                            <td>00:01 hras</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <Brightness1Icon style={{ color: "#25a0fc" }} />
-                                Paro
-                              </td>
-                            <td>
-                              <Progress value="30" color="azul" max={100} />
-                            </td>
-                            <td>00:01 hras</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <Brightness1Icon style={{ color: "#775dd0" }} />
-                                Microparo
-                              </td>
-                            <td>
-                              <Progress value="50" color="morado" max={100} />
-                            </td>
-                            <td>00:01 hras</td>
-                          </tr>
-                        </tbody>
-                      </Table>
+                        />
+                      </InputGroup>
                     </Col>
                   </Row>
                 </Container>
               </CardBody>
             </Card>
-          </Fragment>
+          </Col>
+        </Row>
 
-        </ReactCSSTransitionGroup>
-      </Fragment>
-    );
-  }
+        <Fragment>
+
+          <Card className="main-card mb-3">
+            <CardBody>
+              <Container>
+                <Row>
+                  <TortaParos
+                    vibot={6296}
+                    ini={startDate}
+                    ter={endDate}
+                  />
+
+                  <TortaParos
+                    vibot={34828}
+                    ini={startDate}
+                    ter={endDate}
+                  />
+
+                  <TortaParos
+                    vibot={23608}
+                    ini={startDate}
+                    ter={endDate}
+                  />
+                  <TortaParos
+                    vibot={30776}
+                    ini={startDate}
+                    ter={endDate}
+                  />
+                  <TortaParos
+                    vibot={32818}
+                    ini={startDate}
+                    ter={endDate}
+                  /><TortaParos
+                    vibot={23643}
+                    ini={startDate}
+                    ter={endDate}
+                  />
+
+                  <Col xs="12" >
+                    Detalle
+                        <Table size="sm">
+                      <tbody>
+                        {
+                          detalleParos.map((paro, i) =>
+
+                            <tr>
+                              <td style={{ width: "33%" }}>
+                                <Brightness1Icon className={paro.id_tipo === 100 ? "blue"
+                                  : paro.id_tipo === 99 ? "red"
+                                    : paro.id_tipo === 1 ? "paro1"
+                                      : paro.id_tipo === 2 ? "paro2"
+                                        : paro.id_tipo === 3 ? "paro3"
+                                          : paro.id_tipo === 4 ? "paro4"
+                                            : paro.id_tipo === 5 ? "paro5"
+                                              : paro.id_tipo === 6 ? "paro6"
+                                                : paro.id_tipo === 7 ? "paro7"
+                                                  : paro.id_tipo === 8 ? "paro8"
+                                                    : paro.id_tipo === 9 ? "paro9"
+                                                      : paro.id_tipo === 10 ? "paro10"
+                                                        : paro.id_tipo === 11 ? "paro11"
+                                                          : paro.id_tipo === 12 ? "paro12"
+                                                            : paro.id_tipo === 13 ? "paro13"
+                                                              : paro.id_tipo === 14 ? "paro14"
+                                                                : paro.id_tipo === 15 ? "paro15"
+                                                                  : "gray"} />
+                                {paro.nombre}
+                              </td>
+
+                              <td style={{ width: "33%" }}>
+                                <Progress
+                                  value={paro.suma}
+                                  color={paro.id_tipo === 100 ? "blue"
+                                    : paro.id_tipo === 99 ? "red"
+                                      : paro.id_tipo === 1 ? "paro1"
+                                        : paro.id_tipo === 2 ? "paro2"
+                                          : paro.id_tipo === 3 ? "paro3"
+                                            : paro.id_tipo === 4 ? "paro4"
+                                              : paro.id_tipo === 5 ? "paro5"
+                                                : paro.id_tipo === 6 ? "paro6"
+                                                  : paro.id_tipo === 7 ? "paro7"
+                                                    : paro.id_tipo === 8 ? "paro8"
+                                                      : paro.id_tipo === 9 ? "paro9"
+                                                        : paro.id_tipo === 10 ? "paro10"
+                                                          : paro.id_tipo === 11 ? "paro11"
+                                                            : paro.id_tipo === 12 ? "paro12"
+                                                              : paro.id_tipo === 13 ? "paro13"
+                                                                : paro.id_tipo === 14 ? "paro14"
+                                                                  : paro.id_tipo === 15 ? "paro15"
+                                                                    : "gray"}
+                                  max={100}
+                                />
+                              </td>
+                              <td style={{ width: "33%" }}>00:01 hras</td>
+                            </tr>
+                          )}
+                      </tbody>
+                    </Table>
+                  </Col>
+                  <Col xs="12">
+                    Producto
+                        <Table size="sm">
+                      <tbody>
+                        <tr>
+                          <td style={{ width: "33%" }}>
+                            <Brightness1Icon style={{ color: "#31cc54" }} />
+                                Produciendo
+                              </td>
+
+                          <td style={{ width: "33%" }}>
+                            <Progress
+                              value="90"
+                              color="produccion"
+                              max={100}
+                            />
+                          </td>
+                          <td style={{ width: "33%" }}>00:01 hras</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <Brightness1Icon style={{ color: "#ff4560" }} />
+                                Paro
+                              </td>
+
+                          <td>
+                            <Progress value="15" color="rojo" max={100} />
+                          </td>
+                          <td>00:01 hras</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <Brightness1Icon style={{ color: "#feb018" }} />
+                                Paro
+                              </td>
+                          <td>
+                            <Progress
+                              value="70"
+                              color="naranjo"
+                              max={100}
+                            />
+                          </td>
+                          <td>00:01 hras</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <Brightness1Icon style={{ color: "#25a0fc" }} />
+                                Paro
+                              </td>
+                          <td>
+                            <Progress value="30" color={1 === 2 ? "azul" : "morado"} max={100} />
+                          </td>
+                          <td>00:01 hras</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <Brightness1Icon style={{ color: "#775dd0" }} />
+                                Microparo
+                              </td>
+                          <td>
+                            <Progress value="50" color="morado" max={100} />
+                          </td>
+                          <td>00:01 hras</td>
+                        </tr>
+                      </tbody>
+                    </Table>
+                  </Col>
+                </Row>
+              </Container>
+            </CardBody>
+          </Card>
+        </Fragment>
+
+      </ReactCSSTransitionGroup>
+    </Fragment>
+  );
+
 }
+
+const mapStateToProps = (state) => ({
+  id_vibot: state.dashboardReducers.id_vibot,
+});
+
+export default connect(mapStateToProps)(TiempoParo);
