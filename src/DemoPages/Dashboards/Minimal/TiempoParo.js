@@ -215,8 +215,6 @@ const TiempoParo = (props) => {
                     ter={endDate}
                   />
 
-                  <Col xs="12" >
-                    Detalle
                      <Col xs="12" >
                       
                       Detalle
@@ -279,75 +277,7 @@ const TiempoParo = (props) => {
                       </tbody>
                     </Table>
                   </Col>
-                  {/*  <Col xs="12">
-                    Producto
-                        <Table size="sm">
-                      <tbody>
-                        <tr>
-                          <td style={{ width: "33%" }}>
-                            <Brightness1Icon style={{ color: "#31cc54" }} />
-                                Produciendo
-                              </td>
-
-                          <td style={{ width: "33%" }}>
-                            <Progress
-                              value="90"
-                              color="produccion"
-                              max={100}
-                            />
-                          </td>
-                          <td style={{ width: "33%" }}>00:01 hras</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <Brightness1Icon style={{ color: "#ff4560" }} />
-                                Paro
-                              </td>
-
-                          <td>
-                            <Progress value="15" color="rojo" max={100} />
-                          </td>
-                          <td>00:01 hras</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <Brightness1Icon style={{ color: "#feb018" }} />
-                                Paro
-                              </td>
-                          <td>
-                            <Progress
-                              value="70"
-                              color="naranjo"
-                              max={100}
-                            />
-                          </td>
-                          <td>00:01 hras</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <Brightness1Icon style={{ color: "#25a0fc" }} />
-                                Paro
-                              </td>
-                          <td>
-                            <Progress value="30" color={1 === 2 ? "azul" : "morado"} max={100} />
-                          </td>
-                          <td>00:01 hras</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <Brightness1Icon style={{ color: "#775dd0" }} />
-                                Microparo
-                              </td>
-
-                          <td>
-                            <Progress value="50" color="morado" max={100} />
-                          </td>
-                          <td>00:01 hras</td>
-                        </tr>
-                      </tbody>
-                    </Table>
-                  </Col>
-                 */}</Row>
+                  </Row>
               </Container>
             </CardBody>
           </Card>
