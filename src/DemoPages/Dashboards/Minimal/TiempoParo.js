@@ -1,7 +1,7 @@
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Brightness1Icon from "@material-ui/icons/Brightness1";
-import React, { useState, Fragment,useEffect } from "react";
+import React, { useState, Fragment, useEffect } from "react";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 import DatePicker from "react-datepicker";
 import moment from 'moment'
@@ -30,10 +30,10 @@ const TiempoParo = (props) => {
     setEnd(endDate)
   } */
 
-  const [modo, setModo] = useState()
+  const [tiempoTotal, setTiempoTotal] = useState()
   const [detalleParos, setDetalleParos] = useState([])
-  const [startDate,setStartDate] = useState()
-  const [endDate,setEndDate] = useState()
+  const [startDate, setStartDate] = useState()
+  const [endDate, setEndDate] = useState()
 
 
   const handleChange = date => {
@@ -42,22 +42,23 @@ const TiempoParo = (props) => {
   const handleChange2 = date => {
     setEndDate(date)
   };
- /*  const togglePop1 = () => {
-    this.setState({
-      popoverOpen1: !this.state.popoverOpen1,
-    });
-
+  const formatHour = (min) => {
+    let horas = min / 60;
+    horas = Math.trunc(horas)
+    let minutos = min - (60 * horas)
+    return horas === 0 ? minutos + " Min" : horas + " Hrs " + minutos + " Min"
   }
-  const onDismiss= () => {
-    this.setState({ visible: false });
-  }  */
+  /*  const togglePop1 = () => {
+     this.setState({
+       popoverOpen1: !this.state.popoverOpen1,
+     });
+ 
+   }
+   const onDismiss= () => {
+     this.setState({ visible: false });
+   }  */
 
-  const verDetalle = (e, id_vibot) => {
-    e.preventDefault();
-    console.log(id_vibot)
-  }
-
- const  loadDetalleParo = () => {
+  const loadDetalleParo = () => {
     var m = moment();
     m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
     m.toISOString()
@@ -71,13 +72,18 @@ const TiempoParo = (props) => {
 
       body: JSON.stringify({
         id_vibot: props.id_vibot,
-               ini: startDate === undefined ? m : startDate,
-                ter: endDate === undefined ? m : endDate 
+        ini: startDate === undefined ? m : startDate,
+        ter: endDate === undefined ? m : endDate
       }),
     })
       .then(response => response.json())
       .then(result => {
         setDetalleParos(result)
+        let tiempo_total =0
+        result.forEach(paro => {
+          tiempo_total += paro.suma
+        });
+        setTiempoTotal(tiempo_total)
       }
       )
       .catch(err => {
@@ -90,9 +96,9 @@ const TiempoParo = (props) => {
 
   useEffect(() => {
     loadDetalleParo()
-}, [props.id_vibot]);
+  }, [props.id_vibot]);
 
- 
+
   return (
     <Fragment>
       <ReactCSSTransitionGroup
@@ -106,12 +112,12 @@ const TiempoParo = (props) => {
         <Row>
           <Col>
             <PageTitleAlt3
-              heading="ANÁLISIS"
+              heading="Control de Tiempo"
               subheading="This is an example dashboard created using build-in elements and components."
               icon="lnr-apartment opacity-6"
               empresa="Agrosuper"
               menues={[]}
-              menu_actual="Análisis"
+              menu_actual="Control de Tiempo"
             />
           </Col>
 
@@ -240,7 +246,7 @@ const TiempoParo = (props) => {
 
                               <td style={{ width: "33%" }}>
                                 <Progress
-                                  value={paro.suma}
+                                  value={paro.suma/tiempoTotal*100}
                                   color={paro.id_tipo === 100 ? "blue"
                                     : paro.id_tipo === 99 ? "red"
                                       : paro.id_tipo === 1 ? "paro1"
@@ -262,13 +268,13 @@ const TiempoParo = (props) => {
                                   max={100}
                                 />
                               </td>
-                              <td style={{ width: "33%" }}>00:01 hras</td>
+                              <td style={{ width: "33%" }}>{formatHour(paro.suma)}</td>
                             </tr>
                           )}
                       </tbody>
                     </Table>
                   </Col>
-                  <Col xs="12">
+                  {/*  <Col xs="12">
                     Producto
                         <Table size="sm">
                       <tbody>
@@ -335,7 +341,7 @@ const TiempoParo = (props) => {
                       </tbody>
                     </Table>
                   </Col>
-                </Row>
+                 */}</Row>
               </Container>
             </CardBody>
           </Card>

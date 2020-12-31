@@ -67,7 +67,7 @@ export const General= [
     }, 
     {
         icon: 'pe-7s-network',
-        label: 'Paros',
+        label: 'Control de Tiempo',
         to: '#/dashboards/TiempoParo'
 
     },  

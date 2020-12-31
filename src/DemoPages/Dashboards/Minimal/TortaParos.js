@@ -152,9 +152,12 @@ const TortaParos = (props) => {
         <div className="blackBorder2" >
           <Row>
             <br />
-            <Col align="left" md="12">
-              <div className="text-uppercase font-weight-bold title1orange mb-3 ml-3">{nombre}</div>
-              <Button onClick={(e) => verDetalle(e)}>Ver detalle</Button>
+            <Col align="left" md="7">
+              
+              <div className="text-uppercase font-weight-bold title1orange mb-3 ml-3">{nombre}</div></Col>
+              <Col>
+              <Button className="mt-3 mr-2 outlineOrange" outline color="danger" size="sm" onClick={(e) => verDetalle(e)}>Ver detalle</Button>
+              
             </Col>
           </Row>
         </div >
