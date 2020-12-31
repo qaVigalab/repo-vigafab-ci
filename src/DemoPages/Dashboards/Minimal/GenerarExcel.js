@@ -104,7 +104,7 @@ const GenerarExcel = (props) => {
          
 <Row>
   <Col align="right">
-  <Label>Rango de fecha</Label>
+  <Label>Seleccione fechas</Label>
 </Col>
 
 <Col>
