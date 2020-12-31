@@ -742,3 +742,13 @@
   .bg-paro15{
     background:#CEDEF0;
   }
+  .outlineOrange{
+    background-color: #fff;
+    color:#FF6200;
+    border-color: #FF6200;
+  }
+  .outlineOrange:hover{
+    background-color: #FF6200;
+    color:#ffffff;
+    border-color: #FF6200;
+  }

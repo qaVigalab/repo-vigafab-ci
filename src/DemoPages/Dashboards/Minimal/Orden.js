@@ -149,7 +149,7 @@ const Orden = (props) => {
         setVacio(0);
 
         result[0].id_sub_orden === null ? setVacio(1) : setOrdenes(result);
-        if (result[1].id_sub_orden != null) {
+        if (result[0].id_sub_orden != null) {
           setVacio(2);
           setOrdenes(result);
           if (localStorage.getItem("recarga_orden") === "0") {
