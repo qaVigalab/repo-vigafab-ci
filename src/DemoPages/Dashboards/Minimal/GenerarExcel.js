@@ -110,6 +110,7 @@ const GenerarExcel = (props) => {
 <Col>
 
 <DatePicker
+        className="form-control"
         selected={startDate}
         onChange={(cambio) => {
             handleChange3(cambio);
@@ -122,6 +123,7 @@ const GenerarExcel = (props) => {
       <Col>
       
       <DatePicker
+        className="form-control"
         selected={endDate}
         onChange={(cambio) => {
             handleChange4(cambio);
@@ -132,22 +134,21 @@ const GenerarExcel = (props) => {
         minDate={startDate}
       />
       </Col>
-    
-
-
 
    <Col>
       <Workbook filename="resumen_linea.xlsx" element={<button className="btn btn-lg btn-primary">Descargar</button>}>
       <Workbook.Sheet data={ordenes} name="Reporte principal">
+      <Workbook.Column label="SKU" value="sku"/>
+      <Workbook.Column label="n de orden" value="id_suborden"/>
         <Workbook.Column label="Producto" value="producto"/>
         <Workbook.Column label="Fecha" value={row =>new Date(row.fecha).toISOString().substr(0, 10)}/>
         <Workbook.Column label="Máquina" value="maquina"/>
         <Workbook.Column label="Disponibilidad [%]" value={row => (row.Disponibilidad * 100).toFixed(2)}/>
         <Workbook.Column label="Calidad [%]" value={row => (row.calidad>1?100:row.calidad * 100).toFixed(2)}/>
-        <Workbook.Column label="Eficiencia [%]" value={row => (row.eficiencia>1?100:(row.eficiencia * 100).toFixed(2))}/>
+        <Workbook.Column label="Eficiencia [%]" value={row => (row.eficiencia * 100).toFixed(2)}/>
         <Workbook.Column label="OEE [%]" value={row => (row.eficiencia*row.calidad*row.Disponibilidad * 100>100?100:(row.eficiencia*row.calidad*row.Disponibilidad * 100).toFixed(2))}/>
         <Workbook.Column label="Tiempo perdido[min]" value="tiempo_perdido" />
-        <Workbook.Column label="Cantidad de paros" value="cantidad_paros"/>
+        <Workbook.Column label="Cantidad de paros" value={row => (row.cantidad_paros-1)}/>
         <Workbook.Column label="Kg producidos" value="kg_producidos" value={row => (row.kg_producidos).toFixed(1)}/>
         <Workbook.Column label="Kg solicitados" value="kg_solicitados"/>
 
@@ -168,7 +169,9 @@ const GenerarExcel = (props) => {
         {/* header */}
         
     </Row>
+    <hr/>
     </div>
+    
   );
 }
 
