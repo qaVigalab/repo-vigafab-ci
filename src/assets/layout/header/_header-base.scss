@@ -61,6 +61,22 @@
     margin-left: 15%;
   }
 }
+.app-header__logo2 {
+  padding: 0 $layout-spacer-x;
+  height: $app-header-height;
+  width: $app-sidebar-width;
+  display: flex;
+  align-items: center;
+  transition: width .2s;
+  .logo-src2 {
+    margin-top: 10%;
+    height: 140%;
+    width: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-left: 15%;
+  }
+}
 
 .app-header__menu,
 .app-header__mobile-menu {

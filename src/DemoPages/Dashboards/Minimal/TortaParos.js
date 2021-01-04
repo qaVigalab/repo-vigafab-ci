@@ -12,7 +12,6 @@ import { setIdVibot } from "../../../actions/dashboardActions";
 const TortaParos = (props) => {
 
   const id = props.vibot
-  const Chart = require('react-chartjs-2').Chart;
 
   var formatNumber = {
     separador: ".", // separador para los miles
@@ -103,7 +102,6 @@ const TortaParos = (props) => {
     })
       .then(response => response.json())
       .then(result => {
-        console.log(result)
         setTActivo(result[0].t_activo)
         setTNoJustificado(result[0].t_noJustificado)
         setTJustificado(result[0].t_justificado)

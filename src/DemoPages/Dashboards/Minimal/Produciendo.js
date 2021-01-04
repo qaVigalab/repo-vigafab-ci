@@ -109,7 +109,7 @@ const Produciendo = (props) => {
             .then(response => response.json())
             .then(result => {
                 const real_kg = result[0].real_kg == 0 ? 1 : result[0].real_kg
-                const tiempo = result[0].tiempo == 0 ? 1 : result[0].tiempo
+                const tiempo = result[0].tiempo_actividad == 0 ? 1 : result[0].tiempo_actividad
                 const h_acumu = result[0].hamburguesas_acumuladas == 0 ? 1 : result[0].hamburguesas_acumuladas
                 const g_ham = result[0].g_hamburguesa == 0 ? 1 : result[0].g_hamburguesa
                 const tinac = result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo

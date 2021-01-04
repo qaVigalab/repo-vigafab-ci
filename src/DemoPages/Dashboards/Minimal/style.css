@@ -427,9 +427,23 @@
       color: #fff;
       font-weight: bold;
   }
+  .bigFont3{
+    font-size: 40px;
+    color: #fff;
+    font-weight: bold;
+}
+  .bigFont2{
+    font-size: 26px;
+    color: #fff;
+}
   .littleFont{
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
+    color: #fff;
+  }
+  .littleFont2{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
     color: #fff;
   }
   .bigFontGreen{
@@ -543,7 +557,7 @@
   .fullscreen-space{
     height: 100%;
     width: 100%;
-    background-color: #f1f4f6;
+    background-color: #eeeeee;
   }
   .fullscreen-nav{
     height: 10%;
@@ -557,23 +571,23 @@
     margin-left: 1.5%;
     border-radius: 15px;
     height: 100%;
-    background-color: #2264A7;
+    background-color: #13395E;
     color: #fff;
   }
   .fullscreen-center1-head{
     border-radius: 15px 15px 0 0;
     height: 20%;
-    background-color: #13395E;
+    background-color: #2264A7;
   }
   .fullscreen-center1-body1{
     border-bottom: 1px solid black;
-    height: 40%;
+    height: 37%;
   }
   .fullscreen-center1-body2{
-    height: 40%;
+    height: 43%;
   }
   .fullscreen-center2{
-    border: 1px solid black;
+
     border-radius: 15px !important;
     margin-top: 2%;
     margin-right: 2%;
@@ -598,6 +612,7 @@
   }
   .fullscreen-center3{
     margin-top: 1%;
+    margin-left: 0%;
     margin-right: 1%;
     height: 20.5%;
     padding-right: 1%;
@@ -615,9 +630,9 @@
     border-radius: 0 15px 15px 0  !important;
   }
   .fullscreen-centerMaquina{
+    margin-left:5%;
     padding-right: 0 !important;
     height: 100%;
-    border: 1px solid black;
     border-radius: 15px !important;
   }
   .fullscreen-botSpace{
@@ -628,9 +643,8 @@
   }
   .fullscreen-botMaquina{
     margin-top: 15%;
-    height: 100%;
-    border: 1px solid black;
     border-radius: 15px !important;
+    height: 100%;
   }
   .fullscreen-botMaquina2{
     margin-top: 15%;

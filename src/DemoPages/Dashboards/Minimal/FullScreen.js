@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
-import { Button, Col, Container, Form, Input, Table, Row } from "reactstrap";
+import { Button, Col, Card, Table, Row } from "reactstrap";
 import _ from "lodash";
+import moment from 'moment'
 import Circle from "react-circle";
 import icono1 from "./images/icono1.png";
 import icono2 from "./images/icono2.png";
 import icono3 from "./images/icono3.png";
-
+import WatchLaterOutlinedIcon from '@material-ui/icons/WatchLaterOutlined';
+import Brightness1Icon from "@material-ui/icons/Brightness1";
 
 
 function FullSceen() {
@@ -159,8 +161,6 @@ function FullSceen() {
   const [calidad, setCalidad] = useState(0)
   const [eficiencia, setEficiencia] = useState(0)
   const [disponibilidad, setDisponibilidad] = useState(0)
-  const [vacio, setVacio] = useState(123);
-  const [perfil, setperfil] = useState(1);
   const [ordenes, setOrdenes] = useState([]);
   const [IdOrden, setIdOrden] = useState()
   const [CajasSol, setCajasSol] = useState()
@@ -248,7 +248,7 @@ function FullSceen() {
         setTiLinea(result[0].ti_linea)
         setTempFor(result[0].temp_for)
         setCalidad((result[0].h_acum_emp * result[0].kg_caja) / result[0].kg_acum_for)
-        setEficiencia((result[0].kg_acum_emp / (result[0].kg_hora * (result[0].ta_linea+result[0].ti_linea) / 60)))
+        setEficiencia((result[0].kg_acum_emp / (result[0].kg_hora * (result[0].ta_linea) / 60)))
         setDisponibilidad((result[0].ta_linea / (result[0].ti_linea + result[0].ta_linea)))
 
         setDataTortaFor({
@@ -293,12 +293,6 @@ function FullSceen() {
             },
           ],
         })
-        /*  setdataFor([0, result[0].ti_for, result[0].ta_for])
-         setdataEnv3([0, result[0].ti_env3, result[0].ta_env3])
-         setdataEnv4([0, result[0].ti_env4, result[0].ta_env4])
-         setdataEnv5([0, result[0].ti_env5, result[0].ta_env5])
-         setdataEnv6([0, result[0].ti_env6, result[0].ta_env6])
-         setdataEmp([0, result[0].ti_emp, result[0].ta_emp]) */
       }
       )
       .catch(err => {
@@ -325,6 +319,12 @@ function FullSceen() {
       return this.formatear(num);
     }
   }
+  const formatHour = (min) =>{
+    let horas = min/60;
+    horas= Math.trunc(horas)
+    let minutos = min-(60*horas) 
+    return horas===0 ? minutos + " Min" : horas+" Hrs " + minutos + " Min"
+  }
 
   const loadOrdenes = () => {
     fetch(global.api.dashboard.getordenes, {
@@ -349,8 +349,8 @@ function FullSceen() {
 
   useEffect(() => {
     loadOrdenes();
-      loadData();
-  
+    loadData();
+
     const interval = setInterval(() => {
       loadOrdenes();
       loadData();
@@ -368,21 +368,33 @@ function FullSceen() {
       console.log("recargando")
     }, 60000);
     return () => clearInterval(interval);
-}, []);
-
+  }, []);
 
   return (
     <div>
-      <button onClick={handle.enter}>
-        Enter fullscreen
-      </button>
+      <Button onClick={handle.enter}>
+        Ver Fullscreen
+      </Button>
+      <FullScreen handle={handle} >
+        <div className={handle.active ? "fullscreen-space" : "fullscreen-space d-none"} >
+          <Row className="fullscreen-nav">
+            <Col>
+              <div className="app-header__logo2 ">
+                <div className="logo-src2"
+                  style={{
+                    backgroundImage: `url(${localStorage.getItem("img")}) `
+                  }}
+                />
+              </div>
+            </Col>
+            <Col className="bigFont2 mt-4 mr-5" align="right">
+              {moment().format('DD-MM-YYYY')}
 
-      <FullScreen handle={handle}>
-        <div className="fullscreen-space">
-          <Row className="fullscreen-nav ">
-            
+              <WatchLaterOutlinedIcon style={{ fontSize: 30 }} className="mb-1 ml-4 mr-1" />
+              {moment().format("HH:mm")}
+            </Col>
           </Row>
-          <Row className="fullscreen-centerSpace ">
+          <Row className="fullscreen-centerSpace">
             <Col xl="4" className="fullscreen-center1" >
               <Row className="fullscreen-center1-head p-3">
                 <Col xl="3" className="font1 mt-3 ">
@@ -394,16 +406,16 @@ function FullSceen() {
               </Row>
               <Row className="fullscreen-center1-body1">
                 <Col xl="4">
-                  <div align="center" className="bigFont mt-4">{formatNumber.new(_.round(KgAcumEmp*100/KgSol, 2))}%</div>
-                  <div align="center" className="littleFont">de Produccion en  Linea</div>
+                  <div align="center" className="bigFont3 mt-4">{formatNumber.new(_.round(KgAcumEmp * 100 / KgSol, 2))}%</div>
+                  <div align="center" className="littleFont2">de Produccion en  Linea</div>
                 </Col>
                 <Col xl="4">
-                  <div align="center" className="bigFont mt-4">{formatNumber.new(_.round(HamAcumEmp/(TaLinea+TiLinea), 2))}</div>
-                  <div align="center" className="littleFont">Caj/min Productividad</div>
+                  <div align="center" className="bigFont3 mt-4">{formatNumber.new(_.round(HamAcumEmp / (TaLinea + TiLinea), 2))}</div>
+                  <div align="center" className="littleFont2">Caj/min Productividad</div>
                 </Col>
                 <Col xl="4">
-                  <div align="center" className="bigFont mt-4"> {formatNumber.new(_.round((TaLinea+TiLinea)/60,2)) } </div>
-                  <div align="center" className="littleFont">Hrs de Actividad</div>
+                  <div align="center" className="bigFont3 mt-4"> {formatNumber.new(_.round((TaLinea + TiLinea) / 60, 2))} </div>
+                  <div align="center" className="littleFont2">Horas de Produccion</div>
                 </Col>
               </Row>
               <Row className="fullscreen-center1-body2 pt-3 pb-3">
@@ -510,7 +522,7 @@ function FullSceen() {
               </Row>
             </Col>
             <Col>
-              <Row className="fullscreen-center2" >
+              <Card className="fullscreen-center2" >
                 <Table className="mt-0 ">
                   <thead className="fullscreen-theadBlue">
                     <tr className="text-center">
@@ -528,10 +540,10 @@ function FullSceen() {
 
                   <tbody>
                     {
-                      
+
                       ordenes.map((orden, i) =>
-                        orden.id_sub_orden? (
-                          
+                        orden.id_sub_orden ? (
+
                           <tr
                             className={orden.id_estado == 1 ? "orangeRow" :
                               "text-center"}
@@ -541,7 +553,7 @@ function FullSceen() {
                             <td>{orden.producto}</td>
                             <td>{formatNumber.new(orden.cajas)}</td>
                             <td>
-                              {formatNumber.new(_.round(orden.productividad, 2)) + " ham/min"}
+                              {orden.id_estado == 1 ? formatNumber.new(_.round(HamAcumEmp / (TaLinea + TiLinea), 2)) + " Caj/min" : formatNumber.new(_.round(orden.productividad, 2)) + " Caj/min"}
                             </td>
                             <td>
                               {formatNumber.new(_.round(orden.tiempo_estimado, 2)) + " hrs"}
@@ -555,7 +567,7 @@ function FullSceen() {
                                   ? "100%"
                                   : formatNumber.new(_.round(orden.kg_porcentual, 2)) + " %"}
                             </td>
-                                
+
                           </tr>
                         ) : (
                             ""
@@ -566,51 +578,51 @@ function FullSceen() {
 
                   </tbody>
                 </Table>
-              </Row>
+              </Card>
               <Row className="fullscreen-center3">
-                <Col xl="3" className="fullscreen-center3-verde1">
-                  <Row className="mx-4 px-4 ">
-                    <div >
+                <Col xl="3" className="fullscreen-center3-verde1 pr-0">
+                  <Row className="mx-4 px-4 mt-2 ">
+                    <div className="ml-3">
                       <img src={icono1} className="" alt="Empaque" width="120%" height="110%" />
                     </div>
                   </Row>
-                  <div align="center" className="bigFont">{KgAcumFor}</div>
-                  <div align="center" className="littleFont">de {KgSol} Kgs</div>
+                  <div align="center" className="bigFont">{formatNumber.new(KgAcumFor)}</div>
+                  <div align="center" className="littleFont">de {formatNumber.new(KgSol)} Kgs</div>
 
 
                 </Col>
                 <Col xl="3" className="fullscreen-center3-verde2">
-                  <Row className="mx-4 px-4 ">
-                    <div className="text-white" >
+                  <Row className="mx-4 px-4 mt-2">
+                    <div className="text-white ml-3" >
                       <img src={icono2} className="" alt="Empaque" width="120%" height="110%" />
                     </div>
                   </Row>
-                  <div align="center" className="bigFont">{HamAcumEnv3 + HamAcumEnv4 + HamAcumEnv5 + HamAcumEnv6}</div>
-                  <div align="center" className="littleFont">de {HamSol} F. Pack</div>
+                  <div align="center" className="bigFont">{formatNumber.new(HamAcumEnv3 + HamAcumEnv4 + HamAcumEnv5 + HamAcumEnv6)}</div>
+                  <div align="center" className="littleFont">de {formatNumber.new(HamSol)} F. Pack</div>
 
 
                 </Col>
-                <Col xl="3" className="fullscreen-center3-verde3  ">
-                  <Row className="mx-4 px-4 ">
-                    <div >
+                <Col xl="3" className="fullscreen-center3-verde3 ">
+                  <Row className="mx-4 px-4 mt-2">
+                    <div className="ml-3">
                       <img src={icono3} className="" alt="Empaque" width="120%" height="110%" />
                     </div>
                   </Row>
-                  <div align="center" className="bigFont">{HamAcumEmp}</div>
-                  <div align="center" className="littleFont">de {CajasSol} Cajas</div>
+                  <div align="center" className="bigFont">{formatNumber.new(HamAcumEmp)}</div>
+                  <div align="center" className="littleFont">de {formatNumber.new(CajasSol)} Cajas</div>
 
 
                 </Col>
                 <Col xl="3" className="">
-                  <Col className="p-0 fullscreen-centerMaquina">
+                  <Card className="p-0 fullscreen-centerMaquina">
                     <div align="center" className="text-uppercase font-weight-bold title1orange2 mr-2 mt-2">Iqf</div>
 
                     <div align="center" className="bigFontGreen">{formatNumber.new(_.round(TempFor, 2))}°C</div>
-                    <div align="center" className="littleFontGreen mb-3">Temp. Entrada</div>
+                    <div align="center" className="littleFontGreen mb-2">Temp. Entrada</div>
                     <div align="center" className="bigFontGreen blackBorderTop pt-2">-18°C</div>
-                    <div align="center" className="littleFontGreen">Temp. Salida</div>
+                    <div align="center" className="littleFontGreen mb-2">Temp. Salida</div>
 
-                  </Col>
+                  </Card>
                 </Col>
 
               </Row>
@@ -620,7 +632,7 @@ function FullSceen() {
           </Row>
           <Row className="fullscreen-botSpace ">
             <Col xl="2">
-              <Container className="fullscreen-botMaquina ">
+              <Card className=" main-card fullscreen-botMaquina">
                 <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Formadora</div>
                 <Doughnut
                   data={dataTortaFor}
@@ -637,18 +649,21 @@ function FullSceen() {
                   }}
                 />
                 <Row className="ml-2 mt-2">
-                  Produciendo: {TaFor} Minutos
+                  <Brightness1Icon style={{ color: "#2264A7" }} />
+                  Produciendo: {formatHour(TaFor)} 
                 </Row>
                 <Row className="ml-2">
-                  En Paro: {TiFor} Minutos
+                  <Brightness1Icon style={{ color: "#F7431E" }} />
+                  En Paro: {formatHour(TiFor)} 
                 </Row>
+
                 {/*             <Row className="ml-2">
                   Desconectado: 3 Hrs
                 </Row> */}
-              </Container>
+              </Card>
             </Col>
             <Col xl="2">
-              <Container className="fullscreen-botMaquina ">
+              <Card className="main-card fullscreen-botMaquina ">
                 <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Envasadora 3</div>
                 <Doughnut
                   data={dataTortaEnv3}
@@ -665,18 +680,20 @@ function FullSceen() {
                   }}
                 />
                 <Row className="ml-2 mt-2">
-                  Produciendo: {TaEnv3} Minutos
+                  <Brightness1Icon style={{ color: "#2264A7" }} />
+                  Produciendo: {formatHour(TaEnv3)} 
                 </Row>
                 <Row className="ml-2">
-                  En Paro: {TiEnv3} Minutos
+                  <Brightness1Icon style={{ color: "#F7431E" }} />
+                  En Paro: {formatHour(TiEnv3)} 
                 </Row>
                 {/*                 <Row className="ml-2">
                   Desconectado: 3 Hrs
                 </Row> */}
-              </Container>
+              </Card>
             </Col>
             <Col xl="2">
-              <Container className="fullscreen-botMaquina">
+              <Card className=" main-card fullscreen-botMaquina">
                 <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Envasadora 4</div>
                 <Doughnut
                   data={dataTortaEnv4}
@@ -693,18 +710,20 @@ function FullSceen() {
                   }}
                 />
                 <Row className="ml-2 mt-2">
-                  Produciendo: {TaEnv4} Minutos
+                  <Brightness1Icon style={{ color: "#2264A7" }} />
+                  Produciendo: {formatHour(TaEnv4)} 
                 </Row>
                 <Row className="ml-2">
-                  En Paro: {TiEnv4} Minutos
+                  <Brightness1Icon style={{ color: "#F7431E" }} />
+                  En Paro: {formatHour(TiEnv4)} 
                 </Row>
                 {/*                 <Row className="ml-2">
                   Desconectado: 3 Hrs
                 </Row> */}
-              </Container>
+              </Card>
             </Col>
             <Col xl="2">
-              <Container className="fullscreen-botMaquina">
+              <Card className="main-card fullscreen-botMaquina">
                 <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Envasadora 5</div>
                 <Doughnut
                   data={dataTortaEnv5}
@@ -721,18 +740,20 @@ function FullSceen() {
                   }}
                 />
                 <Row className="ml-2 mt-2">
-                  Produciendo: {TaEnv5} Minutos
+                  <Brightness1Icon style={{ color: "#2264A7" }} />
+                  Produciendo: {formatHour(TaEnv5)} 
                 </Row>
                 <Row className="ml-2">
-                  En Paro: {TiEnv5} Minutos
+                  <Brightness1Icon style={{ color: "#F7431E" }} />
+                  En Paro: {formatHour(TiEnv5)} 
                 </Row>
                 {/*                 <Row className="ml-2">
                   Desconectado: 3 Hrs
                 </Row> */}
-              </Container>
+              </Card>
             </Col>
             <Col xl="2">
-              <Container className="fullscreen-botMaquina">
+              <Card className="main-card fullscreen-botMaquina">
                 <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Envasadora 6</div>
                 <Doughnut
                   data={dataTortaEnv6}
@@ -749,18 +770,20 @@ function FullSceen() {
                   }}
                 />
                 <Row className="ml-2 mt-2">
-                  Produciendo: {TaEnv6} Minutos
+                  <Brightness1Icon style={{ color: "#2264A7" }} />
+                  Produciendo: {formatHour(TaEnv6)} 
                 </Row>
                 <Row className="ml-2">
-                  En Paro: {TiEnv6} Minutos
+                  <Brightness1Icon style={{ color: "#F7431E" }} />
+                  En Paro: {formatHour(TiEnv6)} 
                 </Row>
                 {/*                 <Row className="ml-2">
                   Desconectado: 3 Hrs
                 </Row> */}
-              </Container>
+              </Card>
             </Col>
             <Col xl="2" >
-              <Container className="fullscreen-botMaquina">
+              <Card className="main-card fullscreen-botMaquina">
                 <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Empaque</div>
                 <Doughnut
                   data={dataTortaEmp}
@@ -777,15 +800,17 @@ function FullSceen() {
                   }}
                 />
                 <Row className="ml-2 mt-2">
-                  Produciendo: {TaEmp} Minutos
+                  <Brightness1Icon style={{ color: "#2264A7" }} />
+                  Produciendo: {formatHour(TaEmp)} 
                 </Row>
                 <Row className="ml-2">
-                  En Paro: {TiEmp} Minutos
+                  <Brightness1Icon style={{ color: "#F7431E" }} />
+                  En Paro: {formatHour(TiEmp)} 
                 </Row>
                 {/*                 <Row className="ml-2">
                   Desconectado: 3 Hrs
                 </Row> */}
-              </Container>
+              </Card>
             </Col>
           </Row>
         </div>
