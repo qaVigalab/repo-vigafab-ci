@@ -19,6 +19,8 @@ import {
   Progress,
   Row,
   Table,
+  FormGroup,
+  Label
 } from "reactstrap";
 import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
 import TortaParos from "./TortaParos";
@@ -29,11 +31,15 @@ const TiempoParo = (props) => {
     setStart(startDate)
     setEnd(endDate)
   } */
-
+  let m = moment();
+  m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
   const [tiempoTotal, setTiempoTotal] = useState()
   const [detalleParos, setDetalleParos] = useState([])
-  const [startDate, setStartDate] = useState()
-  const [endDate, setEndDate] = useState()
+  const [startDate, setStartDate] = useState(new Date(m))
+  const [endDate, setEndDate] = useState(new Date(m))
+  const [btnSku, setBtnSku] = useState(0)
+  const [sku, setSku] = useState(0)
+  const [refresh, setRefresh] = useState(true)
 
 
   const handleChange = date => {
@@ -58,8 +64,22 @@ const TiempoParo = (props) => {
      this.setState({ visible: false });
    }  */
 
+  const changeBtnSku = (e) => {
+    e.preventDefault();
+    btnSku === 1 ? setBtnSku(0) : setBtnSku(1)
+    if (btnSku === 1) setSku(0);
+  }
+
+  const changeSku = (e) => {
+    e.target.value.length === 7 ? setSku(e.target.value) : setSku(0)
+  }
+  const changeBtnBuscar = (e) => {
+    e.preventDefault();
+    setRefresh(!refresh)
+  }
+
   const loadDetalleParo = () => {
-    var m = moment();
+    let m = moment();
     m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
     m.toISOString()
     m.format()
@@ -79,7 +99,7 @@ const TiempoParo = (props) => {
       .then(response => response.json())
       .then(result => {
         setDetalleParos(result)
-        let tiempo_total =0
+        let tiempo_total = 0
         result.forEach(paro => {
           tiempo_total += paro.suma
         });
@@ -124,7 +144,36 @@ const TiempoParo = (props) => {
         </Row>
 
         <Row>
-          <Col md="12" xl="12">
+          <Col>
+            <Card className="main-card mb-3">
+              <CardBody>
+                <Container>
+                  <div className="titlecard">Filtrar Por</div>
+                  <Row className="mb-1">
+                    <Col>
+                      <Button block
+
+                        className="mb-3 mr-1"
+                        color="primary">
+                        Tiempo
+                    </Button>
+                    </Col>
+                    <Col>
+                      <Button block
+
+                        onClick={(e) => changeBtnSku(e)}
+                        outline={btnSku === 1 ? false : true}
+                        className="mb-3 mr-1"
+                        color={btnSku === 1 ? "primary" : "secondary"}>
+                        Producto
+                    </Button>
+                    </Col>
+                  </Row>
+                </Container>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col md="8" xl="9">
             <Card className="main-card mb-3">
               <CardBody>
                 <Container>
@@ -139,6 +188,7 @@ const TiempoParo = (props) => {
                           </div>
                         </InputGroupAddon>
                         <DatePicker
+                          dateFormat="dd/MM/yyyy"
                           className="form-control"
                           selected={startDate}
                           onChange={(e) => handleChange(e)}
@@ -158,6 +208,7 @@ const TiempoParo = (props) => {
                           </div>
                         </InputGroupAddon>
                         <DatePicker
+                          dateFormat="dd/MM/yyyy"
                           className="form-control"
                           selected={endDate}
                           onChange={(e) => handleChange2(e)}
@@ -168,6 +219,26 @@ const TiempoParo = (props) => {
 
                         />
                       </InputGroup>
+                    </Col>
+                    <Col>
+                      <FormGroup>
+                        <Label>Buscar por SKU</Label>
+                        <Input
+                          onChange={(e) => changeSku(e)}
+                          size="md"
+                          className="mt-2"
+                          type="text"
+                          name="sku"
+                          id="sku"
+                          placeholder="SKU"
+                          disabled={btnSku === 0 ? true : false}
+                        />
+
+                      </FormGroup>
+                    </Col>
+                    <Col >
+                      <Label></Label>
+                      <Button className="mt-3" size="lg" block color="primary" onClick={(e) => changeBtnBuscar(e)}> Buscar</Button>
                     </Col>
                   </Row>
                 </Container>
@@ -183,48 +254,61 @@ const TiempoParo = (props) => {
               <Container>
                 <Row>
                   <TortaParos
+                    refresh={refresh}
                     vibot={6296}
                     ini={startDate}
                     ter={endDate}
+                    sku={sku}
                   />
 
 
                   <TortaParos
+                    refresh={refresh}
                     vibot={34828}
                     ini={startDate}
                     ter={endDate}
+                    sku={sku}
                   />
 
                   <TortaParos
+                    refresh={refresh}
                     vibot={23608}
                     ini={startDate}
                     ter={endDate}
+                    sku={sku}
                   />
                   <TortaParos
+                    refresh={refresh}
                     vibot={30776}
                     ini={startDate}
                     ter={endDate}
+                    sku={sku}
                   />
                   <TortaParos
+                    refresh={refresh}
                     vibot={32818}
                     ini={startDate}
                     ter={endDate}
-                  /><TortaParos
+                    sku={sku}
+                  />
+                  <TortaParos
+                    refresh={refresh}
                     vibot={23643}
                     ini={startDate}
                     ter={endDate}
+                    sku={sku}
                   />
 
-                     <Col xs="12" >
-                      
-                      Detalle
+                  <Col xs="12" >
+
+                    Detalle
 
                         <Table size="sm">
                       <tbody>
                         {
                           detalleParos.map((paro, i) =>
 
-                            <tr>
+                            <tr key={i}>
                               <td style={{ width: "33%" }}>
                                 <Brightness1Icon className={paro.id_tipo === 100 ? "blue"
                                   : paro.id_tipo === 99 ? "red"
@@ -249,7 +333,7 @@ const TiempoParo = (props) => {
 
                               <td style={{ width: "33%" }}>
                                 <Progress
-                                  value={paro.suma/tiempoTotal*100}
+                                  value={paro.suma / tiempoTotal * 100}
                                   color={paro.id_tipo === 100 ? "blue"
                                     : paro.id_tipo === 99 ? "red"
                                       : paro.id_tipo === 1 ? "paro1"
@@ -277,7 +361,7 @@ const TiempoParo = (props) => {
                       </tbody>
                     </Table>
                   </Col>
-                  </Row>
+                </Row>
               </Container>
             </CardBody>
           </Card>

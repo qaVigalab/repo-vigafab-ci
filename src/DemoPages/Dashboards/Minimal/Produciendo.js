@@ -177,10 +177,10 @@ const Produciendo = (props) => {
             .then(response => response.json())
             .then(r => {
                 let data = [];
-                if (r[0].tiempo_paro == 0 && r[0].tiempo_justificado == 0 && r[0].tiempo_produccion == 0) {
+                if (r[0].t_noJustificado == 0 && r[0].t_justificado == 0 && r[0].t_activo == 0) {
                     data = [1, 0, 0, 0]
                 } else {
-                    data = [0, Math.round(r[0].tiempo_paro / 60 * 100) / 100, Math.round(r[0].tiempo_justificado / 60 * 100) / 100, Math.round(r[0].tiempo_produccion / 60 * 100) / 100]
+                    data = [0, Math.round(r[0].t_noJustificado / 60 * 100) / 100, Math.round(r[0].t_justificado / 60 * 100) / 100, Math.round(r[0].t_activo / 60 * 100) / 100]
                 }
 
                 setDataTorta(
