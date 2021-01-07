@@ -83,11 +83,7 @@ const TortaParos = (props) => {
   }
 
   const loadData = () => {
-    var m = moment();
-    m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
-    m.toISOString()
-    m.format()
-    //console.log("buscando: " + id + " " + props.ini+" " + props.ter+ " " + props.sku)
+
     fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getparosmaquina", {
       "method": "POST",
       "headers": {
@@ -97,14 +93,13 @@ const TortaParos = (props) => {
 
       body: JSON.stringify({
         id_vibot: id,
-        ini: props.ini === undefined ? m : props.ini,
-        ter: props.ter === undefined ? m : props.ter,
+        ini: props.ini,
+        ter: props.ter,
         pro: props.sku
       }),
     })
       .then(response => response.json())
       .then(result => {
-        console.log(result)
         setTActivo(result[0].t_activo)
         setTNoJustificado(result[0].t_noJustificado)
         setTJustificado(result[0].t_justificado)

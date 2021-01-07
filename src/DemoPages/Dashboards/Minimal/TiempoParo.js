@@ -31,11 +31,12 @@ const TiempoParo = (props) => {
     setStart(startDate)
     setEnd(endDate)
   } */
-
+  let m = moment();
+  m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
   const [tiempoTotal, setTiempoTotal] = useState()
   const [detalleParos, setDetalleParos] = useState([])
-  const [startDate, setStartDate] = useState(new Date())
-  const [endDate, setEndDate] = useState(new Date())
+  const [startDate, setStartDate] = useState(new Date(m))
+  const [endDate, setEndDate] = useState(new Date(m))
   const [btnSku, setBtnSku] = useState(0)
   const [sku, setSku] = useState(0)
   const [refresh, setRefresh] = useState(true)
@@ -66,7 +67,7 @@ const TiempoParo = (props) => {
   const changeBtnSku = (e) => {
     e.preventDefault();
     btnSku === 1 ? setBtnSku(0) : setBtnSku(1)
-    if(btnSku===1) setSku(0);
+    if (btnSku === 1) setSku(0);
   }
 
   const changeSku = (e) => {
@@ -74,8 +75,6 @@ const TiempoParo = (props) => {
   }
   const changeBtnBuscar = (e) => {
     e.preventDefault();
-    console.log(startDate)
-    console.log(endDate)
     setRefresh(!refresh)
   }
 
@@ -189,6 +188,7 @@ const TiempoParo = (props) => {
                           </div>
                         </InputGroupAddon>
                         <DatePicker
+                          dateFormat="dd/MM/yyyy"
                           className="form-control"
                           selected={startDate}
                           onChange={(e) => handleChange(e)}
@@ -208,6 +208,7 @@ const TiempoParo = (props) => {
                           </div>
                         </InputGroupAddon>
                         <DatePicker
+                          dateFormat="dd/MM/yyyy"
                           className="form-control"
                           selected={endDate}
                           onChange={(e) => handleChange2(e)}
@@ -307,7 +308,7 @@ const TiempoParo = (props) => {
                         {
                           detalleParos.map((paro, i) =>
 
-                            <tr>
+                            <tr key={i}>
                               <td style={{ width: "33%" }}>
                                 <Brightness1Icon className={paro.id_tipo === 100 ? "blue"
                                   : paro.id_tipo === 99 ? "red"
