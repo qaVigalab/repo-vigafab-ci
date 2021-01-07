@@ -198,9 +198,15 @@ function FullSceen() {
   const [TaLinea, setTaLinea] = useState()
   const [TiLinea, setTiLinea] = useState()
   const [TempFor, setTempFor] = useState()
+  const [ordenFor, setOrdenFor] = useState()
+  const [ordenEnv1, setOrdenEnv1] = useState()
+  const [ordenEnv2, setOrdenEnv2] = useState()
+  const [ordenEnv3, setOrdenEnv3] = useState()
+  const [ordenEnv4, setOrdenEnv4] = useState()
+  const [ordenEmp, setOrdenEmp] = useState()
 
   const loadData = () => {
-    fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getfullscreen", {
+    fetch(global.api.dashboard.getfullscreen, {
       "method": "POST",
       "headers": {
         "content-type": "application/json",
@@ -247,6 +253,12 @@ function FullSceen() {
         setTaLinea(result[0].ta_linea)
         setTiLinea(result[0].ti_linea)
         setTempFor(result[0].temp_for)
+        setOrdenFor(result[0].ordenfor)
+        setOrdenEnv1(result[0].ordenenv1)
+        setOrdenEnv2(result[0].ordenenv2)
+        setOrdenEnv3(result[0].ordenenv3)
+        setOrdenEnv4(result[0].ordenenv4)
+        setOrdenEmp(result[0].ordenemp)
         setCalidad((result[0].h_acum_emp * result[0].kg_caja) / result[0].kg_acum_for)
         setEficiencia((result[0].kg_acum_emp / (result[0].kg_hora * (result[0].ta_linea) / 60)))
         setDisponibilidad((result[0].ta_linea / (result[0].ti_linea + result[0].ta_linea)))
@@ -544,7 +556,7 @@ function FullSceen() {
                       ordenes.map((orden, i) =>
                         orden.id_sub_orden ? (
 
-                          <tr
+                          <tr key={i}
                             className={orden.id_estado == 1 ? "orangeRow" :
                               "text-center"}
                           >
@@ -633,7 +645,7 @@ function FullSceen() {
           <Row className="fullscreen-botSpace ">
             <Col xl="2">
               <Card className=" main-card fullscreen-botMaquina">
-                <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Formadora</div>
+                <div align="center" className="text-uppercase font-weight-bold title1orange2 mb- mr-2 mt-2">Formadora</div>
                 <Doughnut
                   data={dataTortaFor}
                   width="12"
@@ -652,7 +664,7 @@ function FullSceen() {
                   <Brightness1Icon style={{ color: "#2264A7" }} />
                   Produciendo: {formatHour(TaFor)} 
                 </Row>
-                <Row className="ml-2">
+                <Row className="ml-2 mb-3">
                   <Brightness1Icon style={{ color: "#F7431E" }} />
                   En Paro: {formatHour(TiFor)} 
                 </Row>
@@ -660,11 +672,13 @@ function FullSceen() {
                 {/*             <Row className="ml-2">
                   Desconectado: 3 Hrs
                 </Row> */}
+                <div className=" fullscreen-botMaquina-bot pl-2 pt-2">{"Orden: "+ordenFor}</div>
               </Card>
             </Col>
             <Col xl="2">
               <Card className="main-card fullscreen-botMaquina ">
                 <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Envasadora 3</div>
+                
                 <Doughnut
                   data={dataTortaEnv3}
                   width="12"
@@ -690,11 +704,13 @@ function FullSceen() {
                 {/*                 <Row className="ml-2">
                   Desconectado: 3 Hrs
                 </Row> */}
+                <div className="fullscreen-botMaquina-bot pl-2 pt-2 ">{"Orden: "+ordenEnv1}</div>
               </Card>
             </Col>
             <Col xl="2">
               <Card className=" main-card fullscreen-botMaquina">
                 <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Envasadora 4</div>
+                
                 <Doughnut
                   data={dataTortaEnv4}
                   width="12"
@@ -720,11 +736,13 @@ function FullSceen() {
                 {/*                 <Row className="ml-2">
                   Desconectado: 3 Hrs
                 </Row> */}
+                <div className=" fullscreen-botMaquina-bot pl-2 pt-2">{"Orden: "+ordenEnv2}</div>
               </Card>
             </Col>
             <Col xl="2">
               <Card className="main-card fullscreen-botMaquina">
                 <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Envasadora 5</div>
+                
                 <Doughnut
                   data={dataTortaEnv5}
                   width="12"
@@ -750,6 +768,7 @@ function FullSceen() {
                 {/*                 <Row className="ml-2">
                   Desconectado: 3 Hrs
                 </Row> */}
+                <div className=" fullscreen-botMaquina-bot pl-2 pt-2">{"Orden: "+ordenEnv3}</div>
               </Card>
             </Col>
             <Col xl="2">
@@ -780,11 +799,13 @@ function FullSceen() {
                 {/*                 <Row className="ml-2">
                   Desconectado: 3 Hrs
                 </Row> */}
+                 <div className=" fullscreen-botMaquina-bot pl-2 pt-2">{"Orden: "+ordenEnv4}</div>
               </Card>
             </Col>
             <Col xl="2" >
               <Card className="main-card fullscreen-botMaquina">
                 <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Empaque</div>
+               
                 <Doughnut
                   data={dataTortaEmp}
                   width="12"
@@ -810,6 +831,7 @@ function FullSceen() {
                 {/*                 <Row className="ml-2">
                   Desconectado: 3 Hrs
                 </Row> */}
+                 <div className="fullscreen-botMaquina-bot pl-2 pt-2 ">{"Orden: "+ordenEmp}</div>
               </Card>
             </Col>
           </Row>

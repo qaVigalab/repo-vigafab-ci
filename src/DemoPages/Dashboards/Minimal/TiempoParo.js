@@ -83,7 +83,7 @@ const TiempoParo = (props) => {
     m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
     m.toISOString()
     m.format()
-    fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getdetalleparo", {
+    fetch(global.api.dashboard.getdetalleparo, {
       "method": "POST",
       "headers": {
         "Content-Type": "application/json",

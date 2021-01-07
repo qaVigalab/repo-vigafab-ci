@@ -94,8 +94,8 @@ const Produciendo = (props) => {
     const loadResumen =  () => {
         let link
         localStorage.getItem("id_orden") === localStorage.getItem("id_ordenA") 
-        ? link = "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenlinea" 
-        : link = "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getreportehistoricolinea"
+        ? link = global.api.dashboard.getresumenlinea
+        : link = global.api.dashboard.getreportehistoricolinea
          fetch(link, {
             "method": "POST",
             "headers": {
@@ -164,7 +164,7 @@ const Produciendo = (props) => {
 
     const loadTorta = () => {
         if(localStorage.getItem("id_orden") === localStorage.getItem("id_ordenA") ){
-        fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getparosgeneral", {
+        fetch(global.api.dashboard.getparosgeneral, {
             "method": "POST",
             "headers": {
                 "Content-Type": "application/json",

@@ -102,9 +102,9 @@ const Orden = (props) => {
   const cambiarOrden = (opcion,e) => {
     e.preventDefault();
     let api = ""
-     if(opcion === 1) api="https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/nextorden" 
-    else if(opcion === 2) api="https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/siguienteordenenvasadoras" 
-    else if(opcion === 3) api="https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/siguienteordenempaque" 
+     if(opcion === 1) api=global.api.dashboard.nextorden
+    else if(opcion === 2) api=global.api.dashboard.siguienteordenenvasadoras
+    else if(opcion === 3) api=global.api.dashboard.siguienteordenempaque
     fetch(api, {
       "method": "POST",
       "headers": {
@@ -305,7 +305,7 @@ const Orden = (props) => {
           ) : (
               ordenes.map((orden, i) =>
                 orden.id_sub_orden ? (
-                  <tr onClick={(e) => verOrden(e, orden.id_sub_orden)}
+                  <tr key={i} onClick={(e) => verOrden(e, orden.id_sub_orden)}
                     className={orden.id_estado == 1 ? "orangeRow" :
                       select == orden.id_sub_orden ? "grayRow" :
                         "text-center"}
