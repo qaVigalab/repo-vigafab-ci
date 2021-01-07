@@ -131,8 +131,8 @@ const CialWidget = (props) => {
   const loadResumen = () => {
     let link
     localStorage.getItem("id_orden") === localStorage.getItem("id_ordenA")
-      ? link = "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenmaquina"
-      : link = "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenhistorico"
+      ? link = global.api.dashboard.getresumenmaquina
+      : link = global.api.dashboard.getresumenhistorico
     fetch(link, {
       "method": "POST",
       "headers": {
@@ -181,7 +181,7 @@ const CialWidget = (props) => {
   }
   const loadTimeLine = () => {
 
-    fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/gettimelinemaquina", {
+    fetch(global.api.dashboard.gettimelinemaquina, {
       "method": "POST",
       "headers": {
         "Content-Type": "application/json",

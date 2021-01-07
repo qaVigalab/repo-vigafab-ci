@@ -85,7 +85,7 @@ class MinimalDashboard1 extends Component {
     };
 
     fetch(
-      "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getmaquinas",
+      global.api.dashboard.getmaquinas,
       requestOptions
     )
       .then((response) => response.json())
@@ -264,10 +264,6 @@ class MinimalDashboard1 extends Component {
               </Card>
             </Col>
           </Row>
-
-          {/* <Row>
-         < FullScreen/>
-          </Row> */}
         </ReactCSSTransitionGroup>
       </Fragment>
     );

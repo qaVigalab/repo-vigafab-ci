@@ -7,6 +7,24 @@ const dashboard = {
     getordenes:                 awsApiUrl2 + "getordenes",
     insertsuborder:             awsApiUrl2 + "insertsuborder",
     getproducto:                awsApiUrl2 + "getproducto",
+    gettimelinemaquina:         awsApiUrl2 + "gettimelinemaquina",
+    getresumenmaquina:          awsApiUrl2 + "getresumenmaquina",
+    gettempformadora:           awsApiUrl2 + "gettempformadora",
+    getfullscreen:              awsApiUrl2 + "getfullscreen",
+    nextorden:                  awsApiUrl2 + "nextorden",
+    siguienteordenenvasadoras:  awsApiUrl2 + "siguienteordenenvasadoras",
+    siguienteordenempaque:      awsApiUrl2 + "siguienteordenempaque",
+    getresumenlinea:            awsApiUrl2 + "getresumenlinea",
+    getreportehistoricolinea:   awsApiUrl2 + "getreportehistoricolinea",
+    getparosgeneral:            awsApiUrl2 + "getparosgeneral",
+    getscada:                   awsApiUrl2 + "getscada",
+    getdetalleparo:             awsApiUrl2 + "getdetalleparo",
+    getmaquinas:                awsApiUrl2 + "getmaquinas",
+    gettempiqf:                 awsApiUrl2 + "gettempiqf",
+    getparosmaquina:            awsApiUrl2 + "getparosmaquina",
+
+
+    
 }
 
 //Api auth

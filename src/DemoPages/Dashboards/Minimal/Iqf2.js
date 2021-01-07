@@ -223,7 +223,7 @@ const Iqf2 = (props) => {
 
 
     const loadKpi = () => {
-        fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getresumenmaquina", {
+        fetch(global.api.dashboard.getresumenmaquina, {
             "method": "POST",
             "headers": {
                 "content-type": "application/json",
@@ -251,7 +251,7 @@ const Iqf2 = (props) => {
 
     const loadGraphs = () => {
 
-        fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/gettempiqf", {
+        fetch(global.api.dashboard.gettempiqf, {
             "method": "POST",
             "headers": {
                 "content-type": "application/json",
@@ -289,7 +289,7 @@ const Iqf2 = (props) => {
 
     const loadTimeLine = () => {
 
-        fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/gettimelinemaquina", {
+        fetch(global.api.dashboard.gettimelinemaquina, {
             "method": "POST",
             "headers": {
                 "Content-Type": "application/json",

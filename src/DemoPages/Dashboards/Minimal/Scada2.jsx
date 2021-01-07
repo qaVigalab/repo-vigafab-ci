@@ -47,7 +47,7 @@ const Scada2 = (props) => {
       redirect: 'follow'
     };
 
-    fetch("https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/getscada", requestOptions)
+    fetch(global.api.dashboard.getscada, requestOptions)
       .then(response => response.json())
       .then(result => {
         setFormadoraTemperaturaSalida(result[0].formadora_temp)
