@@ -411,7 +411,7 @@ const Produciendo = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (eficiencia * disponibilidad * calidad) > 1 ? 100 : eficiencia * disponibilidad * calidad * 100
+                                                ((eficiencia>1? 1: eficiencia )* ( disponibilidad>1? 1: disponibilidad)* (calidad>1? 1: calidad )) *100
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.

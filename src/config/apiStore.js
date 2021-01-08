@@ -9,6 +9,7 @@ const dashboard = {
     getproducto:                awsApiUrl2 + "getproducto",
     gettimelinemaquina:         awsApiUrl2 + "gettimelinemaquina",
     getresumenmaquina:          awsApiUrl2 + "getresumenmaquina",
+    getresumenhistorico:          awsApiUrl2 + "getresumenhistorico",
     gettempformadora:           awsApiUrl2 + "gettempformadora",
     getfullscreen:              awsApiUrl2 + "getfullscreen",
     nextorden:                  awsApiUrl2 + "nextorden",
