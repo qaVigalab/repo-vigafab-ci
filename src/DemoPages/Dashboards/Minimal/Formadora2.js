@@ -67,7 +67,6 @@ const Formadora2 = (props) => {
             ],
         }
     )
-
     const [options3, setOptions3] = useState(
         {
             chart: {
@@ -372,7 +371,10 @@ const Formadora2 = (props) => {
                         <Row >
                             <Col align="right">
                                 <div className="font2  my-4 ">Estado</div></Col>
-                            <div className={estado == 1 ? "font2gray  my-4" : "font2Blue my-4"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
+                            <div className={estado == 1 ? "font2gray  my-4" : "font2Blue my-4"}>{
+                            localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Detenida" : 
+                            estado == 1 ? " Detenida" : " Produciendo"}
+                            </div>
                             <div className="font2 ml-3 my-4">Tiempo de Actividad</div>
                             <div className="font2Blue ml-1 mr-5 my-4">{formatNumber.new(_.round(tActivo/60,2))} hrs</div>
                             <div className="font2 ml-3 my-4">Productividad</div>

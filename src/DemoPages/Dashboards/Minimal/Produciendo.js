@@ -7,6 +7,7 @@ import icono2 from "./images/icono2.png";
 import icono3 from "./images/icono3.png";
 import TimeLine from "./TimeLine";
 import _ from "lodash";
+import Brightness1Icon from "@material-ui/icons/Brightness1";
 import Circle from "react-circle";
 
 const Produciendo = (props) => {
@@ -33,6 +34,7 @@ const Produciendo = (props) => {
     const [perdidaTotal, setPerdidaTotal] = useState(0)
     const [TiempoActivo, setTiempoActivo] = useState(0)
     const [TiempoInactivo, setTiempoInactivo] = useState(0)
+    const [TiempoJustificado, setTiempoJustificado] = useState(0)
     const [TiempoDesconectado, setTiempoDesconectado] = useState(0)
     const [dataTorta, setDataTorta] = useState(
         {
@@ -74,29 +76,36 @@ const Produciendo = (props) => {
     var formatNumber = {
         separador: ".", // separador para los miles
         sepDecimal: ',', // separador para los decimales
-        formatear:function (num){
-        num +='';
-        var splitStr = num.split('.');
-        var splitLeft = splitStr[0];
-        var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
-        var regx = /(\d+)(\d{3})/;
-        while (regx.test(splitLeft)) {
-        splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
-        }
-        return this.simbol + splitLeft +splitRight;
+        formatear: function (num) {
+            num += '';
+            var splitStr = num.split('.');
+            var splitLeft = splitStr[0];
+            var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
+            var regx = /(\d+)(\d{3})/;
+            while (regx.test(splitLeft)) {
+                splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
+            }
+            return this.simbol + splitLeft + splitRight;
         },
-        new:function(num, simbol){
-        this.simbol = simbol ||'';
-        return this.formatear(num);
+        new: function (num, simbol) {
+            this.simbol = simbol || '';
+            return this.formatear(num);
         }
-       }
+    }
 
-    const loadResumen =  () => {
+    const formatHour = (min) => {
+        let horas = min / 60;
+        horas = Math.trunc(horas)
+        let minutos = min - (60 * horas)
+        return horas === 0 ? minutos + " Min" : horas + " Hrs " + minutos + " Min"
+    }
+
+    const loadResumen = () => {
         let link
-        localStorage.getItem("id_orden") === localStorage.getItem("id_ordenA") 
-        ? link = global.api.dashboard.getresumenlinea
-        : link = global.api.dashboard.getreportehistoricolinea
-         fetch(link, {
+        localStorage.getItem("id_orden") === localStorage.getItem("id_ordenA")
+            ? link = global.api.dashboard.getresumenlinea
+            : link = global.api.dashboard.getreportehistoricolinea
+        fetch(link, {
             "method": "POST",
             "headers": {
                 "Content-Type": "application/json",
@@ -113,8 +122,8 @@ const Produciendo = (props) => {
                 const h_acumu = result[0].hamburguesas_acumuladas == 0 ? 1 : result[0].hamburguesas_acumuladas
                 const g_ham = result[0].g_hamburguesa == 0 ? 1 : result[0].g_hamburguesa
                 const tinac = result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo
-                const kg_emp = result[0].cajas_acumuladas*result[0].kg_caja
-                const kg_env = h_acumu*g_ham/1000
+                const kg_emp = result[0].cajas_acumuladas * result[0].kg_caja
+                const kg_env = h_acumu * g_ham / 1000
                 setEstado(result[0].estado)
                 setnOrden(result[0].id_sub_orden)
                 setSku(result[0].sku)
@@ -128,26 +137,27 @@ const Produciendo = (props) => {
                 setH_solicitado(result[0].hamburguesas_solicitadas)
                 setcajas_solicitadas(result[0].cajas)
                 setTiempoActivo(result[0].tiempo_actividad)
+                setTiempoJustificado(result[0].tiempo_justificado)
                 setTiempoInactivo(result[0].tiempo_inactivo)
                 setTiempoDesconectado(result[0].tiempo_desconectado)
                 setCalidad((result[0].cajas_acumuladas * result[0].kg_caja) / real_kg)
                 setEficiencia(((result[0].cajas_acumuladas * result[0].kg_caja) / (result[0].kg_hora * tiempo / 60)))
                 setDisponibilidad((result[0].tiempo_actividad / (tinac + result[0].tiempo_actividad)))
-                
+                console.log()
 
-                setPerdidaEnvasado((real_kg - kg_env)/real_kg)
+                setPerdidaEnvasado((real_kg - kg_env) / real_kg)
                 setPerdidaEmpaquetadora((kg_env - kg_emp) / kg_env)
-                setPerdidaTotal((real_kg - kg_emp)/ real_kg)
+                setPerdidaTotal((real_kg - kg_emp) / real_kg)
                 setPerdidaTotalKg(real_kg - kg_emp)
                 setPerdidaEnvasadoKg(real_kg - kg_env)
                 setPerdidaEmpaquetadoraKg(kg_env - kg_emp)
-                if(localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ){
+                if (localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA")) {
                     setDataTorta(
                         {
-                            
+
                             datasets: [
                                 {
-                                    data: [Math.round( 0 / 60 * 100) / 100, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, Math.round(0 / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
+                                    data: [Math.round(0 / 60 * 100) / 100, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, Math.round(0 / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
                                 }
                             ],
                         }
@@ -155,48 +165,48 @@ const Produciendo = (props) => {
                 }
             }
             )
-            
-            
+
+
             .catch(err => {
                 console.error(err);
             });
     }
 
     const loadTorta = () => {
-        if(localStorage.getItem("id_orden") === localStorage.getItem("id_ordenA") ){
-        fetch(global.api.dashboard.getparosgeneral, {
-            "method": "POST",
-            "headers": {
-                "Content-Type": "application/json",
-                "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
-            },
-            body: JSON.stringify({
-                id_orden: localStorage.getItem("id_orden")
-            }),
-        })
-            .then(response => response.json())
-            .then(r => {
-                let data = [];
-                if (r[0].t_noJustificado == 0 && r[0].t_justificado == 0 && r[0].t_activo == 0) {
-                    data = [1, 0, 0, 0]
-                } else {
-                    data = [0, Math.round(r[0].t_noJustificado / 60 * 100) / 100, Math.round(r[0].t_justificado / 60 * 100) / 100, Math.round(r[0].t_activo / 60 * 100) / 100]
-                }
-
-                setDataTorta(
-                    {
-                        datasets: [
-                            {
-                                data: [Math.round(r[0].tiempo_desconectado / 60 * 100) / 100, Math.round(r[0].tiempo_paro / 60 * 100) / 100, Math.round(r[0].tiempo_justificado / 60 * 100) / 100, Math.round(r[0].tiempo_produccion / 60 * 100) / 100]
-                            }
-                        ],
+        if (localStorage.getItem("id_orden") === localStorage.getItem("id_ordenA")) {
+            fetch(global.api.dashboard.getparosgeneral, {
+                "method": "POST",
+                "headers": {
+                    "Content-Type": "application/json",
+                    "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+                },
+                body: JSON.stringify({
+                    id_orden: localStorage.getItem("id_orden")
+                }),
+            })
+                .then(response => response.json())
+                .then(r => {
+                    let data = [];
+                    if (r[0].t_noJustificado == 0 && r[0].t_justificado == 0 && r[0].t_activo == 0) {
+                        data = [1, 0, 0, 0]
+                    } else {
+                        data = [0, Math.round(r[0].t_noJustificado / 60 * 100) / 100, Math.round(r[0].t_justificado / 60 * 100) / 100, Math.round(r[0].t_activo / 60 * 100) / 100]
                     }
+
+                    setDataTorta(
+                        {
+                            datasets: [
+                                {
+                                    data: [Math.round(r[0].tiempo_desconectado / 60 * 100) / 100, Math.round(r[0].tiempo_paro / 60 * 100) / 100, Math.round(r[0].tiempo_justificado / 60 * 100) / 100, Math.round(r[0].tiempo_produccion / 60 * 100) / 100]
+                                }
+                            ],
+                        }
+                    )
+                }
                 )
-            }
-            )
-            .catch(err => {
-                console.error(err);
-            });
+                .catch(err => {
+                    console.error(err);
+                });
         }
     }
 
@@ -248,7 +258,7 @@ const Produciendo = (props) => {
                     <Col md="2">
                         <Row>
                             <div align="left" className="font2 my-1">Productividad:</div>
-                            <div align="left" className="font3 my-1">{formatNumber.new(_.round(productividad))+ " ham/min"}</div>
+                            <div align="left" className="font3 my-1">{formatNumber.new(_.round(productividad)) + " ham/min"}</div>
                         </Row>
                     </Col>
                     <br />
@@ -264,10 +274,14 @@ const Produciendo = (props) => {
                     <Col>
                         <Row >
                             <Col align="right">
-                                <div className="font2  my-1">Estado</div></Col>
-                            <div className={estado == 1 ? "font2White  my-1" : "font2White my-1"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
+                                <div className="font2  my-1">Estado</div>
+                            </Col>
+                            <div className={estado == 1 ? "font2White  my-1" : "font2White my-1"}>
+                                {localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Detenida"
+                                    : estado == 1 ? " Detenida" : " Produciendo"}
+                            </div>
                             <div className="font2 ml-3 my-1">Tiempo Total</div>
-                            <div align="right" className="font2White ml-1 mr-5 my-1">{formatNumber.new(_.round(tiempo/60,2)) } hrs</div>
+                            <div align="right" className="font2White ml-1 mr-5 my-1">{formatNumber.new(_.round(tiempo / 60, 2))} hrs</div>
 
                         </Row>
                     </Col>
@@ -285,8 +299,8 @@ const Produciendo = (props) => {
                                     </div>
                                 </Col>
                                 <Col md="9">
-                                    <div align="center" className="bigFont mt-4">{formatNumber.new(_.round(kg_acumulado,2))}</div>
-                                    <div align="center" className="littleFont">de {" " + formatNumber.new(_.round(kg_solicitado,2)) + " "} Kg</div>
+                                    <div align="center" className="bigFont mt-4">{formatNumber.new(_.round(kg_acumulado, 2))}</div>
+                                    <div align="center" className="littleFont">de {" " + formatNumber.new(_.round(kg_solicitado, 2)) + " "} Kg</div>
                                 </Col>
 
                             </Row>
@@ -315,7 +329,7 @@ const Produciendo = (props) => {
                                 </Col>
                                 <Col md="9">
                                     <div align="center" className="bigFont mt-4">{formatNumber.new(_.round(cajas_acumuladas))}</div>
-                                    <div align="center" className="littleFont">de {" " + formatNumber.new(_.round(cajas_solicitadas))+ " "} cajas</div>
+                                    <div align="center" className="littleFont">de {" " + formatNumber.new(_.round(cajas_solicitadas)) + " "} cajas</div>
                                 </Col>
 
                             </Row>
@@ -411,7 +425,7 @@ const Produciendo = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                ((eficiencia>1? 1: eficiencia )* ( disponibilidad>1? 1: disponibilidad)* (calidad>1? 1: calidad )) *100
+                                                ((eficiencia > 1 ? 1 : eficiencia) * (disponibilidad > 1 ? 1 : disponibilidad) * (calidad > 1 ? 1 : calidad)) * 100
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -435,7 +449,7 @@ const Produciendo = (props) => {
                             <Doughnut
                                 data={dataTorta}
                                 width="12"
-                                height="12"
+                                height="11"
                                 align="left"
                                 options={{
                                     legend: {
@@ -444,6 +458,18 @@ const Produciendo = (props) => {
                                     responsive: true,
                                     maintainAspectRatio: true,
                                 }} /></div>
+                        <Row className="ml-5 mt-1">
+                            <Brightness1Icon style={{ color: "#2264A7" }} />
+                  Produciendo: {formatHour(TiempoActivo)}
+                        </Row>
+{/*                         <Row className="ml-5">
+                            <Brightness1Icon style={{ color: "#F7431E" }} />
+                  Justificado: {formatHour(TiempoJustificado)}
+                        </Row> */}
+                        <Row className="ml-5">
+                            <Brightness1Icon style={{ color: "#F7431E" }} />
+                  En Paro: {formatHour(TiempoInactivo)}
+                        </Row>
                     </Col>
                     <Col className="blueRow" md="3">
                         <div className="text-uppercase font-weight-bold my-3">Control de Pérdida</div>
@@ -515,7 +541,7 @@ const Produciendo = (props) => {
                                 <Col md="6">
                                     <div align="left" className=" mt-2 ml-2 text-uppercase littleFont font-weight-bold">Empaque</div>
                                     <Row className="">
-                                        <div align="left" className="ml-4 mt-1 bigFont">{ formatNumber.new(_.round(perdidaEmpaquetadoraKg))}</div>
+                                        <div align="left" className="ml-4 mt-1 bigFont">{formatNumber.new(_.round(perdidaEmpaquetadoraKg))}</div>
                                         <div align="center" className="littleFont mt-4 ml-2 mr-auto">Kgs</div>
                                     </Row>
 
