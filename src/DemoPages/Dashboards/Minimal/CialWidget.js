@@ -283,7 +283,10 @@ const CialWidget = (props) => {
             <Col md="6">
               <Row >
                 <Col align="right">
-                  <div className={estado == 1 ? "font2gray mr-2 " : "font2Blue mr-2"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
+                  <div className={estado == 1 ? "font2gray mr-2 " : "font2Blue mr-2"}>
+                    {localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Detenida" : 
+                    estado == 1 ? " Detenida" : " Produciendo"}
+                  </div>
                 </Col>
               </Row>
               <Row >

@@ -163,7 +163,8 @@ const TotalEnvasadoras = (props) => {
                     <Col md="4">
                         <Row align="right">
                             <div className="font2  my-4">Estado</div>
-                            <div className={estado == 0 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>{estado + "/4 Env. Produciendo"}</div>
+                            <div className={estado == 0 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>
+                                {localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Detenidas" : estado  + "/4 Env. Produciendo"}</div>
                         </Row>
                     </Col>
 

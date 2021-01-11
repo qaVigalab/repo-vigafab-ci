@@ -268,7 +268,10 @@ const Empaque = (props) => {
                     <Col xl="3" md="6">
                         <Row align="right">
                             <div className="font2 ml-3 my-4">Estado</div>
-                            <div className={estado == 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
+                            <div className={estado == 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>
+                                {localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Detenida" : 
+                                estado == 1 ? " Detenida" : " Produciendo"}
+                            </div>
                         </Row>
                     </Col>
 
