@@ -204,6 +204,7 @@ function FullSceen() {
   const [ordenEnv3, setOrdenEnv3] = useState()
   const [ordenEnv4, setOrdenEnv4] = useState()
   const [ordenEmp, setOrdenEmp] = useState()
+  const [TiempoRetencion, setTiempoRetencion] = useState()
 
   const loadData = () => {
     fetch(global.api.dashboard.getfullscreen, {
@@ -217,6 +218,7 @@ function FullSceen() {
     })
       .then(response => response.json())
       .then(result => {
+        console.log(result)
         setIdOrden(result[0].id_so)
         setCajasSol(result[0].cajas_sol)
         setHamSol(result[0].h_sol)
@@ -259,6 +261,7 @@ function FullSceen() {
         setOrdenEnv3(result[0].ordenenv3)
         setOrdenEnv4(result[0].ordenenv4)
         setOrdenEmp(result[0].ordenemp)
+        setTiempoRetencion(result[0].tiempo_retencion)
         setCalidad((result[0].h_acum_emp * result[0].kg_caja) / result[0].kg_acum_for)
         setEficiencia((result[0].kg_acum_emp / (result[0].kg_hora * (result[0].ta_linea) / 60)))
         setDisponibilidad((result[0].ta_linea / (result[0].ti_linea + result[0].ta_linea)))
@@ -331,11 +334,11 @@ function FullSceen() {
       return this.formatear(num);
     }
   }
-  const formatHour = (min) =>{
-    let horas = min/60;
-    horas= Math.trunc(horas)
-    let minutos = min-(60*horas) 
-    return horas===0 ? minutos + " Min" : horas+" Hrs " + minutos + " Min"
+  const formatHour = (min) => {
+    let horas = min / 60;
+    horas = Math.trunc(horas)
+    let minutos = min - (60 * horas)
+    return horas === 0 ? minutos + " Min" : horas + " Hrs " + minutos + " Min"
   }
 
   const loadOrdenes = () => {
@@ -515,7 +518,7 @@ function FullSceen() {
                       size="100" // String: Defines the size of the circle.
                       lineWidth="30" // String: Defines the thickness of the circle's stroke.
                       progress={(
-                        ((eficiencia>1? 1: eficiencia )* ( disponibilidad>1? 1: disponibilidad)* (calidad>1? 1: calidad )) *100
+                        ((eficiencia > 1 ? 1 : eficiencia) * (disponibilidad > 1 ? 1 : disponibilidad) * (calidad > 1 ? 1 : calidad)) * 100
                       ).toFixed(0)} // String: Update to change the progress and percentage.
                       progressColor="#02c39a" // String: Color of "progress" portion of circle.
                       bgColor="#a4a4a4" // String: Color of "empty" portion of circle.
@@ -631,8 +634,8 @@ function FullSceen() {
 
                     <div align="center" className="bigFontGreen">{formatNumber.new(_.round(TempFor, 2))}°C</div>
                     <div align="center" className="littleFontGreen mb-2">Temp. Entrada</div>
-                    <div align="center" className="bigFontGreen blackBorderTop pt-2">-18°C</div>
-                    <div align="center" className="littleFontGreen mb-2">Temp. Salida</div>
+                    <div align="center" className="bigFontGreen blackBorderTop pt-2">{formatNumber.new(_.round(TiempoRetencion, 0))} Min</div>
+                    <div align="center" className="littleFontGreen mb-2">Tiempo Retencion</div>
 
                   </Card>
                 </Col>
@@ -662,23 +665,23 @@ function FullSceen() {
                 />
                 <Row className="ml-2 mt-2">
                   <Brightness1Icon style={{ color: "#2264A7" }} />
-                  Produciendo: {formatHour(TaFor)} 
+                  Produciendo: {formatHour(TaFor)}
                 </Row>
                 <Row className="ml-2 mb-3">
                   <Brightness1Icon style={{ color: "#F7431E" }} />
-                  En Paro: {formatHour(TiFor)} 
+                  En Paro: {formatHour(TiFor)}
                 </Row>
 
                 {/*             <Row className="ml-2">
                   Desconectado: 3 Hrs
                 </Row> */}
-                <div className=" fullscreen-botMaquina-bot pl-2 pt-2">{"Orden: "+ordenFor}</div>
+                <div className=" fullscreen-botMaquina-bot pl-2 pt-2">{"Orden: " + ordenFor}</div>
               </Card>
             </Col>
             <Col xl="2">
               <Card className="main-card fullscreen-botMaquina ">
                 <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Envasadora 3</div>
-                
+
                 <Doughnut
                   data={dataTortaEnv3}
                   width="12"
@@ -695,22 +698,22 @@ function FullSceen() {
                 />
                 <Row className="ml-2 mt-2">
                   <Brightness1Icon style={{ color: "#2264A7" }} />
-                  Produciendo: {formatHour(TaEnv3)} 
+                  Produciendo: {formatHour(TaEnv3)}
                 </Row>
                 <Row className="ml-2">
                   <Brightness1Icon style={{ color: "#F7431E" }} />
-                  En Paro: {formatHour(TiEnv3)} 
+                  En Paro: {formatHour(TiEnv3)}
                 </Row>
                 {/*                 <Row className="ml-2">
                   Desconectado: 3 Hrs
                 </Row> */}
-                <div className="fullscreen-botMaquina-bot pl-2 pt-2 ">{"Orden: "+ordenEnv1}</div>
+                <div className="fullscreen-botMaquina-bot pl-2 pt-2 ">{"Orden: " + ordenEnv1}</div>
               </Card>
             </Col>
             <Col xl="2">
               <Card className=" main-card fullscreen-botMaquina">
                 <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Envasadora 4</div>
-                
+
                 <Doughnut
                   data={dataTortaEnv4}
                   width="12"
@@ -727,22 +730,22 @@ function FullSceen() {
                 />
                 <Row className="ml-2 mt-2">
                   <Brightness1Icon style={{ color: "#2264A7" }} />
-                  Produciendo: {formatHour(TaEnv4)} 
+                  Produciendo: {formatHour(TaEnv4)}
                 </Row>
                 <Row className="ml-2">
                   <Brightness1Icon style={{ color: "#F7431E" }} />
-                  En Paro: {formatHour(TiEnv4)} 
+                  En Paro: {formatHour(TiEnv4)}
                 </Row>
                 {/*                 <Row className="ml-2">
                   Desconectado: 3 Hrs
                 </Row> */}
-                <div className=" fullscreen-botMaquina-bot pl-2 pt-2">{"Orden: "+ordenEnv2}</div>
+                <div className=" fullscreen-botMaquina-bot pl-2 pt-2">{"Orden: " + ordenEnv2}</div>
               </Card>
             </Col>
             <Col xl="2">
               <Card className="main-card fullscreen-botMaquina">
                 <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Envasadora 5</div>
-                
+
                 <Doughnut
                   data={dataTortaEnv5}
                   width="12"
@@ -759,16 +762,16 @@ function FullSceen() {
                 />
                 <Row className="ml-2 mt-2">
                   <Brightness1Icon style={{ color: "#2264A7" }} />
-                  Produciendo: {formatHour(TaEnv5)} 
+                  Produciendo: {formatHour(TaEnv5)}
                 </Row>
                 <Row className="ml-2">
                   <Brightness1Icon style={{ color: "#F7431E" }} />
-                  En Paro: {formatHour(TiEnv5)} 
+                  En Paro: {formatHour(TiEnv5)}
                 </Row>
                 {/*                 <Row className="ml-2">
                   Desconectado: 3 Hrs
                 </Row> */}
-                <div className=" fullscreen-botMaquina-bot pl-2 pt-2">{"Orden: "+ordenEnv3}</div>
+                <div className=" fullscreen-botMaquina-bot pl-2 pt-2">{"Orden: " + ordenEnv3}</div>
               </Card>
             </Col>
             <Col xl="2">
@@ -790,22 +793,22 @@ function FullSceen() {
                 />
                 <Row className="ml-2 mt-2">
                   <Brightness1Icon style={{ color: "#2264A7" }} />
-                  Produciendo: {formatHour(TaEnv6)} 
+                  Produciendo: {formatHour(TaEnv6)}
                 </Row>
                 <Row className="ml-2">
                   <Brightness1Icon style={{ color: "#F7431E" }} />
-                  En Paro: {formatHour(TiEnv6)} 
+                  En Paro: {formatHour(TiEnv6)}
                 </Row>
                 {/*                 <Row className="ml-2">
                   Desconectado: 3 Hrs
                 </Row> */}
-                 <div className=" fullscreen-botMaquina-bot pl-2 pt-2">{"Orden: "+ordenEnv4}</div>
+                <div className=" fullscreen-botMaquina-bot pl-2 pt-2">{"Orden: " + ordenEnv4}</div>
               </Card>
             </Col>
             <Col xl="2" >
               <Card className="main-card fullscreen-botMaquina">
                 <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Empaque</div>
-               
+
                 <Doughnut
                   data={dataTortaEmp}
                   width="12"
@@ -822,16 +825,16 @@ function FullSceen() {
                 />
                 <Row className="ml-2 mt-2">
                   <Brightness1Icon style={{ color: "#2264A7" }} />
-                  Produciendo: {formatHour(TaEmp)} 
+                  Produciendo: {formatHour(TaEmp)}
                 </Row>
                 <Row className="ml-2">
                   <Brightness1Icon style={{ color: "#F7431E" }} />
-                  En Paro: {formatHour(TiEmp)} 
+                  En Paro: {formatHour(TiEmp)}
                 </Row>
                 {/*                 <Row className="ml-2">
                   Desconectado: 3 Hrs
                 </Row> */}
-                 <div className="fullscreen-botMaquina-bot pl-2 pt-2 ">{"Orden: "+ordenEmp}</div>
+                <div className="fullscreen-botMaquina-bot pl-2 pt-2 ">{"Orden: " + ordenEmp}</div>
               </Card>
             </Col>
           </Row>

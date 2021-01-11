@@ -462,7 +462,7 @@ const Produciendo = (props) => {
                             <Brightness1Icon style={{ color: "#2264A7" }} />
                   Produciendo: {formatHour(TiempoActivo)}
                         </Row>
-{/*                         <Row className="ml-5">
+                        {/*                         <Row className="ml-5">
                             <Brightness1Icon style={{ color: "#F7431E" }} />
                   Justificado: {formatHour(TiempoJustificado)}
                         </Row> */}
