@@ -235,7 +235,9 @@ const Produciendo = (props) => {
                 <Row className='sticky-row'>
                     <br />
                     <Col md="2">
-                        <div align="left" className="text-uppercase font-weight-bold my-1 ml-4">{estado == 1 ? "Detenida" : "Produciendo"}</div>
+                        <div align="left" className="text-uppercase font-weight-bold my-1 ml-4">{
+                            localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Terminada" :
+                                estado === 1 ? "Detenida" : "Produciendo"}</div>
                     </Col>
                     <Col md="2">
                         <Row>
@@ -277,7 +279,7 @@ const Produciendo = (props) => {
                                 <div className="font2  my-1">Estado</div>
                             </Col>
                             <div className={estado == 1 ? "font2White  my-1" : "font2White my-1"}>
-                                {localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Detenida"
+                                {localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Terminada"
                                     : estado == 1 ? " Detenida" : " Produciendo"}
                             </div>
                             <div className="font2 ml-3 my-1">Tiempo Total</div>

@@ -164,7 +164,7 @@ const TotalEnvasadoras = (props) => {
                         <Row align="right">
                             <div className="font2  my-4">Estado</div>
                             <div className={estado == 0 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>
-                                {localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Detenidas" : estado  + "/4 Env. Produciendo"}</div>
+                                {localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Terminada" : estado  + "/4 Env. Produciendo"}</div>
                         </Row>
                     </Col>
 
@@ -236,8 +236,10 @@ const TotalEnvasadoras = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (kgacumulados / (capacidad * ((tActivo) / 180))) * 100 //(totalKG/capacidad*tiempo que se demoro)
-                                            ).toFixed(0)} // String: Update to change the progress and percentage.
+                                                ( (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))))>0 ? 
+                                                 (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))) * 100 : //(totalKG/capacidad*tiempo que se demoro)
+                                                 0
+                                               ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                             textColor="#6b778c" // String: Color of percentage text color.

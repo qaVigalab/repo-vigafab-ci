@@ -59,7 +59,7 @@ export const General= [
 
     },
      {
-        icon: 'pe-7s-network',
+        icon: 'pe-7s-monitor',
         label: 'FullScreen',
         to: '#/dashboards/FullScreen'
 
@@ -67,7 +67,7 @@ export const General= [
 
   {
 
-        icon: 'pe-7s-network',
+        icon: 'pe-7s-stopwatch',
         label: 'Control de Tiempo',
         to: '#/dashboards/TiempoParo'
 
