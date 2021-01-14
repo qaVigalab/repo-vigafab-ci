@@ -9,7 +9,7 @@ const dashboard = {
     getproducto:                awsApiUrl2 + "getproducto",
     gettimelinemaquina:         awsApiUrl2 + "gettimelinemaquina",
     getresumenmaquina:          awsApiUrl2 + "getresumenmaquina",
-    getresumenhistorico:          awsApiUrl2 + "getresumenhistorico",
+    getresumenhistorico:        awsApiUrl2 + "getresumenhistorico",
     gettempformadora:           awsApiUrl2 + "gettempformadora",
     getfullscreen:              awsApiUrl2 + "getfullscreen",
     nextorden:                  awsApiUrl2 + "nextorden",
@@ -26,9 +26,8 @@ const dashboard = {
     insertordenfromexcel:       awsApiUrl2 + "insertordenfromexcel",
     Agrosuper_excel_ordenes:    awsApiUrl2 + "Agrosuper_excel_ordenes",
     agrosuper_excel_paros:      awsApiUrl2 + "agrosuper_excel_paros",
-
-
-    
+    getresumenenvasadoras:      awsApiUrl2 + "getresumenenvasadoras",
+    getresumenhistoricoEnv:     awsApiUrl2 + "getresumenhistoricoEnv",
 }
 
 //Api auth
