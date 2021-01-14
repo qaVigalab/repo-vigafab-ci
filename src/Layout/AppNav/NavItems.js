@@ -5,7 +5,6 @@ export const General= [
         to: '#/dashboards/minimal-dashboard-1',
 
     },
-    
   /*  {
         icon: 'pe-7s-graph1',
         label: 'Hornos',

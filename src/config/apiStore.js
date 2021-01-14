@@ -23,6 +23,9 @@ const dashboard = {
     getmaquinas:                awsApiUrl2 + "getmaquinas",
     gettempiqf:                 awsApiUrl2 + "gettempiqf",
     getparosmaquina:            awsApiUrl2 + "getparosmaquina",
+    insertordenfromexcel:       awsApiUrl2 + "insertordenfromexcel",
+    Agrosuper_excel_ordenes:    awsApiUrl2 + "Agrosuper_excel_ordenes",
+    agrosuper_excel_paros:      awsApiUrl2 + "agrosuper_excel_paros",
 
 
     
