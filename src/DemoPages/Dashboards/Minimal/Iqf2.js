@@ -259,7 +259,7 @@ const Iqf2 = (props) => {
             },
             body: JSON.stringify({
                 id_orden: localStorage.getItem("id_orden")
-              }),
+            }),
         })
             .then(response => response.json())
             .then(result => {
@@ -372,7 +372,9 @@ const Iqf2 = (props) => {
                         <Row >
                             <Col align="right">
                                 <div className="font2  my-4 ">Estado</div></Col>
-                            <div className={estado == 1 ? "font2gray  my-4" : "font2Blue my-4"}>{estado == 1 ? " Detenida" : " Produciendo"}</div>
+                            <div className={estado == 1 ? "font2gray  my-4" : "font2Blue my-4"}>{
+                                localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Terminada" :
+                                    estado == 1 ? " Detenida" : " Produciendo"}</div>
                             <div className="font2 ml-3 my-4">Tiempo de Actividad</div>
                             <div className="font2Blue ml-2 my-4 mr-5">{Math.round(tActivo / 60 * 100) / 100} hrs</div>
 
@@ -427,7 +429,7 @@ const Iqf2 = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (kgacumulados / (capacidad * ((tActivo ) / 60))) * 100 //(totalKG/capacidad*tiempo que trabajo)
+                                                (kgacumulados / (capacidad * ((tActivo) / 60))) * 100 //(totalKG/capacidad*tiempo que trabajo)
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -476,7 +478,7 @@ const Iqf2 = (props) => {
                     </Row>
                 </Col>
             </Row>
-            
+
             <Row>
                 <Col xs="12">
                     <div id="chart">
@@ -485,7 +487,7 @@ const Iqf2 = (props) => {
                     </div>
                 </Col>
             </Row>
-            
+
 
             {
                 //<div className="bot-description">Receta actual: {" " + producto}</div>

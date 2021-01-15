@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Button, Col, Container, Form, Input, Label, Row } from "reactstrap";
 import { setIdOrden } from '../../../actions/dashboardActions'
-import GridOnIcon from '@material-ui/icons/GridOn';
+
 import CargaExcel from "./CargaExcel";
 class NuevaOrden extends Component {
   constructor(props) {

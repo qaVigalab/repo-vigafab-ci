@@ -5,7 +5,6 @@ export const General= [
         to: '#/dashboards/minimal-dashboard-1',
 
     },
-    
   /*  {
         icon: 'pe-7s-graph1',
         label: 'Hornos',
@@ -60,7 +59,7 @@ export const General= [
 
     },
      {
-        icon: 'pe-7s-network',
+        icon: 'pe-7s-monitor',
         label: 'FullScreen',
         to: '#/dashboards/FullScreen'
 
@@ -68,7 +67,7 @@ export const General= [
 
   {
 
-        icon: 'pe-7s-network',
+        icon: 'pe-7s-stopwatch',
         label: 'Control de Tiempo',
         to: '#/dashboards/TiempoParo'
 

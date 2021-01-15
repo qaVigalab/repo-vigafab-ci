@@ -634,7 +634,7 @@ function FullSceen() {
 
                     <div align="center" className="bigFontGreen">{formatNumber.new(_.round(TempFor, 2))}°C</div>
                     <div align="center" className="littleFontGreen mb-2">Temp. Entrada</div>
-                    <div align="center" className="bigFontGreen blackBorderTop pt-2">{formatNumber.new(_.round(TiempoRetencion, 0))} Min</div>
+                    <div align="center" className="bigFontGreen blackBorderTop pt-2">{/* formatNumber.new(_.round(TiempoRetencion, 2)) */ TiempoRetencion} Min</div>
                     <div align="center" className="littleFontGreen mb-2">Tiempo Retencion</div>
 
                   </Card>

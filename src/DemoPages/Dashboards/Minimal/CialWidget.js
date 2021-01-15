@@ -195,32 +195,34 @@ const CialWidget = (props) => {
       .then((response) => response.json())
       .then((r) => {
         var objeto = {};
-        var objetos = [
-          {
-            x: 'Prod',
-            y: [new Date(r[0].hora_inicio).getTime(),
-            new Date(r[0].hora_inicio).getTime()],
-            fillColor: '#2264A7'
-          },
-          {
-            x: 'Paro',
-            y: [new Date(r[0].hora_inicio).getTime(),
-            new Date(r[0].hora_inicio).getTime()],
-            fillColor: '#F7431E'
-          }
-        ];
-        for (let i = 0; i < r.length; i++) {
+        if (r.length > 0) {
+          var objetos = [
+            {
+              x: 'Prod',
+              y: [new Date(r[0].hora_inicio).getTime(),
+              new Date(r[0].hora_inicio).getTime()],
+              fillColor: '#2264A7'
+            },
+            {
+              x: 'Paro',
+              y: [new Date(r[0].hora_inicio).getTime(),
+              new Date(r[0].hora_inicio).getTime()],
+              fillColor: '#F7431E'
+            }
+          ];
+          for (let i = 0; i < r.length; i++) {
 
-          objeto = {
-            x: r[i].id_tipo == 2 ? 'Prod' : 'Paro',
-            y: [
-              new Date(r[i].hora_inicio).getTime(),
-              new Date(r[i].hora_termino).getTime()
-            ],
-            fillColor: r[i].id_tipo == 2 ? '#2264A7' : '#F7431E'
+            objeto = {
+              x: r[i].id_tipo == 2 ? 'Prod' : 'Paro',
+              y: [
+                new Date(r[i].hora_inicio).getTime(),
+                new Date(r[i].hora_termino).getTime()
+              ],
+              fillColor: r[i].id_tipo == 2 ? '#2264A7' : '#F7431E'
 
+            }
+            objetos.push(objeto)
           }
-          objetos.push(objeto)
         }
         setSeriesTimeLine([{
           data: objetos
@@ -284,8 +286,8 @@ const CialWidget = (props) => {
               <Row >
                 <Col align="right">
                   <div className={estado == 1 ? "font2gray mr-2 " : "font2Blue mr-2"}>
-                    {localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Detenida" : 
-                    estado == 1 ? " Detenida" : " Produciendo"}
+                    {localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Terminada" :
+                      estado == 1 ? " Detenida" : " Produciendo"}
                   </div>
                 </Col>
               </Row>
@@ -369,7 +371,9 @@ const CialWidget = (props) => {
                   size="50" // String: Defines the size of the circle.
                   lineWidth="30" // String: Defines the thickness of the circle's stroke.
                   progress={(
-                    (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))) * 100 //(totalKG/capacidad*tiempo que se demoro)
+                    ((kgacumulados / ((capacidad / 3) * ((tActivo) / 60)))) > 0 ?
+                      (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))) * 100 : //(totalKG/capacidad*tiempo que se demoro)
+                      0
                   ).toFixed(0)} // String: Update to change the progress and percentage.
                   progressColor="#02c39a" // String: Color of "progress" portion of circle.
                   bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -392,7 +396,7 @@ const CialWidget = (props) => {
 
           <Row>
             <Col xs="12">
-              <div id="chart">
+              <div id="chart" className={seriesTimeLine.data !== undefined ? "" : "d-none"} >
                 <ReactApexChart options={optionsTimeLine} series={seriesTimeLine} type="rangeBar" height={150} />
 
               </div>

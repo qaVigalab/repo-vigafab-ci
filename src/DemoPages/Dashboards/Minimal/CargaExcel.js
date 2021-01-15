@@ -22,7 +22,7 @@ class CargaExcel extends Component {
 
   insertFromExcel = (prioridad,cajas,kg_sol,sku,tiempo,fecha) => {
     fetch(
-      "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/insertordenfromexcel",
+      global.api.dashboard.insertordenfromexcel,
       {
         method: "POST",
         headers: {

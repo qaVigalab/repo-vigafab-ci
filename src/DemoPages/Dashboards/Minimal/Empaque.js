@@ -113,27 +113,27 @@ const Empaque = (props) => {
         separador: ".", // separador para los miles
         sepDecimal: ',', // separador para los decimales
         formatear: function (num) {
-          num += '';
-          var splitStr = num.split('.');
-          var splitLeft = splitStr[0];
-          var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
-          var regx = /(\d+)(\d{3})/;
-          while (regx.test(splitLeft)) {
-            splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
-          }
-          return this.simbol + splitLeft + splitRight;
+            num += '';
+            var splitStr = num.split('.');
+            var splitLeft = splitStr[0];
+            var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
+            var regx = /(\d+)(\d{3})/;
+            while (regx.test(splitLeft)) {
+                splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
+            }
+            return this.simbol + splitLeft + splitRight;
         },
         new: function (num, simbol) {
-          this.simbol = simbol || '';
-          return this.formatear(num);
+            this.simbol = simbol || '';
+            return this.formatear(num);
         }
-      }
+    }
 
     const loadResumen = () => {
         let link
-        localStorage.getItem("id_orden") === localStorage.getItem("id_ordenA") 
-        ? link = global.api.dashboard.getresumenmaquina 
-        : link = global.api.dashboard.getresumenhistorico
+        localStorage.getItem("id_orden") === localStorage.getItem("id_ordenA")
+            ? link = global.api.dashboard.getresumenmaquina
+            : link = global.api.dashboard.getresumenhistorico
         fetch(link, {
             "method": "POST",
             "headers": {
@@ -195,7 +195,9 @@ const Empaque = (props) => {
         })
             .then((response) => response.json())
             .then((r) => {
+              
                 var objeto = {};
+                if (r.length > 0) {
                 var objetos = [
                     {
                         x: 'En Producción',
@@ -210,20 +212,21 @@ const Empaque = (props) => {
                         fillColor: '#F7431E'
                     }
                 ];
-                for (let i = 0; i < r.length; i++) {
+                
+                    for (let i = 0; i < r.length; i++) {
 
-                    objeto = {
-                        x: r[i].id_tipo == 2 ? 'En Producción' : 'En Paro',
-                        y: [
-                            new Date(r[i].hora_inicio).getTime(),
-                            new Date(r[i].hora_termino).getTime()
-                        ],
-                        fillColor: r[i].id_tipo == 2 ? '#2264A7' : '#F7431E'
+                        objeto = {
+                            x: r[i].id_tipo == 2 ? 'En Producción' : 'En Paro',
+                            y: [
+                                new Date(r[i].hora_inicio).getTime(),
+                                new Date(r[i].hora_termino).getTime()
+                            ],
+                            fillColor: r[i].id_tipo == 2 ? '#2264A7' : '#F7431E'
 
+                        }
+                        objetos.push(objeto)
                     }
-                    objetos.push(objeto)
                 }
-                //console.log(objetos)
                 setSeriesTimeLine([{
                     data: objetos
                 }]);
@@ -269,8 +272,8 @@ const Empaque = (props) => {
                         <Row align="right">
                             <div className="font2 ml-3 my-4">Estado</div>
                             <div className={estado == 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>
-                                {localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Detenida" : 
-                                estado == 1 ? " Detenida" : " Produciendo"}
+                                {localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Terminada" :
+                                    estado == 1 ? " Detenida" : " Produciendo"}
                             </div>
                         </Row>
                     </Col>
@@ -279,15 +282,15 @@ const Empaque = (props) => {
                     <Col xl="4" md="6">
                         <Row align="right">
                             <div className="font2 ml-3 my-4">Tiempo de Actividad</div>
-                            <div className="font2Blue ml-1 my-4">{formatNumber.new(_.round(tActivo/60 ,2 ))} hrs</div>
+                            <div className="font2Blue ml-1 my-4">{formatNumber.new(_.round(tActivo / 60, 2))} hrs</div>
                         </Row>
 
                     </Col>
-                    
+
                     <Col xl="3" md="6" >
                         <Row align="right">
                             <div className="font2 my-4">Productividad</div>
-                            <div className="font2Blue ml-1 my-4">{formatNumber.new(_.round(productividad))+ " caj/min"}</div>
+                            <div className="font2Blue ml-1 my-4">{formatNumber.new(_.round(productividad)) + " caj/min"}</div>
                         </Row>
 
                     </Col>
@@ -353,7 +356,9 @@ const Empaque = (props) => {
                                                 size="100" // String: Defines the size of the circle.
                                                 lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                                 progress={(
-                                                    (kgacumulados / (capacidad * ((tActivo ) / 60))) * 100 //(totalKG/capacidad*tiempo que trabajo)
+                                                    ((kgacumulados / ((capacidad / 3) * ((tActivo) / 60)))) > 0 ?
+                                                        (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))) * 100 : //(totalKG/capacidad*tiempo que se demoro)
+                                                        0
                                                 ).toFixed(0)} // String: Update to change the progress and percentage.
                                                 progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                                 bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -398,11 +403,12 @@ const Empaque = (props) => {
             <Row>
 
                 <Col xs="12">
-                    <div id="chart" className="m-3">
+                    <div id="chart" className={seriesTimeLine.data !== undefined ? "m-3" : "d-none"} >
 
                         <ReactApexChart options={optionsTimeLine} series={seriesTimeLine} type="rangeBar" height={150} />
 
                     </div>
+                    
                 </Col>
 
             </Row>

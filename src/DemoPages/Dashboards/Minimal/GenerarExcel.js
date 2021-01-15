@@ -37,7 +37,7 @@ const GenerarExcel = (props) => {
 
   const loadOrden = () => {
     let link
-     link = "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/Agrosuper_excel_ordenes"
+     link = global.api.dashboard.Agrosuper_excel_ordenes
     fetch(link, {
       "method": "POST",
       "headers": {
@@ -62,7 +62,7 @@ const GenerarExcel = (props) => {
 
   const loadParo = () => {
     let link
-     link =  "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/agrosuper_excel_paros"
+     link =  global.api.dashboard.agrosuper_excel_paros
     fetch(link, {
       "method": "POST",
       "headers": {
