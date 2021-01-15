@@ -396,7 +396,7 @@ const CialWidget = (props) => {
 
           <Row>
             <Col xs="12">
-              <div id="chart" className={seriesTimeLine.data !== undefined ? "" : "d-none"} >
+              <div id="chart" className={/*seriesTimeLine.data !== undefined ? "m-3" : "d-none"*/ ""}>
                 <ReactApexChart options={optionsTimeLine} series={seriesTimeLine} type="rangeBar" height={150} />
 
               </div>
