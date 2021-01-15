@@ -512,11 +512,11 @@ const Formadora2 = (props) => {
             }
             <Row>
                 <Col xs="12">
-                    <div id="chart" className={seriesTimeLine.data !== undefined ? "m-3" : "d-none"}>
+                    <div id="chart" className={/*seriesTimeLine.data !== undefined ? "m-3" : "d-none"*/ "m-3"}>
                         <ReactApexChart options={optionsTimeLine} series={seriesTimeLine} type="rangeBar" height={150} />
 
                     </div>
-                   {/*  asd {console.log(  seriesTimeLine[0]) } */}
+                
                 </Col>
             </Row>
         </div>
