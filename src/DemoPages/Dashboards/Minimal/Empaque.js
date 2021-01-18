@@ -195,24 +195,24 @@ const Empaque = (props) => {
         })
             .then((response) => response.json())
             .then((r) => {
-              
+
                 var objeto = {};
                 if (r.length > 0) {
-                var objetos = [
-                    {
-                        x: 'En Producción',
-                        y: [new Date(r[0].hora_inicio).getTime() - 2,
-                        new Date(r[0].hora_inicio).getTime() - 1],
-                        fillColor: '#2264A7'
-                    },
-                    {
-                        x: 'En Paro',
-                        y: [new Date(r[0].hora_inicio).getTime() - 1,
-                        new Date(r[0].hora_inicio).getTime()],
-                        fillColor: '#F7431E'
-                    }
-                ];
-                
+                    var objetos = [
+                        {
+                            x: 'En Producción',
+                            y: [new Date(r[0].hora_inicio).getTime() - 2,
+                            new Date(r[0].hora_inicio).getTime() - 1],
+                            fillColor: '#2264A7'
+                        },
+                        {
+                            x: 'En Paro',
+                            y: [new Date(r[0].hora_inicio).getTime() - 1,
+                            new Date(r[0].hora_inicio).getTime()],
+                            fillColor: '#F7431E'
+                        }
+                    ];
+
                     for (let i = 0; i < r.length; i++) {
 
                         objeto = {
@@ -330,7 +330,10 @@ const Empaque = (props) => {
                                                 size="100" // String: Defines the size of the circle.
                                                 lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                                 progress={(
-                                                    (tActivo / (tInactivo + tActivo)) * 100
+                                                    (tActivo / (tInactivo + tActivo)) * 100 === Infinity ? 0 :
+                                                        (tActivo / (tInactivo + tActivo)) * 100 > 0 ?
+                                                            (tActivo / (tInactivo + tActivo)) * 100
+                                                            : 0
                                                 ).toFixed(0)} // String: Update to change the progress and percentage.
                                                 progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                                 bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -356,9 +359,10 @@ const Empaque = (props) => {
                                                 size="100" // String: Defines the size of the circle.
                                                 lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                                 progress={(
-                                                    ((kgacumulados / ((capacidad / 3) * ((tActivo) / 60)))) > 0 ?
-                                                        (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))) * 100 : //(totalKG/capacidad*tiempo que se demoro)
-                                                        0
+                                                    (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))) * 100 === Infinity ? 0 :
+                                                        ((kgacumulados / ((capacidad / 3) * ((tActivo) / 60)))) > 0 ?
+                                                            (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))) * 100  //(totalKG/capacidad*tiempo que se demoro)
+                                                            : 0
                                                 ).toFixed(0)} // String: Update to change the progress and percentage.
                                                 progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                                 bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -403,12 +407,12 @@ const Empaque = (props) => {
             <Row>
 
                 <Col xs="12">
-                <div id="chart" className={/*seriesTimeLine.data !== undefined ? "m-3" : "d-none"*/ "m-3"}>
+                    <div id="chart" className={/*seriesTimeLine.data !== undefined ? "m-3" : "d-none"*/ "m-3"}>
 
                         <ReactApexChart options={optionsTimeLine} series={seriesTimeLine} type="rangeBar" height={150} />
 
                     </div>
-                    
+
                 </Col>
 
             </Row>

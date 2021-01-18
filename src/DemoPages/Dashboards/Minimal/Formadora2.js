@@ -426,7 +426,10 @@ const Formadora2 = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (tActivo / (tInactivo + tActivo)) * 100
+                                                (tActivo / (tInactivo + tActivo)) * 100 === Infinity ? 0 :
+                                                    (tActivo / (tInactivo + tActivo)) * 100 > 0 ?
+                                                        (tActivo / (tInactivo + tActivo)) * 100
+                                                        : 0
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -453,7 +456,10 @@ const Formadora2 = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (kgacumulados / (capacidad * ((tActivo) / 60))) * 100 //(totalKG/capacidad*tiempo que trabajo)
+                                                (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))) * 100 === Infinity ? 0 :
+                                                    ((kgacumulados / ((capacidad / 3) * ((tActivo) / 60)))) > 0 ?
+                                                        (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))) * 100  //(totalKG/capacidad*tiempo que se demoro)
+                                                        : 0
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -516,7 +522,7 @@ const Formadora2 = (props) => {
                         <ReactApexChart options={optionsTimeLine} series={seriesTimeLine} type="rangeBar" height={150} />
 
                     </div>
-                
+
                 </Col>
             </Row>
         </div>
