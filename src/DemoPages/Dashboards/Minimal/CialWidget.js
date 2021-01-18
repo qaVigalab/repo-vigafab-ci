@@ -340,12 +340,15 @@ const CialWidget = (props) => {
               <div className="circle space5px ">
                 <Circle
                   animate={true} // Boolean: Animated/Static progress
-                  animationDuration="10s" // String: Length of animation
+                  animationDuration="5s" // String: Length of animation
                   responsive={true} // Boolean: Make SVG adapt to parent size
                   size="14rem" // String: Defines the size of the circle.
                   lineWidth="30" // String: Defines the thickness of the circle's stroke.
                   progress={(
-                    (tActivo / (tInactivo + tActivo)) * 100
+                    (tActivo / (tInactivo + tActivo)) * 100 === Infinity ? 0 :
+                    (tActivo / (tInactivo + tActivo)) * 100 > 0 ?
+                    (tActivo / (tInactivo + tActivo)) * 100 
+                      : 0
                   ).toFixed(0)} // String: Update to change the progress and percentage.
                   progressColor="#02c39a" // String: Color of "progress" portion of circle.
                   bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -371,9 +374,10 @@ const CialWidget = (props) => {
                   size="50" // String: Defines the size of the circle.
                   lineWidth="30" // String: Defines the thickness of the circle's stroke.
                   progress={(
+                    (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))) * 100 === Infinity ? 0 :
                     ((kgacumulados / ((capacidad / 3) * ((tActivo) / 60)))) > 0 ?
-                      (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))) * 100 : //(totalKG/capacidad*tiempo que se demoro)
-                      0
+                      (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))) * 100  //(totalKG/capacidad*tiempo que se demoro)
+                      : 0
                   ).toFixed(0)} // String: Update to change the progress and percentage.
                   progressColor="#02c39a" // String: Color of "progress" portion of circle.
                   bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -387,7 +391,7 @@ const CialWidget = (props) => {
                   showPercentageSymbol={true} // Boolean: Show/hide only the "%" symbol.
                 />
               </div>
-
+                  
               <div align="center" className="font2 mt-3">Eficiencia</div>
             </Col>
 

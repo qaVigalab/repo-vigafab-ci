@@ -486,7 +486,9 @@ const Produciendo = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                perdidaEnvasado * 100
+                                                perdidaEnvasado<0 ? 0 :
+                                                perdidaEnvasado>100 ? 99.9 :
+                                                perdidaEnvasado*100
                                             ).toFixed(1)} // String: Update to change the progress and percentage.
                                             progressColor="#F7431E" // String: Color of "progress" portion of circle.
                                             bgColor="#6b778c" // String: Color of "empty" portion of circle.
@@ -505,7 +507,7 @@ const Produciendo = (props) => {
                                 <Col md="6">
                                     <div align="left" className=" mt-2 ml-2 text-uppercase littleFont font-weight-bold">Envasado</div>
                                     <Row className="">
-                                        <div align="left" className="ml-4 mt-1 bigFont">{formatNumber.new(_.round(perdidaEnvasadoKg))}</div>
+                                        <div align="left" className="ml-4 mt-1 bigFont">{perdidaEnvasadoKg<0 ? "---" : formatNumber.new(_.round(perdidaEnvasadoKg))}</div>
                                         <div align="center" className="littleFont mt-4 ml-2 mr-auto">Kgs</div>
                                     </Row>
 
@@ -524,7 +526,9 @@ const Produciendo = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                perdidaEmpaquetadora * 100
+                                                perdidaEmpaquetadora<0 ? 0 :
+                                                perdidaEmpaquetadora>100 ? 99.9 :
+                                                perdidaEmpaquetadora*100
                                             ).toFixed(1)} // String: Update to change the progress and percentage.
                                             progressColor="#F7431E" // String: Color of "progress" portion of circle.
                                             bgColor="#6b778c" // String: Color of "empty" portion of circle.
@@ -543,7 +547,7 @@ const Produciendo = (props) => {
                                 <Col md="6">
                                     <div align="left" className=" mt-2 ml-2 text-uppercase littleFont font-weight-bold">Empaque</div>
                                     <Row className="">
-                                        <div align="left" className="ml-4 mt-1 bigFont">{formatNumber.new(_.round(perdidaEmpaquetadoraKg))}</div>
+                                        <div align="left" className="ml-4 mt-1 bigFont">{perdidaEmpaquetadoraKg<0 ? "---" : formatNumber.new(_.round(perdidaEmpaquetadoraKg))}</div>
                                         <div align="center" className="littleFont mt-4 ml-2 mr-auto">Kgs</div>
                                     </Row>
 
@@ -562,7 +566,9 @@ const Produciendo = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                perdidaTotal * 100
+                                                perdidaTotal<0 ? 0 :
+                                                perdidaTotal>100 ? 99.9 :
+                                                perdidaTotal*100
                                             ).toFixed(1)} // String: Update to change the progress and percentage.
                                             progressColor="#F7431E" // String: Color of "progress" portion of circle.
                                             bgColor="#6b778c" // String: Color of "empty" portion of circle.
@@ -581,7 +587,7 @@ const Produciendo = (props) => {
                                 <Col md="6">
                                     <div align="left" className=" mt-2 ml-2 text-uppercase littleFont font-weight-bold">Total</div>
                                     <Row className="">
-                                        <div align="left" className="ml-4 mt-1 bigFont">{formatNumber.new(_.round(perdidaTotalKg))}</div>
+                                        <div align="left" className="ml-4 mt-1 bigFont">{perdidaTotalKg<0 ? "---" : formatNumber.new(_.round(perdidaTotalKg))}</div>
                                         <div align="center" className="littleFont mt-4 ml-2 mr-auto">Kgs</div>
                                     </Row>
 
