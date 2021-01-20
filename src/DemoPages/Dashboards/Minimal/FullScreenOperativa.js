@@ -577,17 +577,6 @@ function FullSceen() {
       });
   };
 
-  useEffect(() => {
-    loadOrdenes();
-    loadData();
-
-    const interval = setInterval(() => {
-      loadOrdenes();
-      loadData();
-      console.log("recargando")
-    }, 600000);
-    return () => clearInterval(interval);
-  }, [])
 
   useEffect(() => {
     loadOrdenes();

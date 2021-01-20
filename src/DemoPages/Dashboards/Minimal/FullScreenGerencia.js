@@ -218,7 +218,7 @@ function FullSceen() {
     })
       .then(response => response.json())
       .then(result => {
-        console.log(result)
+        
         setIdOrden(result[0].id_so)
         setCajasSol(result[0].cajas_sol)
         setHamSol(result[0].h_sol)
@@ -362,17 +362,6 @@ function FullSceen() {
       });
   };
 
-  useEffect(() => {
-    loadOrdenes();
-    loadData();
-
-    const interval = setInterval(() => {
-      loadOrdenes();
-      loadData();
-      console.log("recargando")
-    }, 600000);
-    return () => clearInterval(interval);
-  }, [])
 
   useEffect(() => {
     loadOrdenes();
@@ -557,6 +546,7 @@ function FullSceen() {
                     {
 
                       ordenes.map((orden, i) =>
+                      i >4 ? "" :  
                         orden.id_sub_orden ? (
 
                           <tr key={i}
