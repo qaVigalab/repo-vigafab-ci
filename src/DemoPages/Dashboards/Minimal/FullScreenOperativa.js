@@ -11,6 +11,7 @@ import icono3 from "./images/icono3.png";
 import WatchLaterOutlinedIcon from '@material-ui/icons/WatchLaterOutlined';
 import ReactApexChart from "react-apexcharts";
 import Brightness1Icon from "@material-ui/icons/Brightness1";
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import TimeLineOperativo from "./TimeLineOperativo";
 
 
@@ -209,218 +210,6 @@ function FullSceen() {
   const [TiempoRetencion, setTiempoRetencion] = useState()
 
 
-
-  const [seriesTimeline, setSeriesTimeline] = useState([
-    // George Washington
-    {
-      name: 'George Washington',
-      data: [
-        {
-          x: 'President',
-          y: [
-            new Date(1789, 3, 30).getTime(),
-            new Date(1797, 2, 4).getTime()
-          ]
-        },
-      ]
-    },
-    // John Adams
-    {
-      name: 'John Adams',
-      data: [
-        {
-          x: 'President',
-          y: [
-            new Date(1797, 2, 4).getTime(),
-            new Date(1801, 2, 4).getTime()
-          ]
-        },
-        {
-          x: 'Vice President',
-          y: [
-            new Date(1789, 3, 21).getTime(),
-            new Date(1797, 2, 4).getTime()
-          ]
-        }
-      ]
-    },
-    // Thomas Jefferson
-    {
-      name: 'Thomas Jefferson',
-      data: [
-        {
-          x: 'President',
-          y: [
-            new Date(1801, 2, 4).getTime(),
-            new Date(1809, 2, 4).getTime()
-          ]
-        },
-        {
-          x: 'Vice President',
-          y: [
-            new Date(1797, 2, 4).getTime(),
-            new Date(1801, 2, 4).getTime()
-          ]
-        },
-        {
-          x: 'Secretary of State',
-          y: [
-            new Date(1790, 2, 22).getTime(),
-            new Date(1793, 11, 31).getTime()
-          ]
-        }
-      ]
-    },
-    // Aaron Burr
-    {
-      name: 'Aaron Burr',
-      data: [
-        {
-          x: 'Vice President',
-          y: [
-            new Date(1801, 2, 4).getTime(),
-            new Date(1805, 2, 4).getTime()
-          ]
-        }
-      ]
-    },
-    // George Clinton
-    {
-      name: 'George Clinton',
-      data: [
-        {
-          x: 'Vice President',
-          y: [
-            new Date(1805, 2, 4).getTime(),
-            new Date(1812, 3, 20).getTime()
-          ]
-        }
-      ]
-    },
-    // John Jay
-    {
-      name: 'John Jay',
-      data: [
-        {
-          x: 'Secretary of State',
-          y: [
-            new Date(1789, 8, 25).getTime(),
-            new Date(1790, 2, 22).getTime()
-          ]
-        }
-      ]
-    },
-    // Edmund Randolph
-    {
-      name: 'Edmund Randolph',
-      data: [
-        {
-          x: 'Secretary of State',
-          y: [
-            new Date(1794, 0, 2).getTime(),
-            new Date(1795, 7, 20).getTime()
-          ]
-        }
-      ]
-    },
-    // Timothy Pickering
-    {
-      name: 'Timothy Pickering',
-      data: [
-        {
-          x: 'Secretary of State',
-          y: [
-            new Date(1795, 7, 20).getTime(),
-            new Date(1800, 4, 12).getTime()
-          ]
-        }
-      ]
-    },
-    // Charles Lee
-    {
-      name: 'Charles Lee',
-      data: [
-        {
-          x: 'Secretary of State',
-          y: [
-            new Date(1800, 4, 13).getTime(),
-            new Date(1800, 5, 5).getTime()
-          ]
-        }
-      ]
-    },
-    // John Marshall
-    {
-      name: 'John Marshall',
-      data: [
-        {
-          x: 'Secretary of State',
-          y: [
-            new Date(1800, 5, 13).getTime(),
-            new Date(1801, 2, 4).getTime()
-          ]
-        }
-      ]
-    },
-    // Levi Lincoln
-    {
-      name: 'Levi Lincoln',
-      data: [
-        {
-          x: 'Secretary of State',
-          y: [
-            new Date(1801, 2, 5).getTime(),
-            new Date(1801, 4, 1).getTime()
-          ]
-        }
-      ]
-    },
-    // James Madison
-    {
-      name: 'James Madison',
-      data: [
-        {
-          x: 'Secretary of State',
-          y: [
-            new Date(1801, 4, 2).getTime(),
-            new Date(1809, 2, 3).getTime()
-          ]
-        }
-      ]
-    },
-  ],)
-  const [optionTimeline, setOptionTimeline] = useState({
-    chart: {
-      height: 350,
-      type: 'rangeBar'
-    },
-    plotOptions: {
-      bar: {
-        horizontal: true,
-        barHeight: '50%',
-        rangeBarGroupRows: true
-      }
-    },
-    colors: [
-      "#008FFB", "#00E396", "#FEB019", "#FF4560", "#775DD0",
-      "#3F51B5", "#546E7A", "#D4526E", "#8D5B4C", "#F86624",
-      "#D7263D", "#1B998B", "#2E294E", "#F46036", "#E2C044"
-    ],
-    fill: {
-      type: 'solid'
-    },
-    xaxis: {
-      type: 'datetime'
-    },
-    legend: {
-      position: 'right'
-    },
-    tooltip: {
-
-    }
-  },)
-
-
   const loadData = () => {
     fetch(global.api.dashboard.getfullscreen, {
       "method": "POST",
@@ -613,135 +402,44 @@ function FullSceen() {
               {moment().format("HH:mm")}
             </Col>
           </Row>
-          <Row className="fullscreen-centerSpace">
+          <Row className="fullscreen-centerSpace-op">
             <Col xl="4" className="fullscreen-center1" >
-              <Row className="fullscreen-center1-head p-3">
-                <Col xl="3" className="font1 mt-3 ">
-                  N° {IdOrden}
+              <Row className="fullscreen-center1-head-op p-3">
+                <Col className="bigFont3 mt-3 ">
+                  Estado: A tiempo
                 </Col>
-                <Col className="font1 mt-3">
-                  {Producto}
+                <Col xs="2" md="2" className="font1 p-3 mt-2 ">
+                  < CheckCircleOutlineIcon style={{ fontSize: 50 }} />
                 </Col>
+
               </Row>
-              <Row className="fullscreen-center1-body1">
+              <Row className="fullscreen-center1-body1-op">
                 <Col xl="4">
-                  <div align="center" className="bigFont3 mt-4">{formatNumber.new(_.round(KgAcumEmp * 100 / KgSol, 2))}%</div>
-                  <div align="center" className="littleFont2">de Produccion en  Linea</div>
+                  <div align="center" className="littleFont2">Prioridad</div>
+                  <div align="center" className="bigFont3 mt-4">N° 2</div>
+
                 </Col>
-                <Col xl="4">
-                  <div align="center" className="bigFont3 mt-4">{formatNumber.new(_.round(HamAcumEmp / (TaLinea + TiLinea), 2))}</div>
-                  <div align="center" className="littleFont2">Caj/min Productividad</div>
+                <Col xl="6">
+                  <div align="center" className="littleFont2">Hora de Término</div>
+                  <div align="center" className="bigFont3 mt-4">15:20</div>
                 </Col>
-                <Col xl="4">
-                  <div align="center" className="bigFont3 mt-4"> {formatNumber.new(_.round((TaLinea + TiLinea) / 60, 2))} </div>
-                  <div align="center" className="littleFont2">Horas de Produccion</div>
-                </Col>
+
               </Row>
-              <Row className="fullscreen-center1-body2 pt-3 pb-3">
-                <Col md="3">
-                  <div className="circle">
-                    <Circle
-                      animate={true} // Boolean: Animated/Static progress
-                      animationDuration="3s" // String: Length of animation
-                      responsive={true} // Boolean: Make SVG adapt to parent size
-                      size="100" // String: Defines the size of the circle.
-                      lineWidth="30" // String: Defines the thickness of the circle's stroke.
-                      progress={(
-                        disponibilidad > 1 ? 100 : disponibilidad * 100
-                      ).toFixed(0)} // String: Update to change the progress and percentage.
-                      progressColor="#02c39a" // String: Color of "progress" portion of circle.
-                      bgColor="#a4a4a4" // String: Color of "empty" portion of circle.
-                      textColor="#fff" // String: Color of percentage text color.
-                      textStyle={{
-                        fontSize: "5rem", // CSSProperties: Custom styling for percentage.
-                      }}
-                      percentSpacing={5} // Number: Adjust spacing of "%" symbol and number.
-                      roundedStroke={true} // Boolean: Rounded/Flat line ends
-                      showPercentage={true} // Boolean: Show/hide percentage.
-                      showPercentageSymbol={true} // Boolean: Show/hide only the "%" symbol.
-                    />
-                    <div align="center" className="mt-2">Disponibilidad</div>
-                  </div>
-                </Col>
-                <Col md="3">
-                  <div className="circle">
-                    <Circle
-                      animate={true} // Boolean: Animated/Static progress
-                      animationDuration="3s" // String: Length of animation
-                      responsive={true} // Boolean: Make SVG adapt to parent size
-                      size="100" // String: Defines the size of the circle.
-                      lineWidth="30" // String: Defines the thickness of the circle's stroke.
-                      progress={(
-                        eficiencia > 1 ? 100 : eficiencia * 100 //(totalKG/capacidad*tiempo que se demoro)
-                      ).toFixed(0)} // String: Update to change the progress and percentage.
-                      progressColor="#02c39a" // String: Color of "progress" portion of circle.
-                      bgColor="#a4a4a4" // String: Color of "empty" portion of circle.
-                      textColor="#FFF" // String: Color of percentage text color.
-                      textStyle={{
-                        fontSize: "5rem", // CSSProperties: Custom styling for percentage.
-                      }}
-                      percentSpacing={5} // Number: Adjust spacing of "%" symbol and number.
-                      roundedStroke={true} // Boolean: Rounded/Flat line ends
-                      showPercentage={true} // Boolean: Show/hide percentage.
-                      showPercentageSymbol={true} // Boolean: Show/hide only the "%" symbol.
-                    />
-                    <div align="center" className="mt-2">Eficiencia</div>
-                  </div>
-                </Col>
-                <Col md="3">
-                  <div className="circle">
-                    <Circle
-                      animate={true} // Boolean: Animated/Static progress
-                      animationDuration="3s" // String: Length of animation
-                      responsive={true} // Boolean: Make SVG adapt to parent size
-                      size="100" // String: Defines the size of the circle.
-                      lineWidth="30" // String: Defines the thickness of the circle's stroke.
-                      progress={(
-                        calidad > 1 ? 100 : calidad * 100
-                      ).toFixed(0)} // String: Update to change the progress and percentage.
-                      progressColor="#02c39a" // String: Color of "progress" portion of circle.
-                      bgColor="#a4a4a4" // String: Color of "empty" portion of circle.
-                      textColor="#FFF" // String: Color of percentage text color.
-                      textStyle={{
-                        fontSize: "5rem", // CSSProperties: Custom styling for percentage.
-                      }}
-                      percentSpacing={5} // Number: Adjust spacing of "%" symbol and number.
-                      roundedStroke={true} // Boolean: Rounded/Flat line ends
-                      showPercentage={true} // Boolean: Show/hide percentage.
-                      showPercentageSymbol={true} // Boolean: Show/hide only the "%" symbol.
-                    />
-                    <div align="center" className="mt-2">Calidad</div>
-                  </div>
-                </Col>
-                <Col md="3">
-                  <div className="circle">
-                    <Circle
-                      animate={true} // Boolean: Animated/Static progress
-                      animationDuration="3s" // String: Length of animation
-                      responsive={true} // Boolean: Make SVG adapt to parent size
-                      size="100" // String: Defines the size of the circle.
-                      lineWidth="30" // String: Defines the thickness of the circle's stroke.
-                      progress={(
-                        ((eficiencia > 1 ? 1 : eficiencia) * (disponibilidad > 1 ? 1 : disponibilidad) * (calidad > 1 ? 1 : calidad)) * 100
-                      ).toFixed(0)} // String: Update to change the progress and percentage.
-                      progressColor="#02c39a" // String: Color of "progress" portion of circle.
-                      bgColor="#a4a4a4" // String: Color of "empty" portion of circle.
-                      textColor="#FFF" // String: Color of percentage text color.
-                      textStyle={{
-                        fontSize: "5rem", // CSSProperties: Custom styling for percentage.
-                      }}
-                      percentSpacing={5} // Number: Adjust spacing of "%" symbol and number.
-                      roundedStroke={true} // Boolean: Rounded/Flat line ends
-                      showPercentage={true} // Boolean: Show/hide percentage.
-                      showPercentageSymbol={true} // Boolean: Show/hide only the "%" symbol.
-                    />
-                    <div align="center" className="mt-2">OEE</div>
-                  </div>
-                </Col>
+              <Row className="fullscreen-center1-body2-op blackBorder2">
+
+                <div align="left" className="">Producción Real</div>
+                <div align="right" className="ml-5"> 65% - 5198 kg</div>
+
+              </Row>
+              <Row className="fullscreen-center1-body2-op pt-3 pb-3">
+
+                <div align="left" className="">Producción Estimada</div>
+                <div align="right" className="ml-5"> 50% - 4569 kg</div>
+
               </Row>
             </Col>
-            <Col>
-              <Card className="fullscreen-center2" >
+            <Col xl="6">
+              <Card className="fullscreen-center2-op" >
                 <Table className="mt-0 ">
                   <thead className="fullscreen-theadBlue">
                     <tr className="text-center">
@@ -798,63 +496,32 @@ function FullSceen() {
                   </tbody>
                 </Table>
               </Card>
-              <Row className="fullscreen-center3">
-                <Col xl="3" className="fullscreen-center3-verde1 pr-0">
-                  <Row className="mx-4 px-4 mt-2 ">
-                    <div className="ml-3">
-                      <img src={icono1} className="" alt="Empaque" width="120%" height="110%" />
-                    </div>
-                  </Row>
-                  <div align="center" className="bigFont">{formatNumber.new(KgAcumFor)}</div>
-                  <div align="center" className="littleFont">de {formatNumber.new(KgSol)} Kgs</div>
-
-
-                </Col>
-                <Col xl="3" className="fullscreen-center3-verde2">
-                  <Row className="mx-4 px-4 mt-2">
-                    <div className="text-white ml-3" >
-                      <img src={icono2} className="" alt="Empaque" width="120%" height="110%" />
-                    </div>
-                  </Row>
-                  <div align="center" className="bigFont">{formatNumber.new(HamAcumEnv3 + HamAcumEnv4 + HamAcumEnv5 + HamAcumEnv6)}</div>
-                  <div align="center" className="littleFont">de {formatNumber.new(HamSol)} F. Pack</div>
-
-
-                </Col>
-                <Col xl="3" className="fullscreen-center3-verde3 ">
-                  <Row className="mx-4 px-4 mt-2">
-                    <div className="ml-3">
-                      <img src={icono3} className="" alt="Empaque" width="120%" height="110%" />
-                    </div>
-                  </Row>
-                  <div align="center" className="bigFont">{formatNumber.new(HamAcumEmp)}</div>
-                  <div align="center" className="littleFont">de {formatNumber.new(CajasSol)} Cajas</div>
-
-
-                </Col>
-                <Col xl="3" className="">
-                  <Card className="p-0 fullscreen-centerMaquina">
-                    <div align="center" className="text-uppercase font-weight-bold title1orange2 mr-2 mt-2">Iqf</div>
-
-                    <div align="center" className="bigFontGreen">{formatNumber.new(_.round(TempFor, 2))}°C</div>
-                    <div align="center" className="littleFontGreen mb-2">Temp. Entrada</div>
-                    <div align="center" className="bigFontGreen blackBorderTop pt-2">{/* formatNumber.new(_.round(TiempoRetencion, 2)) */ TiempoRetencion} Min</div>
-                    <div align="center" className="littleFontGreen mb-2">Tiempo Retencion</div>
-
-                  </Card>
-                </Col>
-
-              </Row>
 
             </Col>
+            <Col className="fullscreen-center3-op">
 
+              <Card className="p-0 fullscreen-centerMaquina-op">
+                <div align="center" className="text-uppercase font-weight-bold title1orange2 mr-2 mt-2 mb-4">Iqf</div>
+                <div align="center" className="littleFontGreen blackBorderTop mb-2">Temp. Entrada</div>
+                <div align="center" className="bigFontGreen mb-5">{formatNumber.new(_.round(TempFor, 2))}°C</div>
+         
+                <div align="center" className="littleFontGreen blackBorderTop mb-2">Tiempo Retencion</div>
+                <div align="center" className="bigFontGreen mb-5 pt-2">{/* formatNumber.new(_.round(TiempoRetencion, 2)) */ TiempoRetencion} Min</div>
+                
+                <div align="center" className="littleFontGreen blackBorderTop mb-2">Temp. Salida</div>
+                <div align="center" className="bigFontGreen mb-5 pt-2">{/* formatNumber.new(_.round(TiempoRetencion, 2)) */} -18 </div>
+             
+              </Card>
+
+
+            </Col>
           </Row>
-          <Row className="fullscreen-botSpace ">
-            <Col xl="12">
-            {/*   <Card >
-              <ReactApexChart options={optionTimeline} series={seriesTimeline} type="rangeBar" height={350} />
-              </Card> */}
-              <TimeLineOperativo/>
+          <Row className="fullscreen-botSpace-op">
+            <Col xl="12" className="mt-5">
+              <Card >
+                <TimeLineOperativo />
+              </Card>
+
             </Col>
           </Row>
         </div>
