@@ -118,6 +118,111 @@ class TimeLineOperativo extends Component {
                 new Date("2021-01-20 09:00:00").getTime()
               ]
             },
+            {
+              x: 'Envasadora 5',
+              y: [
+                new Date("2021-01-20 00:00:00").getTime(),
+                new Date("2021-01-20 01:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Envasadora 5',
+              y: [
+                new Date("2021-01-20 02:00:00").getTime(),
+                new Date("2021-01-20 03:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Envasadora 5',
+              y: [
+                new Date("2021-01-20 04:00:00").getTime(),
+                new Date("2021-01-20 05:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Envasadora 5',
+              y: [
+                new Date("2021-01-20 06:00:00").getTime(),
+                new Date("2021-01-20 07:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Envasadora 5',
+              y: [
+                new Date("2021-01-20 08:00:00").getTime(),
+                new Date("2021-01-20 09:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Envasadora 6',
+              y: [
+                new Date("2021-01-20 00:00:00").getTime(),
+                new Date("2021-01-20 01:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Envasadora 6',
+              y: [
+                new Date("2021-01-20 02:00:00").getTime(),
+                new Date("2021-01-20 03:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Envasadora 6',
+              y: [
+                new Date("2021-01-20 04:00:00").getTime(),
+                new Date("2021-01-20 05:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Envasadora 6',
+              y: [
+                new Date("2021-01-20 06:00:00").getTime(),
+                new Date("2021-01-20 07:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Envasadora 6',
+              y: [
+                new Date("2021-01-20 08:00:00").getTime(),
+                new Date("2021-01-20 09:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Empaque',
+              y: [
+                new Date("2021-01-20 00:00:00").getTime(),
+                new Date("2021-01-20 01:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Empaque',
+              y: [
+                new Date("2021-01-20 02:00:00").getTime(),
+                new Date("2021-01-20 03:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Empaque',
+              y: [
+                new Date("2021-01-20 04:00:00").getTime(),
+                new Date("2021-01-20 05:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Empaque',
+              y: [
+                new Date("2021-01-20 06:00:00").getTime(),
+                new Date("2021-01-20 07:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Empaque',
+              y: [
+                new Date("2021-01-20 08:00:00").getTime(),
+                new Date("2021-01-20 09:00:00").getTime()
+              ]
+            },
           ]
         },
         // John Adams
@@ -208,6 +313,91 @@ class TimeLineOperativo extends Component {
                 new Date("2021-01-20 08:00:00").getTime()
               ]
             },
+            {
+              x: 'Envasadora 5',
+              y: [
+                new Date("2021-01-20 01:00:00").getTime(),
+                new Date("2021-01-20 02:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Envasadora 5',
+              y: [
+                new Date("2021-01-20 03:00:00").getTime(),
+                new Date("2021-01-20 04:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Envasadora 5',
+              y: [
+                new Date("2021-01-20 05:00:00").getTime(),
+                new Date("2021-01-20 06:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Envasadora 5',
+              y: [
+                new Date("2021-01-20 07:00:00").getTime(),
+                new Date("2021-01-20 08:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Envasadora 6',
+              y: [
+                new Date("2021-01-20 01:00:00").getTime(),
+                new Date("2021-01-20 02:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Envasadora 6',
+              y: [
+                new Date("2021-01-20 03:00:00").getTime(),
+                new Date("2021-01-20 04:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Envasadora 6',
+              y: [
+                new Date("2021-01-20 05:00:00").getTime(),
+                new Date("2021-01-20 06:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Envasadora 6',
+              y: [
+                new Date("2021-01-20 07:00:00").getTime(),
+                new Date("2021-01-20 08:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Empaque',
+              y: [
+                new Date("2021-01-20 01:00:00").getTime(),
+                new Date("2021-01-20 02:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Empaque',
+              y: [
+                new Date("2021-01-20 03:00:00").getTime(),
+                new Date("2021-01-20 04:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Empaque',
+              y: [
+                new Date("2021-01-20 05:00:00").getTime(),
+                new Date("2021-01-20 06:00:00").getTime()
+              ]
+            },
+            {
+              x: 'Empaque',
+              y: [
+                new Date("2021-01-20 07:00:00").getTime(),
+                new Date("2021-01-20 08:00:00").getTime()
+              ]
+            },
+            
           ]
         },
   

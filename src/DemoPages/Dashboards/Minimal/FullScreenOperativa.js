@@ -13,6 +13,7 @@ import ReactApexChart from "react-apexcharts";
 import Brightness1Icon from "@material-ui/icons/Brightness1";
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import TimeLineOperativo from "./TimeLineOperativo";
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 
 
 function FullSceen() {
@@ -164,11 +165,13 @@ function FullSceen() {
   const [calidad, setCalidad] = useState(0)
   const [eficiencia, setEficiencia] = useState(0)
   const [disponibilidad, setDisponibilidad] = useState(0)
-  const [ordenes, setOrdenes] = useState([]);
+  const [ordenes, setOrdenes] = useState([]); 
+  const [hora_termino, setHoraTermino] = useState([]); 
   const [IdOrden, setIdOrden] = useState()
   const [CajasSol, setCajasSol] = useState()
   const [HamSol, setHamSol] = useState()
   const [GHam, setGHam] = useState()
+  const [prioridad, setPrioridad] = useState()
   const [HamAcumEmp, setHamAcumEmp] = useState()
   const [HamAcumEnv3, setHamAcumEnv3] = useState()
   const [HamAcumEnv4, setHamAcumEnv4] = useState()
@@ -211,7 +214,7 @@ function FullSceen() {
 
 
   const loadData = () => {
-    fetch(global.api.dashboard.getfullscreen, {
+    fetch(global.api.dashboard.getfullscreenoperativa, {
       "method": "POST",
       "headers": {
         "content-type": "application/json",
@@ -224,20 +227,14 @@ function FullSceen() {
       .then(result => {
         console.log(result)
         setIdOrden(result[0].id_so)
+        setHoraTermino(result[0].hora_estimada_termino)
+        setPrioridad(result[0].prioridad)
         setCajasSol(result[0].cajas_sol)
         setHamSol(result[0].h_sol)
         setGHam(result[0].g_ham)
         setHamAcumEmp(result[0].h_acum_emp)
-        setHamAcumEnv3(result[0].h_acum_env3)
-        setHamAcumEnv4(result[0].h_acum_env4)
-        setHamAcumEnv5(result[0].h_acum_env5)
-        setHamAcumEnv6(result[0].h_acum_env6)
         setHamAcumFor(result[0].h_acum_for)
         setKgAcumEmp(result[0].kg_acum_emp)
-        setKgAcumEnv3(result[0].kg_acum_env3)
-        setKgAcumEnv4(result[0].kg_acum_env4)
-        setKgAcumEnv5(result[0].kg_acum_env5)
-        setKgAcumEnv6(result[0].kg_acum_env6)
         setKgAcumFor(result[0].kg_acum_for)
         setKgCaja(result[0].kg_caja)
         setKgHora(result[0].kg_hora)
@@ -245,16 +242,8 @@ function FullSceen() {
         setProducto(result[0].producto)
         setSku(result[0].sku)
         setTaFor(result[0].ta_for)
-        setTaEnv3(result[0].ta_env3)
-        setTaEnv4(result[0].ta_env4)
-        setTaEnv5(result[0].ta_env5)
-        setTaEnv6(result[0].ta_env6)
         setTaEmp(result[0].ta_emp)
         setTiFor(result[0].ti_for)
-        setTiEnv3(result[0].ti_env3)
-        setTiEnv4(result[0].ti_env4)
-        setTiEnv5(result[0].ti_env5)
-        setTiEnv6(result[0].ti_env6)
         setTiEmp(result[0].ti_emp)
         setTaLinea(result[0].ta_linea)
         setTiLinea(result[0].ti_linea)
@@ -403,42 +392,44 @@ function FullSceen() {
             </Col>
           </Row>
           <Row className="fullscreen-centerSpace-op">
-            <Col xl="4" className="fullscreen-center1" >
-              <Row className="fullscreen-center1-head-op p-3">
-                <Col className="bigFont3 mt-3 ">
-                  Estado: A tiempo
+            <Col xl="3" className="fullscreen-center1" >
+              <Row className={KgAcumFor>(KgHora*(TaFor+TiFor)/60) ? "fullscreen-center1-head-op" : "fullscreen-center1-head-op2"}>
+                <Col className="bigFont5 p-3 ml-3">
+                  {KgAcumFor>(KgHora*(TaFor+TiFor)/60) ? _.toUpper("Estado: A tiempo") : _.toUpper("Estado: Atrasado")}
                 </Col>
-                <Col xs="2" md="2" className="font1 p-3 mt-2 ">
+                <Col xs="3" md="3" className="font1 mt-2 ml-2">
+                  {KgAcumFor>(KgHora*(TaFor+TiFor)/60) ? (
                   < CheckCircleOutlineIcon style={{ fontSize: 50 }} />
+                   ) :(
+                    <ErrorOutlineIcon style={{ fontSize: 50 }}/>)}
                 </Col>
 
               </Row>
               <Row className="fullscreen-center1-body1-op">
                 <Col xl="4">
-                  <div align="center" className="littleFont2">Prioridad</div>
-                  <div align="center" className="bigFont3 mt-4">N° 2</div>
+                  <div align="left" className="littleFont2 ml-3 mt-3">{_.toUpper("Prioridad")}</div>
+                  <div align="left" className="bigFont4 ml-3 mt-0">N° {" "+prioridad}</div>
 
                 </Col>
-                <Col xl="6">
-                  <div align="center" className="littleFont2">Hora de Término</div>
-                  <div align="center" className="bigFont3 mt-4">15:20</div>
+                <Col xl="8">
+                  <div align="left" className="littleFont2 ml-3 mt-3">{_.toUpper("Hora de Término")}</div>
+                  <div align="left" className="bigFont4 ml-5 mt-0">{hora_termino}</div>
                 </Col>
 
               </Row>
-              <Row className="fullscreen-center1-body2-op blackBorder2">
-
-                <div align="left" className="">Producción Real</div>
-                <div align="right" className="ml-5"> 65% - 5198 kg</div>
-
-              </Row>
-              <Row className="fullscreen-center1-body2-op pt-3 pb-3">
-
-                <div align="left" className="">Producción Estimada</div>
-                <div align="right" className="ml-5"> 50% - 4569 kg</div>
+              <Row className="fullscreen-center1-body2-op blackBorder2  pt-2 pb-3">
+                <pre align="left" className=" text-uppercase littleFont2 pl-2 mt-2">{"Producción \nReal"} </pre>
+                <div align="right" className="ml-3 mt-2 bigFont4"> {formatNumber.new(_.round(KgAcumFor/KgSol*100))}% - {formatNumber.new(_.round(KgAcumFor))} kg</div>
 
               </Row>
+              <Row className="fullscreen-center1-body2-op pt-2 pb-3">
+
+                <pre align="left" className="text-uppercase littleFont2 mt-2 pl-3 ml-2">{"Producción \nEstimada"} </pre>
+                <div align="right" className="ml-3 mt-2 bigFont4">{formatNumber.new(_.round((KgHora*((TaFor+TiFor)/60))/KgSol*100))}% - {formatNumber.new(_.round(KgHora*(TaFor+TiFor)/60))}kg</div>
+
+              </Row>   
             </Col>
-            <Col xl="6">
+            <Col xl="7">
               <Card className="fullscreen-center2-op" >
                 <Table className="mt-0 ">
                   <thead className="fullscreen-theadBlue">
@@ -446,12 +437,12 @@ function FullSceen() {
                       <th className="border1">N° de Orden</th>
                       <th>SKU</th>
                       <th>Producto</th>
-                      <th>Cajas</th>
-                      <th>Productividad</th>
+                      <th>Producción Real</th>
                       <th>Tiempo</th>
-                      <th>Kg Solicitados</th>
-                      <th>Kg Producidos</th>
-                      <th className="border2">Kg %</th>
+                      <th> Reales vs Program.</th>
+                      <th>% Cumplim.</th>
+                      <th>Rechazo Envasado</th>
+                      <th className="border2">Rechazo Rayos x</th>
                     </tr>
                   </thead>
 
@@ -468,22 +459,18 @@ function FullSceen() {
                             <td>{orden.id_sub_orden}</td>
                             <td>{orden.sku}</td>
                             <td>{orden.producto}</td>
-                            <td>{formatNumber.new(orden.cajas)}</td>
-                            <td>
-                              {orden.id_estado == 1 ? formatNumber.new(_.round(HamAcumEmp / (TaLinea + TiLinea), 2)) + " Caj/min" : formatNumber.new(_.round(orden.productividad, 2)) + " Caj/min"}
-                            </td>
+                            <td>{orden.id_estado == 1 ? formatNumber.new(_.round(HamAcumEmp / (TaLinea + TiLinea), 2)) + " Caj/min" : formatNumber.new(_.round(orden.productividad, 2)) + " Caj/min"}</td>
                             <td>
                               {formatNumber.new(_.round(orden.tiempo_estimado, 2)) + " hrs"}
                             </td>
-                            <td>{formatNumber.new(_.round(orden.kg_solicitados)) + " Kg"}</td>
-                            <td>{formatNumber.new(_.round(orden.real_kg)) + " Kg"}</td>
+                            <td>{formatNumber.new(orden.h_acumuladas)+" / "+formatNumber.new(orden.cajas)} </td>
                             <td>
                               {orden.kg_porcentual == null
                                 ? "0 %"
-                                : orden.kg_porcentual > 100
-                                  ? "100%"
                                   : formatNumber.new(_.round(orden.kg_porcentual, 2)) + " %"}
                             </td>
+                            <td>{formatNumber.new(_.round(orden.h_formado - orden.h_envasado))+" "}U</td>
+                            <td>{formatNumber.new(_.round(orden.h_envasado - (orden.real_kg/orden.g_hamburguesa)*1000))+" "}U</td>
 
                           </tr>
                         ) : (
@@ -501,16 +488,16 @@ function FullSceen() {
             <Col className="fullscreen-center3-op">
 
               <Card className="p-0 fullscreen-centerMaquina-op">
-                <div align="center" className="text-uppercase font-weight-bold title1orange2 mr-2 mt-2 mb-4">Iqf</div>
-                <div align="center" className="littleFontGreen blackBorderTop mb-2">Temp. Entrada</div>
-                <div align="center" className="bigFontGreen mb-5">{formatNumber.new(_.round(TempFor, 2))}°C</div>
-         
-                <div align="center" className="littleFontGreen blackBorderTop mb-2">Tiempo Retencion</div>
-                <div align="center" className="bigFontGreen mb-5 pt-2">{/* formatNumber.new(_.round(TiempoRetencion, 2)) */ TiempoRetencion} Min</div>
-                
-                <div align="center" className="littleFontGreen blackBorderTop mb-2">Temp. Salida</div>
-                <div align="center" className="bigFontGreen mb-5 pt-2">{/* formatNumber.new(_.round(TiempoRetencion, 2)) */} -18 </div>
-             
+                <div align="center" className="text-uppercase font-weight-bold title1orange2 mr-2 mt-2 mb-2">Iqf</div>
+                <div align="center" className="littleFontGreen blackBorderTop pt-3 mb-1">Temp. Entrada</div>
+                <div align="center" className="bigFontGreen mb-3">{formatNumber.new(_.round(TempFor, 2))}°C</div>
+
+                <div align="center" className="littleFontGreen blackBorderTop pt-3 mb-1">Tiempo Retencion</div>
+                <div align="center" className="bigFontGreen mb-3 ">{/* formatNumber.new(_.round(TiempoRetencion, 2)) */ TiempoRetencion} Min</div>
+
+                <div align="center" className="littleFontGreen blackBorderTop pt-3 mb-1">Temp. Salida</div>
+                <div align="center" className="bigFontGreen mb-3 ">{/* formatNumber.new(_.round(TiempoRetencion, 2)) */} -18° C </div>
+
               </Card>
 
 

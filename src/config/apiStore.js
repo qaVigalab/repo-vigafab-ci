@@ -12,6 +12,7 @@ const dashboard = {
     getresumenhistorico:        awsApiUrl2 + "getresumenhistorico",
     gettempformadora:           awsApiUrl2 + "gettempformadora",
     getfullscreen:              awsApiUrl2 + "getfullscreen",
+    getfullscreenoperativa:     awsApiUrl2 + "getfullscreenoperativa",
     nextorden:                  awsApiUrl2 + "nextorden",
     siguienteordenenvasadoras:  awsApiUrl2 + "siguienteordenenvasadoras",
     siguienteordenempaque:      awsApiUrl2 + "siguienteordenempaque",

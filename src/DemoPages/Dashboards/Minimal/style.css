@@ -436,6 +436,14 @@
     font-size: 26px;
     color: #fff;
 }
+.bigFont4{
+  font-size: 30px;
+  color: #fff;
+}
+.bigFont5{
+  font-size: 20px;
+  color: #fff;
+}
   .littleFont{
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
@@ -453,7 +461,7 @@
 }
 .littleFontGreen{
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 12px;
+  font-size: 14px;
 }
   .whiteBorder{
     border-bottom: 1px solid white !important;
@@ -587,6 +595,11 @@
     height: 20%;
     background-color: #02c39a;
   }
+  .fullscreen-center1-head-op2{
+    border-radius: 15px 15px 0 0;
+    height: 20%;
+    background-color: #F7431E;
+  }
   .fullscreen-center1-body1-op{
     height: 30%;
     background-color: #2264A7;
@@ -613,8 +626,8 @@
 
     border-radius: 15px !important;
     margin-top: 2%;
-    margin-right: 2%;
-    height: 93.5%;
+    margin-right: 0%;
+    height: 92%;
   }
   .fullscreen-theadBlue{
     width: 100%;
