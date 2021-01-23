@@ -143,7 +143,7 @@ const Produciendo = (props) => {
                 setCalidad((result[0].cajas_acumuladas * result[0].kg_caja) / real_kg)
                 setEficiencia(((result[0].cajas_acumuladas * result[0].kg_caja) / (result[0].kg_hora * tiempo / 60)))
                 setDisponibilidad((result[0].tiempo_actividad / (tinac + result[0].tiempo_actividad)))
-                console.log()
+               
 
                 setPerdidaEnvasado((real_kg - kg_env) / real_kg)
                 setPerdidaEmpaquetadora((kg_env - kg_emp) / kg_env)

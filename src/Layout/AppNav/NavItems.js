@@ -60,8 +60,14 @@ export const General= [
     },
      {
         icon: 'pe-7s-monitor',
-        label: 'FullScreen',
-        to: '#/dashboards/FullScreen'
+        label: 'FullScreen Gerencia',
+        to: '#/dashboards/FullScreenGerencia'
+
+    },
+    {
+        icon: 'pe-7s-monitor',
+        label: 'FullScreen Operativa',
+        to: '#/dashboards/FullScreenOperativa'
 
     }, 
 
