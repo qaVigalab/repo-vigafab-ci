@@ -425,7 +425,7 @@ function FullSceen() {
               <Row className="fullscreen-center1-body2-op pt-2 pb-3">
 
                 <pre align="left" className="text-uppercase littleFont2 mt-2 pl-3 ml-2">{"Producción \nEstimada"} </pre>
-                <div align="right" className="ml-3 mt-2 bigFont4">{formatNumber.new(_.round((KgHora*((TaFor+TiFor)/60))/KgSol*100))}% - {formatNumber.new(_.round(KgHora*(TaFor+TiFor)/60))}kg</div>
+                <div align="right" className="ml-3 mt-2 bigFont4">{formatNumber.new(_.round((KgHora*((TaFor+TiFor)/60))/KgSol*100))}% - {formatNumber.new(_.round(KgHora*(TaFor+TiFor)/60))} kg</div>
 
               </Row>   
             </Col>
