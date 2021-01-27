@@ -29,6 +29,7 @@ const dashboard = {
     agrosuper_excel_paros:      awsApiUrl2 + "agrosuper_excel_paros",
     getresumenenvasadoras:      awsApiUrl2 + "getresumenenvasadoras",
     getresumenhistoricoEnv:     awsApiUrl2 + "getresumenhistoricoEnv",
+    gettimelineoperativo:       awsApiUrl2 + "gettimelineoperativo",
 }
 
 //Api auth
