@@ -17,7 +17,6 @@ class NuevaOrden extends Component {
     this.fechaChange = this.fechaChange.bind(this);
     this.changeSku = this.changeSku.bind(this);
 
-
     this.state = {
       existeSku: "",
       kg: 0,

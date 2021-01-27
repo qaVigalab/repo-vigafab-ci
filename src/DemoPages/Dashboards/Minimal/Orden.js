@@ -1,16 +1,6 @@
 import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Col,
-  Table,
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  Alert,
-  Row,
-  Input,
-} from "reactstrap";
+import { Container, Col, Table, Button, Modal, ModalHeader, ModalBody,
+          Alert, Row, Input, Form, Label } from "reactstrap";
 import { connect } from "react-redux";
 import { setIdOrden } from "../../../actions/dashboardActions";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
@@ -19,6 +9,8 @@ import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
+import { FormGroup } from "@material-ui/core";
 import _ from "lodash";
 
 const Orden = (props) => {
@@ -29,6 +21,7 @@ const Orden = (props) => {
   const [cajas, setCajas] = useState("")
   const [producto, setProducto] = useState("")
   const [idSubOrden, setIdSubOrden] = useState("")
+  const [prioridad, setPrioridad] = useState("")
   const [select, setSelect] = useState(0)
   const [recarga, setRecarga] = useState()
   let fecha = new Date();
@@ -73,14 +66,12 @@ const Orden = (props) => {
         id: id_sub,
       }),
     })
-      .then(
-
-        console.log("Borrado ok")
-      )
-      .catch((err) => {
-        console.error(err);
-      });
-
+    .then(
+      console.log("Borrado ok")
+    )
+    .catch((err) => {
+      console.error(err);
+    });
 
     setModal(!modal)
     loadOrdenes()
@@ -123,7 +114,6 @@ const Orden = (props) => {
   }
 
   const [modal, setModal] = useState(false);
-
   const toggle = (cajas, id_sub_orden, sku, producto) => {
     setCajas(cajas);
     setIdSubOrden(id_sub_orden);
@@ -158,17 +148,153 @@ const Orden = (props) => {
           }
           localStorage.setItem("id_ordenA", result.find(e => e.id_estado === 1).id_sub_orden)
         }
-
-
       })
       .catch((err) => {
         console.error(err);
       });
+  }
+
+  const [modalEdit, setModalEdit] = useState(false);
+  const [productos, setProductos] = useState([]);
+  const [nombre, setNombre] = useState("");
+  const [kg, setKg] = useState(0);
+  const [tiempo, setTiempo] = useState(0);
+  const [existeSku, setExisteSku] = useState(false);
+  const [fechaEdit, setFechaEdit] = useState("");
+  const [confirmEdit, setConfirmEdit] = useState(false);
+  const [editable, setEditable] = useState(true);
+
+  const toggleEdit = (prioridad, id_sub_orden, sku, producto, cajas, kg, tiempo, fecha_sub) => {
+    changeSku({target: {value: sku}});
+
+    setPrioridad(prioridad);
+    setIdSubOrden(id_sub_orden);
+    setSku(sku);
+    setNombre(producto);
+    setCajas(cajas);
+    setKg(kg);
+    setTiempo(tiempo);
+    setFechaEdit(fecha_sub);
+
+    console.log(productos.find((p) => p.sku.includes(sku)));
+    setModalEdit(!modalEdit);
+  };
+
+  const loadProductos = () => {
+    fetch(
+      global.api.dashboard.getproducto,
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
+        },
+        body: false,
+      }
+    )
+      .then((response) => response.json())
+      .then((result) => {
+        setProductos(result);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
+
+  const changeSku = (event) => {
+    const sku = event.target.value;
+    const prod_sku = productos.find((p) => p.sku.includes(sku));
+    if (prod_sku !== undefined) {
+      setProducto(prod_sku);
+      setNombre(prod_sku.producto);
+      setExisteSku(true);
+      cajasChange2();
+    } else {
+      setProducto({});
+      setNombre("No Existe SKU");
+      setExisteSku(false);
+      setKg(0);
+      setTiempo(0);
+    }
+    setSku(sku);
+  }
+
+  const cajasChange = (event) => {
+    setCajas(event.target.value);
+    const caja = event.target.value;
+    setKg(caja * producto.kg_caja);
+    setTiempo(caja * producto.kg_caja / producto.kg_hora);
+  }
+
+  const cajasChange2 = () => {
+    var caja = cajas;
+
+    setNombre(producto.producto);
+    setKg(caja * producto.kg_caja);
+    setTiempo(caja * producto.kg_caja / producto.kg_hora);
+  }
+
+  const changePrioridad = (e) => {
+    setPrioridad(e.target.value);
+  }
+
+  const editOrden = (event) => {
+    event.preventDefault();
+    if (existeSku === true) {
+      fetch(
+        global.api.dashboard.editOrden,
+        {
+          method: "PUT",
+          headers: {
+            "content-type": "application/json",
+            "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
+          },
+          body: JSON.stringify({
+            id: idSubOrden,
+            prioridad: prioridad,
+            cajas: cajas,
+            kg_solicitados: kg,
+            id_producto: producto.id,
+            tiempo_estimado: tiempo,
+            fecha_orden: fechaEdit
+          }),
+        }
+      )
+      .then(response => {
+        console.log(response);
+        setConfirmEdit(true);
+
+        setTimeout(() => {
+          loadOrdenes();
+          setConfirmEdit(false);
+        }, 3000);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  
+      setModalEdit(!modalEdit)
+    } else {
+      setExisteSku(false);
+    }
+  }
+
+  const fechaEditChange = (e) => {
+    setFechaEdit(e.target.value);
   };
 
   const fechaChange = (e) => {
     setFechaFinal(e.target.value);
     localStorage.setItem("fechaFinal", e.target.value);
+
+    var date1 = new Date(localStorage.getItem("fechaFinal"));
+    var date2 = new Date();
+
+    if(date1.getTime() >= date2.getTime()){
+      setEditable(true);
+    } else{
+      setEditable(false);
+    }
   };
 
   useEffect(() => {
@@ -193,6 +319,10 @@ const Orden = (props) => {
   useEffect(() => {
     loadOrdenes();
   }, [props.id_orden]);
+
+  useEffect(() => {
+    loadProductos();
+  }, [])
 
   return (
     <div>
@@ -244,6 +374,13 @@ const Orden = (props) => {
       ) : (
           ""
         )}
+      {confirmEdit === true ? (
+        <Alert color="success" className="mb-0">
+          <a className="alert-link">¡La orden ha sido editada satisfactoriamente!</a>.
+        </Alert>
+      ) : (
+          ""
+      )}
       <Table striped className="mt-0">
         <thead className="theadBlue">
           <tr className="text-center">
@@ -263,7 +400,15 @@ const Orden = (props) => {
 
             {perfil == 1 || perfil == 2 ? (
               <th>
-                <DeleteIcon />
+                {/*
+                <IconButton aria-label="edit" style={{ color: 'white' }} disabled>
+                    <EditIcon />
+                </IconButton>
+
+                <IconButton aria-label="delete" style={{ color: 'white' }} disabled>
+                  <DeleteIcon />
+                </IconButton>
+                */}
               </th>
             ) : (
                 ""
@@ -294,6 +439,10 @@ const Orden = (props) => {
 
               {perfil == 1 || perfil == 2 ? (
                 <td>
+                  <IconButton aria-label="edit">
+                    <EditIcon />
+                  </IconButton>
+                  
                   <IconButton aria-label="delete">
                     <DeleteIcon />
                   </IconButton>
@@ -338,9 +487,29 @@ const Orden = (props) => {
                         )}
                     </td>
 
-
                     {perfil == 1 || perfil == 2 ? (
                       <td>
+                        {editable == true ? (
+                        <IconButton
+                          aria-label="edit"
+                          style={orden.id_estado == 1 ? { color: "#ffebee" } : {}}
+                          onClick={() => toggleEdit(
+                            orden.prioridad, 
+                            orden.id_sub_orden, 
+                            orden.sku, 
+                            orden.producto, 
+                            orden.cajas,
+                            orden.kg_solicitados,
+                            orden.tiempo_estimado,
+                            localStorage.getItem("fechaFinal")
+                          )}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        ) : (
+                          <IconButton> </IconButton>
+                        )}
+
                         <IconButton
                           aria-label="delete"
                           style={orden.id_estado == 1 ? { color: "#ffebee" } : {}}
@@ -360,10 +529,167 @@ const Orden = (props) => {
             )}
         </tbody>
       </Table>
+
+      <Modal size="lg" isOpen={modalEdit} toggle={() => toggleEdit(0, 0, 0, 0, 0, 0, 0, 0)}>
+        <ModalHeader className="orangeRow" >
+          <Col md="auto">{"Editando orden N° " + idSubOrden + "."}</Col>
+        </ModalHeader>
+        <ModalBody>
+          <Container align="center">
+            <Form onSubmit={existeSku === false ? "" : editOrden}>
+              <Row>
+                <Col md="12">
+                  <Row>
+                    <Col md="1"></Col>
+                    <Col md="3">
+                      <FormGroup>
+                        <Label>SKU</Label>
+                        {existeSku === "false" ? (
+                          <Input invalid
+                            type="text"
+                            name="sku"
+                            id="sku"
+                            onChange={changeSku}
+                            placeholder="SKU"
+                          />
+                        ) : <Input
+                            type="text"
+                            name="sku"
+                            id="sku"
+                            onChange={changeSku}
+                            placeholder="SKU"
+                            value={sku}
+                          />}
+                      </FormGroup>
+                    </Col>
+                    <Col md="5">
+                      <FormGroup>
+                        <Label>Producto</Label>
+                        <Input
+                          type="text"
+                          name="prod"
+                          id="prod"
+                          value={nombre}
+                          placeholder="Producto"
+                        >
+                        </Input>
+                      </FormGroup>
+                    </Col>
+
+                    <Col md="2">
+                      <FormGroup>
+                        <Label>Prioridad</Label>
+                        <Input
+                          value={prioridad}
+                          type="select"
+                          name="prio"
+                          id="prio"
+                          placeholder="with a placeholder"
+                          onChange={changePrioridad}
+                        >
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                        </Input>
+                      </FormGroup>
+                    </Col>
+                    <Col md="1"></Col>
+                  </Row>
+                </Col>
+              </Row>
+              <div><br></br><br></br></div>
+              <Row>
+                <Col md="12">
+                  <Row>
+                    <Col md="1"></Col>
+                    <Col md="3">
+                      <FormGroup>
+                        <Label>Cajas</Label>
+                        <Input
+                          type="number"
+                          name="cajas"
+                          id="cajas"
+                          min="1"
+                          placeholder="Numero"
+                          value={cajas}
+                          onChange={cajasChange}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col md="3">
+                      <FormGroup>
+                        <Label>Kg Solicitados</Label>
+                        <Input
+                          type="text"
+                          name="kg_sol"
+                          id="kg_sol"
+                          placeholder="Numero"
+                          value={kg + " kg"}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col md="4">
+                      <FormGroup>
+                        <Label>Tiempo Estimado</Label>
+                        <Input
+                          type="text"
+                          name="tiempo"
+                          id="tiempo"
+                          placeholder="Hora"
+                          value={
+                            Math.round(tiempo * 100) / 100 + " hrs"
+                          }
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col md="1"></Col>
+                  </Row>
+                </Col>
+              </Row>
+              <div><br></br><br></br></div>
+              <Row>
+              <Col md="12">
+                  <Row>
+                    <Col md="1"></Col>
+                    <Col md="4">
+                      <FormGroup>
+                        <Label>Fecha de la Orden</Label>
+                        <Input
+                          type="date"
+                          name="tiempo"
+                          id="tiempo"
+                          value={fechaEdit}
+                          onChange={fechaEditChange}
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col md="7"></Col>
+                  </Row>
+                </Col>
+              </Row>
+              <div><br></br></div>
+              <Row className="mt-4 pr-0">
+                <Col align="right" md={{ size: 4, offset: 2 }} sm="6" >
+                  <Button block className="buttonOrange2">
+                    Confirmar
+                  </Button>
+                </Col>
+                <Col md="4" sm="6">
+                  <Button block className="buttonGray" onClick={() => toggleEdit(0, 0, 0, 0, 0, 0, 0, 0)}>
+                    Cancelar
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          </Container>
+        </ModalBody>
+      </Modal>
+
       <Modal isOpen={modal} toggle={() => toggle(0, 0, 0, 0)}>
         <ModalHeader className="orangeRow" >
           <Col className="ml-5">{"¿Desea eliminar la orden n° " + idSubOrden + "?"}</Col>
-
         </ModalHeader>
         <ModalBody>
           <Container align="center">
