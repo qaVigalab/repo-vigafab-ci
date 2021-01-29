@@ -1,450 +1,99 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 
-class TimeLineOperativo extends Component {
-  constructor(props) {
-    super(props);
+const TimeLineOperativo = () => {
 
-    this.state = {
+  const [series, setSeries] = useState([
+
+  ])
+
+  const [options, setOptions] = useState({
+    chart: {
+      height: 350,
+      type: 'rangeBar'
+    },
+    plotOptions: {
+      bar: {
+        horizontal: true,
+        barHeight: '60%',
+        rangeBarGroupRows: true
+      }
+    },
+    colors: [
+      "#F7431E", "#2264A7"
+    ],
     
-      series: [
-        // George Washington
-        {
-          name: 'Paro',
-          data: [
-            {
-              x: 'Formadora',
-              y: [
-                new Date("2021-01-20 00:00:00").getTime(),
-                new Date("2021-01-20 01:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Formadora',
-              y: [
-                new Date("2021-01-20 02:00:00").getTime(),
-                new Date("2021-01-20 03:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Formadora',
-              y: [
-                new Date("2021-01-20 04:00:00").getTime(),
-                new Date("2021-01-20 05:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Formadora',
-              y: [
-                new Date("2021-01-20 06:00:00").getTime(),
-                new Date("2021-01-20 07:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Formadora',
-              y: [
-                new Date("2021-01-20 08:00:00").getTime(),
-                new Date("2021-01-20 09:00:00").getTime()
-              ]
-            },
-            
-            {
-              x: 'Envasadora 3',
-              y: [
-                new Date("2021-01-20 00:00:00").getTime(),
-                new Date("2021-01-20 01:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 3',
-              y: [
-                new Date("2021-01-20 02:00:00").getTime(),
-                new Date("2021-01-20 03:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 3',
-              y: [
-                new Date("2021-01-20 04:00:00").getTime(),
-                new Date("2021-01-20 05:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 3',
-              y: [
-                new Date("2021-01-20 06:00:00").getTime(),
-                new Date("2021-01-20 07:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 3',
-              y: [
-                new Date("2021-01-20 08:00:00").getTime(),
-                new Date("2021-01-20 09:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 4',
-              y: [
-                new Date("2021-01-20 00:00:00").getTime(),
-                new Date("2021-01-20 01:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 4',
-              y: [
-                new Date("2021-01-20 02:00:00").getTime(),
-                new Date("2021-01-20 03:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 4',
-              y: [
-                new Date("2021-01-20 04:00:00").getTime(),
-                new Date("2021-01-20 05:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 4',
-              y: [
-                new Date("2021-01-20 06:00:00").getTime(),
-                new Date("2021-01-20 07:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 4',
-              y: [
-                new Date("2021-01-20 08:00:00").getTime(),
-                new Date("2021-01-20 09:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 5',
-              y: [
-                new Date("2021-01-20 00:00:00").getTime(),
-                new Date("2021-01-20 01:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 5',
-              y: [
-                new Date("2021-01-20 02:00:00").getTime(),
-                new Date("2021-01-20 03:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 5',
-              y: [
-                new Date("2021-01-20 04:00:00").getTime(),
-                new Date("2021-01-20 05:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 5',
-              y: [
-                new Date("2021-01-20 06:00:00").getTime(),
-                new Date("2021-01-20 07:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 5',
-              y: [
-                new Date("2021-01-20 08:00:00").getTime(),
-                new Date("2021-01-20 09:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 6',
-              y: [
-                new Date("2021-01-20 00:00:00").getTime(),
-                new Date("2021-01-20 01:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 6',
-              y: [
-                new Date("2021-01-20 02:00:00").getTime(),
-                new Date("2021-01-20 03:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 6',
-              y: [
-                new Date("2021-01-20 04:00:00").getTime(),
-                new Date("2021-01-20 05:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 6',
-              y: [
-                new Date("2021-01-20 06:00:00").getTime(),
-                new Date("2021-01-20 07:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 6',
-              y: [
-                new Date("2021-01-20 08:00:00").getTime(),
-                new Date("2021-01-20 09:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Empaque',
-              y: [
-                new Date("2021-01-20 00:00:00").getTime(),
-                new Date("2021-01-20 01:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Empaque',
-              y: [
-                new Date("2021-01-20 02:00:00").getTime(),
-                new Date("2021-01-20 03:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Empaque',
-              y: [
-                new Date("2021-01-20 04:00:00").getTime(),
-                new Date("2021-01-20 05:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Empaque',
-              y: [
-                new Date("2021-01-20 06:00:00").getTime(),
-                new Date("2021-01-20 07:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Empaque',
-              y: [
-                new Date("2021-01-20 08:00:00").getTime(),
-                new Date("2021-01-20 09:00:00").getTime()
-              ]
-            },
-          ]
-        },
-        // John Adams
-        {
-          name: 'Produciendo',
-          data: [
-            {
-              x: 'Formadora',
-              y: [
-                new Date("2021-01-20 01:00:00").getTime(),
-                new Date("2021-01-20 02:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Formadora',
-              y: [
-                new Date("2021-01-20 03:00:00").getTime(),
-                new Date("2021-01-20 04:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Formadora',
-              y: [
-                new Date("2021-01-20 05:00:00").getTime(),
-                new Date("2021-01-20 06:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Formadora',
-              y: [
-                new Date("2021-01-20 07:00:00").getTime(),
-                new Date("2021-01-20 08:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 3',
-              y: [
-                new Date("2021-01-20 01:00:00").getTime(),
-                new Date("2021-01-20 02:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 3',
-              y: [
-                new Date("2021-01-20 03:00:00").getTime(),
-                new Date("2021-01-20 04:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 3',
-              y: [
-                new Date("2021-01-20 05:00:00").getTime(),
-                new Date("2021-01-20 06:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 3',
-              y: [
-                new Date("2021-01-20 07:00:00").getTime(),
-                new Date("2021-01-20 08:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 4',
-              y: [
-                new Date("2021-01-20 01:00:00").getTime(),
-                new Date("2021-01-20 02:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 4',
-              y: [
-                new Date("2021-01-20 03:00:00").getTime(),
-                new Date("2021-01-20 04:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 4',
-              y: [
-                new Date("2021-01-20 05:00:00").getTime(),
-                new Date("2021-01-20 06:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 4',
-              y: [
-                new Date("2021-01-20 07:00:00").getTime(),
-                new Date("2021-01-20 08:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 5',
-              y: [
-                new Date("2021-01-20 01:00:00").getTime(),
-                new Date("2021-01-20 02:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 5',
-              y: [
-                new Date("2021-01-20 03:00:00").getTime(),
-                new Date("2021-01-20 04:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 5',
-              y: [
-                new Date("2021-01-20 05:00:00").getTime(),
-                new Date("2021-01-20 06:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 5',
-              y: [
-                new Date("2021-01-20 07:00:00").getTime(),
-                new Date("2021-01-20 08:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 6',
-              y: [
-                new Date("2021-01-20 01:00:00").getTime(),
-                new Date("2021-01-20 02:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 6',
-              y: [
-                new Date("2021-01-20 03:00:00").getTime(),
-                new Date("2021-01-20 04:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 6',
-              y: [
-                new Date("2021-01-20 05:00:00").getTime(),
-                new Date("2021-01-20 06:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Envasadora 6',
-              y: [
-                new Date("2021-01-20 07:00:00").getTime(),
-                new Date("2021-01-20 08:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Empaque',
-              y: [
-                new Date("2021-01-20 01:00:00").getTime(),
-                new Date("2021-01-20 02:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Empaque',
-              y: [
-                new Date("2021-01-20 03:00:00").getTime(),
-                new Date("2021-01-20 04:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Empaque',
-              y: [
-                new Date("2021-01-20 05:00:00").getTime(),
-                new Date("2021-01-20 06:00:00").getTime()
-              ]
-            },
-            {
-              x: 'Empaque',
-              y: [
-                new Date("2021-01-20 07:00:00").getTime(),
-                new Date("2021-01-20 08:00:00").getTime()
-              ]
-            },
-            
-          ]
-        },
-  
-      ],
-      options: {
-        chart: {
-          height: 350,
-          type: 'rangeBar'
-        },
-        plotOptions: {
-          bar: {
-            horizontal: true,
-            barHeight: '50%',
-            rangeBarGroupRows: true
-          }
-        },
-        colors: [
-          "#F7431E", "#2264A7"
-        ],
-        fill: {
-          type: 'solid'
-        },
-        xaxis: {
-          type: 'datetime'
-        },
-        legend: {
-          position: 'right'
-        },
-        tooltip: {
-          x: {
-            format: 'dd/MM/yy HH:mm',
-    
-          },
-        }
+    xaxis: {
+      type: 'datetime'
+    },
+    legend: {
+      position: 'right'
+    },
+    tooltip: {
+      x: {
+        format: 'dd/MM/yy HH:mm',
+
       },
-    
-    
-    };
+    }
+  })
+
+
+  const loadData = () => {
+    fetch(global.api.dashboard.gettimelineoperativo, {
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json",
+        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+      },
+      body: JSON.stringify({
+
+      }),
+    })
+      .then(response => response.json())
+      .then(r => {
+        var objeto = {}
+        var dataParo = []
+        var dataProd = []
+        for (let i = 0; i < r.length; i++) {
+
+          objeto = {
+            x: r[i].maquina,
+            y: [
+              new Date(r[i].hora_inicio).getTime(),
+              new Date(r[i].hora_termino).getTime()
+            ],
+          }
+          r[i].id_tipo === 1 ? dataParo.push(objeto) : dataProd.push(objeto)
+        }
+        setSeries([
+          {
+            name: 'Paro',
+            data: dataParo
+          },
+          
+          {
+            name: 'Produciendo',
+            data: dataProd
+          },
+        ])
+      }
+      )
+      .catch(err => {
+        console.error(err);
+      });
   }
 
-  render() {
-    return (
-      <div id="chart">
-  <Chart options={this.state.options} series={this.state.series} type="rangeBar" height={350} />
-</div>
-    );
-  }
+  useEffect(() => {
+    loadData()
+  }, []);
+
+
+  return (
+    <div id="chart">
+      <Chart options={options} series={series} type="rangeBar" height={350} />
+    </div>
+  );
 }
+
 
 export default TimeLineOperativo;
