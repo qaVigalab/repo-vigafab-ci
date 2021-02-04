@@ -27,43 +27,38 @@ const TimeLine = (props) => {
     
     const [infoData, setTInfoData] = useState()
     const [SeriesTimeLine, setSeriesTimeLine] = useState([])
-    const [options2, setOptions2] = useState(
+    const [options2, setOptions2] = useState({
+      dataLabels: labels,
+      markers: markers,
+      tooltip: tooltips,
 
-      {
-
-        dataLabels: labels,
-        markers: markers,
-        tooltip: tooltips,
-
-        chart: {
-          type: 'rangeBar',
-        },
-        plotOptions: {
-          bar: {
-            horizontal: true,
-            distributed: false,
-            dataLabels: {
-              hideOverflowingLabels: false
-            }
+      chart: {
+        type: 'rangeBar',
+      },
+      plotOptions: {
+        bar: {
+          horizontal: true,
+          distributed: false,
+          dataLabels: {
+            hideOverflowingLabels: false
           }
-        },
-
-        xaxis: {
-          type: 'datetime',
-          labels: {
-            
         }
-        },
+      },
 
-        grid: {
-          row: {
-            colors: ['#f3f4f5', '#fff'],
-            opacity: 1
-          }
+      xaxis: {
+        type: 'datetime',
+        labels: {
+          
+      }
+      },
+
+      grid: {
+        row: {
+          colors: ['#f3f4f5', '#fff'],
+          opacity: 1
         }
       }
-    )
-    
+    })
     
     useEffect(() => {
       setTimeout(() => {
@@ -75,10 +70,7 @@ const TimeLine = (props) => {
     loadTimeLine()
   }, [props.id_orden]);
 
-
-
  const loadTimeLine = () =>  {
-
     fetch(global.api.dashboard.gettimelinemaquina, {
       "method": "POST",
       "headers": {
@@ -107,19 +99,30 @@ const TimeLine = (props) => {
                 fillColor: '#F7431E'
             }
         ];
-        for (let i = 0; i < r.length; i++) {
 
-            objeto = {
-                x: r[i].id_tipo == 2 ? 'Prod' : 'Paro',
+        for (let i = 0; i < r.length; i++) {
+            var x_ = "", color_ = null;
+            if (r[i].id_tipo == 1) {
+              x_ = "Paro";
+              color_ = '#F7431E';
+            } else if (r[i].id_tipo == 2) {
+              x_ = "Prod";
+              color_ = '#2264A7';
+            }
+
+            if (r[i].id_tipo != 4) {
+              objeto = {
+                x: x_,
                 y: [
                     new Date(r[i].hora_inicio).getTime(),
                     new Date(r[i].hora_termino).getTime()
                 ],
-                fillColor: r[i].id_tipo == 2 ? '#2264A7' : '#F7431E'
-
+                fillColor: color_
+              }
+              objetos.push(objeto)
             }
-            objetos.push(objeto)
         }
+        
         setSeriesTimeLine([{
             data: objetos
         }]);
@@ -130,24 +133,15 @@ const TimeLine = (props) => {
       });
   }
 
+  return (
+    <div id="chart">
+      <ReactApexChart options={options2} series={SeriesTimeLine} type="rangeBar" height={180} />
+    </div>
+  );
+}
 
+const mapStateToProps = (state) => ({
+  id_orden: state.dashboardReducers.id_orden,
+});
 
-    return (
-
-
-      <div id="chart">
-        <ReactApexChart options={options2} series={SeriesTimeLine} type="rangeBar" height={250} />
-
-      </div>
-
-
-
-
-    );
-  }
-
-  const mapStateToProps = (state) => ({
-    id_orden: state.dashboardReducers.id_orden,
-  });
-  
-  export default connect(mapStateToProps)(TimeLine);
+export default connect(mapStateToProps)(TimeLine);

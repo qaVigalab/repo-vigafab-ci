@@ -228,9 +228,7 @@ const Produciendo = (props) => {
     }, []);
 
     return (
-
         <div>
-
             <div className="title2Orange">
                 <Row className='sticky-row'>
                     <br />
@@ -289,10 +287,11 @@ const Produciendo = (props) => {
                     </Col>
                 </Row>
             </div>
+            
             <div className="divP10">
                 <Row>
+                    {/* Producción en cada máquina */}
                     <Col className="blueRow " md="3">
-
                         <div className="whiteBorder">
                             <Row className="mb-2">
                                 <Col md="3">
@@ -338,6 +337,8 @@ const Produciendo = (props) => {
                         </div>
 
                     </Col>
+                    
+                    {/* Gráficos de donas */}
                     <Col md="3" className="">
                         <Row className="ml-3 mt-4">
                             <Row>
@@ -446,6 +447,8 @@ const Produciendo = (props) => {
                             </Row>
                         </Row>
                     </Col>
+                    
+                    {/* Gráfico de torta */}
                     <Col md="3">
                         <div className="centralbodydetail" style={{ paddingBottom: '15px' }}>
                             <Doughnut
@@ -473,6 +476,8 @@ const Produciendo = (props) => {
                   En Paro: {formatHour(TiempoInactivo)}
                         </Row>
                     </Col>
+                    
+                    {/* Control de pérdida */}
                     <Col className="blueRow" md="3">
                         <div className="text-uppercase font-weight-bold my-3">Control de Pérdida</div>
                         <div className="">
@@ -596,7 +601,6 @@ const Produciendo = (props) => {
                             </Row>
                         </div>
                     </Col>
-
                 </Row>
             </div>
 
