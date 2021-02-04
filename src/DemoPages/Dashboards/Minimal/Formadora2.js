@@ -8,8 +8,6 @@ import ReactApexChart from "react-apexcharts";
 import "moment/locale/es";
 import _ from "lodash";
 
-
-
 const Formadora2 = (props) => {
     const id_vibot = 6296;
     var temperatura = [];
@@ -284,7 +282,6 @@ const Formadora2 = (props) => {
     }
 
     const loadTimeLine = () => {
-
         fetch(global.api.dashboard.gettimelinemaquina, {
             "method": "POST",
             "headers": {
@@ -312,18 +309,35 @@ const Formadora2 = (props) => {
                             y: [new Date(r[0].hora_inicio).getTime(),
                             new Date(r[0].hora_inicio).getTime()],
                             fillColor: '#F7431E'
+                        },
+                        {
+                            x: 'Cambio',
+                            y: [new Date(r[0].hora_inicio).getTime(),
+                            new Date(r[0].hora_inicio).getTime()],
+                            fillColor: '#02c39a'
                         }
                     ];
+                    
                     for (let i = 0; i < r.length; i++) {
-
+                        var x_ = "", color_ = null;
+                        if (r[i].id_tipo == 1) {
+                          x_ = "Paro";
+                          color_ = '#F7431E';
+                        } else if (r[i].id_tipo == 2) {
+                          x_ = "Prod";
+                          color_ = '#2264A7';
+                        } else {
+                          x_ = "Cambio";
+                          color_ = '#02c39a';
+                        }
+            
                         objeto = {
-                            x: r[i].id_tipo == 2 ? 'Prod' : 'Paro',
+                            x: x_,
                             y: [
                                 new Date(r[i].hora_inicio).getTime(),
                                 new Date(r[i].hora_termino).getTime()
                             ],
-                            fillColor: r[i].id_tipo == 2 ? '#2264A7' : '#F7431E'
-
+                            fillColor: color_
                         }
                         objetos.push(objeto)
                     }
@@ -356,12 +370,9 @@ const Formadora2 = (props) => {
         return () => clearInterval(interval);
     }, []);
 
-
-
     return (
-
         <div>
-
+            {/* Barra superior Formadora */}
             <div className="blackBorder2" >
                 <Row>
                     <br />
@@ -381,42 +392,33 @@ const Formadora2 = (props) => {
                             <div className="font2Blue ml-1 mr-5 my-4">{formatNumber.new(_.round(tActivo / 60, 2))} hrs</div>
                             <div className="font2 ml-3 my-4">Productividad</div>
                             <div className="font2Blue ml-1 mr-5 my-4">{formatNumber.new(_.round(productividad)) + " ham/min"}</div>
-
                         </Row>
-
                     </Col>
-
                 </Row>
             </div >
 
-
-
+            {/* Formadora */}
             <Row>
+                {/* Resumen Formadora */}
                 <Col md="2" className="blackBorderRight">
                     <div class="noSpace">
                         <div className="blackBorderBot">
                             <Row className="my-4">
-
-
                                 <div align="center" className="ml-auto indi">{formatNumber.new(_.round(kgacumulados))}</div>
                                 <div align="center" className="font2 mt-3 ml-2 mr-auto">     Kg </div>
-
                             </Row>
                         </div>
 
                         <div className="blackBorderBot">
                             <Row className="" >
-
                                 <Col md="12">
                                     <div align="center" className="indi mt-3 ">{formatNumber.new(_.round(hacumuladas))}</div>
                                     <div align="left" className="font2 mb-3 ">Hamburguesas formadas</div>
                                 </Col>
-
                             </Row>
                         </div>
                         <div className="my-3">
                             <Row >
-
                                 <Col md="6">
                                     <div className="circle space5px ml-5">
                                         <Circle
@@ -442,7 +444,6 @@ const Formadora2 = (props) => {
                                             showPercentage={true} // Boolean: Show/hide percentage.
                                             showPercentageSymbol={true} // Boolean: Show/hide only the "%" symbol.
                                         />
-
                                     </div>
                                     <div align="left" className="mt-2 ml-2">Disponibilidad</div>
                                 </Col>
@@ -472,15 +473,15 @@ const Formadora2 = (props) => {
                                             showPercentage={true} // Boolean: Show/hide percentage.
                                             showPercentageSymbol={true} // Boolean: Show/hide only the "%" symbol.
                                         />
-
                                     </div>
                                     <div align="center" className="mt-2">Eficiencia</div>
                                 </Col>
-
                             </Row>
                         </div>
                     </div>
                 </Col>
+                
+                {/* Gráfico de torta y tendencia de Tª - Formadora */}
                 <Col md="9">
                     <Row>
                         <Col md="4">
@@ -507,22 +508,18 @@ const Formadora2 = (props) => {
                                     width="100%"
                                     height="290px"
                                 />
-
                             </div>
                         </Col>
                     </Row>
                 </Col>
             </Row>
-            {
-                //<div className="bot-description">Receta actual: {" " + producto}</div>
-            }
+            
+            {/* Línea de tiempo operativa */}
             <Row>
                 <Col xs="12">
                     <div id="chart" className={/*seriesTimeLine.data !== undefined ? "m-3" : "d-none"*/ "m-3"}>
-                        <ReactApexChart options={optionsTimeLine} series={seriesTimeLine} type="rangeBar" height={150} />
-
+                        <ReactApexChart options={optionsTimeLine} series={seriesTimeLine} type="rangeBar" height={180} />
                     </div>
-
                 </Col>
             </Row>
         </div>

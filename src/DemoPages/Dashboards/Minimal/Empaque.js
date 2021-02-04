@@ -200,29 +200,45 @@ const Empaque = (props) => {
                 if (r.length > 0) {
                     var objetos = [
                         {
-                            x: 'En Producción',
-                            y: [new Date(r[0].hora_inicio).getTime() - 2,
-                            new Date(r[0].hora_inicio).getTime() - 1],
+                            x: 'Prod',
+                            y: [new Date(r[0].hora_inicio).getTime(),
+                            new Date(r[0].hora_inicio).getTime()],
                             fillColor: '#2264A7'
                         },
                         {
-                            x: 'En Paro',
-                            y: [new Date(r[0].hora_inicio).getTime() - 1,
+                            x: 'Paro',
+                            y: [new Date(r[0].hora_inicio).getTime(),
                             new Date(r[0].hora_inicio).getTime()],
                             fillColor: '#F7431E'
+                        },
+                        {
+                            x: 'Cambio',
+                            y: [new Date(r[0].hora_inicio).getTime(),
+                            new Date(r[0].hora_inicio).getTime()],
+                            fillColor: '#02c39a'
                         }
                     ];
 
                     for (let i = 0; i < r.length; i++) {
-
+                        var x_ = "", color_ = null;
+                        if (r[i].id_tipo == 1) {
+                          x_ = "Paro";
+                          color_ = '#F7431E';
+                        } else if (r[i].id_tipo == 2) {
+                          x_ = "Prod";
+                          color_ = '#2264A7';
+                        } else {
+                          x_ = "Cambio";
+                          color_ = '#02c39a';
+                        }
+            
                         objeto = {
-                            x: r[i].id_tipo == 2 ? 'En Producción' : 'En Paro',
+                            x: x_,
                             y: [
                                 new Date(r[i].hora_inicio).getTime(),
                                 new Date(r[i].hora_termino).getTime()
                             ],
-                            fillColor: r[i].id_tipo == 2 ? '#2264A7' : '#F7431E'
-
+                            fillColor: color_
                         }
                         objetos.push(objeto)
                     }
