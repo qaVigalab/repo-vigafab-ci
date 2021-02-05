@@ -360,7 +360,7 @@ const TiempoParo = (props) => {
                               <td style={{ width: "33%" }}>
                                 <Brightness1Icon className={paro.id_tipo === 100 ? "blue"
                                   : paro.id_tipo === 99 ? "red"
-                                  : paro.nombre === "Operativo" ? "paro1"
+                                  : paro.nombre != "Produciendo" && paro.nombre != "Paro no justificado" ? "paro1"
                                   : i === 1 ? "paro1" : i === 2 ? "paro2"
                                   : i === 3 ? "paro3" : i === 4 ? "paro4"
                                   : i === 5 ? "paro5" : i === 6 ? "paro6"
@@ -377,7 +377,7 @@ const TiempoParo = (props) => {
                                   value={paro.suma / tiempoTotal * 100}
                                   color={paro.id_tipo === 100 ? "blue"
                                   : paro.id_tipo === 99 ? "red"
-                                  : paro.nombre === "Operativo" ? "paro1"
+                                  : paro.nombre != "Produciendo" && paro.nombre != "Paro no justificado" ? "paro1"
                                   : i === 1 ? "paro1" : i === 2 ? "paro2"
                                   : i === 3 ? "paro3" : i === 4 ? "paro4"
                                   : i === 5 ? "paro5" : i === 6 ? "paro6"
