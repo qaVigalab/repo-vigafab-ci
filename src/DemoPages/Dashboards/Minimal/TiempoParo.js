@@ -26,44 +26,37 @@ import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
 import TortaParos from "./TortaParos";
 
 const TiempoParo = (props) => {
-
-  /* applyCallback(startDate, endDate) {
-    setStart(startDate)
-    setEnd(endDate)
-  } */
   let m = moment();
-  m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
-  const [tiempoTotal, setTiempoTotal] = useState()
-  const [tiempoOperativo, setTiempoOperativo] = useState()
-  const [detalleParos, setDetalleParos] = useState([])
-  const [detalleOperativos, setDetalleOperativos] = useState([])
-  const [startDate, setStartDate] = useState(new Date(m))
-  const [endDate, setEndDate] = useState(new Date(m))
-  const [btnSku, setBtnSku] = useState(0)
-  const [sku, setSku] = useState(0)
-  const [refresh, setRefresh] = useState(true)
+  m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+  const [tiempoTotal, setTiempoTotal] = useState();
+  const [tiempoOperativo, setTiempoOperativo] = useState();
+  const [tiempoMantenimiento, setTiempoMantenimiento] = useState();
+  const [detalleParos, setDetalleParos] = useState([]);
+  const [detalleOperativos, setDetalleOperativos] = useState([]);
+  const [detalleMantenimiento, setDetalleMantenimiento] = useState([]);
+  const [detalleSelected, setDetalleSelected] = useState([]);
+  const [tituloSelected, setTituloSelected] = useState();
+  const [tiempoSelected, setTiempoSelected] = useState();
+  const [startDate, setStartDate] = useState(new Date(m));
+  const [endDate, setEndDate] = useState(new Date(m));
+  const [btnSku, setBtnSku] = useState(0);
+  const [sku, setSku] = useState(0);
+  const [refresh, setRefresh] = useState(true);
 
-  const handleChange = date => {
+  const handleChange = (date) => {
     setStartDate(date)
   };
-  const handleChange2 = date => {
+
+  const handleChange2 = (date) => {
     setEndDate(date)
   };
+
   const formatHour = (min) => {
     let horas = min / 60;
     horas = Math.trunc(horas)
     let minutos = min - (60 * horas)
     return horas === 0 ? minutos + " Min" : horas + " Hrs " + minutos + " Min"
   }
-  /*  const togglePop1 = () => {
-     this.setState({
-       popoverOpen1: !this.state.popoverOpen1,
-     });
- 
-   }
-   const onDismiss= () => {
-     this.setState({ visible: false });
-   }  */
 
   const changeBtnSku = (e) => {
     e.preventDefault();
@@ -78,6 +71,14 @@ const TiempoParo = (props) => {
     e.preventDefault();
     setRefresh(!refresh)
   }
+
+  const updateDetalle = (e, titulo, detalle, tiempo) => {
+    e.preventDefault();
+
+    setTituloSelected(titulo);
+    setDetalleSelected(detalle);
+    setTiempoSelected(tiempo);
+  };
 
   const loadDetalleParo = () => {
     let m = moment();
@@ -99,7 +100,7 @@ const TiempoParo = (props) => {
     })
       .then(response => response.json())
       .then(result => {
-        var paros = [], operativos = [];
+        var paros = [], operativos = [], mantenimiento = [];
         for (var i = 0; i < result.length; i++) {
           /* Se settea la información general de los paros */
           var found = false, pos = -1;
@@ -124,8 +125,8 @@ const TiempoParo = (props) => {
           /* Se settea el detalle de los operativos */
           if (result[i].nombre === "Operativo") {
             found = false; pos = -1;
-            for (var j = 0; j < paros.length; j++) {
-              if (result[i].ambito == paros[j].ambito) {
+            for (var j = 0; j < operativos.length; j++) {
+              if (result[i].ambito == operativos[j].ambito) {
                   found = true; pos = j;
                   break;
               }
@@ -141,29 +142,58 @@ const TiempoParo = (props) => {
               operativos.push(obj);
             }
           }
+
+          /* Se settea el detalle de los de mantenimiento */
+          if (result[i].nombre === "Mantenimiento") {
+            console.log(result[i].nombre);
+            found = false; pos = -1;
+            for (var j = 0; j < mantenimiento.length; j++) {
+              if (result[i].ambito == mantenimiento[j].ambito) {
+                  found = true; pos = j;
+                  break;
+              }
+            }
+
+            if (found) {
+              mantenimiento[pos].suma += result[i].suma;
+            } else {
+              var obj = {
+                suma: result[i].suma,
+                ambito: result[i].ambito
+              }
+              mantenimiento.push(obj);
+            }
+          }
         }
 
         paros.sort((a, b) => b.suma - a.suma);
         operativos.sort((a, b) => b.suma - a.suma);
+        mantenimiento.sort((a, b) => b.suma - a.suma);
 
         setDetalleParos(paros);
         setDetalleOperativos(operativos);
+        setDetalleMantenimiento(mantenimiento);
 
-        let tiempo_total = 0, tiempo_operativo = 0;
+        let tiempo_total = 0, tiempo_operativo = 0, tiempo_mantenimiento = 0;
         paros.forEach(paro => {
           tiempo_total += paro.suma;
         });
         operativos.forEach(paro => {
           tiempo_operativo += paro.suma;
         });
+        mantenimiento.forEach(paro => {
+          tiempo_mantenimiento += paro.suma;
+        });
 
         setTiempoTotal(tiempo_total);
         setTiempoOperativo(tiempo_operativo);
+        setTiempoMantenimiento(tiempo_mantenimiento);
       })
       .catch(err => {
         console.error(err);
       });
   }
+
   useEffect(() => {
     loadDetalleParo()
   }, []);
@@ -171,7 +201,6 @@ const TiempoParo = (props) => {
   useEffect(() => {
     loadDetalleParo()
   }, [props.id_vibot]);
-
 
   return (
     <Fragment>
@@ -353,59 +382,73 @@ const TiempoParo = (props) => {
                     sku={sku}
                   />
 
-                  <Col xs="12" >
-                    Detalle
-                    <Table size="sm" style={{marginTop: '1%'}}>
-                      <tbody>
-                        {
-                          detalleParos.map((paro, i) =>
-                            <tr key={i}>
-                              <td style={{ width: "33%" }}>
-                                <Brightness1Icon className={paro.id_tipo === 100 ? "blue"
-                                  : paro.id_tipo === 99 ? "red"
-                                  : paro.nombre != "Produciendo" && paro.nombre != "Paro no justificado" && i === 0 ? "paro1"
-                                  : i === 1 ? "paro1" : i === 2 ? "paro2"
-                                  : i === 3 ? "paro3" : i === 4 ? "paro4"
-                                  : i === 5 ? "paro5" : i === 6 ? "paro6"
-                                  : i === 7 ? "paro7" : i === 8 ? "paro8"
-                                  : i === 9 ? "paro9" : i === 10 ? "paro10"
-                                  : i === 11 ? "paro11" : i === 12 ? "paro12"
-                                  : i === 13 ? "paro13" : i === 14 ? "paro14"
-                                  : i === 15 ? "paro15" : "gray"} style={{marginRight: '2%'}} />
-                                {paro.nombre.slice(0,1).toUpperCase() + paro.nombre.slice(1, paro.nombre.length)}
-                              </td>
-
-                              <td style={{ width: "33%" }}>
-                                <Progress
-                                  value={paro.suma / tiempoTotal * 100}
-                                  color={paro.id_tipo === 100 ? "blue"
-                                  : paro.id_tipo === 99 ? "red"
-                                  : paro.nombre != "Produciendo" && paro.nombre != "Paro no justificado" && i === 0  ? "paro1"
-                                  : i === 1 ? "paro1" : i === 2 ? "paro2"
-                                  : i === 3 ? "paro3" : i === 4 ? "paro4"
-                                  : i === 5 ? "paro5" : i === 6 ? "paro6"
-                                  : i === 7 ? "paro7" : i === 8 ? "paro8"
-                                  : i === 9 ? "paro9" : i === 10 ? "paro10"
-                                  : i === 11 ? "paro11" : i === 12 ? "paro12"
-                                  : i === 13 ? "paro13" : i === 14 ? "paro14"
-                                  : i === 15 ? "paro15" : "gray"}
-                                  max={100}
-                                />
-                              </td>
-                              <td style={{ width: "33%" }}>{formatHour(paro.suma)}</td>
-                            </tr>
-                          )}
-                      </tbody>
-                    </Table>
-                  </Col>
-
-                  {detalleOperativos.length > 0 ?
-                    <Col xs="7" >
-                      Detalle de Paros Operativos
+                  {detalleParos.length > 0 ?
+                    <Col xs="12" >
+                      Detalle
                       <Table size="sm" style={{marginTop: '1%'}}>
                         <tbody>
                           {
-                            detalleOperativos.map((paro, i) =>
+                            detalleParos.map((paro, i) =>
+                              <tr key={i}>
+                                <td style={{ width: "33%" }}>
+                                  <Brightness1Icon className={paro.id_tipo === 100 ? "blue"
+                                    : paro.id_tipo === 99 ? "red"
+                                    : paro.nombre != "Produciendo" && paro.nombre != "Paro no justificado" && i === 0 ? "paro1"
+                                    : i === 1 ? "paro1" : i === 2 ? "paro2"
+                                    : i === 3 ? "paro3" : i === 4 ? "paro4"
+                                    : i === 5 ? "paro5" : i === 6 ? "paro6"
+                                    : i === 7 ? "paro7" : i === 8 ? "paro8"
+                                    : i === 9 ? "paro9" : i === 10 ? "paro10"
+                                    : i === 11 ? "paro11" : i === 12 ? "paro12"
+                                    : i === 13 ? "paro13" : i === 14 ? "paro14"
+                                    : i === 15 ? "paro15" : "gray"} style={{marginRight: '2%'}} />
+                                  {
+                                    paro.nombre === "Operativo" ?
+                                      <a style={{color: '#6e767e'}} href="#"
+                                          onClick={e => updateDetalle(e, "Operativo", detalleOperativos, tiempoOperativo)} 
+                                          class="active">{paro.nombre.slice(0,1).toUpperCase() + paro.nombre.slice(1, paro.nombre.length)}</a>
+                                    : paro.nombre === "Mantenimiento" ?
+                                      <a style={{color: '#6e767e'}} href="#"
+                                          onClick={e => updateDetalle(e, "Mantenimiento", detalleMantenimiento, tiempoMantenimiento)}
+                                          class="active">{paro.nombre.slice(0,1).toUpperCase() + paro.nombre.slice(1, paro.nombre.length)}</a>
+                                    : paro.nombre.slice(0,1).toUpperCase() + paro.nombre.slice(1, paro.nombre.length)
+                                  }
+                                </td>
+
+                                <td style={{ width: "33%" }}>
+                                  <Progress
+                                    value={paro.suma / tiempoTotal * 100}
+                                    color={paro.id_tipo === 100 ? "blue"
+                                    : paro.id_tipo === 99 ? "red"
+                                    : paro.nombre != "Produciendo" && paro.nombre != "Paro no justificado" && i === 0  ? "paro1"
+                                    : i === 1 ? "paro1" : i === 2 ? "paro2"
+                                    : i === 3 ? "paro3" : i === 4 ? "paro4"
+                                    : i === 5 ? "paro5" : i === 6 ? "paro6"
+                                    : i === 7 ? "paro7" : i === 8 ? "paro8"
+                                    : i === 9 ? "paro9" : i === 10 ? "paro10"
+                                    : i === 11 ? "paro11" : i === 12 ? "paro12"
+                                    : i === 13 ? "paro13" : i === 14 ? "paro14"
+                                    : i === 15 ? "paro15" : "gray"}
+                                    max={100}
+                                  />
+                                </td>
+                                <td style={{ width: "33%" }}>{formatHour(paro.suma)}</td>
+                              </tr>
+                            )
+                          }
+                        </tbody>
+                      </Table>
+                    </Col>
+                    : ""
+                  }
+
+                  {detalleSelected.length > 0 ?
+                    <Col xs="7" >
+                      Detalle de Paros - {tituloSelected}
+                      <Table size="sm" style={{marginTop: '1%'}}>
+                        <tbody>
+                          {
+                            detalleSelected.map((paro, i) =>
                               <tr key={i}>
                                 <td style={{ width: "33%" }}>
                                   <Brightness1Icon className={
@@ -422,7 +465,7 @@ const TiempoParo = (props) => {
 
                                 <td style={{ width: "33%" }}>
                                   <Progress
-                                    value={paro.suma / tiempoOperativo * 100}
+                                    value={paro.suma / tiempoSelected * 100}
                                     color={
                                       i === 1 ? "paro1" : i === 2 ? "paro2"
                                     : i === 3 ? "paro3" : i === 4 ? "paro4"
@@ -437,11 +480,13 @@ const TiempoParo = (props) => {
                                 </td>
                                 <td style={{ width: "33%" }}>{formatHour(paro.suma)}</td>
                               </tr>
-                            )}
+                            )
+                          }
                         </tbody>
                       </Table>
                     </Col>
-                  : "" }
+                    : ""
+                  }
                 </Row>
               </Container>
             </CardBody>
