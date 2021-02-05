@@ -33,6 +33,8 @@ const TimeLineOperativo = () => {
     }
   })
 
+  const [estadoMaquinas, setEstadoMaquinas] = useState([1, 1, 1, 1, 1, 1]);
+
   const loadData = () => {
     fetch(global.api.dashboard.gettimelineoperativo, {
       "method": "POST",
@@ -85,9 +87,15 @@ const TimeLineOperativo = () => {
   }
 
   useEffect(() => {
-    loadData()
+    const interval = setInterval(() => {
+      loadData();
+    }, 60000);
+    return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    loadData()
+  }, []);
 
   return (
     <div id="chart">
