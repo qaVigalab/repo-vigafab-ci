@@ -69,7 +69,8 @@ const TiempoParo = (props) => {
   }
   const changeBtnBuscar = (e) => {
     e.preventDefault();
-    setRefresh(!refresh)
+    setRefresh(!refresh);
+    setDetalleSelected([]);
   }
 
   const updateDetalle = (e, titulo, detalle, tiempo) => {
