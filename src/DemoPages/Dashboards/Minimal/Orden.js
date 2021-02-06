@@ -138,7 +138,7 @@ const Orden = (props) => {
         setVacio(0);
         result.length === 0 ? setVacio(1) : 
         result[0].id_sub_orden === null ? setVacio(1) : setOrdenes(result);
-        if (result[1].id_sub_orden != null) {
+        if (result.length > 1 && result[1].id_sub_orden != null) {
           setVacio(2);
           setOrdenes(result);
           if (localStorage.getItem("recarga_orden") === "0") {
@@ -147,6 +147,14 @@ const Orden = (props) => {
             setSelect(0)
           }
           localStorage.setItem("id_ordenA", result.find(e => e.id_estado === 1).id_sub_orden)
+        } else if (result.length === 1 && result[0].id_sub_orden != null) {
+          setVacio(2);
+          setOrdenes(result);
+          if (localStorage.getItem("recarga_orden") === "0") {
+            localStorage.setItem("id_orden", result.find(e => e.id_estado === 1).id_sub_orden)
+            localStorage.setItem("recarga_orden", 1)
+            setSelect(0)
+          }
         }
       })
       .catch((err) => {
