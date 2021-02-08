@@ -1,82 +1,57 @@
-
-import React, { Component, Fragment } from "react";
+import React, { Component, Fragment, useState, useEffect } from "react";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 
+import moment from 'moment';
 import { connect } from "react-redux";
-import {
-  Card,
-  Col,
-  Row,
-} from "reactstrap";
+import { Card, Col, Row } from "reactstrap";
+
 import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
-import CialWidget from "./CialWidget";
-import Formadora2 from "./Formadora2";
-import Iqf2 from "./Iqf2";
 import GenerarExcel from "./GenerarExcel";
 import NuevaOrden from "./NuevaOrden";
 import Orden from "./Orden";
 import Produciendo from "./Produciendo";
+import Formadora2 from "./Formadora2";
+import Iqf2 from "./Iqf2";
+import CialWidget from "./CialWidget";
 import TotalEnvasadoras from "./TotalEnvasadoras";
 import Empaque from "./Empaque";
 
-import moment from 'moment'
+const MinimalDashboard1 = (props) => {
+  const [start, setStart] = useState();
+  const [end, setEnd] = useState();
 
-
-class MinimalDashboard1 extends Component {
-  applyCallback(startDate, endDate) {
-    this.setState({
-      start: startDate,
-      end: endDate,
-    });
+  const applyCallback = (startDate, endDate) => {
+    setStart(startDate);
+    setEnd(endDate);
   }
 
-  constructor(props) {
-    super(props);
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
 
-    this.togglePop1 = this.togglePop1.bind(this);
-
-    this.state = {
-      modo: 0,
-      maquinas: [
-        {
-          id: "",
-          nombre: "",
-        },
-      ],
-      perfil: localStorage.getItem("perfil")
-
-    };
-    this.onDismiss = this.onDismiss.bind(this);
-    this.getMaquinas = this.getMaquinas.bind(this);
-  }
-
-  handleChange = (date) => {
-    this.setState({
-      startDate: date,
-    });
+  const handleChange = (date) => {
+    setStartDate(date);
   };
-  handleChange2 = (date) => {
-    this.setState({
-      endDate: date,
-    });
+
+  const handleChange2 = (date) => {
+    setEndDate(date);
   };
-  togglePop1() {
-    this.setState({
-      popoverOpen1: !this.state.popoverOpen1,
-    });
+
+  const [modo, setModo] = useState(0);
+  const [maquinas, setMaquinas] = useState([{ id: "", nombre: "" }]);
+  const [perfil, setPerfil] = useState(localStorage.getItem("perfil"));
+  const [popoverOpen1, setPopoverOpen1] = useState();
+  const [visible, setVisible] = useState();
+
+  const onDismiss = () => {
+    setVisible(false);
   }
 
-  onDismiss() {
-    this.setState({ visible: false });
-  }
-
-  getMaquinas(tipo) {
+  const getMaquinas = (tipo) => {
     var myHeaders = new Headers();
     myHeaders.append("x-api-key", "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m");
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({ maquina: tipo });
-
     var requestOptions = {
       method: "POST",
       headers: myHeaders,
@@ -88,32 +63,73 @@ class MinimalDashboard1 extends Component {
       global.api.dashboard.getmaquinas,
       requestOptions
     )
-      .then((response) => response.json())
-      .then((result) => {
-        this.setState({
-          maquinas: result /*[
-            ...this.state.maquinas,
-            {
-              id: result[0].id,
-              nombre: result[0].maquina,
-            },
-          ]*/,
-        });
-      })
-      .catch((error) => console.log("error", error));
+    .then((response) => response.json())
+    .then((result) => {
+      setMaquinas(result);
+    })
+    .catch((error) => console.log("error", error));
   }
-  componentDidMount() {
-    this.setState({
-      maquinas: [],
-    });
-    this.getMaquinas("envasadora");
+
+  useEffect(() => {
+    setMaquinas([]);
+    getMaquinas("Envasadora");
+
     localStorage.setItem("fechaFinal", moment().format('YYYY-MM-DD'))
     localStorage.setItem("recarga_orden", 0)
+  }, []);
 
+  /* ESTO ES PARA PROBAR LO QUE DIJO EL EDUARDO */
+  const [ordenes, setOrdenes] = useState([]);
+  const [ordenSelected, setOrdenSelected] = useState("");
 
+  /* Se consulta a la API para obtener la información de las órdenes diarias */
+  const loadOrdenes = async (orden) => {
+    const query = await fetch(global.api.dashboard.getordenes, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
+      },
+      body: JSON.stringify({
+        fecha: localStorage.getItem("fechaFinal"),
+      }),
+    })
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.length >= 1) {
+        setOrdenes(result);
+        if (orden === "")
+          setOrdenSelected(result.find(e => e.id_estado === 1).id_sub_orden);
+        else
+          setOrdenSelected(orden);
+      } else {
+        setOrdenes([]);
+        setOrdenSelected("");
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+    });
   }
-  render() {
-    return (
+
+  /* Se cargan las órdenes del día, actualizando la variable que define a la orden seleccionada */
+  const updateOrden = (orden) => {
+    loadOrdenes(orden);
+  }
+
+  /* Debug: Se imprime el listado de órdenes del día en curso y la orden seleccionada en el listado */
+  useEffect(() => {
+    console.log(ordenes);
+    console.log(ordenSelected);
+  }, [ordenSelected]);
+
+  /* Se cargan las órdenes al recargar la página */
+  useEffect(() => {
+    loadOrdenes("");
+  }, []);
+
+  return (
+    <div>
       <Fragment>
         <ReactCSSTransitionGroup
           component="div"
@@ -134,37 +150,17 @@ class MinimalDashboard1 extends Component {
                 menu_actual="Vista General"
               />
             </Col>
-            {/* <Col>
-              <div align="right">
-                <Button className="buttonOrange2 mr-2" size="">
-                  <Row>
-                  <AddIcon className="ml-3 mt-1" /> 
-                  <div className="ml-2 mr-4 mt-1">Nueva orden de Producción</div>
-                  </Row>
-                </Button>
-              </div>
-            </Col>
-            
-            <div align="right">
-              <Button className=" buttonBlue mr-4" size="">
-                <Row>
-                  <GetAppIcon className="ml-3 mt-1"/>
-                  <div className="ml-2 mr-4 mt-1">Descargar como Reporte</div>
-                </Row>
-              </Button>
-            </div> */}
-
           </Row>
+
           <Row>
-          <Col md="12" xl="12">
-                <Card className="main-card mb-3">
-                  <GenerarExcel />
-                </Card>
-              </Col>
-
+            <Col md="12" xl="12">
+              <Card className="main-card mb-3">
+                <GenerarExcel />
+              </Card>
+            </Col>
           </Row>
 
-          {this.state.perfil == 1 || this.state.perfil == 2 ? (
+          {perfil == 1 || perfil == 2 ? (
             <Row>
               <Col md="12" xl="12">
                 <Card className="main-card mb-3">
@@ -173,15 +169,17 @@ class MinimalDashboard1 extends Component {
               </Col>
             </Row>
           ) : (
-              ""
-            )}
+            ""
+          )}
 
           <Row>
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
-
-                <Orden id_orden={this.props.id_orden} />
-
+                <Orden 
+                  ordenes={ordenes}
+                  ordenSelected={ordenSelected}
+                  updateOrden={id_orden => updateOrden(id_orden)}
+                />
               </Card>
             </Col>
           </Row>
@@ -202,20 +200,21 @@ class MinimalDashboard1 extends Component {
             </Col>
           </Row>
 
-          {/*<div class="columns-parent">
+          {/*
+          <div class="columns-parent">
             <Row>
               <Col xs="12" xl="12">
                 <Card className="main-card mb-3">
                   <Iqf2 estado={1} />
                 </Card>
               </Col>
-            </Row>*/}
-
+            </Row>
+          */}
 
           <div class="columns-parent"> {/* sacar al agregar iqf */}
-            {this.state.modo === 2 || this.state.modo === 0 ? (
+            {modo === 2 || modo === 0 ? (
               <Row>
-                {this.state.maquinas.map((maquina) => (
+                {maquinas.map((maquina) => (
                   <CialWidget
                     nombre={maquina.maquina}
                     id_vibot={maquina.id}
@@ -223,11 +222,11 @@ class MinimalDashboard1 extends Component {
                 ))}
               </Row>
             ) : (
-                ""
-              )}
+              ""
+            )}
 
             {/*    <Row alignItems="stretch">
-              {this.state.modo === 1 || this.state.modo === 0 ? (
+              {modo === 1 || modo === 0 ? (
                 <CialWidget
                   modo={3}
                   nombre="Total Hornos"
@@ -236,7 +235,7 @@ class MinimalDashboard1 extends Component {
               ) : (
                 ""
               )}
-              {this.state.modo === 2 || this.state.modo === 0 ? (
+              {modo === 2 || modo === 0 ? (
                 <CialWidget
                   modo={4}
                   nombre="Total Envasadoras"
@@ -266,8 +265,8 @@ class MinimalDashboard1 extends Component {
           </Row>
         </ReactCSSTransitionGroup>
       </Fragment>
-    );
-  }
+    </div>
+  );
 }
 
 const mapStateToProps = (state) => ({

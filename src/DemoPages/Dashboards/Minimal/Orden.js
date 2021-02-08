@@ -15,20 +15,20 @@ import _ from "lodash";
 
 const Orden = (props) => {
   const [perfil, setPerfil] = useState(localStorage.getItem("perfil"));
+  const [sku, setSku] = useState("");
+  const [cajas, setCajas] = useState("");
+  const [producto, setProducto] = useState("");
   const [ordenes, setOrdenes] = useState([]);
-  const [vacio, setVacio] = useState(0);
-  const [sku, setSku] = useState("")
-  const [cajas, setCajas] = useState("")
-  const [producto, setProducto] = useState("")
-  const [idSubOrden, setIdSubOrden] = useState("")
-  const [prioridad, setPrioridad] = useState("")
-  const [select, setSelect] = useState(0)
-  const [recarga, setRecarga] = useState()
+  const [idSubOrden, setIdSubOrden] = useState("");
+  const [prioridad, setPrioridad] = useState("");
+  const [select, setSelect] = useState(0);
+  
   let fecha = new Date();
   let date = fecha.getDate() < 10 ? "0" + fecha.getDate() : fecha.getDate();
   let month = fecha.getMonth() + 1;
   let year = fecha.getFullYear();
   fecha = year + "-" + month + "-" + date;
+
   const [fechaFinal, setFechaFinal] = useState(
     localStorage.getItem("fechaFinal") || fecha
   );
@@ -36,6 +36,7 @@ const Orden = (props) => {
   var formatNumber = {
     separador: ".", // separador para los miles
     sepDecimal: ',', // separador para los decimales
+
     formatear: function (num) {
       num += '';
       var splitStr = num.split('.');
@@ -73,29 +74,25 @@ const Orden = (props) => {
       console.error(err);
     });
 
-    setModal(!modal)
-    loadOrdenes()
+    setModal(!modal);
+    props.updateOrden(idSubOrden);
   };
 
   const verOrden = (e, id_orden) => {
     e.preventDefault();
-    if (select === id_orden) {
-      let id = localStorage.getItem("id_ordenA")
-      setSelect(0)
-      localStorage.setItem("id_orden", id)
-    } else {
-      setSelect(id_orden)
-      localStorage.setItem("id_orden", id_orden)
-    }
+
     props.setIdOrden(!props.id_orden)
+    props.updateOrden(id_orden);
   }
 
-  const cambiarOrden = (opcion,e) => {
+  /*const cambiarOrden = (opcion,e) => {
     e.preventDefault();
-    let api = ""
-     if(opcion === 1) api=global.api.dashboard.nextorden
+
+    let api = "";
+    if(opcion === 1) api=global.api.dashboard.nextorden
     else if(opcion === 2) api=global.api.dashboard.siguienteordenenvasadoras
     else if(opcion === 3) api=global.api.dashboard.siguienteordenempaque
+
     fetch(api, {
       "method": "POST",
       "headers": {
@@ -104,14 +101,13 @@ const Orden = (props) => {
       },
       "body": false
     })
-      .then(response => {
-        console.log(response);
-      })
-      .catch(err => {
-        console.error(err);
-      });
-
-  }
+    .then(response => {
+      console.log(response);
+    })
+    .catch(err => {
+      console.error(err);
+    });
+  }*/
 
   const [modal, setModal] = useState(false);
   const toggle = (cajas, id_sub_orden, sku, producto) => {
@@ -121,46 +117,6 @@ const Orden = (props) => {
     setProducto(producto);
     setModal(!modal);
   };
-
-  const loadOrdenes = () => {
-    fetch(global.api.dashboard.getordenes, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
-      },
-      body: JSON.stringify({
-        fecha: localStorage.getItem("fechaFinal"),
-      }),
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        setVacio(0);
-        result.length === 0 ? setVacio(1) : 
-        result[0].id_sub_orden === null ? setVacio(1) : setOrdenes(result);
-        if (result.length > 1 && result[1].id_sub_orden != null) {
-          setVacio(2);
-          setOrdenes(result);
-          if (localStorage.getItem("recarga_orden") === "0") {
-            localStorage.setItem("id_orden", result.find(e => e.id_estado === 1).id_sub_orden)
-            localStorage.setItem("recarga_orden", 1)
-            setSelect(0)
-          }
-          localStorage.setItem("id_ordenA", result.find(e => e.id_estado === 1).id_sub_orden)
-        } else if (result.length === 1 && result[0].id_sub_orden != null) {
-          setVacio(2);
-          setOrdenes(result);
-          if (localStorage.getItem("recarga_orden") === "0") {
-            localStorage.setItem("id_orden", result.find(e => e.id_estado === 1).id_sub_orden)
-            localStorage.setItem("recarga_orden", 1)
-            setSelect(0)
-          }
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }
 
   const [modalEdit, setModalEdit] = useState(false);
   const [productos, setProductos] = useState([]);
@@ -273,7 +229,7 @@ const Orden = (props) => {
         setConfirmEdit(true);
 
         setTimeout(() => {
-          loadOrdenes();
+          props.updateOrden(idSubOrden);
           setConfirmEdit(false);
         }, 3000);
       })
@@ -307,8 +263,7 @@ const Orden = (props) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      loadOrdenes();
-
+      props.updateOrden(idSubOrden);
     }, 60000);
     return () => clearInterval(interval);
   }, []);
@@ -321,12 +276,13 @@ const Orden = (props) => {
   }, [])
 
   useEffect(() => {
-    loadOrdenes();
+    props.updateOrden(idSubOrden);
   }, [localStorage.getItem("fechaFinal")]);
 
   useEffect(() => {
-    loadOrdenes();
-  }, [props.id_orden]);
+    setOrdenes(props.ordenes);
+    setIdSubOrden(props.ordenSelected);
+  }, [props.ordenSelected]);
 
   useEffect(() => {
     loadProductos();
@@ -340,27 +296,28 @@ const Orden = (props) => {
             Producción en línea
           </div>
         </Col>
-        {/*}
+        {/*
         <Col>
           <Button className="buttonOrange" size="lg" onClick={partirOrden}>
             Partir Orden
           </Button>
-        </Col>{*/}
-       
-          <Col align="left">
-            <Button className="buttonOrange2 ml-3 mt-3" size="lg" onClick={(e) => cambiarOrden(1, e)}>
-              Cambiar Formadora
-             </Button>
-             <Button className="buttonOrange2 ml-3 mt-3" size="lg" onClick={(e) => cambiarOrden(2, e)}>
-              Cambiar Envasadoras
-             </Button>
-             <Button className="buttonOrange2 ml-3 mt-3" size="lg" onClick={(e) => cambiarOrden(3, e)}>
-              Cambiar Empaque
-             </Button>
-          </Col>
-        
-        <Row>
-          <Col className="mt-4 mr-0 ">
+        </Col>{
+        */}
+        <Col align="left">
+          {/*
+          <Button className="buttonOrange2 ml-3 mt-3" size="lg" onClick={(e) => cambiarOrden(1, e)}>
+            Cambiar Formadora
+            </Button>
+            <Button className="buttonOrange2 ml-3 mt-3" size="lg" onClick={(e) => cambiarOrden(2, e)}>
+            Cambiar Envasadoras
+            </Button>
+            <Button className="buttonOrange2 ml-3 mt-3" size="lg" onClick={(e) => cambiarOrden(3, e)}>
+            Cambiar Empaque
+            </Button>
+          */}
+        </Col>
+        <Row style={{ marginRight: '0.5%' }}>
+          <Col className="mt-4 mr-0">
             <div>Seleccione fecha</div>
           </Col>
           <Col className="mt-3 mb-0 ml-0 mr-4">
@@ -375,19 +332,19 @@ const Orden = (props) => {
         </Row>
       </Row>
       <br />
-      {vacio === 1 ? (
+      {ordenes.length === 0 ? (
         <Alert color="warning" className="mb-0">
           <a className="alert-link">No existen ordenes para mostrar</a>.
         </Alert>
       ) : (
-          ""
-        )}
+        ""
+      )}
       {confirmEdit === true ? (
         <Alert color="success" className="mb-0">
           <a className="alert-link">¡La orden ha sido editada satisfactoriamente!</a>.
         </Alert>
       ) : (
-          ""
+        ""
       )}
       <Table striped className="mt-0">
         <thead className="theadBlue">
@@ -402,29 +359,12 @@ const Orden = (props) => {
             <th>Kg Solicitados</th>
             <th>Kg Producidos</th>
             <th>Kg %</th>
-            <th>
-              <CheckCircleOutlineIcon />
-            </th>
-
-            {perfil == 1 || perfil == 2 ? (
-              <th>
-                {/*
-                <IconButton aria-label="edit" style={{ color: 'white' }} disabled>
-                    <EditIcon />
-                </IconButton>
-
-                <IconButton aria-label="delete" style={{ color: 'white' }} disabled>
-                  <DeleteIcon />
-                </IconButton>
-                */}
-              </th>
-            ) : (
-                ""
-              )}
+            <th><CheckCircleOutlineIcon /></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          {vacio === 1 ? (
+          {ordenes.length === 0 ? (
             <tr className="text-center">
               <td>---</td>
               <td>---</td>
@@ -435,37 +375,19 @@ const Orden = (props) => {
               <td>---</td>
               <td>---</td>
               <td>---</td>
-              {perfil == 1 || perfil == 2 ? (
-                <td>---</td>
-
-              ) : (
-                  ""
-                )}
-              <td>
-                <RadioButtonUncheckedIcon />
-              </td>
-
-              {perfil == 1 || perfil == 2 ? (
-                <td>
-                  <IconButton aria-label="edit">
-                    <EditIcon />
-                  </IconButton>
-                  
-                  <IconButton aria-label="delete">
-                    <DeleteIcon />
-                  </IconButton>
-                </td>
-              ) : (
-                  ""
-                )}
+              <td>---</td>
+              <td><RadioButtonUncheckedIcon /></td>
+              <td></td>
             </tr>
           ) : (
               ordenes.map((orden, i) =>
                 orden.id_sub_orden ? (
                   <tr key={i} onClick={(e) => verOrden(e, orden.id_sub_orden)}
-                    className={orden.id_estado == 1 ? "orangeRow" :
-                      select == orden.id_sub_orden ? "grayRow" :
-                        "text-center"}
+                    className={
+                        orden.id_estado == 1 ? "orangeRow"
+                      : orden.id_sub_orden === idSubOrden ? "grayRow"
+                      : "text-center"
+                    }
                   >
                     <td>{orden.prioridad}</td>
                     <td>{orden.id_sub_orden}</td>
@@ -478,23 +400,22 @@ const Orden = (props) => {
                     <td>
                       {formatNumber.new(_.round(orden.tiempo_estimado, 2)) + " hrs"}
                     </td>
-                    <td>{formatNumber.new(_.round(orden.kg_solicitados)) + " Kg"}</td>
-                    <td>{formatNumber.new(_.round(orden.real_kg)) + " Kg"}</td>
+                    <td>{formatNumber.new(_.round(orden.kg_solicitados)) + " kg"}</td>
+                    <td>{formatNumber.new(_.round(orden.real_kg)) + " kg"}</td>
                     <td>
-                      {orden.kg_porcentual == null
-                        ? "0 %"
-                        : orden.kg_porcentual > 100
-                          ? "100%"
-                          : formatNumber.new(_.round(orden.kg_porcentual, 2)) + " %"}
+                      {
+                        orden.kg_porcentual == null ? "0 %"
+                        : orden.kg_porcentual > 100 ? "100 %"
+                        : formatNumber.new(_.round(orden.kg_porcentual, 2)) + " %"
+                      }
                     </td>
                     <td>
                       {orden.id_estado == 3 ? (
                         <CheckCircleIcon style={{ color: green[500] }} />
                       ) : (
-                          <RadioButtonUncheckedIcon />
-                        )}
+                        <RadioButtonUncheckedIcon />
+                      )}
                     </td>
-
                     {perfil == 1 || perfil == 2 ? (
                       <td>
                         {editable == true ? (
@@ -517,7 +438,6 @@ const Orden = (props) => {
                         ) : (
                           <IconButton> </IconButton>
                         )}
-
                         <IconButton
                           aria-label="delete"
                           style={orden.id_estado == 1 ? { color: "#ffebee" } : {}}
@@ -527,12 +447,12 @@ const Orden = (props) => {
                         </IconButton>
                       </td>
                     ) : (
-                        ""
-                      )}
+                      ""
+                    )}
                   </tr>
                 ) : (
-                    ""
-                  )
+                  ""
+                )
               )
             )}
         </tbody>
