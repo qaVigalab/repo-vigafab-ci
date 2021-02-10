@@ -12,6 +12,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import { FormGroup } from "@material-ui/core";
 import _ from "lodash";
+import moment from 'moment';
 
 const Orden = (props) => {
   const [perfil, setPerfil] = useState(localStorage.getItem("perfil"));
@@ -21,17 +22,8 @@ const Orden = (props) => {
   const [ordenes, setOrdenes] = useState([]);
   const [idSubOrden, setIdSubOrden] = useState("");
   const [prioridad, setPrioridad] = useState("");
-  const [select, setSelect] = useState(0);
-  
-  let fecha = new Date();
-  let date = fecha.getDate() < 10 ? "0" + fecha.getDate() : fecha.getDate();
-  let month = fecha.getMonth() + 1;
-  let year = fecha.getFullYear();
-  fecha = year + "-" + month + "-" + date;
 
-  const [fechaFinal, setFechaFinal] = useState(
-    localStorage.getItem("fechaFinal") || fecha
-  );
+  const [fechaOrdenes, setFechaOrdenes] = useState(props.fechaOrdenes);
 
   var formatNumber = {
     separador: ".", // separador para los miles
@@ -83,6 +75,7 @@ const Orden = (props) => {
 
     props.setIdOrden(!props.id_orden)
     props.updateOrden(id_orden);
+    console.log(id_orden);
   }
 
   /*const cambiarOrden = (opcion,e) => {
@@ -143,27 +136,6 @@ const Orden = (props) => {
     console.log(productos.find((p) => p.sku.includes(sku)));
     setModalEdit(!modalEdit);
   };
-
-  const loadProductos = () => {
-    fetch(
-      global.api.dashboard.getproducto,
-      {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
-        },
-        body: false,
-      }
-    )
-      .then((response) => response.json())
-      .then((result) => {
-        setProductos(result);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }
 
   const changeSku = (event) => {
     const sku = event.target.value;
@@ -248,13 +220,16 @@ const Orden = (props) => {
   };
 
   const fechaChange = (e) => {
-    setFechaFinal(e.target.value);
-    localStorage.setItem("fechaFinal", e.target.value);
+    var date = new Date(e.target.value);
+    props.updateFecha(moment(date).add(3, 'hours').format('YYYY-MM-DD'));
 
-    var date1 = new Date(localStorage.getItem("fechaFinal"));
+    var date1 = new Date(moment(date).add(3, 'hours'));
     var date2 = new Date();
 
-    if(date1.getTime() >= date2.getTime()){
+    console.log(date1);
+    console.log(date2);
+
+    if(date1.getDate() >= date2.getDate()){
       setEditable(true);
     } else{
       setEditable(false);
@@ -266,27 +241,20 @@ const Orden = (props) => {
       props.updateOrden(idSubOrden);
     }, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [idSubOrden]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      localStorage.setItem("recarga_orden", 0)
-    }, 600000);
-    return () => clearInterval(interval);
-  }, [])
-
-  useEffect(() => {
-    props.updateOrden(idSubOrden);
-  }, [localStorage.getItem("fechaFinal")]);
+    setFechaOrdenes(props.fechaOrdenes);
+  }, [props.fechaOrdenes]);
 
   useEffect(() => {
     setOrdenes(props.ordenes);
-    setIdSubOrden(props.ordenSelected);
+    setIdSubOrden(props.ordenSelected.id_sub_orden);
   }, [props.ordenSelected]);
 
   useEffect(() => {
-    loadProductos();
-  }, [])
+    setProductos(props.productos);
+  }, [props.productos]);
 
   return (
     <div>
@@ -325,7 +293,7 @@ const Orden = (props) => {
               type="date"
               name="tiempo"
               id="tiempo"
-              value={localStorage.getItem("fechaFinal")}
+              value={fechaOrdenes}
               onChange={fechaChange}
             />
           </Col>
@@ -418,10 +386,10 @@ const Orden = (props) => {
                     </td>
                     {perfil == 1 || perfil == 2 ? (
                       <td>
-                        {editable == true ? (
+                        {editable == true && orden.id_estado === 2 ? (
                         <IconButton
                           aria-label="edit"
-                          style={orden.id_estado == 1 ? { color: "#ffebee" } : {}}
+                          style={orden.id_estado === 1 ? { color: "#ffebee" } : {}}
                           onClick={() => toggleEdit(
                             orden.prioridad, 
                             orden.id_sub_orden, 
@@ -430,13 +398,13 @@ const Orden = (props) => {
                             orden.cajas,
                             orden.kg_solicitados,
                             orden.tiempo_estimado,
-                            localStorage.getItem("fechaFinal")
+                            fechaOrdenes
                           )}
                         >
                           <EditIcon />
                         </IconButton>
                         ) : (
-                          <IconButton> </IconButton>
+                          <IconButton aria-label="edit" disabled style={{ opacity: 0 }}> <EditIcon /> </IconButton>
                         )}
                         <IconButton
                           aria-label="delete"

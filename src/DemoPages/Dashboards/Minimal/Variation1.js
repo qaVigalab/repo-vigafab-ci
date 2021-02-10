@@ -58,7 +58,6 @@ const MinimalDashboard1 = (props) => {
       body: raw,
       redirect: "follow",
     };
-
     fetch(
       global.api.dashboard.getmaquinas,
       requestOptions
@@ -73,17 +72,38 @@ const MinimalDashboard1 = (props) => {
   useEffect(() => {
     setMaquinas([]);
     getMaquinas("Envasadora");
-
-    localStorage.setItem("fechaFinal", moment().format('YYYY-MM-DD'))
-    localStorage.setItem("recarga_orden", 0)
   }, []);
 
   /* ESTO ES PARA PROBAR LO QUE DIJO EL EDUARDO */
+  const [productos, setProductos] = useState([]);
   const [ordenes, setOrdenes] = useState([]);
-  const [ordenSelected, setOrdenSelected] = useState("");
+  const [ordenSelected, setOrdenSelected] = useState({});
+  const [fechaOrdenes, setFechaOrdenes] = useState(moment().format('YYYY-MM-DD'));
+
+  /* Se consulta a la API para obtener, sólo una vez, el listado de productos */
+  const loadProductos = () => {
+    fetch(
+      global.api.dashboard.getproducto,
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
+        },
+        body: false,
+      }
+    )
+    .then((response) => response.json())
+    .then((result) => {
+      setProductos(result);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+  }
 
   /* Se consulta a la API para obtener la información de las órdenes diarias */
-  const loadOrdenes = async (orden) => {
+  const loadOrdenes = async (id_orden) => {
     const query = await fetch(global.api.dashboard.getordenes, {
       method: "POST",
       headers: {
@@ -91,20 +111,27 @@ const MinimalDashboard1 = (props) => {
         "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
       },
       body: JSON.stringify({
-        fecha: localStorage.getItem("fechaFinal"),
+        fecha: fechaOrdenes
       }),
     })
     .then((response) => response.json())
     .then((result) => {
+      console.log(result);
       if (result.length >= 1) {
         setOrdenes(result);
-        if (orden === "")
-          setOrdenSelected(result.find(e => e.id_estado === 1).id_sub_orden);
+        if (id_orden === "") {
+          if (result.find(e => e.id_estado === 1))
+            setOrdenSelected(result.find(e => e.id_estado === 1));
+          else
+            setOrdenSelected(result[0]);
+        }
+        else if (id_orden === -1)
+          setOrdenSelected(result[0]);
         else
-          setOrdenSelected(orden);
+          setOrdenSelected(result.find(e => e.id_sub_orden === id_orden));
       } else {
         setOrdenes([]);
-        setOrdenSelected("");
+        setOrdenSelected({});
       }
     })
     .catch((err) => {
@@ -117,15 +144,29 @@ const MinimalDashboard1 = (props) => {
     loadOrdenes(orden);
   }
 
+  /* Se actualiza la fecha de las órdenes a cargar desde el componente Orden */
+  const updateFecha = (fecha) => {
+    setFechaOrdenes(fecha);
+  }
+
   /* Debug: Se imprime el listado de órdenes del día en curso y la orden seleccionada en el listado */
   useEffect(() => {
     console.log(ordenes);
     console.log(ordenSelected);
   }, [ordenSelected]);
 
+  useEffect(() => {
+    var date = new Date(fechaOrdenes);
+    if (moment(new Date(date.setHours(date.getHours() + 3))).format('YYYY-MM-DD') != moment().format('YYYY-MM-DD'))
+      loadOrdenes(-1);
+    else
+      loadOrdenes("");
+  }, [fechaOrdenes])
+
   /* Se cargan las órdenes al recargar la página */
   useEffect(() => {
     loadOrdenes("");
+    loadProductos();
   }, []);
 
   return (
@@ -176,9 +217,12 @@ const MinimalDashboard1 = (props) => {
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
                 <Orden 
+                  productos={productos}
                   ordenes={ordenes}
                   ordenSelected={ordenSelected}
+                  fechaOrdenes={fechaOrdenes}
                   updateOrden={id_orden => updateOrden(id_orden)}
+                  updateFecha={fecha => updateFecha(fecha)}
                 />
               </Card>
             </Col>
@@ -187,7 +231,10 @@ const MinimalDashboard1 = (props) => {
           <Row>
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
-                <Produciendo estado={1} />
+                <Produciendo 
+                  ordenes={ordenes}
+                  ordenSelected={ordenSelected}
+                />
               </Card>
             </Col>
           </Row>

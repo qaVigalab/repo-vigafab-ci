@@ -14,11 +14,8 @@ const Produciendo = (props) => {
     const [calidad, setCalidad] = useState(0)
     const [eficiencia, setEficiencia] = useState(0)
     const [disponibilidad, setDisponibilidad] = useState(0)
-    const [estado, setEstado] = useState(0)
-    const [nOrden, setnOrden] = useState(0)
-    const [sku, setSku] = useState("")
-    const [producto, setProducto] = useState("")
-    const [productividad, setProductividad] = useState(0)
+    const [nOrden, setnOrden] = useState(props.ordenSelected.id_sub_orden)
+
     const [tiempo, setTiempo] = useState(0)
     const [kg_acumulado, setKg_acumulado] = useState(0)
     const [h_acumulado, setH_acumulado] = useState(0)
@@ -34,8 +31,6 @@ const Produciendo = (props) => {
     const [perdidaTotal, setPerdidaTotal] = useState(0)
     const [TiempoActivo, setTiempoActivo] = useState(0)
     const [TiempoInactivo, setTiempoInactivo] = useState(0)
-    const [TiempoJustificado, setTiempoJustificado] = useState(0)
-    const [TiempoDesconectado, setTiempoDesconectado] = useState(0)
     const [dataTorta, setDataTorta] = useState(
         {
             legend: [
@@ -100,132 +95,68 @@ const Produciendo = (props) => {
         return horas === 0 ? minutos + " Min" : horas + " Hrs " + minutos + " Min"
     }
 
-    const loadResumen = () => {
-        let link
-        localStorage.getItem("id_orden") === localStorage.getItem("id_ordenA")
-            ? link = global.api.dashboard.getresumenlinea
-            : link = global.api.dashboard.getreportehistoricolinea
-        fetch(link, {
+    const loadResumen = async () => {
+        let link = global.api.dashboard.getresumenlinea;
+        const query = await fetch(link, {
             "method": "POST",
             "headers": {
                 "Content-Type": "application/json",
                 "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
             },
             body: JSON.stringify({
-                id_orden: localStorage.getItem("id_orden")
+                id_orden: props.ordenSelected.id_sub_orden
             }),
         })
-            .then(response => response.json())
-            .then(result => {
-                const real_kg = result[0].real_kg == 0 ? 1 : result[0].real_kg
-                const tiempo = result[0].tiempo_actividad == 0 ? 1 : result[0].tiempo_actividad
-                const h_acumu = result[0].hamburguesas_acumuladas == 0 ? 1 : result[0].hamburguesas_acumuladas
-                const g_ham = result[0].g_hamburguesa == 0 ? 1 : result[0].g_hamburguesa
-                const tinac = result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo
-                const kg_emp = result[0].cajas_acumuladas * result[0].kg_caja
-                const kg_env = h_acumu * g_ham / 1000
-                setEstado(result[0].estado)
-                setnOrden(result[0].id_sub_orden)
-                setSku(result[0].sku)
-                setProducto(result[0].producto)
-                setProductividad(result[0].productividad)
-                setTiempo(result[0].tiempo)
-                setKg_acumulado(result[0].real_kg)
-                setH_acumulado(result[0].hamburguesas_acumuladas)
-                setCajas_acumuladas(result[0].cajas_acumuladas)
-                setKg_solicitado(result[0].kg_solicitados)
-                setH_solicitado(result[0].hamburguesas_solicitadas)
-                setcajas_solicitadas(result[0].cajas)
-                setTiempoActivo(result[0].tiempo_actividad)
-                setTiempoJustificado(result[0].tiempo_justificado)
-                setTiempoInactivo(result[0].tiempo_inactivo)
-                setTiempoDesconectado(result[0].tiempo_desconectado)
-                setCalidad((result[0].cajas_acumuladas * result[0].kg_caja) / real_kg)
-                setEficiencia(((result[0].cajas_acumuladas * result[0].kg_caja) / (result[0].kg_hora * tiempo / 60)))
-                setDisponibilidad((result[0].tiempo_actividad / (tinac + result[0].tiempo_actividad)))
-               
+        .then(response => response.json())
+        .then(result => {
+            const real_kg = result[0].real_kg == 0 ? 1 : result[0].real_kg
+            const tiempo = result[0].tiempo_actividad == 0 ? 1 : result[0].tiempo_actividad
+            const h_acumu = result[0].hamburguesas_acumuladas == 0 ? 1 : result[0].hamburguesas_acumuladas
+            const g_ham = result[0].g_hamburguesa == 0 ? 1 : result[0].g_hamburguesa
+            const tinac = result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo
+            const kg_emp = result[0].cajas_acumuladas * result[0].kg_caja
+            const kg_env = h_acumu * g_ham / 1000
+            
+            setnOrden(result[0].id_sub_orden)
+            setTiempo(result[0].tiempo)
+            setKg_acumulado(result[0].real_kg)
+            setH_acumulado(result[0].hamburguesas_acumuladas)
+            setCajas_acumuladas(result[0].cajas_acumuladas)
+            setKg_solicitado(result[0].kg_solicitados)
+            setH_solicitado(result[0].hamburguesas_solicitadas)
+            setcajas_solicitadas(result[0].cajas)
+            setTiempoActivo(result[0].tiempo_actividad)
+            setTiempoInactivo(result[0].tiempo_inactivo)
+            setCalidad((result[0].cajas_acumuladas * result[0].kg_caja) / real_kg)
+            setEficiencia(((result[0].cajas_acumuladas * result[0].kg_caja) / (result[0].kg_hora * tiempo / 60)))
+            setDisponibilidad((result[0].tiempo_actividad / (tinac + result[0].tiempo_actividad)))
+            
+            setPerdidaEnvasado((real_kg - kg_env) / real_kg)
+            setPerdidaEmpaquetadora((kg_env - kg_emp) / kg_env)
+            setPerdidaTotal((real_kg - kg_emp) / real_kg)
+            setPerdidaTotalKg(real_kg - kg_emp)
+            setPerdidaEnvasadoKg(real_kg - kg_env)
+            setPerdidaEmpaquetadoraKg(kg_env - kg_emp)
 
-                setPerdidaEnvasado((real_kg - kg_env) / real_kg)
-                setPerdidaEmpaquetadora((kg_env - kg_emp) / kg_env)
-                setPerdidaTotal((real_kg - kg_emp) / real_kg)
-                setPerdidaTotalKg(real_kg - kg_emp)
-                setPerdidaEnvasadoKg(real_kg - kg_env)
-                setPerdidaEmpaquetadoraKg(kg_env - kg_emp)
-                if (localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA")) {
-                    setDataTorta(
+            setDataTorta(
+                {
+                    datasets: [
                         {
-
-                            datasets: [
-                                {
-                                    data: [Math.round(0 / 60 * 100) / 100, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, Math.round(0 / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
-                                }
-                            ],
+                            data: [Math.round(0 / 60 * 100) / 100, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, 
+                                    Math.round(0 / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
                         }
-                    )
+                    ],
                 }
-            }
             )
-
-
-            .catch(err => {
-                console.error(err);
-            });
-    }
-
-    const loadTorta = () => {
-        if (localStorage.getItem("id_orden") === localStorage.getItem("id_ordenA")) {
-            fetch(global.api.dashboard.getparosgeneral, {
-                "method": "POST",
-                "headers": {
-                    "Content-Type": "application/json",
-                    "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
-                },
-                body: JSON.stringify({
-                    id_orden: localStorage.getItem("id_orden")
-                }),
-            })
-                .then(response => response.json())
-                .then(r => {
-                    let data = [];
-                    if (r[0].t_noJustificado == 0 && r[0].t_justificado == 0 && r[0].t_activo == 0) {
-                        data = [1, 0, 0, 0]
-                    } else {
-                        data = [0, Math.round(r[0].t_noJustificado / 60 * 100) / 100, Math.round(r[0].t_justificado / 60 * 100) / 100, Math.round(r[0].t_activo / 60 * 100) / 100]
-                    }
-
-                    setDataTorta(
-                        {
-                            datasets: [
-                                {
-                                    data: [Math.round(r[0].tiempo_desconectado / 60 * 100) / 100, Math.round(r[0].tiempo_paro / 60 * 100) / 100, Math.round(r[0].tiempo_justificado / 60 * 100) / 100, Math.round(r[0].tiempo_produccion / 60 * 100) / 100]
-                                }
-                            ],
-                        }
-                    )
-                }
-                )
-                .catch(err => {
-                    console.error(err);
-                });
-        }
+        })
+        .catch(err => {
+            console.error(err);
+        });
     }
 
     useEffect(() => {
-        loadResumen()
-        loadTorta()
-    }, [props.id_orden]);
-
-    useEffect(() => {
-        setTimeout(() => {
-            loadResumen()
-            loadTorta()
-        }, 2000);
-
-        const interval = setInterval(() => {
-            loadResumen();
-        }, 30000);
-        return () => clearInterval(interval);
-    }, []);
+        loadResumen();
+    }, [props.ordenSelected]);
 
     return (
         <div>
@@ -234,8 +165,10 @@ const Produciendo = (props) => {
                     <br />
                     <Col md="2">
                         <div align="left" className="text-uppercase font-weight-bold my-1 ml-4">{
-                            localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Terminada" :
-                                estado === 1 ? "Detenida" : "Produciendo"}</div>
+                            props.ordenSelected.id_estado === 3 ? "Terminada"
+                            : props.ordenSelected.id_estado === 2 ? "En espera"
+                            : "Produciendo"
+                        }</div>
                     </Col>
                     <Col md="2">
                         <Row>
@@ -246,19 +179,19 @@ const Produciendo = (props) => {
                     <Col md="2">
                         <Row>
                             <div align="left" className="font2 my-1">Sku:</div>
-                            <div align="left" className="font3 my-1">{sku}</div>
+                            <div align="left" className="font3 my-1">{props.ordenSelected.sku}</div>
                         </Row>
                     </Col>
                     <Col md="3">
                         <Row>
                             <div align="left" className="font2 my-1">Producto:</div>
-                            <div align="left" className="font3 my-1">{producto}</div>
+                            <div align="left" className="font3 my-1">{props.ordenSelected.producto}</div>
                         </Row>
                     </Col>
                     <Col md="2">
                         <Row>
                             <div align="left" className="font2 my-1">Productividad:</div>
-                            <div align="left" className="font3 my-1">{formatNumber.new(_.round(productividad)) + " ham/min"}</div>
+                            <div align="left" className="font3 my-1">{formatNumber.new(_.round(props.ordenSelected.productividad)) + " ham/min"}</div>
                         </Row>
                     </Col>
                     <br />
@@ -276,9 +209,12 @@ const Produciendo = (props) => {
                             <Col align="right">
                                 <div className="font2  my-1">Estado</div>
                             </Col>
-                            <div className={estado == 1 ? "font2White  my-1" : "font2White my-1"}>
-                                {localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Terminada"
-                                    : estado == 1 ? " Detenida" : " Produciendo"}
+                            <div className={props.ordenSelected.id_estado === 1 ? "font2White  my-1" : "font2White my-1"}>
+                                {
+                                    props.ordenSelected.id_estado === 3 ? "Terminada"
+                                    : props.ordenSelected.id_estado == 2 ? "En espera"
+                                    : "Produciendo"
+                                }
                             </div>
                             <div className="font2 ml-3 my-1">Tiempo Total</div>
                             <div align="right" className="font2White ml-1 mr-5 my-1">{formatNumber.new(_.round(tiempo / 60, 2))} hrs</div>
@@ -467,10 +403,6 @@ const Produciendo = (props) => {
                             <Brightness1Icon style={{ color: "#2264A7" }} />
                   Produciendo: {formatHour(TiempoActivo)}
                         </Row>
-                        {/*                         <Row className="ml-5">
-                            <Brightness1Icon style={{ color: "#F7431E" }} />
-                  Justificado: {formatHour(TiempoJustificado)}
-                        </Row> */}
                         <Row className="ml-5">
                             <Brightness1Icon style={{ color: "#F7431E" }} />
                   En Paro: {formatHour(TiempoInactivo)}
