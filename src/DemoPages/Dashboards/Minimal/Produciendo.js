@@ -109,14 +109,7 @@ const Produciendo = (props) => {
         })
         .then(response => response.json())
         .then(result => {
-            const real_kg = result[0].real_kg == 0 ? 1 : result[0].real_kg
-            const tiempo = result[0].tiempo_actividad == 0 ? 1 : result[0].tiempo_actividad
-            const h_acumu = result[0].hamburguesas_acumuladas == 0 ? 1 : result[0].hamburguesas_acumuladas
-            const g_ham = result[0].g_hamburguesa == 0 ? 1 : result[0].g_hamburguesa
-            const tinac = result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo
-            const kg_emp = result[0].cajas_acumuladas * result[0].kg_caja
-            const kg_env = h_acumu * g_ham / 1000
-            
+
             setnOrden(result[0].id_sub_orden)
             setTiempo(result[0].tiempo)
             setKg_acumulado(result[0].real_kg)
@@ -127,23 +120,23 @@ const Produciendo = (props) => {
             setcajas_solicitadas(result[0].cajas)
             setTiempoActivo(result[0].tiempo_actividad)
             setTiempoInactivo(result[0].tiempo_inactivo)
-            setCalidad((result[0].cajas_acumuladas * result[0].kg_caja) / real_kg)
-            setEficiencia(((result[0].cajas_acumuladas * result[0].kg_caja) / (result[0].kg_hora * tiempo / 60)))
-            setDisponibilidad((result[0].tiempo_actividad / (tinac + result[0].tiempo_actividad)))
+            setCalidad((result[0].cajas_acumuladas * result[0].kg_caja) / props.ordenSelected.kg_formados)
+            setEficiencia(((result[0].cajas_acumuladas * result[0].kg_caja) / (result[0].kg_hora * props.ordenSelected.tiempo_activo / 60)))
+            setDisponibilidad((result[0].tiempo_actividad / (props.ordenSelected.tiempo_inactivo + result[0].tiempo_actividad)))
             
-            setPerdidaEnvasado((real_kg - kg_env) / real_kg)
-            setPerdidaEmpaquetadora((kg_env - kg_emp) / kg_env)
-            setPerdidaTotal((real_kg - kg_emp) / real_kg)
-            setPerdidaTotalKg(real_kg - kg_emp)
-            setPerdidaEnvasadoKg(real_kg - kg_env)
-            setPerdidaEmpaquetadoraKg(kg_env - kg_emp)
+            setPerdidaEnvasado((props.ordenSelected.kg_formados - props.ordenSelected.kg_envasados) / props.ordenSelected.kg_formados)
+            setPerdidaEmpaquetadora((props.ordenSelected.kg_envasados - props.ordenSelected.real_kg) / props.ordenSelected.kg_envasados)
+            setPerdidaTotal((props.ordenSelected.kg_formados - props.ordenSelected.real_kg) / props.ordenSelected.kg_formados)
+            setPerdidaTotalKg(props.ordenSelected.kg_formados - props.ordenSelected.real_kg)
+            setPerdidaEnvasadoKg(props.ordenSelected.kg_formados - props.ordenSelected.kg_envasados)
+            setPerdidaEmpaquetadoraKg(props.ordenSelected.kg_envasados - props.ordenSelected.real_kg)
 
             setDataTorta(
                 {
                     datasets: [
                         {
-                            data: [Math.round(0 / 60 * 100) / 100, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, 
-                                    Math.round(0 / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
+                            data: [Math.round(0 / 60 * 100) / 100, Math.round(props.ordenSelected.tiempo_inactivo / 60 * 100) / 100, 
+                                    Math.round(0 / 60 * 100) / 100, Math.round(props.ordenSelected.tiempo_activo / 60 * 100) / 100]
                         }
                     ],
                 }

@@ -104,7 +104,7 @@ const MinimalDashboard1 = (props) => {
 
   /* Se consulta a la API para obtener la información de las órdenes diarias */
   const loadOrdenes = async (id_orden) => {
-    const query = await fetch(global.api.dashboard.getordenes, {
+    const query = await fetch(global.api.dashboard.getOrdenesResumen, {
       method: "POST",
       headers: {
         "content-type": "application/json",
