@@ -46,10 +46,9 @@ const Orden = (props) => {
     }
   }
 
-  const deleteOrdenes = async (id_sub, e) => {
+  const deleteOrdenes = (id_sub, e) => {
     e.preventDefault();
-
-    await fetch(global.api.dashboard.deletesuborden, {
+    fetch(global.api.dashboard.deletesuborden, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -386,7 +385,7 @@ const Orden = (props) => {
                     </td>
                     {perfil == 1 || perfil == 2 ? (
                       <td>
-                        {editable == true && orden.id_estado === 2 ? (
+                        {editable == true && orden.id_estado != 3 ? (
                         <IconButton
                           aria-label="edit"
                           style={orden.id_estado === 1 ? { color: "#ffebee" } : {}}

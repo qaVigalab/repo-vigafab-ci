@@ -15,11 +15,12 @@ const Formadora2 = (props) => {
     const labels = {
         enabled: false
     };
+
     const markers = {
         size: 0
     };
-    const tooltips = {
 
+    const tooltips = {
         x: {
             format: 'dd/MM/yy HH:mm',
 
@@ -65,6 +66,7 @@ const Formadora2 = (props) => {
             ],
         }
     )
+
     const [options3, setOptions3] = useState(
         {
             chart: {
@@ -128,7 +130,8 @@ const Formadora2 = (props) => {
                     color: '#606060'
                 },
             }
-        })
+        }
+    )
     const [series3, setSeries3] = useState(
         [{
             name: 'Temperatura',
@@ -136,15 +139,12 @@ const Formadora2 = (props) => {
 
         },]
     )
+
     const [seriesTimeLine, setSeriesTimeLine] = useState([])
-    const [optionsTimeLine, setOptionsTimeLine] = useState(
-
-        {
-
+    const [optionsTimeLine, setOptionsTimeLine] = useState({
             dataLabels: labels,
             markers: markers,
             tooltip: tooltips,
-
             chart: {
                 type: 'rangeBar',
             },
@@ -157,13 +157,11 @@ const Formadora2 = (props) => {
                     }
                 }
             },
-
             xaxis: {
                 type: 'datetime',
                 labels: {
                 }
             },
-
             grid: {
                 row: {
                     colors: ['#f3f4f5', '#fff'],
@@ -172,7 +170,7 @@ const Formadora2 = (props) => {
             }
         }
     )
-    const [productividad, setProductividad] = useState(0)
+    
     const [hacumuladas, setHacumuladas] = useState(0)
     const [tActivo, setTActivo] = useState(0)
     const [tInactivo, setTInactivo] = useState(0)
@@ -214,7 +212,7 @@ const Formadora2 = (props) => {
 
             body: JSON.stringify({
                 id_vibot: id_vibot,
-                id_orden: localStorage.getItem("id_orden")
+                id_orden: props.ordenSelected.id_sub_orden
             }),
         })
             .then(response => response.json())
@@ -226,7 +224,6 @@ const Formadora2 = (props) => {
                     data = [0, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
                 }
                 setTActivo(result[0].tiempo_actividad)
-                setProductividad(result[0].productividad)
                 setTInactivo(result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo)
                 setEstado(result[0].estado)
                 setHacumuladas(result[0].hamburguesas_acumuladas)
@@ -256,7 +253,7 @@ const Formadora2 = (props) => {
                 "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
             },
             body: JSON.stringify({
-                id_orden: localStorage.getItem("id_orden")
+                id_orden: props.ordenSelected.id_sub_orden
             }),
         })
             .then(response => response.json())
@@ -269,7 +266,6 @@ const Formadora2 = (props) => {
             ).then(() => {
 
                 setSeries3([{
-
                     data: temperatura
                 }]);
                 setOptions3({ xaxis: { categories: fecha } });
@@ -290,7 +286,7 @@ const Formadora2 = (props) => {
             },
             body: JSON.stringify({
                 id_vibot: id_vibot,
-                id_orden: localStorage.getItem("id_orden")
+                id_orden: props.ordenSelected.id_sub_orden
             }),
         })
             .then((response) => response.json())
@@ -356,7 +352,7 @@ const Formadora2 = (props) => {
         loadResumen()
         loadGraphTemp()
         loadTimeLine()
-    }, [props.id_orden]);
+    }, [props.ordenSelected]);
 
     useEffect(() => {
         setTimeout(() => {
@@ -368,7 +364,7 @@ const Formadora2 = (props) => {
             loadResumen();
         }, 30000);
         return () => clearInterval(interval);
-    }, []);
+    }, [props.ordenSelected]);
 
     return (
         <div>
@@ -383,15 +379,26 @@ const Formadora2 = (props) => {
                     <Col >
                         <Row >
                             <Col align="right">
-                                <div className="font2  my-4 ">Estado</div></Col>
-                            <div className={estado == 1 ? "font2gray  my-4" : "font2Blue my-4"}>{
-                                localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Terminada" :
-                                    estado == 1 ? " Detenida" : " Produciendo"}
-                            </div>
+                                <div className="font2  my-4 ">Estado</div>
+                            </Col>
+                            <div className={props.ordenSelected.id_estado != 1 ? "font2gray  my-4" : "font2Blue my-4"}>{
+                                props.ordenSelected.id_estado === 3 ? "Terminada"
+                                : props.ordenSelected.id_estado === 2 ? "En espera"
+                                : "Produciendo"
+                            }</div>
                             <div className="font2 ml-3 my-4">Tiempo de Actividad</div>
-                            <div className="font2Blue ml-1 mr-5 my-4">{formatNumber.new(_.round(tActivo / 60, 2))} hrs</div>
+                            {parseInt(props.ordenSelected.tiempo_total/60) == 1 ?
+                                <div className="font2Blue ml-1 mr-5 my-4">
+                                    {parseInt(props.ordenSelected.tiempo_total/60)} hr,
+                                    {" " + parseInt(props.ordenSelected.tiempo_total%60)} min
+                                </div> :
+                                <div className="font2Blue ml-1 mr-5 my-4">
+                                    {parseInt(props.ordenSelected.tiempo_total/60)} hrs,
+                                    {" " + parseInt(props.ordenSelected.tiempo_total%60)} min
+                                </div> 
+                            }
                             <div className="font2 ml-3 my-4">Productividad</div>
-                            <div className="font2Blue ml-1 mr-5 my-4">{formatNumber.new(_.round(productividad)) + " ham/min"}</div>
+                            <div className="font2Blue ml-1 mr-5 my-4">{formatNumber.new(_.round(props.ordenSelected.hamb_formadas/props.ordenSelected.tiempo_total)) + " ham/min"}</div>
                         </Row>
                     </Col>
                 </Row>
@@ -404,16 +411,16 @@ const Formadora2 = (props) => {
                     <div class="noSpace">
                         <div className="blackBorderBot">
                             <Row className="my-4">
-                                <div align="center" className="ml-auto indi">{formatNumber.new(_.round(kgacumulados))}</div>
-                                <div align="center" className="font2 mt-3 ml-2 mr-auto">     Kg </div>
+                                <div align="center" className="ml-auto indi">{formatNumber.new(_.round(props.ordenSelected.kg_formados))}</div>
+                                <div align="center" className="font2 mt-3 ml-2 mr-auto">Kg</div>
                             </Row>
                         </div>
 
                         <div className="blackBorderBot">
                             <Row className="" >
                                 <Col md="12">
-                                    <div align="center" className="indi mt-3 ">{formatNumber.new(_.round(hacumuladas))}</div>
-                                    <div align="left" className="font2 mb-3 ">Hamburguesas formadas</div>
+                                    <div align="center" className="indi mt-3">{formatNumber.new(_.round(props.ordenSelected.hamb_formadas))}</div>
+                                    <div align="left" className="font2 mb-3">Hamburguesas formadas</div>
                                 </Col>
                             </Row>
                         </div>
@@ -428,10 +435,10 @@ const Formadora2 = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (tActivo / (tInactivo + tActivo)) * 100 === Infinity ? 0 :
-                                                    (tActivo / (tInactivo + tActivo)) * 100 > 0 ?
-                                                        (tActivo / (tInactivo + tActivo)) * 100
-                                                        : 0
+                                                props.ordenSelected.tiempo_activo/props.ordenSelected.tiempo_total * 100 === Infinity ? 0 :
+                                                props.ordenSelected.tiempo_activo/props.ordenSelected.tiempo_total * 100 > 0 ?
+                                                props.ordenSelected.tiempo_activo/props.ordenSelected.tiempo_total * 100 :
+                                                0
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -457,10 +464,10 @@ const Formadora2 = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))) * 100 === Infinity ? 0 :
-                                                    ((kgacumulados / ((capacidad / 3) * ((tActivo) / 60)))) > 0 ?
-                                                        (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))) * 100  //(totalKG/capacidad*tiempo que se demoro)
-                                                        : 0
+                                                (props.ordenSelected.kg_formados / ((props.ordenSelected.kg_hora / 3) * ((props.ordenSelected.tiempo_activo) / 60))) * 100 === Infinity ? 0 :
+                                                ((props.ordenSelected.kg_formados / ((props.ordenSelected.kg_hora / 3) * ((props.ordenSelected.tiempo_activo) / 60)))) > 0 ?
+                                                (props.ordenSelected.kg_formados / ((props.ordenSelected.kg_hora / 3) * ((props.ordenSelected.tiempo_activo) / 60))) * 100  //(totalKG/capacidad*tiempo que se demoro)
+                                                : 0
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.

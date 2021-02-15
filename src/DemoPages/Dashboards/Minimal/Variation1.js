@@ -103,8 +103,8 @@ const MinimalDashboard1 = (props) => {
   }
 
   /* Se consulta a la API para obtener la información de las órdenes diarias */
-  const loadOrdenes = async (id_orden) => {
-    const query = await fetch(global.api.dashboard.getOrdenesResumen, {
+  const loadOrdenes = (id_orden) => {
+    const query = fetch(global.api.dashboard.getOrdenesResumen, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -242,7 +242,9 @@ const MinimalDashboard1 = (props) => {
           <Row>
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
-                <Formadora2 estado={1} />
+                <Formadora2
+                  ordenSelected={ordenSelected}
+                />
               </Card>
             </Col>
           </Row>
@@ -265,6 +267,7 @@ const MinimalDashboard1 = (props) => {
                   <CialWidget
                     nombre={maquina.maquina}
                     id_vibot={maquina.id}
+                    ordenSelected={ordenSelected}
                   />
                 ))}
               </Row>
@@ -300,13 +303,17 @@ const MinimalDashboard1 = (props) => {
           <Row>
             <Col md="6" xl="6">
               <Card className="main-card mb-3">
-                <TotalEnvasadoras estado={1} />
+                <TotalEnvasadoras
+                  ordenSelected={ordenSelected}
+                />
               </Card>
             </Col>
 
             <Col md="6" xl="6">
               <Card className="main-card mb-3">
-                <Empaque estado={1} />
+                <Empaque
+                  ordenSelected={ordenSelected}
+                />
               </Card>
             </Col>
           </Row>

@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import icono1 from "./images/icono1.png";
 import icono2 from "./images/icono2.png";
 import icono3 from "./images/icono3.png";
-import TimeLine from "./TimeLine";
+//import TimeLine from "./TimeLine";
 import _ from "lodash";
 import Brightness1Icon from "@material-ui/icons/Brightness1";
 import Circle from "react-circle";
@@ -16,13 +16,6 @@ const Produciendo = (props) => {
     const [disponibilidad, setDisponibilidad] = useState(0)
     const [nOrden, setnOrden] = useState(props.ordenSelected.id_sub_orden)
 
-    const [tiempo, setTiempo] = useState(0)
-    const [kg_acumulado, setKg_acumulado] = useState(0)
-    const [h_acumulado, setH_acumulado] = useState(0)
-    const [cajas_acumuladas, setCajas_acumuladas] = useState(0)
-    const [kg_solicitado, setKg_solicitado] = useState(0)
-    const [h_solicitado, setH_solicitado] = useState(0)
-    const [cajas_solicitadas, setcajas_solicitadas] = useState(0)
     const [perdidaEnvasado, setPerdidaEnvasado] = useState(0)
     const [perdidaEmpaquetadora, setPerdidaEmpaquetadora] = useState(0)
     const [perdidaTotalKg, setPerdidaTotalKg] = useState(0)
@@ -33,38 +26,13 @@ const Produciendo = (props) => {
     const [TiempoInactivo, setTiempoInactivo] = useState(0)
     const [dataTorta, setDataTorta] = useState(
         {
-            legend: [
-                {
-                    display: false,
-                    position: "top",
-                    fullWidth: true,
-                    reverse: true,
-                },
-            ],
-
-            labels: [
-                "Desconectado",
-                "Paro sin Justificar",
-                "Paro Justificado",
-                "Producción",
-            ],
-            datasets: [
-                {
-                    data: [],
-                    backgroundColor: [
-                        "#d9d9d9",
-                        "#F7431E  ",
-                        "#FFB000",
-                        "#2264A7",
-                    ],
-                    hoverBackgroundColor: [
-                        "#d9d9d9",
-                        "#F7431E  ",
-                        "#FFB000",
-                        "#2264A7 ",
-                    ],
-                },
-            ],
+            legend: [{display: false, position: "top", fullWidth: true, reverse: true}],
+            labels: ["Desconectado", "Paro sin Justificar", "Paro Justificado", "Producción",],
+            datasets: [{
+                data: [],
+                backgroundColor: ["#d9d9d9", "#F7431E ", "#FFB000", "#2264A7"],
+                hoverBackgroundColor: ["#d9d9d9", "#F7431E  ", "#FFB000", "#2264A7 "],
+            }],
         }
     )
 
@@ -95,60 +63,31 @@ const Produciendo = (props) => {
         return horas === 0 ? minutos + " Min" : horas + " Hrs " + minutos + " Min"
     }
 
-    const loadResumen = async () => {
-        let link = global.api.dashboard.getresumenlinea;
-        const query = await fetch(link, {
-            "method": "POST",
-            "headers": {
-                "Content-Type": "application/json",
-                "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
-            },
-            body: JSON.stringify({
-                id_orden: props.ordenSelected.id_sub_orden
-            }),
-        })
-        .then(response => response.json())
-        .then(result => {
-
-            setnOrden(result[0].id_sub_orden)
-            setTiempo(result[0].tiempo)
-            setKg_acumulado(result[0].real_kg)
-            setH_acumulado(result[0].hamburguesas_acumuladas)
-            setCajas_acumuladas(result[0].cajas_acumuladas)
-            setKg_solicitado(result[0].kg_solicitados)
-            setH_solicitado(result[0].hamburguesas_solicitadas)
-            setcajas_solicitadas(result[0].cajas)
-            setTiempoActivo(result[0].tiempo_actividad)
-            setTiempoInactivo(result[0].tiempo_inactivo)
-            setCalidad((result[0].cajas_acumuladas * result[0].kg_caja) / props.ordenSelected.kg_formados)
-            setEficiencia(((result[0].cajas_acumuladas * result[0].kg_caja) / (result[0].kg_hora * props.ordenSelected.tiempo_activo / 60)))
-            setDisponibilidad((result[0].tiempo_actividad / (props.ordenSelected.tiempo_inactivo + result[0].tiempo_actividad)))
-            
-            setPerdidaEnvasado((props.ordenSelected.kg_formados - props.ordenSelected.kg_envasados) / props.ordenSelected.kg_formados)
-            setPerdidaEmpaquetadora((props.ordenSelected.kg_envasados - props.ordenSelected.real_kg) / props.ordenSelected.kg_envasados)
-            setPerdidaTotal((props.ordenSelected.kg_formados - props.ordenSelected.real_kg) / props.ordenSelected.kg_formados)
-            setPerdidaTotalKg(props.ordenSelected.kg_formados - props.ordenSelected.real_kg)
-            setPerdidaEnvasadoKg(props.ordenSelected.kg_formados - props.ordenSelected.kg_envasados)
-            setPerdidaEmpaquetadoraKg(props.ordenSelected.kg_envasados - props.ordenSelected.real_kg)
-
-            setDataTorta(
-                {
-                    datasets: [
-                        {
-                            data: [Math.round(0 / 60 * 100) / 100, Math.round(props.ordenSelected.tiempo_inactivo / 60 * 100) / 100, 
-                                    Math.round(0 / 60 * 100) / 100, Math.round(props.ordenSelected.tiempo_activo / 60 * 100) / 100]
-                        }
-                    ],
-                }
-            )
-        })
-        .catch(err => {
-            console.error(err);
-        });
-    }
-
     useEffect(() => {
-        loadResumen();
+        setnOrden(props.ordenSelected.id_sub_orden)
+        setTiempoActivo(props.ordenSelected.tiempo_activo)
+        setTiempoInactivo(props.ordenSelected.tiempo_inactivo)
+        setCalidad((props.ordenSelected.cajas_acumuladas * props.ordenSelected.kg_caja) / props.ordenSelected.kg_formados)
+        setEficiencia(((props.ordenSelected.cajas_acumuladas * props.ordenSelected.kg_caja) / (props.ordenSelected.kg_hora * props.ordenSelected.tiempo_activo / 60)))
+        setDisponibilidad((props.ordenSelected.tiempo_activo / (props.ordenSelected.tiempo_total)))
+        
+        setPerdidaEnvasado((props.ordenSelected.kg_formados - props.ordenSelected.kg_envasados) / props.ordenSelected.kg_formados)
+        setPerdidaEmpaquetadora((props.ordenSelected.kg_envasados - props.ordenSelected.real_kg) / props.ordenSelected.kg_envasados)
+        setPerdidaTotal((props.ordenSelected.kg_formados - props.ordenSelected.real_kg) / props.ordenSelected.kg_formados)
+        setPerdidaTotalKg(props.ordenSelected.kg_formados - props.ordenSelected.real_kg)
+        setPerdidaEnvasadoKg(props.ordenSelected.kg_formados - props.ordenSelected.kg_envasados)
+        setPerdidaEmpaquetadoraKg(props.ordenSelected.kg_envasados - props.ordenSelected.real_kg)
+
+        setDataTorta(
+            {
+                datasets: [
+                    {
+                        data: [Math.round(0 / 60 * 100) / 100, Math.round(props.ordenSelected.tiempo_inactivo / 60 * 100) / 100, 
+                                Math.round(0 / 60 * 100) / 100, Math.round(props.ordenSelected.tiempo_activo / 60 * 100) / 100]
+                    }
+                ],
+            }
+        )
     }, [props.ordenSelected]);
 
     return (
@@ -200,7 +139,7 @@ const Produciendo = (props) => {
                     <Col>
                         <Row >
                             <Col align="right">
-                                <div className="font2  my-1">Estado</div>
+                                <div className="font2 my-1">Estado</div>
                             </Col>
                             <div className={props.ordenSelected.id_estado === 1 ? "font2White  my-1" : "font2White my-1"}>
                                 {
@@ -210,8 +149,16 @@ const Produciendo = (props) => {
                                 }
                             </div>
                             <div className="font2 ml-3 my-1">Tiempo Total</div>
-                            <div align="right" className="font2White ml-1 mr-5 my-1">{formatNumber.new(_.round(tiempo / 60, 2))} hrs</div>
-
+                            {parseInt(props.ordenSelected.tiempo_total/60) == 1 ?
+                                <div align="right" className="font2White ml-1 mr-5 my-1">
+                                    {parseInt(props.ordenSelected.tiempo_total/60)} hr,
+                                    {" " + parseInt(props.ordenSelected.tiempo_total%60)} min
+                                </div> :
+                                <div align="right" className="font2White ml-1 mr-5 my-1">
+                                    {parseInt(props.ordenSelected.tiempo_total/60)} hrs,
+                                    {" " + parseInt(props.ordenSelected.tiempo_total%60)} min
+                                </div> 
+                            }
                         </Row>
                     </Col>
                 </Row>
@@ -229,8 +176,8 @@ const Produciendo = (props) => {
                                     </div>
                                 </Col>
                                 <Col md="9">
-                                    <div align="center" className="bigFont mt-4">{formatNumber.new(_.round(kg_acumulado, 2))}</div>
-                                    <div align="center" className="littleFont">de {" " + formatNumber.new(_.round(kg_solicitado, 2)) + " "} Kg</div>
+                                    <div align="center" className="bigFont mt-4">{formatNumber.new(_.round(props.ordenSelected.kg_formados, 2))}</div>
+                                    <div align="center" className="littleFont">de {" " + formatNumber.new(_.round(props.ordenSelected.kg_solicitados, 2)) + " "} Kg</div>
                                 </Col>
 
                             </Row>
@@ -244,8 +191,8 @@ const Produciendo = (props) => {
                                     </div>
                                 </Col>
                                 <Col md="9">
-                                    <div align="center" className="bigFont mt-4">{formatNumber.new(_.round(h_acumulado))}</div>
-                                    <div align="center" className="littleFont">de {" " + formatNumber.new(_.round(h_solicitado)) + " "} F. Pack</div>
+                                    <div align="center" className="bigFont mt-4">{formatNumber.new(_.round(props.ordenSelected.hamb_envasadas))}</div>
+                                    <div align="center" className="littleFont">de {" " + formatNumber.new(_.round(props.ordenSelected.hamb_solicitadas)) + " "} F. Pack</div>
                                 </Col>
 
                             </Row>
@@ -258,8 +205,8 @@ const Produciendo = (props) => {
                                     </div>
                                 </Col>
                                 <Col md="9">
-                                    <div align="center" className="bigFont mt-4">{formatNumber.new(_.round(cajas_acumuladas))}</div>
-                                    <div align="center" className="littleFont">de {" " + formatNumber.new(_.round(cajas_solicitadas)) + " "} cajas</div>
+                                    <div align="center" className="bigFont mt-4">{formatNumber.new(_.round(props.ordenSelected.cajas_acumuladas))}</div>
+                                    <div align="center" className="littleFont">de {" " + formatNumber.new(_.round(props.ordenSelected.cajas)) + " "} cajas</div>
                                 </Col>
 
                             </Row>
@@ -280,7 +227,9 @@ const Produciendo = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                disponibilidad > 1 ? 100 : disponibilidad * 100
+                                                disponibilidad > 1 ? 100 : 
+                                                isNaN(disponibilidad) ? 0 :
+                                                disponibilidad * 100
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -305,7 +254,9 @@ const Produciendo = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                eficiencia > 1 ? 100 : eficiencia * 100 //(totalKG/capacidad*tiempo que se demoro)
+                                                eficiencia > 1 ? 100 : 
+                                                isNaN(eficiencia) ? 0 :
+                                                eficiencia * 100
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -332,7 +283,9 @@ const Produciendo = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                calidad > 1 ? 100 : calidad * 100
+                                                calidad > 1 ? 100 : 
+                                                isNaN(calidad) ? 0 :
+                                                calidad * 100
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -357,6 +310,7 @@ const Produciendo = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
+                                                isNaN(((eficiencia > 1 ? 1 : eficiencia) * (disponibilidad > 1 ? 1 : disponibilidad) * (calidad > 1 ? 1 : calidad)) * 100) ? 0 :
                                                 ((eficiencia > 1 ? 1 : eficiencia) * (disponibilidad > 1 ? 1 : disponibilidad) * (calidad > 1 ? 1 : calidad)) * 100
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
@@ -394,14 +348,13 @@ const Produciendo = (props) => {
                                 }} /></div>
                         <Row className="ml-5 mt-1">
                             <Brightness1Icon style={{ color: "#2264A7" }} />
-                  Produciendo: {formatHour(TiempoActivo)}
+                            Produciendo: {formatHour(TiempoActivo)}
                         </Row>
                         <Row className="ml-5">
                             <Brightness1Icon style={{ color: "#F7431E" }} />
-                  En Paro: {formatHour(TiempoInactivo)}
+                            En Paro: {formatHour(TiempoInactivo)}
                         </Row>
                     </Col>
-                    
                     {/* Control de pérdida */}
                     <Col className="blueRow" md="3">
                         <div className="text-uppercase font-weight-bold my-3">Control de Pérdida</div>
@@ -531,7 +484,9 @@ const Produciendo = (props) => {
 
             <Row className="blackBorderTop mx-2">
                 <Col xs="12" className="my-3 mx-2">
+                    {/*
                     <TimeLine />
+                    */}
                 </Col>
             </Row>
         </div>

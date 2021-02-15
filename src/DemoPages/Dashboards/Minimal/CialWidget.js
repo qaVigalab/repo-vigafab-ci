@@ -25,10 +25,8 @@ const CialWidget = (props) => {
     size: 0
   };
   const tooltips = {
-
     x: {
       format: 'dd/MM/yy HH:mm',
-
     },
     y: {
       formatter: undefined,
@@ -73,9 +71,7 @@ const CialWidget = (props) => {
   )
   const [seriesTimeLine, setSeriesTimeLine] = useState([])
   const [optionsTimeLine, setOptionsTimeLine] = useState(
-
     {
-
       dataLabels: labels,
       markers: markers,
       tooltip: tooltips,
@@ -139,10 +135,9 @@ const CialWidget = (props) => {
         "content-type": "application/json",
         "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
       },
-
       body: JSON.stringify({
         id_vibot: id_vibot,
-        id_orden: localStorage.getItem("id_orden")
+        id_orden: props.ordenSelected.id_sub_orden
       }),
     })
       .then(response => response.json())
@@ -189,7 +184,7 @@ const CialWidget = (props) => {
       },
       body: JSON.stringify({
         id_vibot: id_vibot,
-        id_orden: localStorage.getItem("id_orden")
+        id_orden: props.ordenSelected.id_sub_orden
       }),
     })
       .then((response) => response.json())
@@ -254,7 +249,7 @@ const CialWidget = (props) => {
   useEffect(() => {
     loadResumen()
     loadTimeLine()
-  }, [props.id_orden]);
+  }, [props.ordenSelected]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -266,7 +261,7 @@ const CialWidget = (props) => {
       loadResumen();
     }, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [props.ordenSelected]);
 
   return (
     <Col md="6" xl="3" lg="6" xs="12">
@@ -303,15 +298,17 @@ const CialWidget = (props) => {
             <Col md="6">
               <Row >
                 <Col align="right">
-                  <div className={estado == 1 ? "font2gray mr-2 " : "font2Blue mr-2"}>
-                    {localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Terminada" :
-                      estado == 1 ? " Detenida" : " Produciendo"}
-                  </div>
+                  <div className={props.ordenSelected.id_estado != 1 ? "font2gray  my-4" : "font2Blue my-4"}>{
+                    props.ordenSelected.id_estado === 3 ? "Terminada"
+                    : props.ordenSelected.id_estado === 2 ? "En espera"
+                    : "Produciendo"
+                  }</div>
                 </Col>
               </Row>
               <Row >
                 <Col align="right">
-                  <div className="font2Blue mr-2 ">{formatNumber.new(_.round(tActivo / 60, 2))} hrs</div></Col>
+                  <div className="font2Blue mr-2 ">{formatNumber.new(_.round(tActivo / 60, 2))} hrs</div>
+                </Col>
               </Row>
               <Row className=" mb-4">
                 <Col align="right">
@@ -320,7 +317,6 @@ const CialWidget = (props) => {
               </Row>
             </Col>
           </Row>
-
 
           <Row >
             <Col xs="9" className="ml-5">
@@ -381,7 +377,6 @@ const CialWidget = (props) => {
                 />
               </div>
               <div align="center" className="font2 mt-3 ">Disponibilidad</div>
-
             </Col>
             <Col xs="6">
               <div className="circle space5px">
@@ -409,25 +404,18 @@ const CialWidget = (props) => {
                   showPercentageSymbol={true} // Boolean: Show/hide only the "%" symbol.
                 />
               </div>
-                  
               <div align="center" className="font2 mt-3">Eficiencia</div>
             </Col>
-
           </Row>
-
 
           <Row>
             <Col xs="12">
               <div id="chart" className={/*seriesTimeLine.data !== undefined ? "m-3" : "d-none"*/ ""}>
                 <ReactApexChart options={optionsTimeLine} series={seriesTimeLine} type="rangeBar" height={150} />
-
               </div>
             </Col>
           </Row>
         </div>
-
-
-
       </Card>
     </Col>
   );
