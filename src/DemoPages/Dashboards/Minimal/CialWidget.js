@@ -6,18 +6,12 @@ import { Card, Col, Container, Row } from "reactstrap";
 import { connect } from "react-redux";
 import ReactApexChart from "react-apexcharts";
 import _ from "lodash";
-const CialWidget = (props) => {
+import moment from 'moment';
 
-  const [productividad, setProductividad] = useState(0)
-  const [hacumuladas, setHacumuladas] = useState(0)
+const CialWidget = (props) => {
   const [tActivo, setTActivo] = useState(0)
   const [tInactivo, setTInactivo] = useState(0)
-  const [kgacumulados, setKgacumulados] = useState(0)
-  const [estado, setEstado] = useState(0)
-  const [capacidad, setCapacidad] = useState(0)
-  const [kgsolicitados, setKgsolicitados] = useState(0)
-  const [hsolicitadas, setHsolicitadas] = useState(0)
-  const id_vibot = props.id_vibot
+
   const labels = {
     enabled: false
   };
@@ -102,172 +96,105 @@ const CialWidget = (props) => {
         }
       }
     }
-  )
+  );
 
-  var formatNumber = {
-    separador: ".", // separador para los miles
-    sepDecimal: ',', // separador para los decimales
-    formatear: function (num) {
-      num += '';
-      var splitStr = num.split('.');
-      var splitLeft = splitStr[0];
-      var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
-      var regx = /(\d+)(\d{3})/;
-      while (regx.test(splitLeft)) {
-        splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
+  const [reportes, setReportes] = useState(props.reportesSelected);
+  const [hambEnvasadas, setHambEnvasadas] = useState(0);
+  const [kgEnvasados, setKgEnvasados] = useState(0);
+  useEffect(() => {
+      var tiempo_activo = 0, tiempo_inactivo = 0;
+      var hamburguesas_envasadas = 0, kilos_envasados = 0;
+
+      for (var i=0; i<props.reportesSelected.length; i++){
+          /* Se calculan los tiempos de actividad y paro */
+          const startDate = moment(props.reportesSelected[i].hora_inicio);
+          const timeEnd = moment(props.reportesSelected[i].hora_termino);
+          const diff = timeEnd.diff(startDate);
+          const diffDuration = moment.duration(diff);
+
+          if (props.reportesSelected[i].id_tipo === 1)
+              tiempo_inactivo += diffDuration.hours()*60 + diffDuration.minutes();
+          else if (props.reportesSelected[i].id_tipo === 2)
+              tiempo_activo += diffDuration.hours()*60 + diffDuration.minutes();
+          
+          /* Se obtiene la cantidad de hamburguesas envasadas y sus kg acumulados */
+          hamburguesas_envasadas += props.reportesSelected[i].hamburguesas_acumuladas;
+          kilos_envasados += props.reportesSelected[i].real_kg;
       }
-      return this.simbol + splitLeft + splitRight;
-    },
-    new: function (num, simbol) {
-      this.simbol = simbol || '';
-      return this.formatear(num);
-    }
-  }
 
-  const loadResumen = () => {
-    let link
-    localStorage.getItem("id_orden") === localStorage.getItem("id_ordenA")
-      ? link = global.api.dashboard.getresumenmaquina
-      : link = global.api.dashboard.getresumenhistorico
-    fetch(link, {
-      "method": "POST",
-      "headers": {
-        "content-type": "application/json",
-        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
-      },
-      body: JSON.stringify({
-        id_vibot: id_vibot,
-        id_orden: props.ordenSelected.id_sub_orden
-      }),
-    })
-      .then(response => response.json())
-      .then(result => {
-        let data = [];
-        if (result[0].tiempo_inactivo == 0 && result[0].tiempo_actividad == 0) {
-          data = [1, 0, 0]
-        } else {
-          data = [0, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
-        }
-
-        setProductividad(result[0].productividad)
-        setTActivo(result[0].tiempo_actividad)
-        setTInactivo(result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo)
-        setEstado(result[0].estado)
-        setHacumuladas(result[0].hamburguesas_acumuladas)
-        setKgacumulados(result[0].real_kg)
-        setHsolicitadas(result[0].hamburguesas_solicitadas)
-        setKgsolicitados(result[0].kg_solicitados)
-        setCapacidad(result[0].kg_hora)
-        setDataTorta(
+      setTInactivo(tiempo_inactivo);
+      setTActivo(tiempo_activo);
+      setHambEnvasadas(hamburguesas_envasadas);
+      setKgEnvasados(kilos_envasados);
+      setDataTorta(
           {
             datasets: [
               {
-                data: data
+                data: [0, tiempo_inactivo, tiempo_activo]
               }
             ],
           }
-        )
+      );
+      setReportes(props.reportesSelected);
+  }, [props.reportesSelected]);
 
-      }
-      )
-      .catch(err => {
-        console.error(err);
-      });
-  }
+  useEffect(() => {
+      loadTimeLine();
+      console.log("Kgs Envasadoras: " + props.ordenSelected.kg_formados + "kg VS " + props.ordenSelected.kg_hora*(tActivo+tInactivo)/60 + "kg")
+  }, [reportes]);
+
   const loadTimeLine = () => {
-
-    fetch(global.api.dashboard.gettimelinemaquina, {
-      "method": "POST",
-      "headers": {
-        "Content-Type": "application/json",
-        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
-      },
-      body: JSON.stringify({
-        id_vibot: id_vibot,
-        id_orden: props.ordenSelected.id_sub_orden
-      }),
-    })
-      .then((response) => response.json())
-      .then((r) => {
-        var objeto = {};
-        if (r.length > 0) {
-          var objetos = [
-            {
-                x: 'Prod',
-                y: [new Date(r[0].hora_inicio).getTime(),
-                new Date(r[0].hora_inicio).getTime()],
-                fillColor: '#2264A7'
-            },
-            {
-                x: 'Paro',
-                y: [new Date(r[0].hora_inicio).getTime(),
-                new Date(r[0].hora_inicio).getTime()],
-                fillColor: '#F7431E'
-            },
-            {
-                x: 'Cambio',
-                y: [new Date(r[0].hora_inicio).getTime(),
-                new Date(r[0].hora_inicio).getTime()],
-                fillColor: '#02c39a'
-            }
-          ];
-
-          for (let i = 0; i < r.length; i++) {
+    if (reportes.length > 0) {
+        var objetos = [{
+            x: 'Prod',
+            y: [new Date(reportes[0].hora_inicio).getTime(),
+            new Date(reportes[0].hora_inicio).getTime()],
+            fillColor: '#2264A7'
+        }, {
+            x: 'Paro',
+            y: [new Date(reportes[0].hora_inicio).getTime(),
+            new Date(reportes[0].hora_inicio).getTime()],
+            fillColor: '#F7431E'
+        }, {
+            x: 'Cambio',
+            y: [new Date(reportes[0].hora_inicio).getTime(),
+            new Date(reportes[0].hora_inicio).getTime()],
+            fillColor: '#02c39a'
+        }];
+        
+        for (let i = 0; i < reportes.length; i++) {
             var x_ = "", color_ = null;
-            if (r[i].id_tipo == 1) {
-              x_ = "Paro";
-              color_ = '#F7431E';
-            } else if (r[i].id_tipo == 2) {
-              x_ = "Prod";
-              color_ = '#2264A7';
+            if (reportes[i].id_tipo == 1) {
+                x_ = "Paro";
+                color_ = '#F7431E';
+            } else if (reportes[i].id_tipo == 2) {
+                x_ = "Prod";
+                color_ = '#2264A7';
             } else {
-              x_ = "Cambio";
-              color_ = '#02c39a';
+                x_ = "Cambio";
+                color_ = '#02c39a';
             }
 
-            objeto = {
+            var objeto = {
                 x: x_,
                 y: [
-                    new Date(r[i].hora_inicio).getTime(),
-                    new Date(r[i].hora_termino).getTime()
+                    new Date(reportes[i].hora_inicio).getTime(),
+                    new Date(reportes[i].hora_termino).getTime()
                 ],
                 fillColor: color_
             }
             objetos.push(objeto)
-          }
         }
-        
         setSeriesTimeLine([{
-          data: objetos
+            data: objetos
         }]);
-      })
-
-      .catch((err) => {
-        console.error(err);
-      });
+    }
   }
-  useEffect(() => {
-    loadResumen()
-    loadTimeLine()
-  }, [props.ordenSelected]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      loadTimeLine()
-      loadResumen()
-    }, 2000);
-
-    const interval = setInterval(() => {
-      loadResumen();
-    }, 30000);
-    return () => clearInterval(interval);
-  }, [props.ordenSelected]);
 
   return (
     <Col md="6" xl="3" lg="6" xs="12">
       <Card className="main-card mb-3">
-        {/* header */}
-
+        {/* header */}  
         <div className="blackBorder2" >
           <Row>
             <br />
@@ -277,42 +204,54 @@ const CialWidget = (props) => {
           </Row>
         </div >
 
-        <div className="space5px ">
+        <div className="space5px">
           <Row>
             <br />
             <Col md="6">
-              <Row className="mt-4" align="left">
-
-                <div className="ml-4 font2gray">{formatNumber.new(_.round(hacumuladas))}</div>
-
-                <div className="ml-2">de {formatNumber.new(_.round(hsolicitadas / 3))} F.Packs</div>
-
+              <Row className="mt-2" align="left">
+                <div className="ml-4 font2gray">{props.formatNumber.new(_.round(hambEnvasadas))} de</div>
               </Row>
-              <Row className="mb-4" align="left">
-                <div className="ml-4 font2gray">{formatNumber.new(_.round(kgacumulados))}</div>
+              <Row align="left">
+                <div className="ml-4">{props.formatNumber.new(_.round(props.ordenSelected.hamb_solicitadas/3))} Packs</div>
+              </Row>
 
-                <div align="center" className=" ml-2 mr-auto"> de {formatNumber.new(_.round(kgsolicitados / 3))} Kgs</div>
-
+              <Row className="mt-2" align="left">
+                <div className="ml-4 font2gray">{props.formatNumber.new(_.round(kgEnvasados))} de</div>
+              </Row>
+              <Row align="left">
+                <div className="ml-4">{props.formatNumber.new(_.round(props.ordenSelected.kg_solicitados/3))} Kgs</div>
               </Row>
             </Col>
+            
             <Col md="6">
-              <Row >
+              <Row className="mt-2">
                 <Col align="right">
-                  <div className={props.ordenSelected.id_estado != 1 ? "font2gray  my-4" : "font2Blue my-4"}>{
+                  <div className={props.ordenSelected.id_estado != 1 ? "font2gray my-1" : "font2Blue my-1"}>{
                     props.ordenSelected.id_estado === 3 ? "Terminada"
                     : props.ordenSelected.id_estado === 2 ? "En espera"
                     : "Produciendo"
                   }</div>
                 </Col>
               </Row>
-              <Row >
+
+              <Row>
                 <Col align="right">
-                  <div className="font2Blue mr-2 ">{formatNumber.new(_.round(tActivo / 60, 2))} hrs</div>
+                  {parseInt(tActivo/60) == 1 ?
+                      <div className="font2Blue">
+                          {parseInt(tActivo/60)} hr,
+                          {" " + parseInt(tActivo%60)} min
+                      </div> :
+                      <div className="font2Blue">
+                          {parseInt(tActivo/60)} hrs,
+                          {" " + parseInt(tActivo%60)} min
+                      </div> 
+                  }
                 </Col>
               </Row>
-              <Row className=" mb-4">
+
+              <Row lassName="mr-1">
                 <Col align="right">
-                  <div className="mr-2 ">Tiempo de Actividad</div>
+                  <div className="mr-1">Tiempo de Actividad</div>
                 </Col>
               </Row>
             </Col>
@@ -347,22 +286,20 @@ const CialWidget = (props) => {
             </Col>
           </Row>
 
-
           <Row className="blackBorderTop blackBorderBot mr-2  " align="left">
-
             <Col xs="6" className="mb-3">
               <div className="circle space5px ">
                 <Circle
                   animate={true} // Boolean: Animated/Static progress
-                  animationDuration="5s" // String: Length of animation
+                  animationDuration="3s" // String: Length of animation
                   responsive={true} // Boolean: Make SVG adapt to parent size
                   size="14rem" // String: Defines the size of the circle.
                   lineWidth="30" // String: Defines the thickness of the circle's stroke.
                   progress={(
-                    (tActivo / (tInactivo + tActivo)) * 100 === Infinity ? 0 :
-                    (tActivo / (tInactivo + tActivo)) * 100 > 0 ?
-                    (tActivo / (tInactivo + tActivo)) * 100 
-                      : 0
+                    (tActivo/(tInactivo + tActivo))*100 === Infinity ? 0 :
+                    (tActivo/(tInactivo + tActivo))*100 > 0 ?
+                    (tActivo/(tInactivo + tActivo))*100 
+                    : 0
                   ).toFixed(0)} // String: Update to change the progress and percentage.
                   progressColor="#02c39a" // String: Color of "progress" portion of circle.
                   bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -382,15 +319,15 @@ const CialWidget = (props) => {
               <div className="circle space5px">
                 <Circle
                   animate={true} // Boolean: Animated/Static progress
-                  animationDuration="10s" // String: Length of animation
+                  animationDuration="3s" // String: Length of animation
                   responsive={true} // Boolean: Make SVG adapt to parent size
                   size="50" // String: Defines the size of the circle.
                   lineWidth="30" // String: Defines the thickness of the circle's stroke.
                   progress={(
-                    (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))) * 100 === Infinity ? 0 :
-                    ((kgacumulados / ((capacidad / 3) * ((tActivo) / 60)))) > 0 ?
-                      (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))) * 100  //(totalKG/capacidad*tiempo que se demoro)
-                      : 0
+                    kgEnvasados/(props.ordenSelected.kg_hora/3 * (tActivo+tInactivo)/60)* 100 === Infinity ? 0 :
+                    kgEnvasados/(props.ordenSelected.kg_hora/3 * (tActivo+tInactivo)/60) > 0 ?
+                    kgEnvasados/(props.ordenSelected.kg_hora/3 * (tActivo+tInactivo)/60)* 100  //(totalKG/capacidad*tiempo que se demoro)
+                    : 0
                   ).toFixed(0)} // String: Update to change the progress and percentage.
                   progressColor="#02c39a" // String: Color of "progress" portion of circle.
                   bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -421,8 +358,5 @@ const CialWidget = (props) => {
   );
 }
 
-const mapStateToProps = (state) => ({
-  id_orden: state.dashboardReducers.id_orden,
-});
-
+const mapStateToProps = (state) => ({});
 export default connect(mapStateToProps)(CialWidget);

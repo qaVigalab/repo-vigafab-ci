@@ -1,4 +1,4 @@
-import React, { Component, Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 
 import moment from 'moment';
@@ -16,41 +16,37 @@ import CialWidget from "./CialWidget";
 import TotalEnvasadoras from "./TotalEnvasadoras";
 import Empaque from "./Empaque";
 
-const MinimalDashboard1 = (props) => {
-  const [start, setStart] = useState();
-  const [end, setEnd] = useState();
-
-  const applyCallback = (startDate, endDate) => {
-    setStart(startDate);
-    setEnd(endDate);
-  }
-
-  const [startDate, setStartDate] = useState();
-  const [endDate, setEndDate] = useState();
-
-  const handleChange = (date) => {
-    setStartDate(date);
-  };
-
-  const handleChange2 = (date) => {
-    setEndDate(date);
-  };
-
+const MinimalDashboard1 = () => {
+  /* Se declaran variables que no serán modificadas durante el uso de la vista */
   const [modo, setModo] = useState(0);
-  const [maquinas, setMaquinas] = useState([{ id: "", nombre: "" }]);
   const [perfil, setPerfil] = useState(localStorage.getItem("perfil"));
-  const [popoverOpen1, setPopoverOpen1] = useState();
-  const [visible, setVisible] = useState();
 
-  const onDismiss = () => {
-    setVisible(false);
+  var formatNumber = {
+    separador: ".", // separador para los miles
+    sepDecimal: ',', // separador para los decimales
+    formatear: function (num) {
+        num += '';
+        var splitStr = num.split('.');
+        var splitLeft = splitStr[0];
+        var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
+        var regx = /(\d+)(\d{3})/;
+        while (regx.test(splitLeft)) {
+            splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
+        }
+        return this.simbol + splitLeft + splitRight;
+    },
+    new: function (num, simbol) {
+        this.simbol = simbol || '';
+        return this.formatear(num);
+    }
   }
 
+  /* Se consulta a la API para obtener el listado de Envasadoras */
+  const [maquinas, setMaquinas] = useState([{ id: "", nombre: "" }]);
   const getMaquinas = (tipo) => {
     var myHeaders = new Headers();
     myHeaders.append("x-api-key", "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m");
     myHeaders.append("Content-Type", "application/json");
-
     var raw = JSON.stringify({ maquina: tipo });
     var requestOptions = {
       method: "POST",
@@ -74,13 +70,8 @@ const MinimalDashboard1 = (props) => {
     getMaquinas("Envasadora");
   }, []);
 
-  /* ESTO ES PARA PROBAR LO QUE DIJO EL EDUARDO */
-  const [productos, setProductos] = useState([]);
-  const [ordenes, setOrdenes] = useState([]);
-  const [ordenSelected, setOrdenSelected] = useState({});
-  const [fechaOrdenes, setFechaOrdenes] = useState(moment().format('YYYY-MM-DD'));
-
   /* Se consulta a la API para obtener, sólo una vez, el listado de productos */
+  const [productos, setProductos] = useState([]);
   const loadProductos = () => {
     fetch(
       global.api.dashboard.getproducto,
@@ -102,7 +93,15 @@ const MinimalDashboard1 = (props) => {
     });
   }
 
+  /* Se consulta por el listado de productos sólo al arrancar la vista */
+  useEffect(() => {
+    loadProductos();
+  }, []);
+
   /* Se consulta a la API para obtener la información de las órdenes diarias */
+  const [ordenes, setOrdenes] = useState([]);
+  const [ordenSelected, setOrdenSelected] = useState({});
+  const [fechaOrdenes, setFechaOrdenes] = useState(moment().format('YYYY-MM-DD'));
   const loadOrdenes = (id_orden) => {
     const query = fetch(global.api.dashboard.getOrdenesResumen, {
       method: "POST",
@@ -116,7 +115,6 @@ const MinimalDashboard1 = (props) => {
     })
     .then((response) => response.json())
     .then((result) => {
-      console.log(result);
       if (result.length >= 1) {
         setOrdenes(result);
         if (id_orden === "") {
@@ -137,7 +135,7 @@ const MinimalDashboard1 = (props) => {
     .catch((err) => {
       console.error(err);
     });
-  }
+  };
 
   /* Se cargan las órdenes del día, actualizando la variable que define a la orden seleccionada */
   const updateOrden = (orden) => {
@@ -149,25 +147,44 @@ const MinimalDashboard1 = (props) => {
     setFechaOrdenes(fecha);
   }
 
-  /* Debug: Se imprime el listado de órdenes del día en curso y la orden seleccionada en el listado */
-  useEffect(() => {
-    console.log(ordenes);
-    console.log(ordenSelected);
-  }, [ordenSelected]);
-
+  /* Se obtiene el listado de órdenes correspondiente a la fecha seleccionada */
   useEffect(() => {
     var date = new Date(fechaOrdenes);
     if (moment(new Date(date.setHours(date.getHours() + 3))).format('YYYY-MM-DD') != moment().format('YYYY-MM-DD'))
       loadOrdenes(-1);
     else
       loadOrdenes("");
-  }, [fechaOrdenes])
+  }, [fechaOrdenes]);
 
-  /* Se cargan las órdenes al recargar la página */
+  /* Se consulta a la API el detalle de los reportes por máquina de la orden en curso */
+  const [reportesSelected, setReportesSelected] = useState([]);
+  const loadReportes = () => {
+    const query = fetch(global.api.dashboard.getReportesByOrden, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
+      },
+      body: JSON.stringify({
+        id_orden: ordenSelected.id_sub_orden
+      }),
+    })
+    .then((response) => response.json())
+    .then((result) => {
+      setReportesSelected(result);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+  };
+
+  /* Debug: Se imprime el listado de órdenes del día en curso y la orden seleccionada en el listado */
+  /* Se actualiza el detalle de los reportes asociados a la orden seleccionada */
   useEffect(() => {
-    loadOrdenes("");
-    loadProductos();
-  }, []);
+    console.log(ordenes);
+    console.log(ordenSelected);
+    loadReportes();
+  }, [ordenSelected]);
 
   return (
     <div>
@@ -216,7 +233,8 @@ const MinimalDashboard1 = (props) => {
           <Row>
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
-                <Orden 
+                <Orden
+                  formatNumber={formatNumber}
                   productos={productos}
                   ordenes={ordenes}
                   ordenSelected={ordenSelected}
@@ -232,6 +250,7 @@ const MinimalDashboard1 = (props) => {
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
                 <Produciendo 
+                  formatNumber={formatNumber}
                   ordenes={ordenes}
                   ordenSelected={ordenSelected}
                 />
@@ -243,7 +262,9 @@ const MinimalDashboard1 = (props) => {
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
                 <Formadora2
+                  formatNumber={formatNumber}
                   ordenSelected={ordenSelected}
+                  reportesSelected={reportesSelected.filter(reporte => reporte.id_vibot === 6296)}
                 />
               </Card>
             </Col>
@@ -265,9 +286,11 @@ const MinimalDashboard1 = (props) => {
               <Row>
                 {maquinas.map((maquina) => (
                   <CialWidget
+                    formatNumber={formatNumber}
                     nombre={maquina.maquina}
                     id_vibot={maquina.id}
                     ordenSelected={ordenSelected}
+                    reportesSelected={reportesSelected.filter(reporte => reporte.id_vibot === maquina.id)}
                   />
                 ))}
               </Row>
@@ -323,8 +346,5 @@ const MinimalDashboard1 = (props) => {
   );
 }
 
-const mapStateToProps = (state) => ({
-  id_orden: state.dashboardReducers.id_orden,
-});
-
+const mapStateToProps = (state) => ({});
 export default connect(mapStateToProps)(MinimalDashboard1);

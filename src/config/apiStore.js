@@ -18,6 +18,7 @@ const dashboard = {
     getproducto:                awsApiUrl2 + "getproducto",
     getresumenhistoricoEnv:     awsApiUrl2 + "getresumenhistoricoEnv",
     getreportehistoricolinea:   awsApiUrl2 + "getreportehistoricolinea",
+    getReportesByOrden:         awsApiUrl2 + "getreportesbyorden",
     getresumenenvasadoras:      awsApiUrl2 + "getresumenenvasadoras",
     getresumenhistorico:        awsApiUrl2 + "getresumenhistorico",
     getresumenlinea:            awsApiUrl2 + "getresumenlinea",

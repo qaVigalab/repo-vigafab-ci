@@ -24,37 +24,15 @@ const Produciendo = (props) => {
     const [perdidaTotal, setPerdidaTotal] = useState(0)
     const [TiempoActivo, setTiempoActivo] = useState(0)
     const [TiempoInactivo, setTiempoInactivo] = useState(0)
-    const [dataTorta, setDataTorta] = useState(
-        {
-            legend: [{display: false, position: "top", fullWidth: true, reverse: true}],
-            labels: ["Desconectado", "Paro sin Justificar", "Paro Justificado", "Producción",],
-            datasets: [{
-                data: [],
-                backgroundColor: ["#d9d9d9", "#F7431E ", "#FFB000", "#2264A7"],
-                hoverBackgroundColor: ["#d9d9d9", "#F7431E  ", "#FFB000", "#2264A7 "],
-            }],
-        }
-    )
-
-    var formatNumber = {
-        separador: ".", // separador para los miles
-        sepDecimal: ',', // separador para los decimales
-        formatear: function (num) {
-            num += '';
-            var splitStr = num.split('.');
-            var splitLeft = splitStr[0];
-            var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
-            var regx = /(\d+)(\d{3})/;
-            while (regx.test(splitLeft)) {
-                splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
-            }
-            return this.simbol + splitLeft + splitRight;
-        },
-        new: function (num, simbol) {
-            this.simbol = simbol || '';
-            return this.formatear(num);
-        }
-    }
+    const [dataTorta, setDataTorta] = useState({
+        legend: [{display: false, position: "top", fullWidth: true, reverse: true}],
+        labels: ["Desconectado", "Paro sin Justificar", "Paro Justificado", "Producción",],
+        datasets: [{
+            data: [],
+            backgroundColor: ["#d9d9d9", "#F7431E ", "#FFB000", "#2264A7"],
+            hoverBackgroundColor: ["#d9d9d9", "#F7431E  ", "#FFB000", "#2264A7 "],
+        }],
+    });
 
     const formatHour = (min) => {
         let horas = min / 60;
@@ -123,7 +101,7 @@ const Produciendo = (props) => {
                     <Col md="2">
                         <Row>
                             <div align="left" className="font2 my-1">Productividad:</div>
-                            <div align="left" className="font3 my-1">{formatNumber.new(_.round(props.ordenSelected.productividad)) + " ham/min"}</div>
+                            <div align="left" className="font3 my-1">{props.formatNumber.new(_.round(props.ordenSelected.productividad, 2)) + " ham/min"}</div>
                         </Row>
                     </Col>
                     <br />
@@ -176,8 +154,8 @@ const Produciendo = (props) => {
                                     </div>
                                 </Col>
                                 <Col md="9">
-                                    <div align="center" className="bigFont mt-4">{formatNumber.new(_.round(props.ordenSelected.kg_formados, 2))}</div>
-                                    <div align="center" className="littleFont">de {" " + formatNumber.new(_.round(props.ordenSelected.kg_solicitados, 2)) + " "} Kg</div>
+                                    <div align="center" className="bigFont mt-4">{props.formatNumber.new(_.round(props.ordenSelected.kg_formados))}</div>
+                                    <div align="center" className="littleFont">de {" " + props.formatNumber.new(_.round(props.ordenSelected.kg_solicitados)) + " "} Kgs</div>
                                 </Col>
 
                             </Row>
@@ -191,8 +169,8 @@ const Produciendo = (props) => {
                                     </div>
                                 </Col>
                                 <Col md="9">
-                                    <div align="center" className="bigFont mt-4">{formatNumber.new(_.round(props.ordenSelected.hamb_envasadas))}</div>
-                                    <div align="center" className="littleFont">de {" " + formatNumber.new(_.round(props.ordenSelected.hamb_solicitadas)) + " "} F. Pack</div>
+                                    <div align="center" className="bigFont mt-4">{props.formatNumber.new(_.round(props.ordenSelected.hamb_envasadas))}</div>
+                                    <div align="center" className="littleFont">de {" " + props.formatNumber.new(_.round(props.ordenSelected.hamb_solicitadas)) + " "} Packs</div>
                                 </Col>
 
                             </Row>
@@ -205,8 +183,8 @@ const Produciendo = (props) => {
                                     </div>
                                 </Col>
                                 <Col md="9">
-                                    <div align="center" className="bigFont mt-4">{formatNumber.new(_.round(props.ordenSelected.cajas_acumuladas))}</div>
-                                    <div align="center" className="littleFont">de {" " + formatNumber.new(_.round(props.ordenSelected.cajas)) + " "} cajas</div>
+                                    <div align="center" className="bigFont mt-4">{props.formatNumber.new(_.round(props.ordenSelected.cajas_acumuladas))}</div>
+                                    <div align="center" className="littleFont">de {" " + props.formatNumber.new(_.round(props.ordenSelected.cajas)) + " "} Cajas</div>
                                 </Col>
 
                             </Row>
@@ -390,7 +368,7 @@ const Produciendo = (props) => {
                                 <Col md="6">
                                     <div align="left" className=" mt-2 ml-2 text-uppercase littleFont font-weight-bold">Envasado</div>
                                     <Row className="">
-                                        <div align="left" className="ml-4 mt-1 bigFont">{perdidaEnvasadoKg<0 ? "---" : formatNumber.new(_.round(perdidaEnvasadoKg))}</div>
+                                        <div align="left" className="ml-4 mt-1 bigFont">{perdidaEnvasadoKg<0 ? "---" : props.formatNumber.new(_.round(perdidaEnvasadoKg))}</div>
                                         <div align="center" className="littleFont mt-4 ml-2 mr-auto">Kgs</div>
                                     </Row>
 
@@ -430,7 +408,7 @@ const Produciendo = (props) => {
                                 <Col md="6">
                                     <div align="left" className=" mt-2 ml-2 text-uppercase littleFont font-weight-bold">Empaque</div>
                                     <Row className="">
-                                        <div align="left" className="ml-4 mt-1 bigFont">{perdidaEmpaquetadoraKg<0 ? "---" : formatNumber.new(_.round(perdidaEmpaquetadoraKg))}</div>
+                                        <div align="left" className="ml-4 mt-1 bigFont">{perdidaEmpaquetadoraKg<0 ? "---" : props.formatNumber.new(_.round(perdidaEmpaquetadoraKg))}</div>
                                         <div align="center" className="littleFont mt-4 ml-2 mr-auto">Kgs</div>
                                     </Row>
 
@@ -470,7 +448,7 @@ const Produciendo = (props) => {
                                 <Col md="6">
                                     <div align="left" className=" mt-2 ml-2 text-uppercase littleFont font-weight-bold">Total</div>
                                     <Row className="">
-                                        <div align="left" className="ml-4 mt-1 bigFont">{perdidaTotalKg<0 ? "---" : formatNumber.new(_.round(perdidaTotalKg))}</div>
+                                        <div align="left" className="ml-4 mt-1 bigFont">{perdidaTotalKg<0 ? "---" : props.formatNumber.new(_.round(perdidaTotalKg))}</div>
                                         <div align="center" className="littleFont mt-4 ml-2 mr-auto">Kgs</div>
                                     </Row>
 
@@ -493,8 +471,5 @@ const Produciendo = (props) => {
     )
 }
 
-const mapStateToProps = (state) => ({
-    id_orden: state.dashboardReducers.id_orden,
-});
-
+const mapStateToProps = (state) => ({});
 export default connect(mapStateToProps)(Produciendo)

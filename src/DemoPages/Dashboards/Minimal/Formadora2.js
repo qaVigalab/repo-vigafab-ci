@@ -7,9 +7,9 @@ import Circle from "react-circle";
 import ReactApexChart from "react-apexcharts";
 import "moment/locale/es";
 import _ from "lodash";
+import moment from 'moment';
 
 const Formadora2 = (props) => {
-    const id_vibot = 6296;
     var temperatura = [];
     var fecha = [];
     const labels = {
@@ -23,7 +23,6 @@ const Formadora2 = (props) => {
     const tooltips = {
         x: {
             format: 'dd/MM/yy HH:mm',
-
         },
         y: {
             formatter: undefined,
@@ -136,7 +135,6 @@ const Formadora2 = (props) => {
         [{
             name: 'Temperatura',
             data: temperatura,
-
         },]
     )
 
@@ -171,80 +169,10 @@ const Formadora2 = (props) => {
         }
     )
     
-    const [hacumuladas, setHacumuladas] = useState(0)
-    const [tActivo, setTActivo] = useState(0)
-    const [tInactivo, setTInactivo] = useState(0)
-    const [kgacumulados, setKgacumulados] = useState(0)
-    const [estado, setEstado] = useState(0)
-    const [capacidad, setCapacidad] = useState(0)
+    const [tActivo, setTActivo] = useState(0);
+    const [tInactivo, setTInactivo] = useState(0);
 
-    var formatNumber = {
-        separador: ".", // separador para los miles
-        sepDecimal: ',', // separador para los decimales
-        formatear: function (num) {
-            num += '';
-            var splitStr = num.split('.');
-            var splitLeft = splitStr[0];
-            var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
-            var regx = /(\d+)(\d{3})/;
-            while (regx.test(splitLeft)) {
-                splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
-            }
-            return this.simbol + splitLeft + splitRight;
-        },
-        new: function (num, simbol) {
-            this.simbol = simbol || '';
-            return this.formatear(num);
-        }
-    }
-
-    const loadResumen = () => {
-        let link
-        localStorage.getItem("id_orden") === localStorage.getItem("id_ordenA")
-            ? link = global.api.dashboard.getresumenmaquina
-            : link = global.api.dashboard.getresumenhistorico
-        fetch(link, {
-            "method": "POST",
-            "headers": {
-                "content-type": "application/json",
-                "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
-            },
-
-            body: JSON.stringify({
-                id_vibot: id_vibot,
-                id_orden: props.ordenSelected.id_sub_orden
-            }),
-        })
-            .then(response => response.json())
-            .then(result => {
-                let data = [];
-                if (result[0].tiempo_inactivo == 0 && result[0].tiempo_actividad == 0) {
-                    data = [1, 0, 0]
-                } else {
-                    data = [0, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
-                }
-                setTActivo(result[0].tiempo_actividad)
-                setTInactivo(result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo)
-                setEstado(result[0].estado)
-                setHacumuladas(result[0].hamburguesas_acumuladas)
-                setKgacumulados(result[0].real_kg)
-                setCapacidad(result[0].kg_hora)
-                setDataTorta(
-                    {
-                        datasets: [
-                            {
-                                data: data
-                            }
-                        ],
-                    }
-                )
-            }
-            )
-            .catch(err => {
-                console.error(err);
-            });
-    }
-
+    /* Se carga el gráfico de temperaturas asociado a la orden en curso */
     const loadGraphTemp = () => {
         fetch(global.api.dashboard.gettempformadora, {
             "method": "POST",
@@ -264,7 +192,6 @@ const Formadora2 = (props) => {
                 ))
             }
             ).then(() => {
-
                 setSeries3([{
                     data: temperatura
                 }]);
@@ -277,94 +204,88 @@ const Formadora2 = (props) => {
             });
     }
 
-    const loadTimeLine = () => {
-        fetch(global.api.dashboard.gettimelinemaquina, {
-            "method": "POST",
-            "headers": {
-                "Content-Type": "application/json",
-                "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
-            },
-            body: JSON.stringify({
-                id_vibot: id_vibot,
-                id_orden: props.ordenSelected.id_sub_orden
-            }),
-        })
-            .then((response) => response.json())
-            .then((r) => {
-                var objeto = {};
-                if (r.length > 0) {
-                    var objetos = [
-                        {
-                            x: 'Prod',
-                            y: [new Date(r[0].hora_inicio).getTime(),
-                            new Date(r[0].hora_inicio).getTime()],
-                            fillColor: '#2264A7'
-                        },
-                        {
-                            x: 'Paro',
-                            y: [new Date(r[0].hora_inicio).getTime(),
-                            new Date(r[0].hora_inicio).getTime()],
-                            fillColor: '#F7431E'
-                        },
-                        {
-                            x: 'Cambio',
-                            y: [new Date(r[0].hora_inicio).getTime(),
-                            new Date(r[0].hora_inicio).getTime()],
-                            fillColor: '#02c39a'
-                        }
-                    ];
-                    
-                    for (let i = 0; i < r.length; i++) {
-                        var x_ = "", color_ = null;
-                        if (r[i].id_tipo == 1) {
-                          x_ = "Paro";
-                          color_ = '#F7431E';
-                        } else if (r[i].id_tipo == 2) {
-                          x_ = "Prod";
-                          color_ = '#2264A7';
-                        } else {
-                          x_ = "Cambio";
-                          color_ = '#02c39a';
-                        }
-            
-                        objeto = {
-                            x: x_,
-                            y: [
-                                new Date(r[i].hora_inicio).getTime(),
-                                new Date(r[i].hora_termino).getTime()
-                            ],
-                            fillColor: color_
-                        }
-                        objetos.push(objeto)
-                    }
+    const [reportes, setReportes] = useState(props.reportesSelected);
+    useEffect(() => {
+        loadGraphTemp();
+        
+        var tiempo_activo = 0, tiempo_inactivo = 0;
+        for (var i=0; i<props.reportesSelected.length; i++){
+            const startDate = moment(props.reportesSelected[i].hora_inicio);
+            const timeEnd = moment(props.reportesSelected[i].hora_termino);
+            const diff = timeEnd.diff(startDate);
+            const diffDuration = moment.duration(diff);
+
+            if (props.reportesSelected[i].id_tipo === 1)
+                tiempo_inactivo += diffDuration.hours()*60 + diffDuration.minutes();
+            else if (props.reportesSelected[i].id_tipo === 2)
+                tiempo_activo += diffDuration.hours()*60 + diffDuration.minutes();
+        }
+        setTInactivo(tiempo_inactivo);
+        setTActivo(tiempo_activo);
+        setDataTorta(
+            {
+              datasets: [
+                {
+                  data: [0, tiempo_inactivo, tiempo_activo]
                 }
-                setSeriesTimeLine([{
-                    data: objetos
-                }]);
-            })
+              ],
+            }
+        );
+        setReportes(props.reportesSelected);
+    }, [props.reportesSelected]);
 
-            .catch((err) => {
-                console.error(err);
-            });
+    useEffect(() => {
+        loadTimeLine();
+        console.log("Kgs Formadora: " + props.ordenSelected.kg_formados + "kg VS " + props.ordenSelected.kg_hora*(tActivo+tInactivo)/60 + "kg")
+    }, [reportes]);
+
+    const loadTimeLine = () => {
+        if (reportes.length > 0) {
+            var objetos = [{
+                x: 'Prod',
+                y: [new Date(reportes[0].hora_inicio).getTime(),
+                new Date(reportes[0].hora_inicio).getTime()],
+                fillColor: '#2264A7'
+            }, {
+                x: 'Paro',
+                y: [new Date(reportes[0].hora_inicio).getTime(),
+                new Date(reportes[0].hora_inicio).getTime()],
+                fillColor: '#F7431E'
+            }, {
+                x: 'Cambio',
+                y: [new Date(reportes[0].hora_inicio).getTime(),
+                new Date(reportes[0].hora_inicio).getTime()],
+                fillColor: '#02c39a'
+            }];
+            
+            for (let i = 0; i < reportes.length; i++) {
+                var x_ = "", color_ = null;
+                if (reportes[i].id_tipo == 1) {
+                    x_ = "Paro";
+                    color_ = '#F7431E';
+                } else if (reportes[i].id_tipo == 2) {
+                    x_ = "Prod";
+                    color_ = '#2264A7';
+                } else {
+                    x_ = "Cambio";
+                    color_ = '#02c39a';
+                }
+    
+                var objeto = {
+                    x: x_,
+                    y: [
+                        new Date(reportes[i].hora_inicio).getTime(),
+                        new Date(reportes[i].hora_termino).getTime()
+                    ],
+                    fillColor: color_
+                }
+                objetos.push(objeto)
+            }
+            setSeriesTimeLine([{
+                data: objetos
+            }]);
+        }
     }
-
-    useEffect(() => {
-        loadResumen()
-        loadGraphTemp()
-        loadTimeLine()
-    }, [props.ordenSelected]);
-
-    useEffect(() => {
-        setTimeout(() => {
-            loadGraphTemp()
-            loadResumen()
-            loadTimeLine()
-        }, 3000);
-        const interval = setInterval(() => {
-            loadResumen();
-        }, 30000);
-        return () => clearInterval(interval);
-    }, [props.ordenSelected]);
 
     return (
         <div>
@@ -387,18 +308,18 @@ const Formadora2 = (props) => {
                                 : "Produciendo"
                             }</div>
                             <div className="font2 ml-3 my-4">Tiempo de Actividad</div>
-                            {parseInt(props.ordenSelected.tiempo_total/60) == 1 ?
+                            {parseInt(tActivo/60) == 1 ?
                                 <div className="font2Blue ml-1 mr-5 my-4">
-                                    {parseInt(props.ordenSelected.tiempo_total/60)} hr,
-                                    {" " + parseInt(props.ordenSelected.tiempo_total%60)} min
+                                    {parseInt(tActivo/60)} hr,
+                                    {" " + parseInt(tActivo%60)} min
                                 </div> :
                                 <div className="font2Blue ml-1 mr-5 my-4">
-                                    {parseInt(props.ordenSelected.tiempo_total/60)} hrs,
-                                    {" " + parseInt(props.ordenSelected.tiempo_total%60)} min
+                                    {parseInt(tActivo/60)} hrs,
+                                    {" " + parseInt(tActivo%60)} min
                                 </div> 
                             }
                             <div className="font2 ml-3 my-4">Productividad</div>
-                            <div className="font2Blue ml-1 mr-5 my-4">{formatNumber.new(_.round(props.ordenSelected.hamb_formadas/props.ordenSelected.tiempo_total)) + " ham/min"}</div>
+                            <div className="font2Blue ml-1 mr-5 my-4">{props.formatNumber.new(_.round(props.ordenSelected.hamb_formadas/tActivo)) + " ham/min"}</div>
                         </Row>
                     </Col>
                 </Row>
@@ -411,7 +332,7 @@ const Formadora2 = (props) => {
                     <div class="noSpace">
                         <div className="blackBorderBot">
                             <Row className="my-4">
-                                <div align="center" className="ml-auto indi">{formatNumber.new(_.round(props.ordenSelected.kg_formados))}</div>
+                                <div align="center" className="ml-auto indi">{props.formatNumber.new(_.round(props.ordenSelected.kg_formados))}</div>
                                 <div align="center" className="font2 mt-3 ml-2 mr-auto">Kg</div>
                             </Row>
                         </div>
@@ -419,7 +340,7 @@ const Formadora2 = (props) => {
                         <div className="blackBorderBot">
                             <Row className="" >
                                 <Col md="12">
-                                    <div align="center" className="indi mt-3">{formatNumber.new(_.round(props.ordenSelected.hamb_formadas))}</div>
+                                    <div align="center" className="indi mt-3">{props.formatNumber.new(_.round(props.ordenSelected.hamb_formadas))}</div>
                                     <div align="left" className="font2 mb-3">Hamburguesas formadas</div>
                                 </Col>
                             </Row>
@@ -430,14 +351,14 @@ const Formadora2 = (props) => {
                                     <div className="circle space5px ml-5">
                                         <Circle
                                             animate={true} // Boolean: Animated/Static progress
-                                            animationDuration="10s" // String: Length of animation
+                                            animationDuration="3s" // String: Length of animation
                                             responsive={true} // Boolean: Make SVG adapt to parent size
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                props.ordenSelected.tiempo_activo/props.ordenSelected.tiempo_total * 100 === Infinity ? 0 :
-                                                props.ordenSelected.tiempo_activo/props.ordenSelected.tiempo_total * 100 > 0 ?
-                                                props.ordenSelected.tiempo_activo/props.ordenSelected.tiempo_total * 100 :
+                                                tActivo/(tActivo+tInactivo) * 100 === Infinity ? 0 :
+                                                tActivo/(tActivo+tInactivo) * 100 > 0 ?
+                                                tActivo/(tActivo+tInactivo) * 100 :
                                                 0
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
@@ -459,14 +380,14 @@ const Formadora2 = (props) => {
                                     <div className="circle space5px">
                                         <Circle
                                             animate={true} // Boolean: Animated/Static progress
-                                            animationDuration="10s" // String: Length of animation
+                                            animationDuration="3s" // String: Length of animation
                                             responsive={true} // Boolean: Make SVG adapt to parent size
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (props.ordenSelected.kg_formados / ((props.ordenSelected.kg_hora / 3) * ((props.ordenSelected.tiempo_activo) / 60))) * 100 === Infinity ? 0 :
-                                                ((props.ordenSelected.kg_formados / ((props.ordenSelected.kg_hora / 3) * ((props.ordenSelected.tiempo_activo) / 60)))) > 0 ?
-                                                (props.ordenSelected.kg_formados / ((props.ordenSelected.kg_hora / 3) * ((props.ordenSelected.tiempo_activo) / 60))) * 100  //(totalKG/capacidad*tiempo que se demoro)
+                                                props.ordenSelected.kg_formados/(props.ordenSelected.kg_hora * ((tActivo+tInactivo)/60))*100 === Infinity ? 0 :
+                                                props.ordenSelected.kg_formados/(props.ordenSelected.kg_hora * ((tActivo+tInactivo)/60)) > 0 ?
+                                                props.ordenSelected.kg_formados/(props.ordenSelected.kg_hora * ((tActivo+tInactivo)/60))*100
                                                 : 0
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
@@ -533,8 +454,5 @@ const Formadora2 = (props) => {
     )
 }
 
-const mapStateToProps = (state) => ({
-    id_orden: state.dashboardReducers.id_orden,
-});
-
+const mapStateToProps = (state) => ({});
 export default connect(mapStateToProps)(Formadora2);

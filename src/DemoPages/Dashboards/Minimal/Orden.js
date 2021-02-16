@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Container, Col, Table, Button, Modal, ModalHeader, ModalBody,
           Alert, Row, Input, Form, Label } from "reactstrap";
 import { connect } from "react-redux";
-import { setIdOrden } from "../../../actions/dashboardActions";
+//import { setIdOrden } from "../../../actions/dashboardActions";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import { green } from "@material-ui/core/colors";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
@@ -22,30 +22,9 @@ const Orden = (props) => {
   const [ordenes, setOrdenes] = useState([]);
   const [idSubOrden, setIdSubOrden] = useState("");
   const [prioridad, setPrioridad] = useState("");
-
   const [fechaOrdenes, setFechaOrdenes] = useState(props.fechaOrdenes);
 
-  var formatNumber = {
-    separador: ".", // separador para los miles
-    sepDecimal: ',', // separador para los decimales
-
-    formatear: function (num) {
-      num += '';
-      var splitStr = num.split('.');
-      var splitLeft = splitStr[0];
-      var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
-      var regx = /(\d+)(\d{3})/;
-      while (regx.test(splitLeft)) {
-        splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
-      }
-      return this.simbol + splitLeft + splitRight;
-    },
-    new: function (num, simbol) {
-      this.simbol = simbol || '';
-      return this.formatear(num);
-    }
-  }
-
+  /* Permite borrar una orden seleccionada */
   const deleteOrdenes = (id_sub, e) => {
     e.preventDefault();
     fetch(global.api.dashboard.deletesuborden, {
@@ -69,37 +48,14 @@ const Orden = (props) => {
     props.updateOrden(idSubOrden);
   };
 
+  /* Permite actualizar la orden actual por una nueva orden seleccionada */
   const verOrden = (e, id_orden) => {
     e.preventDefault();
 
-    props.setIdOrden(!props.id_orden)
+    //props.setIdOrden(!props.id_orden)
     props.updateOrden(id_orden);
     console.log(id_orden);
   }
-
-  /*const cambiarOrden = (opcion,e) => {
-    e.preventDefault();
-
-    let api = "";
-    if(opcion === 1) api=global.api.dashboard.nextorden
-    else if(opcion === 2) api=global.api.dashboard.siguienteordenenvasadoras
-    else if(opcion === 3) api=global.api.dashboard.siguienteordenempaque
-
-    fetch(api, {
-      "method": "POST",
-      "headers": {
-        "Content-Type": "application/json",
-        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
-      },
-      "body": false
-    })
-    .then(response => {
-      console.log(response);
-    })
-    .catch(err => {
-      console.error(err);
-    });
-  }*/
 
   const [modal, setModal] = useState(false);
   const toggle = (cajas, id_sub_orden, sku, producto) => {
@@ -238,7 +194,7 @@ const Orden = (props) => {
   useEffect(() => {
     const interval = setInterval(() => {
       props.updateOrden(idSubOrden);
-    }, 60000);
+    }, 300000);
     return () => clearInterval(interval);
   }, [idSubOrden]);
 
@@ -270,19 +226,7 @@ const Orden = (props) => {
           </Button>
         </Col>{
         */}
-        <Col align="left">
-          {/*
-          <Button className="buttonOrange2 ml-3 mt-3" size="lg" onClick={(e) => cambiarOrden(1, e)}>
-            Cambiar Formadora
-            </Button>
-            <Button className="buttonOrange2 ml-3 mt-3" size="lg" onClick={(e) => cambiarOrden(2, e)}>
-            Cambiar Envasadoras
-            </Button>
-            <Button className="buttonOrange2 ml-3 mt-3" size="lg" onClick={(e) => cambiarOrden(3, e)}>
-            Cambiar Empaque
-            </Button>
-          */}
-        </Col>
+        <Col align="left"></Col>
         <Row style={{ marginRight: '0.5%' }}>
           <Col className="mt-4 mr-0">
             <div>Seleccione fecha</div>
@@ -360,20 +304,20 @@ const Orden = (props) => {
                     <td>{orden.id_sub_orden}</td>
                     <td>{orden.sku}</td>
                     <td>{orden.producto}</td>
-                    <td>{formatNumber.new(orden.cajas)}</td>
+                    <td>{props.formatNumber.new(orden.cajas)}</td>
                     <td>
-                      {formatNumber.new(_.round(orden.productividad, 2)) + " ham/min"}
+                      {props.formatNumber.new(_.round(orden.productividad, 2)) + " ham/min"}
                     </td>
                     <td>
-                      {formatNumber.new(_.round(orden.tiempo_estimado, 2)) + " hrs"}
+                      {props.formatNumber.new(_.round(orden.tiempo_estimado, 2)) + " hrs"}
                     </td>
-                    <td>{formatNumber.new(_.round(orden.kg_solicitados)) + " kg"}</td>
-                    <td>{formatNumber.new(_.round(orden.real_kg)) + " kg"}</td>
+                    <td>{props.formatNumber.new(parseInt(orden.kg_solicitados)) + " kg"}</td>
+                    <td>{props.formatNumber.new(parseInt(orden.real_kg)) + " kg"}</td>
                     <td>
                       {
                         orden.kg_porcentual == null ? "0 %"
                         : orden.kg_porcentual > 100 ? "100 %"
-                        : formatNumber.new(_.round(orden.kg_porcentual, 2)) + " %"
+                        : props.formatNumber.new(_.round(orden.kg_porcentual, 2)) + " %"
                       }
                     </td>
                     <td>
@@ -618,7 +562,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setIdOrden: (data) => dispatch(setIdOrden(data)),
+  //setIdOrden: (data) => dispatch(setIdOrden(data)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Orden);
