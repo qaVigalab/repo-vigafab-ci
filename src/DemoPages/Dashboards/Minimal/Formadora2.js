@@ -204,20 +204,21 @@ const Formadora2 = (props) => {
             });
     }
 
-    const [reportes, setReportes] = useState(props.reportesSelected);
+    const [reportes, setReportes] = useState(props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55')));
     useEffect(() => {
         loadGraphTemp();
         
+        var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55'));
         var tiempo_activo = 0, tiempo_inactivo = 0;
-        for (var i=0; i<props.reportesSelected.length; i++){
-            const startDate = moment(props.reportesSelected[i].hora_inicio);
-            const timeEnd = moment(props.reportesSelected[i].hora_termino);
+        for (var i=0; i<reportesSel.length; i++){
+            const startDate = moment(reportesSel[i].hora_inicio);
+            const timeEnd = moment(reportesSel[i].hora_termino);
             const diff = timeEnd.diff(startDate);
             const diffDuration = moment.duration(diff);
 
-            if (props.reportesSelected[i].id_tipo === 1)
+            if (reportesSel[i].id_tipo === 1)
                 tiempo_inactivo += diffDuration.hours()*60 + diffDuration.minutes();
-            else if (props.reportesSelected[i].id_tipo === 2)
+            else if (reportesSel[i].id_tipo === 2)
                 tiempo_activo += diffDuration.hours()*60 + diffDuration.minutes();
         }
         setTInactivo(tiempo_inactivo);
@@ -231,7 +232,7 @@ const Formadora2 = (props) => {
               ],
             }
         );
-        setReportes(props.reportesSelected);
+        setReportes(reportesSel);
     }, [props.reportesSelected]);
 
     useEffect(() => {
@@ -300,25 +301,25 @@ const Formadora2 = (props) => {
                     <Col >
                         <Row >
                             <Col align="right">
-                                <div className="font2  my-4 ">Estado</div>
+                                <div className="font2 my-4">Estado: </div>
                             </Col>
-                            <div className={props.ordenSelected.id_estado != 1 ? "font2gray  my-4" : "font2Blue my-4"}>{
+                            <div className={props.ordenSelected.id_estado != 1 ? "font2gray my-4" : "font2Blue my-4"}>{
                                 props.ordenSelected.id_estado === 3 ? "Terminada"
                                 : props.ordenSelected.id_estado === 2 ? "En espera"
                                 : "Produciendo"
                             }</div>
-                            <div className="font2 ml-3 my-4">Tiempo de Actividad</div>
+                            <div className="font2 ml-4 my-4">Tiempo de Actividad: </div>
                             {parseInt(tActivo/60) == 1 ?
-                                <div className="font2Blue ml-1 mr-5 my-4">
+                                <div className="font2Blue ml-1 my-4">
                                     {parseInt(tActivo/60)} hr,
                                     {" " + parseInt(tActivo%60)} min
                                 </div> :
-                                <div className="font2Blue ml-1 mr-5 my-4">
+                                <div className="font2Blue ml-1 my-4">
                                     {parseInt(tActivo/60)} hrs,
                                     {" " + parseInt(tActivo%60)} min
                                 </div> 
                             }
-                            <div className="font2 ml-3 my-4">Productividad</div>
+                            <div className="font2 ml-4 my-4">Productividad</div>
                             <div className="font2Blue ml-1 mr-5 my-4">{props.formatNumber.new(_.round(props.ordenSelected.hamb_formadas/tActivo)) + " ham/min"}</div>
                         </Row>
                     </Col>

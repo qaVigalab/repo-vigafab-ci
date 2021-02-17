@@ -42,7 +42,7 @@ const MinimalDashboard1 = () => {
   }
 
   /* Se consulta a la API para obtener el listado de Envasadoras */
-  const [maquinas, setMaquinas] = useState([{ id: "", nombre: "" }]);
+  const [maquinas, setMaquinas] = useState([]);
   const getMaquinas = (tipo) => {
     var myHeaders = new Headers();
     myHeaders.append("x-api-key", "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m");
@@ -222,7 +222,9 @@ const MinimalDashboard1 = () => {
             <Row>
               <Col md="12" xl="12">
                 <Card className="main-card mb-3">
-                  <NuevaOrden />
+                  <NuevaOrden
+                    productos={productos}
+                  />
                 </Card>
               </Col>
             </Row>
@@ -327,7 +329,11 @@ const MinimalDashboard1 = () => {
             <Col md="6" xl="6">
               <Card className="main-card mb-3">
                 <TotalEnvasadoras
+                  maquinas={maquinas}
+                  formatNumber={formatNumber}
                   ordenSelected={ordenSelected}
+                  reportesSelected={reportesSelected.filter(reporte => reporte.id_vibot === 23608 || reporte.id_vibot === 34828 ||
+                                                            reporte.id_vibot === 32818 ||reporte.id_vibot === 30776)}
                 />
               </Card>
             </Col>
@@ -335,7 +341,9 @@ const MinimalDashboard1 = () => {
             <Col md="6" xl="6">
               <Card className="main-card mb-3">
                 <Empaque
+                  formatNumber={formatNumber}
                   ordenSelected={ordenSelected}
+                  reportesSelected={reportesSelected.filter(reporte => reporte.id_vibot === 23643)}
                 />
               </Card>
             </Col>

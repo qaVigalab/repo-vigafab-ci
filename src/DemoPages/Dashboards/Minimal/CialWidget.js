@@ -98,49 +98,52 @@ const CialWidget = (props) => {
     }
   );
 
-  const [reportes, setReportes] = useState(props.reportesSelected);
+  const [reportes, setReportes] = useState(props.reportesSelected.filter(rep => rep.hora_inicio.includes('05:55')));
   const [hambEnvasadas, setHambEnvasadas] = useState(0);
   const [kgEnvasados, setKgEnvasados] = useState(0);
   useEffect(() => {
-      var tiempo_activo = 0, tiempo_inactivo = 0;
-      var hamburguesas_envasadas = 0, kilos_envasados = 0;
+    var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55'));
+    var tiempo_activo = 0, tiempo_inactivo = 0;
+    var hamburguesas_envasadas = 0, kilos_envasados = 0;
 
-      for (var i=0; i<props.reportesSelected.length; i++){
-          /* Se calculan los tiempos de actividad y paro */
-          const startDate = moment(props.reportesSelected[i].hora_inicio);
-          const timeEnd = moment(props.reportesSelected[i].hora_termino);
-          const diff = timeEnd.diff(startDate);
-          const diffDuration = moment.duration(diff);
+    for (var i=0; i<reportesSel.length; i++){
+        /* Se calculan los tiempos de actividad y paro */
+        const startDate = moment(reportesSel[i].hora_inicio);
+        const timeEnd = moment(reportesSel[i].hora_termino);
+        const diff = timeEnd.diff(startDate);
+        const diffDuration = moment.duration(diff);
 
-          if (props.reportesSelected[i].id_tipo === 1)
-              tiempo_inactivo += diffDuration.hours()*60 + diffDuration.minutes();
-          else if (props.reportesSelected[i].id_tipo === 2)
-              tiempo_activo += diffDuration.hours()*60 + diffDuration.minutes();
-          
-          /* Se obtiene la cantidad de hamburguesas envasadas y sus kg acumulados */
-          hamburguesas_envasadas += props.reportesSelected[i].hamburguesas_acumuladas;
-          kilos_envasados += props.reportesSelected[i].real_kg;
-      }
+        if (reportesSel[i].id_tipo === 1)
+            tiempo_inactivo += diffDuration.hours()*60 + diffDuration.minutes();
+        else if (reportesSel[i].id_tipo === 2)
+            tiempo_activo += diffDuration.hours()*60 + diffDuration.minutes();
+        
+        /* Se obtiene la cantidad de hamburguesas envasadas y sus kg acumulados */
+        if (reportesSel[i].id_tipo === 2) {
+          hamburguesas_envasadas += reportesSel[i].hamburguesas_acumuladas;
+          kilos_envasados += reportesSel[i].real_kg;
+        }
+    }
 
-      setTInactivo(tiempo_inactivo);
-      setTActivo(tiempo_activo);
-      setHambEnvasadas(hamburguesas_envasadas);
-      setKgEnvasados(kilos_envasados);
-      setDataTorta(
-          {
-            datasets: [
-              {
-                data: [0, tiempo_inactivo, tiempo_activo]
-              }
-            ],
-          }
-      );
-      setReportes(props.reportesSelected);
+    setTInactivo(tiempo_inactivo);
+    setTActivo(tiempo_activo);
+    setHambEnvasadas(hamburguesas_envasadas);
+    setKgEnvasados(kilos_envasados);
+    setDataTorta(
+        {
+          datasets: [
+            {
+              data: [0, tiempo_inactivo, tiempo_activo]
+            }
+          ],
+        }
+    );
+    setReportes(reportesSel);
   }, [props.reportesSelected]);
 
   useEffect(() => {
-      loadTimeLine();
-      console.log("Kgs Envasadoras: " + props.ordenSelected.kg_formados + "kg VS " + props.ordenSelected.kg_hora*(tActivo+tInactivo)/60 + "kg")
+    loadTimeLine();
+    console.log("Kgs Envasadoras: " + props.ordenSelected.kg_formados + "kg VS " + props.ordenSelected.kg_hora*(tActivo+tInactivo)/60 + "kg")
   }, [reportes]);
 
   const loadTimeLine = () => {
@@ -226,11 +229,19 @@ const CialWidget = (props) => {
             <Col md="6">
               <Row className="mt-2">
                 <Col align="right">
-                  <div className={props.ordenSelected.id_estado != 1 ? "font2gray my-1" : "font2Blue my-1"}>{
-                    props.ordenSelected.id_estado === 3 ? "Terminada"
-                    : props.ordenSelected.id_estado === 2 ? "En espera"
-                    : "Produciendo"
-                  }</div>
+                  {reportes.length > 0 ?
+                    <div className={props.ordenSelected.id_estado != 1 || reportes.filter(rep => rep.id_tipo != 4)[reportes.filter(rep => rep.id_tipo != 4).length-1].id_tipo === 1 ? "font2gray my-1" : "font2Blue my-1"}>{
+                      props.ordenSelected.id_estado === 3 ? "Terminada"
+                      : props.ordenSelected.id_estado === 2 ? "En espera"
+                      : reportes.filter(rep => rep.id_tipo != 4)[reportes.filter(rep => rep.id_tipo != 4).length-1].id_tipo === 1 ? "Detenida"
+                      : "Produciendo"
+                    }</div> :
+                    <div className={props.ordenSelected.id_estado != 1 ? "font2gray my-1" : "font2Blue my-1"}>{
+                      props.ordenSelected.id_estado === 3 ? "Terminada"
+                      : props.ordenSelected.id_estado === 2 ? "En espera"
+                      : "Produciendo"
+                    }</div>
+                  }
                 </Col>
               </Row>
 
