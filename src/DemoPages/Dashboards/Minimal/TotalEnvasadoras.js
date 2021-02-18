@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col, Container } from "reactstrap";
 import { connect } from "react-redux";
-
 import { Doughnut } from "react-chartjs-2";
-
 import Circle from "react-circle";
 import _ from "lodash";
-
+import moment from 'moment';
 
 const TotalEnvasadoras = (props) => {
-
     const [dataTorta, setDataTorta] = useState(
         {
             legend: [
@@ -42,7 +39,8 @@ const TotalEnvasadoras = (props) => {
                 },
             ],
         }
-    )
+    );
+
     const [optionTorta, setOptionTorta] = useState(
         {
             legend: {
@@ -51,166 +49,123 @@ const TotalEnvasadoras = (props) => {
             responsive: true,
             maintainAspectRatio: true,
         }
-    )
-    const [hacumuladas, setHacumuladas] = useState(0)
-    const [tActivo, setTActivo] = useState(0)
-    const [tInactivo, setTInactivo] = useState(0)
-    const [kgacumulados, setKgacumulados] = useState(0)
-    const [kgsolicitados, setKgsolicitados] = useState(0)
-    const [hsolicitadas, setHsolicitadas] = useState(0)
-    const [estado, setEstado] = useState(0)
-    const [capacidad, setCapacidad] = useState(0)
+    );
 
-    var formatNumber = {
-        separador: ".", // separador para los miles
-        sepDecimal: ',', // separador para los decimales
-        formatear: function (num) {
-          num += '';
-          var splitStr = num.split('.');
-          var splitLeft = splitStr[0];
-          var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
-          var regx = /(\d+)(\d{3})/;
-          while (regx.test(splitLeft)) {
-            splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
-          }
-          return this.simbol + splitLeft + splitRight;
-        },
-        new: function (num, simbol) {
-          this.simbol = simbol || '';
-          return this.formatear(num);
-        }
-      }
+    const [cantMaquinas, setCantMaquinas] = useState(0);
+    const [disponibilidad, setDisponibilidad] = useState(0);
+    const [eficiencia, setEficiencia] = useState();
+    const [tActivo, setTActivo] = useState(0);
 
-    const loadResumen = () => {
-        let link
-        localStorage.getItem("id_orden") === localStorage.getItem("id_ordenA") 
-        ? link = global.api.dashboard.getresumenenvasadoras
-        : link = global.api.dashboard.getresumenhistoricoEnv
-        fetch(link, {
-            "method": "POST",
-            "headers": {
-                "Content-Type": "application/json",
-                "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
-            },
-            body: JSON.stringify({
-                id_orden: localStorage.getItem("id_orden"),
-            }),
-        })
-            .then(response => response.json())
-            .then(result => {
-                let data = [];
-                if (result[0].tiempo_inactivo == 0 && result[0].tiempo_actividad == 0) {
-                    data = [1, 0, 0]
-                } else {
-                    data = [0, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
+    useEffect(() => {
+        var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55'));
+        var t_activo = 0, t_inactivo = 0;
+        for (var j=0; j<props.maquinas.length; j++){
+            for (var i=0; i<reportesSel.length; i++){
+                /* Se calculan los tiempos de actividad y paro */
+                const startDate = moment(reportesSel[i].hora_inicio);
+                const timeEnd = moment(reportesSel[i].hora_termino);
+                const diff = timeEnd.diff(startDate);
+                const diffDuration = moment.duration(diff);
+
+                if (reportesSel[i].id_tipo === 1 && reportesSel[i].id_vibot === props.maquinas[j].id && props.maquinas[j].id != 34828){
+                    t_inactivo += diffDuration.hours()*60 + diffDuration.minutes();
                 }
-                setTActivo(result[0].tiempo_actividad)
-                setTInactivo(result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo)
-                setEstado(result[0].estado)
-                setHacumuladas(result[0].hamburguesas_acumuladas)
-                setKgacumulados(result[0].real_kg)
-                setKgsolicitados(result[0].kg_solicitados)
-                setHsolicitadas(result[0].hamburguesas_solicitadas)
-                setCapacidad(result[0].kg_hora)
-                setDataTorta(
-                    {
-                        datasets: [
-                            {
-                                data: data
-                            }
-                        ],
-                    }
-                )
+                else if (reportesSel[i].id_tipo === 2 && reportesSel[i].id_vibot === props.maquinas[j].id){
+                    t_activo += diffDuration.hours()*60 + diffDuration.minutes();
+                }
             }
-            )
-            .catch(err => {
-                console.error(err);
-            });
-    }
+        }
+        
+        setDisponibilidad(isNaN(t_activo/(t_activo+t_inactivo)) ? 0: t_activo/(t_activo+t_inactivo));
+        setEficiencia(props.ordenSelected.kg_envasados/(props.ordenSelected.kg_hora * (t_activo+t_inactivo)/60/3));
+        setTActivo(t_activo/3);
 
-    useEffect(() => {
+        var sumMaquinas = 0;
+        for (var i=0; i<props.maquinas.length; i++){
+            var reportesMaq = reportesSel.filter(rep => rep.id_vibot === props.maquinas[i].id);
+            if (reportesMaq[reportesMaq.length-1] != undefined && reportesMaq[reportesMaq.length-1].id_tipo === 2)
+                sumMaquinas += 1
+        }
+        setCantMaquinas(sumMaquinas);
 
-        loadResumen()
-    }, [])
-
-    useEffect(() => {
-        setTimeout(() => {
-            loadResumen()
-        }, 2000);
-
-        const interval = setInterval(() => {
-            loadResumen();
-        }, 30000);
-        return () => clearInterval(interval);
-    }, []);
-
-    useEffect(() => {
-        loadResumen()
-    }, [props.id_orden]);
-
-
+        setDataTorta(
+            {
+            datasets: [
+                {
+                data: [0, t_inactivo/3, t_activo/3]
+                }
+            ],
+            }
+        );
+    }, [props.reportesSelected]);
 
     return (
-
         <div>
-
             <div className="blackBorder2" >
                 <Row>
                     <br />
                     <Col align="center" md="4">
-                        <div className="text-uppercase font-weight-bold title1orange my-1">TOTAL ENVASADORAS</div>
+                        <div className="text-uppercase font-weight-bold title1orange my-1">ENVASADORAS</div>
                     </Col>
-                    <Col md="4">
+                    <Col md="3">
                         <Row align="right">
-                            <div className="font2  my-4">Estado</div>
-                            <div className={estado == 0 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>
-                                {localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Terminada" : estado  + "/4 Env. Produciendo"}</div>
+                            <div className="font2 my-4">Estado:</div>
+                            <div className={cantMaquinas == 0 || props.ordenSelected.id_estado != 1  ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>
+                                {props.ordenSelected.id_estado === 3 ? "Terminada"
+                                : props.ordenSelected.id_estado === 2 ? "En espera"
+                                : cantMaquinas  + "/4 Produciendo"}
+                            </div>
                         </Row>
                     </Col>
 
-
-                    <Col md="4">
+                    <Col md="5">
                         <Row align="right">
-                            <div className="font2 ml-3 my-4">Tiempo de Actividad</div>
-                            <div className="font2Blue ml-1 my-4">{formatNumber.new(_.round((tActivo/180),2))} hrs</div> {/* tiempo activo/(60*3)*/}
+                            <div className="font2 ml-4 my-4">Tiempo de Actividad: </div>
+                            {parseInt(tActivo/60) == 1 ?
+                                <div className="font2Blue ml-1 my-4">
+                                    {parseInt(tActivo/60)} hr,
+                                    {" " + parseInt(tActivo%60)} min
+                                </div> :
+                                <div className="font2Blue ml-1 my-4">
+                                    {parseInt(tActivo/60)} hrs,
+                                    {" " + parseInt((tActivo)%60)} min
+                                </div> 
+                            }
                         </Row>
-
                     </Col>
-
                 </Row>
-            </div >
+            </div>
+
             <Row>
                 <Col md="5" className="blackBorderRight">
                     <div class="noSpace ">
                         <div className="blackBorderBot">
-
                             <Row className="mt-4">
-
-
-                                <div align="center" className="ml-auto indi">{formatNumber.new(_.round(hacumuladas))}</div>
-                                <div align="center" className="font2 mt-3 ml-2 mr-auto">de {formatNumber.new(_.round(hsolicitadas))} F.Packs</div>
-
+                                <div align="center" className="ml-auto indi">{props.formatNumber.new(_.round(props.ordenSelected.hamb_envasadas))}</div>
+                                <div align="center" className="font2 mt-3 ml-2 mr-auto">de {props.formatNumber.new(_.round(props.ordenSelected.hamb_solicitadas))} Packs</div>
                             </Row>
+
                             <Row className="mt-1 mb-4">
-                                <div align="left" className="ml-auto indi">{formatNumber.new(_.round(kgacumulados))}</div>
-                                <div align="center" className="font2 mt-3 ml-2 mr-auto"> de {formatNumber.new(_.round(kgsolicitados))} Kgs</div>
-
+                                <div align="left" className="ml-auto indi">{props.formatNumber.new(_.round(props.ordenSelected.kg_envasados))}</div>
+                                <div align="center" className="font2 mt-3 ml-2 mr-auto"> de {props.formatNumber.new(_.round(props.ordenSelected.kg_solicitados))} Kgs</div>
                             </Row>
-
                         </div>
+
                         <div className="my-3">
                             <Row >
-
                                 <Col md="6 my-auto">
                                     <div className="circle space5px">
                                         <Circle
                                             animate={true} // Boolean: Animated/Static progress
-                                            animationDuration="10s" // String: Length of animation
+                                            animationDuration="3s" // String: Length of animation
                                             responsive={true} // Boolean: Make SVG adapt to parent size
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (tActivo / (tInactivo + tActivo)) * 100
+                                                disponibilidad * 100 === Infinity ? 0 :
+                                                disponibilidad * 100 > 0 ?
+                                                disponibilidad * 100 :
+                                                0
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -231,14 +186,14 @@ const TotalEnvasadoras = (props) => {
                                     <div className="circle space5px">
                                         <Circle
                                             animate={true} // Boolean: Animated/Static progress
-                                            animationDuration="10s" // String: Length of animation
+                                            animationDuration="3s" // String: Length of animation
                                             responsive={true} // Boolean: Make SVG adapt to parent size
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                ( (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))))>0 ? 
-                                                 (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))) * 100 : //(totalKG/capacidad*tiempo que se demoro)
-                                                 0
+                                                eficiencia > 0 ? 
+                                                eficiencia * 100 : //(totalKG/capacidad*tiempo que se demoro)
+                                                0
                                                ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -254,11 +209,11 @@ const TotalEnvasadoras = (props) => {
                                         <div align="center" className="font2 mt-3">Eficiencia</div>
                                     </div>
                                 </Col>
-
                             </Row>
                         </div>
                     </div>
                 </Col>
+
                 <Col md="7">
                     <Row>
                         <Col md="10" xs="12" className="mx-auto">
@@ -274,12 +229,13 @@ const TotalEnvasadoras = (props) => {
                     </Row>
                 </Col>
             </Row>
+
+            <Row className="blackBorderTop mx-2">
+                <Col xs="12" className="my-3 mx-2"></Col>
+            </Row>
         </div>
     )
 }
 
-const mapStateToProps = (state) => ({
-    id_orden: state.dashboardReducers.id_orden,
-});
-
+const mapStateToProps = (state) => ({});
 export default connect(mapStateToProps)(TotalEnvasadoras);

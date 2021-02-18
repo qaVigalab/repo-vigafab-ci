@@ -7,22 +7,22 @@ import Circle from "react-circle";
 import ReactApexChart from "react-apexcharts";
 import "moment/locale/es";
 import _ from "lodash";
+import moment from 'moment';
 
 const Formadora2 = (props) => {
-    const id_vibot = 6296;
     var temperatura = [];
     var fecha = [];
     const labels = {
         enabled: false
     };
+
     const markers = {
         size: 0
     };
-    const tooltips = {
 
+    const tooltips = {
         x: {
             format: 'dd/MM/yy HH:mm',
-
         },
         y: {
             formatter: undefined,
@@ -65,6 +65,7 @@ const Formadora2 = (props) => {
             ],
         }
     )
+
     const [options3, setOptions3] = useState(
         {
             chart: {
@@ -128,23 +129,20 @@ const Formadora2 = (props) => {
                     color: '#606060'
                 },
             }
-        })
+        }
+    )
     const [series3, setSeries3] = useState(
         [{
             name: 'Temperatura',
             data: temperatura,
-
         },]
     )
+
     const [seriesTimeLine, setSeriesTimeLine] = useState([])
-    const [optionsTimeLine, setOptionsTimeLine] = useState(
-
-        {
-
+    const [optionsTimeLine, setOptionsTimeLine] = useState({
             dataLabels: labels,
             markers: markers,
             tooltip: tooltips,
-
             chart: {
                 type: 'rangeBar',
             },
@@ -157,13 +155,11 @@ const Formadora2 = (props) => {
                     }
                 }
             },
-
             xaxis: {
                 type: 'datetime',
                 labels: {
                 }
             },
-
             grid: {
                 row: {
                     colors: ['#f3f4f5', '#fff'],
@@ -172,82 +168,11 @@ const Formadora2 = (props) => {
             }
         }
     )
-    const [productividad, setProductividad] = useState(0)
-    const [hacumuladas, setHacumuladas] = useState(0)
-    const [tActivo, setTActivo] = useState(0)
-    const [tInactivo, setTInactivo] = useState(0)
-    const [kgacumulados, setKgacumulados] = useState(0)
-    const [estado, setEstado] = useState(0)
-    const [capacidad, setCapacidad] = useState(0)
+    
+    const [tActivo, setTActivo] = useState(0);
+    const [tInactivo, setTInactivo] = useState(0);
 
-    var formatNumber = {
-        separador: ".", // separador para los miles
-        sepDecimal: ',', // separador para los decimales
-        formatear: function (num) {
-            num += '';
-            var splitStr = num.split('.');
-            var splitLeft = splitStr[0];
-            var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
-            var regx = /(\d+)(\d{3})/;
-            while (regx.test(splitLeft)) {
-                splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
-            }
-            return this.simbol + splitLeft + splitRight;
-        },
-        new: function (num, simbol) {
-            this.simbol = simbol || '';
-            return this.formatear(num);
-        }
-    }
-
-    const loadResumen = () => {
-        let link
-        localStorage.getItem("id_orden") === localStorage.getItem("id_ordenA")
-            ? link = global.api.dashboard.getresumenmaquina
-            : link = global.api.dashboard.getresumenhistorico
-        fetch(link, {
-            "method": "POST",
-            "headers": {
-                "content-type": "application/json",
-                "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
-            },
-
-            body: JSON.stringify({
-                id_vibot: id_vibot,
-                id_orden: localStorage.getItem("id_orden")
-            }),
-        })
-            .then(response => response.json())
-            .then(result => {
-                let data = [];
-                if (result[0].tiempo_inactivo == 0 && result[0].tiempo_actividad == 0) {
-                    data = [1, 0, 0]
-                } else {
-                    data = [0, Math.round(result[0].tiempo_inactivo / 60 * 100) / 100, Math.round(result[0].tiempo_actividad / 60 * 100) / 100]
-                }
-                setTActivo(result[0].tiempo_actividad)
-                setProductividad(result[0].productividad)
-                setTInactivo(result[0].tiempo_inactivo == 0 ? 1 : result[0].tiempo_inactivo)
-                setEstado(result[0].estado)
-                setHacumuladas(result[0].hamburguesas_acumuladas)
-                setKgacumulados(result[0].real_kg)
-                setCapacidad(result[0].kg_hora)
-                setDataTorta(
-                    {
-                        datasets: [
-                            {
-                                data: data
-                            }
-                        ],
-                    }
-                )
-            }
-            )
-            .catch(err => {
-                console.error(err);
-            });
-    }
-
+    /* Se carga el gráfico de temperaturas asociado a la orden en curso */
     const loadGraphTemp = () => {
         fetch(global.api.dashboard.gettempformadora, {
             "method": "POST",
@@ -256,7 +181,7 @@ const Formadora2 = (props) => {
                 "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
             },
             body: JSON.stringify({
-                id_orden: localStorage.getItem("id_orden")
+                id_orden: props.ordenSelected.id_sub_orden
             }),
         })
             .then(response => response.json())
@@ -267,9 +192,7 @@ const Formadora2 = (props) => {
                 ))
             }
             ).then(() => {
-
                 setSeries3([{
-
                     data: temperatura
                 }]);
                 setOptions3({ xaxis: { categories: fecha } });
@@ -281,94 +204,88 @@ const Formadora2 = (props) => {
             });
     }
 
-    const loadTimeLine = () => {
-        fetch(global.api.dashboard.gettimelinemaquina, {
-            "method": "POST",
-            "headers": {
-                "Content-Type": "application/json",
-                "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
-            },
-            body: JSON.stringify({
-                id_vibot: id_vibot,
-                id_orden: localStorage.getItem("id_orden")
-            }),
-        })
-            .then((response) => response.json())
-            .then((r) => {
-                var objeto = {};
-                if (r.length > 0) {
-                    var objetos = [
-                        {
-                            x: 'Prod',
-                            y: [new Date(r[0].hora_inicio).getTime(),
-                            new Date(r[0].hora_inicio).getTime()],
-                            fillColor: '#2264A7'
-                        },
-                        {
-                            x: 'Paro',
-                            y: [new Date(r[0].hora_inicio).getTime(),
-                            new Date(r[0].hora_inicio).getTime()],
-                            fillColor: '#F7431E'
-                        },
-                        {
-                            x: 'Cambio',
-                            y: [new Date(r[0].hora_inicio).getTime(),
-                            new Date(r[0].hora_inicio).getTime()],
-                            fillColor: '#02c39a'
-                        }
-                    ];
-                    
-                    for (let i = 0; i < r.length; i++) {
-                        var x_ = "", color_ = null;
-                        if (r[i].id_tipo == 1) {
-                          x_ = "Paro";
-                          color_ = '#F7431E';
-                        } else if (r[i].id_tipo == 2) {
-                          x_ = "Prod";
-                          color_ = '#2264A7';
-                        } else {
-                          x_ = "Cambio";
-                          color_ = '#02c39a';
-                        }
-            
-                        objeto = {
-                            x: x_,
-                            y: [
-                                new Date(r[i].hora_inicio).getTime(),
-                                new Date(r[i].hora_termino).getTime()
-                            ],
-                            fillColor: color_
-                        }
-                        objetos.push(objeto)
-                    }
+    const [reportes, setReportes] = useState(props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55')));
+    useEffect(() => {
+        loadGraphTemp();
+        
+        var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55'));
+        var tiempo_activo = 0, tiempo_inactivo = 0;
+        for (var i=0; i<reportesSel.length; i++){
+            const startDate = moment(reportesSel[i].hora_inicio);
+            const timeEnd = moment(reportesSel[i].hora_termino);
+            const diff = timeEnd.diff(startDate);
+            const diffDuration = moment.duration(diff);
+
+            if (reportesSel[i].id_tipo === 1)
+                tiempo_inactivo += diffDuration.hours()*60 + diffDuration.minutes();
+            else if (reportesSel[i].id_tipo === 2)
+                tiempo_activo += diffDuration.hours()*60 + diffDuration.minutes();
+        }
+        setTInactivo(tiempo_inactivo);
+        setTActivo(tiempo_activo);
+        setDataTorta(
+            {
+              datasets: [
+                {
+                  data: [0, tiempo_inactivo, tiempo_activo]
                 }
-                setSeriesTimeLine([{
-                    data: objetos
-                }]);
-            })
+              ],
+            }
+        );
+        setReportes(reportesSel);
+    }, [props.reportesSelected]);
 
-            .catch((err) => {
-                console.error(err);
-            });
+    useEffect(() => {
+        loadTimeLine();
+    }, [reportes]);
+
+    const loadTimeLine = () => {
+        if (reportes.length > 0) {
+            var objetos = [{
+                x: 'Prod',
+                y: [new Date(reportes[0].hora_inicio).getTime(),
+                new Date(reportes[0].hora_inicio).getTime()],
+                fillColor: '#2264A7'
+            }, {
+                x: 'Paro',
+                y: [new Date(reportes[0].hora_inicio).getTime(),
+                new Date(reportes[0].hora_inicio).getTime()],
+                fillColor: '#F7431E'
+            }, {
+                x: 'Cambio',
+                y: [new Date(reportes[0].hora_inicio).getTime(),
+                new Date(reportes[0].hora_inicio).getTime()],
+                fillColor: '#02c39a'
+            }];
+            
+            for (let i = 0; i < reportes.length; i++) {
+                var x_ = "", color_ = null;
+                if (reportes[i].id_tipo == 1) {
+                    x_ = "Paro";
+                    color_ = '#F7431E';
+                } else if (reportes[i].id_tipo == 2) {
+                    x_ = "Prod";
+                    color_ = '#2264A7';
+                } else {
+                    x_ = "Cambio";
+                    color_ = '#02c39a';
+                }
+    
+                var objeto = {
+                    x: x_,
+                    y: [
+                        new Date(reportes[i].hora_inicio).getTime(),
+                        new Date(reportes[i].hora_termino).getTime()
+                    ],
+                    fillColor: color_
+                }
+                objetos.push(objeto)
+            }
+            setSeriesTimeLine([{
+                data: objetos
+            }]);
+        }
     }
-
-    useEffect(() => {
-        loadResumen()
-        loadGraphTemp()
-        loadTimeLine()
-    }, [props.id_orden]);
-
-    useEffect(() => {
-        setTimeout(() => {
-            loadGraphTemp()
-            loadResumen()
-            loadTimeLine()
-        }, 3000);
-        const interval = setInterval(() => {
-            loadResumen();
-        }, 30000);
-        return () => clearInterval(interval);
-    }, []);
 
     return (
         <div>
@@ -383,15 +300,26 @@ const Formadora2 = (props) => {
                     <Col >
                         <Row >
                             <Col align="right">
-                                <div className="font2  my-4 ">Estado</div></Col>
-                            <div className={estado == 1 ? "font2gray  my-4" : "font2Blue my-4"}>{
-                                localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Terminada" :
-                                    estado == 1 ? " Detenida" : " Produciendo"}
-                            </div>
-                            <div className="font2 ml-3 my-4">Tiempo de Actividad</div>
-                            <div className="font2Blue ml-1 mr-5 my-4">{formatNumber.new(_.round(tActivo / 60, 2))} hrs</div>
-                            <div className="font2 ml-3 my-4">Productividad</div>
-                            <div className="font2Blue ml-1 mr-5 my-4">{formatNumber.new(_.round(productividad)) + " ham/min"}</div>
+                                <div className="font2 my-4">Estado: </div>
+                            </Col>
+                            <div className={props.ordenSelected.id_estado != 1 ? "font2gray my-4" : "font2Blue my-4"}>{
+                                props.ordenSelected.id_estado === 3 ? "Terminada"
+                                : props.ordenSelected.id_estado === 2 ? "En espera"
+                                : "Produciendo"
+                            }</div>
+                            <div className="font2 ml-4 my-4">Tiempo de Actividad: </div>
+                            {parseInt(tActivo/60) == 1 ?
+                                <div className="font2Blue ml-1 my-4">
+                                    {parseInt(tActivo/60)} hr,
+                                    {" " + parseInt(tActivo%60)} min
+                                </div> :
+                                <div className="font2Blue ml-1 my-4">
+                                    {parseInt(tActivo/60)} hrs,
+                                    {" " + parseInt(tActivo%60)} min
+                                </div> 
+                            }
+                            <div className="font2 ml-4 my-4">Productividad: </div>
+                            <div className="font2Blue ml-1 mr-5 my-4">{props.formatNumber.new(_.round(props.ordenSelected.hamb_formadas/tActivo)) + " ham/min"}</div>
                         </Row>
                     </Col>
                 </Row>
@@ -404,16 +332,16 @@ const Formadora2 = (props) => {
                     <div class="noSpace">
                         <div className="blackBorderBot">
                             <Row className="my-4">
-                                <div align="center" className="ml-auto indi">{formatNumber.new(_.round(kgacumulados))}</div>
-                                <div align="center" className="font2 mt-3 ml-2 mr-auto">     Kg </div>
+                                <div align="center" className="ml-auto indi">{props.formatNumber.new(_.round(props.ordenSelected.kg_formados))}</div>
+                                <div align="center" className="font2 mt-3 ml-2 mr-auto">Kg</div>
                             </Row>
                         </div>
 
                         <div className="blackBorderBot">
                             <Row className="" >
                                 <Col md="12">
-                                    <div align="center" className="indi mt-3 ">{formatNumber.new(_.round(hacumuladas))}</div>
-                                    <div align="left" className="font2 mb-3 ">Hamburguesas formadas</div>
+                                    <div align="center" className="indi mt-3">{props.formatNumber.new(_.round(props.ordenSelected.hamb_formadas))}</div>
+                                    <div align="left" className="font2 mb-3">Hamburguesas formadas</div>
                                 </Col>
                             </Row>
                         </div>
@@ -423,15 +351,15 @@ const Formadora2 = (props) => {
                                     <div className="circle space5px ml-5">
                                         <Circle
                                             animate={true} // Boolean: Animated/Static progress
-                                            animationDuration="10s" // String: Length of animation
+                                            animationDuration="3s" // String: Length of animation
                                             responsive={true} // Boolean: Make SVG adapt to parent size
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (tActivo / (tInactivo + tActivo)) * 100 === Infinity ? 0 :
-                                                    (tActivo / (tInactivo + tActivo)) * 100 > 0 ?
-                                                        (tActivo / (tInactivo + tActivo)) * 100
-                                                        : 0
+                                                tActivo/(tActivo+tInactivo) * 100 === Infinity ? 0 :
+                                                tActivo/(tActivo+tInactivo) * 100 > 0 ?
+                                                tActivo/(tActivo+tInactivo) * 100 :
+                                                0
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -452,15 +380,15 @@ const Formadora2 = (props) => {
                                     <div className="circle space5px">
                                         <Circle
                                             animate={true} // Boolean: Animated/Static progress
-                                            animationDuration="10s" // String: Length of animation
+                                            animationDuration="3s" // String: Length of animation
                                             responsive={true} // Boolean: Make SVG adapt to parent size
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))) * 100 === Infinity ? 0 :
-                                                    ((kgacumulados / ((capacidad / 3) * ((tActivo) / 60)))) > 0 ?
-                                                        (kgacumulados / ((capacidad / 3) * ((tActivo) / 60))) * 100  //(totalKG/capacidad*tiempo que se demoro)
-                                                        : 0
+                                                props.ordenSelected.kg_formados/(props.ordenSelected.kg_hora * ((tActivo+tInactivo)/60))*100 === Infinity ? 0 :
+                                                props.ordenSelected.kg_formados/(props.ordenSelected.kg_hora * ((tActivo+tInactivo)/60)) > 0 ?
+                                                props.ordenSelected.kg_formados/(props.ordenSelected.kg_hora * ((tActivo+tInactivo)/60))*100
+                                                : 0
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
@@ -526,8 +454,5 @@ const Formadora2 = (props) => {
     )
 }
 
-const mapStateToProps = (state) => ({
-    id_orden: state.dashboardReducers.id_orden,
-});
-
+const mapStateToProps = (state) => ({});
 export default connect(mapStateToProps)(Formadora2);

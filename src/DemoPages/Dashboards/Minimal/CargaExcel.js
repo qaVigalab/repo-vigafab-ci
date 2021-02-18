@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Alert, Col, Input, InputGroup, InputGroupAddon, FormGroup, Label, Button, Fade, FormFeedback } from 'reactstrap';
 
 class CargaExcel extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -84,8 +83,6 @@ class CargaExcel extends Component {
         
       }
       
-
-
       let fileObj = event.target.files[0];
       let fileName = fileObj.name;
 

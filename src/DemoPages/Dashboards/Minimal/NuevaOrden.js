@@ -1,8 +1,9 @@
 import { FormGroup } from "@material-ui/core";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Button, Col, Container, Form, Input, Label, Row } from "reactstrap";
+import { Button, Col, Form, Input, Label, Row } from "reactstrap";
 import { setIdOrden } from '../../../actions/dashboardActions'
+import moment from 'moment';
 
 import CargaExcel from "./CargaExcel";
 class NuevaOrden extends Component {
@@ -24,9 +25,9 @@ class NuevaOrden extends Component {
       cajas: 0,
       productos: [],
       producto: {},
-      prioridad: 5,
+      prioridad: 1,
       nombre: "",
-      fecha: localStorage.getItem("fechaFinal")
+      fecha: new Date()
     };
   }
 
@@ -314,7 +315,6 @@ class NuevaOrden extends Component {
         </Form>
         <hr />
         <CargaExcel />
-
       </div>
     );
   }
