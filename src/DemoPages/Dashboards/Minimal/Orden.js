@@ -37,15 +37,18 @@ const Orden = (props) => {
         id: id_sub,
       }),
     })
-    .then(
-      console.log("Borrado ok")
-    )
+    .then(response => {})
     .catch((err) => {
       console.error(err);
     });
 
     setModal(!modal);
-    props.updateOrden(idSubOrden);
+    setConfirmDelete(true);
+    props.updateOrden("");
+
+    setTimeout(() => {
+      setConfirmDelete(false);
+    }, 3000);
   };
 
   /* Permite actualizar la orden actual por una nueva orden seleccionada */
@@ -74,6 +77,7 @@ const Orden = (props) => {
   const [existeSku, setExisteSku] = useState(false);
   const [fechaEdit, setFechaEdit] = useState("");
   const [confirmEdit, setConfirmEdit] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [editable, setEditable] = useState(true);
 
   const toggleEdit = (prioridad, id_sub_orden, sku, producto, cajas, kg, tiempo, fecha_sub) => {
@@ -219,13 +223,6 @@ const Orden = (props) => {
             Producción en línea
           </div>
         </Col>
-        {/*
-        <Col>
-          <Button className="buttonOrange" size="lg" onClick={partirOrden}>
-            Partir Orden
-          </Button>
-        </Col>{
-        */}
         <Col align="left"></Col>
         <Row style={{ marginRight: '0.5%' }}>
           <Col className="mt-4 mr-0">
@@ -245,14 +242,21 @@ const Orden = (props) => {
       <br />
       {ordenes.length === 0 ? (
         <Alert color="warning" className="mb-0">
-          <a className="alert-link">No existen ordenes para mostrar</a>.
+          <a className="alert-link">No existen órdenes para mostrar.</a>
         </Alert>
       ) : (
         ""
       )}
       {confirmEdit === true ? (
         <Alert color="success" className="mb-0">
-          <a className="alert-link">¡La orden ha sido editada satisfactoriamente!</a>.
+          <a className="alert-link">¡La orden ha sido editada satisfactoriamente!</a>
+        </Alert>
+      ) : (
+        ""
+      )}
+      {confirmDelete === true ? (
+        <Alert color="danger" className="mb-0">
+          <a className="alert-link">¡La orden ha sido eliminada satisfactoriamente!</a>
         </Alert>
       ) : (
         ""
