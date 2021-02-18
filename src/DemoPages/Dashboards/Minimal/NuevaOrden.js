@@ -1,7 +1,7 @@
 import { FormGroup } from "@material-ui/core";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Button, Col, Form, Input, Label, Row } from "reactstrap";
+import { Button, Col, Form, Input, Label, Row, Alert } from "reactstrap";
 import { setIdOrden } from '../../../actions/dashboardActions'
 import moment from 'moment';
 
@@ -27,7 +27,8 @@ class NuevaOrden extends Component {
       producto: {},
       prioridad: 1,
       nombre: "",
-      fecha: new Date()
+      fecha: new Date(),
+      confirmCreate: false
     };
   }
 
@@ -52,16 +53,22 @@ class NuevaOrden extends Component {
           }),
         }
       )
-        .then((res) => res.json())
-        .then(this.limpiarForm(),
-          this.props.setIdOrden(!this.props.id_orden)
-        )
-        .catch((err) => {
-          console.error(err);
-        });
+      .then((res) => {
+        this.limpiarForm();
+        this.props.setIdOrden(!this.props.id_orden);
+        this.setState({confirmCreate: true});
+
+        setTimeout(() => {
+          this.setState({confirmCreate: false})
+        }, 3000);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
     } else {
-      this.props.setIdOrden(!this.props.id_orden)
-      this.setState({existeSku:false})
+      this.props.setIdOrden(!this.props.id_orden);
+      this.setState({existeSku:false});
+      this.setState({confirmCreate: false})
     }
   }
 
@@ -85,19 +92,6 @@ class NuevaOrden extends Component {
         console.error(err);
       });
   }
-
-  /* selectProducto(event) {
-    const prod_id = event.target.value;
-    const prod_sku = this.state.productos.find((p) => p.id == prod_id);
-    this.setState(
-      {
-        producto: prod_sku,
-      },
-      () => {
-        this.cajasChange2();
-      }
-    );
-  } */
 
   fechaChange(event) {
     this.setState({ fecha: event.target.value })
@@ -171,17 +165,6 @@ class NuevaOrden extends Component {
           <Col align="left">
             <div className="ml-3 mt-1 text-uppercase font-weight-bold title1orange">Nueva Orden De Produccion</div>
           </Col>
-          {/* <Col align="right">
-            <div className="mr-4 cerrarO ">Cerrar</div>
-          </Col> */}
-          {/* <Col align="right">
-            <Button className="mt-3 mr-4" size="">
-              <Row>
-                <GridOnIcon className="ml-3 mt-1" fontSize="small" />
-                <div className="ml-2 mr-4 mt-1">Importar ordenes desde excel</div>
-              </Row>
-            </Button>
-          </Col> */}
         </Row>
         <hr />
         <Form className="ml-4 mr-4" onSubmit={this.state.existeSku === false ? "" : this.handleSubmit}>
@@ -306,13 +289,18 @@ class NuevaOrden extends Component {
                   <Button className="buttonOrange" size="lg" block>
                     Generar Orden
                   </Button>
-
-
                 </Col>
               </Row>
             </Col>
           </Row>
         </Form>
+        {this.state.confirmCreate === true ? (
+          <Alert color="success" className="mb-0">
+            <a className="alert-link">¡La orden ha sido creada exitosamente!</a>
+          </Alert>
+        ) : (
+          ""
+        )}
         <hr />
         <CargaExcel />
       </div>
@@ -327,6 +315,4 @@ const mapDispatchToProps = dispatch => ({
   setIdOrden: data => dispatch(setIdOrden(data)),
 });
 
-//export default MinimalDashboard1;
 export default connect(mapStateToProps, mapDispatchToProps)(NuevaOrden);
-//export default connect(mapStateToProps)(NuevaOrden);
