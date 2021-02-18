@@ -32,6 +32,7 @@ function FullSceen() {
   }
 
   const [tiempoOrden, setTiempoOrden] = useState(0);
+  const [tiempoRetencion, setTiempoRetencion] = useState(0);
   const [horaTermino, setHoraTermino] = useState("");
   const [reportesSelected, setReportesSelected] = useState([]);
   const loadData = () => {
@@ -51,6 +52,10 @@ function FullSceen() {
       const diff = endMoment.diff(startMoment);
       const diffDuration = moment.duration(diff);
       setTiempoOrden(diffDuration.hours() + diffDuration.minutes()/60);
+      if ((diffDuration.hours() + diffDuration.minutes()/60-(ordenSelected.tiempo_retencion_iqf+5)/60) >= 0)
+        setTiempoRetencion((ordenSelected.tiempo_retencion_iqf+5));
+      else
+        setTiempoRetencion(0);
       setHoraTermino(moment(reportesSel[0].hora_inicio).add(ordenSelected.tiempo_estimado + 3, 'hours').format('HH:MM'));
       setReportesSelected(r);
     })
@@ -107,7 +112,7 @@ function FullSceen() {
   useEffect(() => {
     const interval = setInterval(() => {
       loadOrdenes();
-    }, 300000);
+    }, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -136,12 +141,12 @@ function FullSceen() {
           {/* Cuadro de la izquierda */}
           <Row className="fullscreen-centerSpace-op">
             <Col xl="3" className="fullscreen-center1" >
-              <Row className={ordenSelected.real_kg > (ordenSelected.kg_hora*tiempoOrden) ? "fullscreen-center1-head-op" : "fullscreen-center1-head-op2"}>
+              <Row className={ordenSelected.real_kg > (ordenSelected.kg_hora*(tiempoOrden-tiempoRetencion/60)) ? "fullscreen-center1-head-op" : "fullscreen-center1-head-op2"}>
                 <Col className="bigFont5 p-3 ml-3">
-                  {ordenSelected.real_kg>(ordenSelected.kg_hora*tiempoOrden) ? _.toUpper("Estado: A tiempo") : _.toUpper("Estado: Atrasado")}
+                  {ordenSelected.real_kg>(ordenSelected.kg_hora*(tiempoOrden-tiempoRetencion/60)) ? _.toUpper("Estado: A tiempo") : _.toUpper("Estado: Atrasado")}
                 </Col>
                 <Col xs="3" md="3" className="font1 mt-2 ml-2">
-                  {ordenSelected.real_kg>(ordenSelected.kg_hora*tiempoOrden) ? (
+                  {ordenSelected.real_kg>(ordenSelected.kg_hora*(tiempoOrden-tiempoRetencion/60)) ? (
                   < CheckCircleOutlineIcon style={{ fontSize: 50 }} />
                    ) :(
                     <ErrorOutlineIcon style={{ fontSize: 50 }}/>)}
@@ -161,12 +166,12 @@ function FullSceen() {
 
               <Row className="fullscreen-center1-body2-op blackBorder2  pt-2 pb-3">
                 <pre align="left" className=" text-uppercase littleFont2 pl-2 mt-2">{"Producción \nReal"} </pre>
-                <div align="right" className="ml-3 mt-2 bigFont4"> {formatNumber.new(_.round(ordenSelected.real_kg/ordenSelected.kg_solicitados*100))}% - {formatNumber.new(_.round(ordenSelected.real_kg))} Kg</div>
+                <div align="right" className="ml-5 mt-2 bigFont4">{formatNumber.new(_.round(ordenSelected.real_kg))} Kg ({formatNumber.new(_.round(ordenSelected.real_kg/ordenSelected.kg_solicitados*100))}%)</div>
               </Row>
 
               <Row className="fullscreen-center1-body2-op pt-2 pb-3">
                 <pre align="left" className="text-uppercase littleFont2 mt-2 pl-3 ml-2">{"Producción \nEstimada"} </pre>
-                <div align="right" className="ml-3 mt-2 bigFont4">{formatNumber.new(_.round((ordenSelected.kg_hora*(tiempoOrden))/ordenSelected.kg_solicitados*100))}% - {formatNumber.new(_.round(ordenSelected.kg_hora*tiempoOrden))} Kg</div>
+                <div align="right" className="ml-5 mt-2 bigFont4">{formatNumber.new(_.round(ordenSelected.kg_hora*(tiempoOrden-tiempoRetencion/60)))} Kg ({formatNumber.new(_.round((ordenSelected.kg_hora*((tiempoOrden-tiempoRetencion/60)))/ordenSelected.kg_solicitados*100))}%)</div>
               </Row>   
             </Col>
 
@@ -228,11 +233,10 @@ function FullSceen() {
                 <div align="center" className="bigFontGreen mb-3">{formatNumber.new(_.round(ordenSelected.temp_entrada, 2))}° C</div>
 
                 <div align="center" className="littleFontGreen blackBorderTop pt-3 mb-1">Tiempo Retencion</div>
-                <div align="center" className="bigFontGreen mb-3 ">{/* formatNumber.new(_.round(TiempoRetencion, 2)) */ ordenSelected.tiempo_retencion_iqf} Min</div>
+                <div align="center" className="bigFontGreen mb-3 ">{formatNumber.new(_.round(ordenSelected.tiempo_retencion_iqf))} Min</div>
 
                 <div align="center" className="littleFontGreen blackBorderTop pt-3 mb-1">Temp. Salida</div>
                 <div align="center" className="bigFontGreen mb-3 ">{/* formatNumber.new(_.round(TiempoRetencion, 2)) */} -18° C </div>
-
               </Card>
             </Col>
           </Row>
