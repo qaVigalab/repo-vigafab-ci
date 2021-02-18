@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
+import moment from 'moment';
 
-const TimeLineOperativo = () => {
+const TimeLineOperativo = (props) => {
   const [series, setSeries] = useState([])
   const [options, setOptions] = useState({
     chart: {
@@ -33,69 +34,42 @@ const TimeLineOperativo = () => {
     }
   })
 
-  const [estadoMaquinas, setEstadoMaquinas] = useState([1, 1, 1, 1, 1, 1]);
+  useEffect(() => {
+    var objeto = {}
+    var dataParo = [], dataProd = [], dataCambio = [];
+    for (let i = 0; i < props.reportesSelected.length; i++) {
+      objeto = {
+        x: props.reportesSelected[i].maquina,
+        y: [
+          new Date(props.reportesSelected[i].hora_inicio).getTime(),
+          new Date(props.reportesSelected[i].hora_termino).getTime()
+        ],
+      }
+      
+      if (props.reportesSelected[i].id_tipo === 1) {
+        dataParo.push(objeto);
+      } else if (props.reportesSelected[i].id_tipo === 2) {
+        dataProd.push(objeto);
+      } else if (props.reportesSelected[i].id_tipo === 4) {
+        dataCambio.push(objeto)
+      }
+    }
 
-  const loadData = () => {
-    fetch(global.api.dashboard.gettimelineoperativo, {
-      "method": "POST",
-      "headers": {
-        "content-type": "application/json",
-        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+    setSeries([
+      {
+        name: 'Paro',
+        data: dataParo
       },
-      body: JSON.stringify({}),
-    })
-      .then(response => response.json())
-      .then(r => {
-        var objeto = {}
-        var dataParo = [], dataProd = [], dataCambio = [];
-        for (let i = 0; i < r.length; i++) {
-          objeto = {
-            x: r[i].maquina,
-            y: [
-              new Date(r[i].hora_inicio).getTime(),
-              new Date(r[i].hora_termino).getTime()
-            ],
-          }
-          
-          if (r[i].id_tipo === 1) {
-            dataParo.push(objeto);
-          } else if (r[i].id_tipo === 2) {
-            dataProd.push(objeto);
-          } else if (r[i].id_tipo === 4) {
-            dataCambio.push(objeto)
-          }
-        }
-
-        setSeries([
-          {
-            name: 'Paro',
-            data: dataParo
-          },
-          {
-            name: 'Produciendo',
-            data: dataProd
-          },
-          {
-            name: 'Cambiando formato',
-            data: dataCambio
-          },
-        ])
-      })
-      .catch(err => {
-        console.error(err);
-      });
-  }
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      loadData();
-    }, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    loadData()
-  }, []);
+      {
+        name: 'Produciendo',
+        data: dataProd
+      },
+      {
+        name: 'Cambiando formato',
+        data: dataCambio
+      },
+    ])
+  },[props.reportesSelected]);
 
   return (
     <div id="chart">
