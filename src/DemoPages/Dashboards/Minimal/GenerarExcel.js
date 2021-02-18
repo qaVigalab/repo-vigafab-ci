@@ -1,10 +1,11 @@
 
 import React, { useEffect, useState } from "react";
-import { Card, Col, Row, Label, CardBody, CardTitle, Button } from "reactstrap";
+import { Col, Row, Label } from "reactstrap";
 import Workbook from 'react-excel-workbook';
 import DatePicker from "react-datepicker";
 import { connect } from "react-redux";
 import _ from "lodash";
+
 const GenerarExcel = (props) => {
   const [ordenes, setOrdenes] = useState(0)
   const [paros, setParos] = useState(0)
@@ -13,12 +14,11 @@ const GenerarExcel = (props) => {
 
   const handleChange3 = (date) =>{
     console.log(date);
-        setStartDate(date);
-        setTimeout(() => {
-          loadParo()
-          loadOrden()
-        }, 700);
-    
+    setStartDate(date);
+    setTimeout(() => {
+      loadParo()
+      loadOrden()
+    }, 700);
   }
 
   const handleChange4= (date) => {
@@ -97,28 +97,24 @@ const GenerarExcel = (props) => {
       <Row>
         <Row>
           <Col align="right">
-            <Label>Seleccione fechas</Label>
+            <Label className="mt-2">Seleccione fechas:</Label>
           </Col>
           <Col>
             <DatePicker
-                    className="form-control"
-                    selected={startDate}
-                    onChange={(cambio) => {
-                        handleChange3(cambio);
-                        }}
-                    selectsStart
-                    startDate={startDate}
-                    endDate={endDate}
-                  />
+              className="form-control"
+              selected={startDate}
+              onChange={(cambio) => {handleChange3(cambio);}}
+              selectsStart
+              startDate={startDate}
+              endDate={endDate}
+            />
           </Col>
           
           <Col>
             <DatePicker
               className="form-control"
               selected={endDate}
-              onChange={(cambio) => {
-                  handleChange4(cambio);
-                  }}
+              onChange={(cambio) => {handleChange4(cambio);}}
               selectsEnd
               startDate={startDate}
               endDate={endDate}

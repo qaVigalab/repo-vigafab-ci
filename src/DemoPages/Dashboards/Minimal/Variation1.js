@@ -222,9 +222,7 @@ const MinimalDashboard1 = () => {
             <Row>
               <Col md="12" xl="12">
                 <Card className="main-card mb-3">
-                  <NuevaOrden
-                    productos={productos}
-                  />
+                  <NuevaOrden/>
                 </Card>
               </Col>
             </Row>
@@ -253,8 +251,10 @@ const MinimalDashboard1 = () => {
               <Card className="main-card mb-3">
                 <Produciendo 
                   formatNumber={formatNumber}
+                  maquinas={maquinas}
                   ordenes={ordenes}
                   ordenSelected={ordenSelected}
+                  reportesSelected={reportesSelected} 
                 />
               </Card>
             </Col>
@@ -266,7 +266,7 @@ const MinimalDashboard1 = () => {
                 <Formadora2
                   formatNumber={formatNumber}
                   ordenSelected={ordenSelected}
-                  reportesSelected={reportesSelected.filter(reporte => reporte.id_vibot === 6296)}
+                  reportesSelected={reportesSelected.filter(reporte => reporte.id_tipo_vibot === 2)}
                 />
               </Card>
             </Col>
@@ -332,8 +332,7 @@ const MinimalDashboard1 = () => {
                   maquinas={maquinas}
                   formatNumber={formatNumber}
                   ordenSelected={ordenSelected}
-                  reportesSelected={reportesSelected.filter(reporte => reporte.id_vibot === 23608 || reporte.id_vibot === 34828 ||
-                                                            reporte.id_vibot === 32818 ||reporte.id_vibot === 30776)}
+                  reportesSelected={reportesSelected.filter(reporte => reporte.id_tipo_vibot === 4)}
                 />
               </Card>
             </Col>
@@ -343,7 +342,7 @@ const MinimalDashboard1 = () => {
                 <Empaque
                   formatNumber={formatNumber}
                   ordenSelected={ordenSelected}
-                  reportesSelected={reportesSelected.filter(reporte => reporte.id_vibot === 23643)}
+                  reportesSelected={reportesSelected.filter(reporte => reporte.id_tipo_vibot === 5)}
                 />
               </Card>
             </Col>

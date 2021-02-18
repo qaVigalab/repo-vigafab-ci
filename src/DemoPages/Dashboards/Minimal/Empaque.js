@@ -226,7 +226,7 @@ const Empaque = (props) => {
 
                     <Col xl="3" md="3">
                         <Row align="right">
-                            <div className="my-4">Productividad</div>
+                            <div className="my-4">Productividad: </div>
                             <div className="font2Blue ml-1 my-4">{props.formatNumber.new(_.round(props.ordenSelected.cajas_acumuladas/tActivo)) + " caj/min"}</div>
                         </Row>
                     </Col>

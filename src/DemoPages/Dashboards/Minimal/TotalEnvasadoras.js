@@ -55,11 +55,10 @@ const TotalEnvasadoras = (props) => {
     const [disponibilidad, setDisponibilidad] = useState(0);
     const [eficiencia, setEficiencia] = useState();
     const [tActivo, setTActivo] = useState(0);
-    const [tInactivo, setTInactivo] = useState(0);
 
     useEffect(() => {
         var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55'));
-        var tiempos_activos = [0, 0, 0, 0], tiempos_inactivos = [0, 0, 0, 0];
+        var t_activo = 0, t_inactivo = 0;
         for (var j=0; j<props.maquinas.length; j++){
             for (var i=0; i<reportesSel.length; i++){
                 /* Se calculan los tiempos de actividad y paro */
@@ -69,24 +68,17 @@ const TotalEnvasadoras = (props) => {
                 const diffDuration = moment.duration(diff);
 
                 if (reportesSel[i].id_tipo === 1 && reportesSel[i].id_vibot === props.maquinas[j].id && props.maquinas[j].id != 34828){
-                    tiempos_inactivos[j] += diffDuration.hours()*60 + diffDuration.minutes();
+                    t_inactivo += diffDuration.hours()*60 + diffDuration.minutes();
                 }
                 else if (reportesSel[i].id_tipo === 2 && reportesSel[i].id_vibot === props.maquinas[j].id){
-                    tiempos_activos[j] += diffDuration.hours()*60 + diffDuration.minutes();
+                    t_activo += diffDuration.hours()*60 + diffDuration.minutes();
                 }
             }
         }
         
-        var suma_disp = 0, suma_tactivo = 0, suma_tinactivo = 0;
-        for (var i=0; i<tiempos_activos.length; i++){
-            suma_disp += isNaN(tiempos_activos[i]/(tiempos_activos[i]+tiempos_inactivos[i])) ? 0: tiempos_activos[i]/(tiempos_activos[i]+tiempos_inactivos[i]);
-            suma_tactivo += tiempos_activos[i];
-            suma_tinactivo += tiempos_inactivos[i];
-        }
-        setDisponibilidad(suma_disp/(tiempos_activos.length-1));
-        setEficiencia(props.ordenSelected.kg_envasados/(props.ordenSelected.kg_hora * (suma_tactivo+suma_tinactivo)/60/(tiempos_activos.length-1)));
-        setTActivo(suma_tactivo/(tiempos_activos.length-1));
-        setTInactivo(suma_tinactivo/(tiempos_inactivos.length-1));
+        setDisponibilidad(isNaN(t_activo/(t_activo+t_inactivo)) ? 0: t_activo/(t_activo+t_inactivo));
+        setEficiencia(props.ordenSelected.kg_envasados/(props.ordenSelected.kg_hora * (t_activo+t_inactivo)/60/3));
+        setTActivo(t_activo/3);
 
         var sumMaquinas = 0;
         for (var i=0; i<props.maquinas.length; i++){
@@ -100,7 +92,7 @@ const TotalEnvasadoras = (props) => {
             {
             datasets: [
                 {
-                data: [0, suma_tinactivo/(tiempos_inactivos.length-1), suma_tactivo/(tiempos_activos.length-1)]
+                data: [0, t_inactivo/3, t_activo/3]
                 }
             ],
             }
@@ -170,7 +162,10 @@ const TotalEnvasadoras = (props) => {
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
                                             progress={(
-                                                disponibilidad * 100
+                                                disponibilidad * 100 === Infinity ? 0 :
+                                                disponibilidad * 100 > 0 ?
+                                                disponibilidad * 100 :
+                                                0
                                             ).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.

@@ -237,7 +237,6 @@ const Formadora2 = (props) => {
 
     useEffect(() => {
         loadTimeLine();
-        console.log("Kgs Formadora: " + props.ordenSelected.kg_formados + "kg VS " + props.ordenSelected.kg_hora*(tActivo+tInactivo)/60 + "kg")
     }, [reportes]);
 
     const loadTimeLine = () => {
@@ -319,7 +318,7 @@ const Formadora2 = (props) => {
                                     {" " + parseInt(tActivo%60)} min
                                 </div> 
                             }
-                            <div className="font2 ml-4 my-4">Productividad</div>
+                            <div className="font2 ml-4 my-4">Productividad: </div>
                             <div className="font2Blue ml-1 mr-5 my-4">{props.formatNumber.new(_.round(props.ordenSelected.hamb_formadas/tActivo)) + " ham/min"}</div>
                         </Row>
                     </Col>

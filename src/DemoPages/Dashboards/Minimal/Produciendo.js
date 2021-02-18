@@ -9,6 +9,7 @@ import icono3 from "./images/icono3.png";
 import _ from "lodash";
 import Brightness1Icon from "@material-ui/icons/Brightness1";
 import Circle from "react-circle";
+import moment from 'moment';
 
 const Produciendo = (props) => {
     const [calidad, setCalidad] = useState(0)
@@ -45,16 +46,14 @@ const Produciendo = (props) => {
         setnOrden(props.ordenSelected.id_sub_orden)
         setTiempoActivo(props.ordenSelected.tiempo_activo)
         setTiempoInactivo(props.ordenSelected.tiempo_inactivo)
-        setCalidad((props.ordenSelected.cajas_acumuladas * props.ordenSelected.kg_caja) / props.ordenSelected.kg_formados)
-        setEficiencia(((props.ordenSelected.cajas_acumuladas * props.ordenSelected.kg_caja) / (props.ordenSelected.kg_hora * props.ordenSelected.tiempo_activo / 60)))
-        setDisponibilidad((props.ordenSelected.tiempo_activo / (props.ordenSelected.tiempo_total)))
         
         setPerdidaEnvasado((props.ordenSelected.kg_formados - props.ordenSelected.kg_envasados) / props.ordenSelected.kg_formados)
         setPerdidaEmpaquetadora((props.ordenSelected.kg_envasados - props.ordenSelected.real_kg) / props.ordenSelected.kg_envasados)
         setPerdidaTotal((props.ordenSelected.kg_formados - props.ordenSelected.real_kg) / props.ordenSelected.kg_formados)
-        setPerdidaTotalKg(props.ordenSelected.kg_formados - props.ordenSelected.real_kg)
+
         setPerdidaEnvasadoKg(props.ordenSelected.kg_formados - props.ordenSelected.kg_envasados)
         setPerdidaEmpaquetadoraKg(props.ordenSelected.kg_envasados - props.ordenSelected.real_kg)
+        setPerdidaTotalKg(props.ordenSelected.kg_formados - props.ordenSelected.real_kg)
 
         setDataTorta(
             {
@@ -67,6 +66,85 @@ const Produciendo = (props) => {
             }
         )
     }, [props.ordenSelected]);
+
+    /* Se crean las variables para cálculo de Disponibilidad, Eficiencia, Calidad y OEE */
+    const [disponibilidadFormadora, setDisponibilidadFormadora] = useState(0);
+    const [disponibilidadEnvasadoras, setDisponibilidadEnvasadoras] = useState(0);
+    const [disponibilidadEmpaquetadora, setDisponibilidadEmpaquetadora] = useState(0);
+
+    const [eficienciaFormadora, setEficienciaFormadora] = useState(0);
+    const [eficienciaEnvasadoras, setEficienciaEnvasadoras] = useState(0);
+    const [eficienciaEmpaquetadora, setEficienciaEmpaquetadora] = useState(0);
+
+    useEffect(() => {
+        var tActivoFormadora = 0, tActivoEnvasadoras = 0, tActivoEmpaquetadora = 0;
+        var tInactivoFormadora = 0, tInactivoEnvasadoras = 0, tInactivoEmpaquetadora = 0;
+
+        var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55'));
+        for (var i=0; i<reportesSel.length; i++){
+            const startDate = moment(reportesSel[i].hora_inicio);
+            const timeEnd = moment(reportesSel[i].hora_termino);
+            const diff = timeEnd.diff(startDate);
+            const diffDuration = moment.duration(diff);
+
+            if (reportesSel[i].id_tipo === 1){
+                if (reportesSel[i].id_tipo_vibot === 2)
+                    tInactivoFormadora += diffDuration.hours()*60 + diffDuration.minutes();
+                else if (reportesSel[i].id_tipo_vibot === 4 && reportesSel[i].id_vibot != 34828)
+                    tInactivoEnvasadoras += diffDuration.hours()*60 + diffDuration.minutes();
+                else if (reportesSel[i].id_tipo_vibot === 5)
+                    tInactivoEmpaquetadora += diffDuration.hours()*60 + diffDuration.minutes();
+            }
+            else if (reportesSel[i].id_tipo === 2)
+                if (reportesSel[i].id_tipo_vibot === 2)
+                    tActivoFormadora += diffDuration.hours()*60 + diffDuration.minutes();
+                else if (reportesSel[i].id_tipo_vibot === 4)
+                    tActivoEnvasadoras += diffDuration.hours()*60 + diffDuration.minutes();
+                else if (reportesSel[i].id_tipo_vibot === 5)
+                    tActivoEmpaquetadora += diffDuration.hours()*60 + diffDuration.minutes();
+        }
+
+        /* Se actualiza las métricas de la Formadora */
+        setDisponibilidadFormadora(
+            isNaN(tActivoFormadora/(tActivoFormadora+tInactivoFormadora)) ? 0 :
+            tActivoFormadora/(tActivoFormadora+tInactivoFormadora) * 100
+        );
+
+        setEficienciaFormadora(
+            isNaN(props.ordenSelected.kg_formados/(props.ordenSelected.kg_hora * ((tActivoFormadora+tInactivoFormadora)/60))) ? 0 :
+            props.ordenSelected.kg_formados/(props.ordenSelected.kg_hora * ((tActivoFormadora+tInactivoFormadora)/60)) * 100
+        );
+
+        /* Se actualiza las métricas de las Envasadoras */
+        setDisponibilidadEnvasadoras(
+            isNaN(tActivoEnvasadoras/(tActivoEnvasadoras+tInactivoEnvasadoras)) ? 0 :
+            tActivoEnvasadoras/(tActivoEnvasadoras+tInactivoEnvasadoras) * 100
+        );
+
+        setEficienciaEnvasadoras(
+            isNaN(props.ordenSelected.kg_envasados/(props.ordenSelected.kg_hora * ((tActivoEnvasadoras+tInactivoEnvasadoras)/60/3))) ? 0 :
+            props.ordenSelected.kg_envasados/(props.ordenSelected.kg_hora * ((tActivoEnvasadoras+tInactivoEnvasadoras)/60/3)) * 100
+        );
+
+        /* Se actualiza las métricas de la Empaquetadora */
+        setDisponibilidadEmpaquetadora(
+            isNaN(tActivoEmpaquetadora/(tActivoEmpaquetadora+tInactivoEmpaquetadora)) ? 0 :
+            tActivoEmpaquetadora/(tActivoEmpaquetadora+tInactivoEmpaquetadora) * 100
+        );
+
+        setEficienciaEmpaquetadora(
+            isNaN(props.ordenSelected.real_kg/(props.ordenSelected.kg_hora * ((tActivoEmpaquetadora+tInactivoEmpaquetadora)/60))) ? 0 :
+            props.ordenSelected.real_kg/(props.ordenSelected.kg_hora * ((tActivoEmpaquetadora+tInactivoEmpaquetadora)/60)) * 100
+        );
+    }, [props.reportesSelected]);
+
+    useEffect(() => {
+        /* Se actualizan las métricas globales */
+        console.log(disponibilidadFormadora + " - " + disponibilidadEnvasadoras + " - " + disponibilidadEmpaquetadora);
+        setCalidad(props.ordenSelected.real_kg/props.ordenSelected.kg_formados * 100)
+        setEficiencia((eficienciaFormadora+eficienciaEnvasadoras+eficienciaEmpaquetadora)/3);
+        setDisponibilidad((disponibilidadFormadora+disponibilidadEnvasadoras+disponibilidadEmpaquetadora)/3)
+    }, [eficienciaEmpaquetadora]);
 
     return (
         <div>
@@ -204,11 +282,7 @@ const Produciendo = (props) => {
                                             responsive={true} // Boolean: Make SVG adapt to parent size
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
-                                            progress={(
-                                                disponibilidad > 1 ? 100 : 
-                                                isNaN(disponibilidad) ? 0 :
-                                                disponibilidad * 100
-                                            ).toFixed(0)} // String: Update to change the progress and percentage.
+                                            progress={(disponibilidad).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                             textColor="#6b778c" // String: Color of percentage text color.
@@ -231,11 +305,7 @@ const Produciendo = (props) => {
                                             responsive={true} // Boolean: Make SVG adapt to parent size
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
-                                            progress={(
-                                                eficiencia > 1 ? 100 : 
-                                                isNaN(eficiencia) ? 0 :
-                                                eficiencia * 100
-                                            ).toFixed(0)} // String: Update to change the progress and percentage.
+                                            progress={(eficiencia).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                             textColor="#6b778c" // String: Color of percentage text color.
@@ -260,11 +330,7 @@ const Produciendo = (props) => {
                                             responsive={true} // Boolean: Make SVG adapt to parent size
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
-                                            progress={(
-                                                calidad > 1 ? 100 : 
-                                                isNaN(calidad) ? 0 :
-                                                calidad * 100
-                                            ).toFixed(0)} // String: Update to change the progress and percentage.
+                                            progress={(calidad).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                             textColor="#6b778c" // String: Color of percentage text color.
@@ -287,10 +353,7 @@ const Produciendo = (props) => {
                                             responsive={true} // Boolean: Make SVG adapt to parent size
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
-                                            progress={(
-                                                isNaN(((eficiencia > 1 ? 1 : eficiencia) * (disponibilidad > 1 ? 1 : disponibilidad) * (calidad > 1 ? 1 : calidad)) * 100) ? 0 :
-                                                ((eficiencia > 1 ? 1 : eficiencia) * (disponibilidad > 1 ? 1 : disponibilidad) * (calidad > 1 ? 1 : calidad)) * 100
-                                            ).toFixed(0)} // String: Update to change the progress and percentage.
+                                            progress={((calidad/100*eficiencia/100*disponibilidad/100) * 100).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                             textColor="#6b778c" // String: Color of percentage text color.
@@ -325,11 +388,11 @@ const Produciendo = (props) => {
                                     maintainAspectRatio: true,
                                 }} /></div>
                         <Row className="ml-5 mt-1">
-                            <Brightness1Icon style={{ color: "#2264A7" }} />
+                            <Brightness1Icon style={{ color: "#2264A7", marginRight: '1% !important' }} />
                             Produciendo: {formatHour(TiempoActivo)}
                         </Row>
                         <Row className="ml-5">
-                            <Brightness1Icon style={{ color: "#F7431E" }} />
+                            <Brightness1Icon style={{ color: "#F7431E", marginRight: '1% !important' }} />
                             En Paro: {formatHour(TiempoInactivo)}
                         </Row>
                     </Col>

@@ -98,11 +98,14 @@ const CialWidget = (props) => {
     }
   );
 
-  const [reportes, setReportes] = useState(props.reportesSelected.filter(rep => rep.hora_inicio.includes('05:55')));
+  const [reportes, setReportes] = useState(props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55')));
   const [hambEnvasadas, setHambEnvasadas] = useState(0);
   const [kgEnvasados, setKgEnvasados] = useState(0);
   useEffect(() => {
     var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55'));
+    if (props.id_vibot === 34828){
+      reportesSel = props.reportesSelected;
+    }
     var tiempo_activo = 0, tiempo_inactivo = 0;
     var hamburguesas_envasadas = 0, kilos_envasados = 0;
 
