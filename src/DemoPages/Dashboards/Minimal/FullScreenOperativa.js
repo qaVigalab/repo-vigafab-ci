@@ -86,7 +86,7 @@ function FullSceen() {
         if (ord != undefined)
           setOrdenSelected(ord);
         else
-          setOrdenSelected({});
+          setOrdenSelected(result[0]);
       } else {
         setOrdenes([]);
         setOrdenSelected({});
