@@ -166,12 +166,12 @@ function FullSceen() {
 
               <Row className="fullscreen-center1-body2-op blackBorder2  pt-2 pb-3">
                 <pre align="left" className=" text-uppercase littleFont2 pl-2 mt-2">{"Producción \nReal"} </pre>
-                <div align="right" className="ml-5 mt-2 bigFont4">{formatNumber.new(_.round(ordenSelected.real_kg))} Kg ({formatNumber.new(_.round(ordenSelected.real_kg/ordenSelected.kg_solicitados*100))}%)</div>
+                <div align="right" className="ml-2 mt-2 bigFont4">{formatNumber.new(_.round(ordenSelected.real_kg))} Kg ({formatNumber.new(_.round(ordenSelected.real_kg/ordenSelected.kg_solicitados*100))}%)</div>
               </Row>
 
               <Row className="fullscreen-center1-body2-op pt-2 pb-3">
                 <pre align="left" className="text-uppercase littleFont2 mt-2 pl-3 ml-2">{"Producción \nEstimada"} </pre>
-                <div align="right" className="ml-5 mt-2 bigFont4">{formatNumber.new(_.round(ordenSelected.kg_hora*(tiempoOrden-tiempoRetencion/60)))} Kg ({formatNumber.new(_.round((ordenSelected.kg_hora*((tiempoOrden-tiempoRetencion/60)))/ordenSelected.kg_solicitados*100))}%)</div>
+                <div align="right" className="ml-2 mt-2 bigFont4">{formatNumber.new(_.round(ordenSelected.kg_hora*(tiempoOrden-tiempoRetencion/60)))} Kg ({formatNumber.new(_.round((ordenSelected.kg_hora*((tiempoOrden-tiempoRetencion/60)))/ordenSelected.kg_solicitados*100))}%)</div>
               </Row>   
             </Col>
 
