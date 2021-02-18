@@ -96,7 +96,6 @@ function FullSceen() {
     loadData();
     const interval = setInterval(() => {
       loadData();
-      console.log("recargando")
     }, 60000);
     return () => clearInterval(interval);
   }, [ordenSelected]);
@@ -104,6 +103,13 @@ function FullSceen() {
   useEffect(() => {
     loadOrdenes();
   },[]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadOrdenes();
+    }, 300000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div>
