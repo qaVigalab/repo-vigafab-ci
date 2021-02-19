@@ -119,7 +119,7 @@ function FullSceen() {
   return (
     <div>
       <Button onClick={handle.enter}>
-        Ver Fullscreen
+        Ver Full Screen
       </Button>
 
       <FullScreen handle={handle} >
@@ -233,7 +233,7 @@ function FullSceen() {
                 <div align="center" className="bigFontGreen mb-3">{formatNumber.new(_.round(ordenSelected.temp_entrada, 2))}° C</div>
 
                 <div align="center" className="littleFontGreen blackBorderTop pt-3 mb-1">Tiempo Retencion</div>
-                <div align="center" className="bigFontGreen mb-3 ">{formatNumber.new(_.round(ordenSelected.tiempo_retencion_iqf))} Min</div>
+                <div align="center" className="bigFontGreen mb-3 ">{formatNumber.new(_.round(ordenSelected.tiempo_retencion_iqf, 1))} Min</div>
 
                 <div align="center" className="littleFontGreen blackBorderTop pt-3 mb-1">Temp. Salida</div>
                 <div align="center" className="bigFontGreen mb-3 ">{/* formatNumber.new(_.round(TiempoRetencion, 2)) */} -18° C </div>
