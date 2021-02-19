@@ -431,7 +431,7 @@ const Produciendo = (props) => {
                                 <Col md="6">
                                     <div align="left" className=" mt-2 ml-2 text-uppercase littleFont font-weight-bold">Envasado</div>
                                     <Row className="">
-                                        <div align="left" className="ml-4 mt-1 bigFont">{perdidaEnvasadoKg<0 ? "---" : props.formatNumber.new(_.round(perdidaEnvasadoKg))}</div>
+                                        <div align="left" className="ml-4 mt-1 bigFont">{/*perdidaEnvasadoKg<0 ? "---" : */props.formatNumber.new(_.round(perdidaEnvasadoKg))}</div>
                                         <div align="center" className="littleFont mt-4 ml-2 mr-auto">Kgs</div>
                                     </Row>
 
@@ -471,7 +471,7 @@ const Produciendo = (props) => {
                                 <Col md="6">
                                     <div align="left" className=" mt-2 ml-2 text-uppercase littleFont font-weight-bold">Empaque</div>
                                     <Row className="">
-                                        <div align="left" className="ml-4 mt-1 bigFont">{perdidaEmpaquetadoraKg<0 ? "---" : props.formatNumber.new(_.round(perdidaEmpaquetadoraKg))}</div>
+                                        <div align="left" className="ml-4 mt-1 bigFont">{/*perdidaEmpaquetadoraKg<0 ? "---" : */props.formatNumber.new(_.round(perdidaEmpaquetadoraKg))}</div>
                                         <div align="center" className="littleFont mt-4 ml-2 mr-auto">Kgs</div>
                                     </Row>
 
@@ -511,7 +511,7 @@ const Produciendo = (props) => {
                                 <Col md="6">
                                     <div align="left" className=" mt-2 ml-2 text-uppercase littleFont font-weight-bold">Total</div>
                                     <Row className="">
-                                        <div align="left" className="ml-4 mt-1 bigFont">{perdidaTotalKg<0 ? "---" : props.formatNumber.new(_.round(perdidaTotalKg))}</div>
+                                        <div align="left" className="ml-4 mt-1 bigFont">{/*perdidaTotalKg<0 ? "---" : */props.formatNumber.new(_.round(perdidaTotalKg))}</div>
                                         <div align="center" className="littleFont mt-4 ml-2 mr-auto">Kgs</div>
                                     </Row>
 
