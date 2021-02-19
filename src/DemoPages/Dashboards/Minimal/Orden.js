@@ -69,6 +69,43 @@ const Orden = (props) => {
     setModal(!modal);
   };
 
+  const [ordenPassed, setOrdenPassed] = useState(false);
+  const [messagePassed, setMessagePassed] = useState("");
+
+  const cambiarOrden = (opcion, e) => {
+    e.preventDefault();
+    let api = "";
+    if (opcion === 1) api = global.api.dashboard.nextorden;
+    else if (opcion === 2) api = global.api.dashboard.siguienteordenenvasadoras;
+    else if (opcion === 3) api = global.api.dashboard.siguienteordenempaque;
+    fetch(api, {
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+      },
+      "body": false
+    })
+      .then(response => {
+        if (opcion === 1){
+          setMessagePassed("¡Se ha modificado satisfactoriamente la orden productiva en la Formadora!");
+        } else if (opcion === 2){
+          setMessagePassed("¡Se ha modificado satisfactoriamente la orden productiva en las Envasadoras!");
+        } else if (opcion === 3){
+          setMessagePassed("¡Se ha modificado satisfactoriamente la orden productiva en la Empaquetadora!");
+        }
+        setOrdenPassed(true);
+        props.updateOrden("");
+
+        setTimeout(() => {
+          setOrdenPassed(false);
+        }, 3000);
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  }
+
   const [modalEdit, setModalEdit] = useState(false);
   const [productos, setProductos] = useState([]);
   const [nombre, setNombre] = useState("");
@@ -158,9 +195,9 @@ const Orden = (props) => {
       .then(response => {
         console.log(response);
         setConfirmEdit(true);
+        props.updateOrden(idSubOrden);
 
         setTimeout(() => {
-          props.updateOrden(idSubOrden);
           setConfirmEdit(false);
         }, 3000);
       })
@@ -223,7 +260,17 @@ const Orden = (props) => {
             Producción en línea
           </div>
         </Col>
-        <Col align="left"></Col>
+        <Col align="left">
+          <Button className="buttonOrange2 ml-3 mt-3" size="lg" onClick={(e) => cambiarOrden(1, e)}>
+              Cambiar Formadora
+            </Button>
+            <Button className="buttonOrange2 ml-4 mt-3" size="lg" onClick={(e) => cambiarOrden(2, e)}>
+              Cambiar Envasadoras
+            </Button>
+            <Button className="buttonOrange2 ml-4 mt-3" size="lg" onClick={(e) => cambiarOrden(3, e)}>
+              Cambiar Empaque
+            </Button>
+        </Col>
         <Row style={{ marginRight: '0.5%' }}>
           <Col className="mt-4 mr-0">
             <div>Seleccione fecha</div>
@@ -243,6 +290,13 @@ const Orden = (props) => {
       {ordenes.length === 0 ? (
         <Alert color="warning" className="mb-0">
           <a className="alert-link">No existen órdenes para mostrar.</a>
+        </Alert>
+      ) : (
+        ""
+      )}
+      {ordenPassed === true ? (
+        <Alert color="success" className="mb-0">
+          <a className="alert-link">{messagePassed}</a>
         </Alert>
       ) : (
         ""

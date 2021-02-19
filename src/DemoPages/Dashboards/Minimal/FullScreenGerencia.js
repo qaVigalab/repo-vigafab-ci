@@ -11,7 +11,6 @@ import icono3 from "./images/icono3.png";
 import WatchLaterOutlinedIcon from '@material-ui/icons/WatchLaterOutlined';
 import Brightness1Icon from "@material-ui/icons/Brightness1";
 
-
 function FullSceen() {
   const handle = useFullScreenHandle();
   const [dataTortaFor, setDataTortaFor] = useState(
@@ -158,162 +157,10 @@ function FullSceen() {
       ],
     }
   )
+
   const [calidad, setCalidad] = useState(0)
   const [eficiencia, setEficiencia] = useState(0)
   const [disponibilidad, setDisponibilidad] = useState(0)
-  const [ordenes, setOrdenes] = useState([]);
-  const [IdOrden, setIdOrden] = useState()
-  const [CajasSol, setCajasSol] = useState()
-  const [HamSol, setHamSol] = useState()
-  const [GHam, setGHam] = useState()
-  const [HamAcumEmp, setHamAcumEmp] = useState()
-  const [HamAcumEnv3, setHamAcumEnv3] = useState()
-  const [HamAcumEnv4, setHamAcumEnv4] = useState()
-  const [HamAcumEnv5, setHamAcumEnv5] = useState()
-  const [HamAcumEnv6, setHamAcumEnv6] = useState()
-  const [HamAcumFor, setHamAcumFor] = useState()
-  const [KgAcumEmp, setKgAcumEmp] = useState()
-  const [KgAcumEnv3, setKgAcumEnv3] = useState()
-  const [KgAcumEnv4, setKgAcumEnv4] = useState()
-  const [KgAcumEnv5, setKgAcumEnv5] = useState()
-  const [KgAcumEnv6, setKgAcumEnv6] = useState()
-  const [KgAcumFor, setKgAcumFor] = useState()
-  const [KgCaja, setKgCaja] = useState()
-  const [KgHora, setKgHora] = useState()
-  const [KgSol, setKgSol] = useState()
-  const [Producto, setProducto] = useState()
-  const [Sku, setSku] = useState()
-  const [TaFor, setTaFor] = useState()
-  const [TaEnv3, setTaEnv3] = useState()
-  const [TaEnv4, setTaEnv4] = useState()
-  const [TaEnv5, setTaEnv5] = useState()
-  const [TaEnv6, setTaEnv6] = useState()
-  const [TaEmp, setTaEmp] = useState()
-  const [TiFor, setTiFor] = useState()
-  const [TiEnv3, setTiEnv3] = useState()
-  const [TiEnv4, setTiEnv4] = useState()
-  const [TiEnv5, setTiEnv5] = useState()
-  const [TiEnv6, setTiEnv6] = useState()
-  const [TiEmp, setTiEmp] = useState()
-  const [TaLinea, setTaLinea] = useState()
-  const [TiLinea, setTiLinea] = useState()
-  const [TempFor, setTempFor] = useState()
-  const [ordenFor, setOrdenFor] = useState()
-  const [ordenEnv1, setOrdenEnv1] = useState()
-  const [ordenEnv2, setOrdenEnv2] = useState()
-  const [ordenEnv3, setOrdenEnv3] = useState()
-  const [ordenEnv4, setOrdenEnv4] = useState()
-  const [ordenEmp, setOrdenEmp] = useState()
-  const [TiempoRetencion, setTiempoRetencion] = useState()
-
-  const loadData = () => {
-    fetch(global.api.dashboard.getfullscreen, {
-      "method": "POST",
-      "headers": {
-        "content-type": "application/json",
-        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
-      },
-      body: JSON.stringify({
-      }),
-    })
-      .then(response => response.json())
-      .then(result => {
-        
-        setIdOrden(result[0].id_so)
-        setCajasSol(result[0].cajas_sol)
-        setHamSol(result[0].h_sol)
-        setGHam(result[0].g_ham)
-        setHamAcumEmp(result[0].h_acum_emp)
-        setHamAcumEnv3(result[0].h_acum_env3)
-        setHamAcumEnv4(result[0].h_acum_env4)
-        setHamAcumEnv5(result[0].h_acum_env5)
-        setHamAcumEnv6(result[0].h_acum_env6)
-        setHamAcumFor(result[0].h_acum_for)
-        setKgAcumEmp(result[0].kg_acum_emp)
-        setKgAcumEnv3(result[0].kg_acum_env3)
-        setKgAcumEnv4(result[0].kg_acum_env4)
-        setKgAcumEnv5(result[0].kg_acum_env5)
-        setKgAcumEnv6(result[0].kg_acum_env6)
-        setKgAcumFor(result[0].kg_acum_for)
-        setKgCaja(result[0].kg_caja)
-        setKgHora(result[0].kg_hora)
-        setKgSol(result[0].kg_sol)
-        setProducto(result[0].producto)
-        setSku(result[0].sku)
-        setTaFor(result[0].ta_for)
-        setTaEnv3(result[0].ta_env3)
-        setTaEnv4(result[0].ta_env4)
-        setTaEnv5(result[0].ta_env5)
-        setTaEnv6(result[0].ta_env6)
-        setTaEmp(result[0].ta_emp)
-        setTiFor(result[0].ti_for)
-        setTiEnv3(result[0].ti_env3)
-        setTiEnv4(result[0].ti_env4)
-        setTiEnv5(result[0].ti_env5)
-        setTiEnv6(result[0].ti_env6)
-        setTiEmp(result[0].ti_emp)
-        setTaLinea(result[0].ta_linea)
-        setTiLinea(result[0].ti_linea)
-        setTempFor(result[0].temp_for)
-        setOrdenFor(result[0].ordenfor)
-        setOrdenEnv1(result[0].ordenenv1)
-        setOrdenEnv2(result[0].ordenenv2)
-        setOrdenEnv3(result[0].ordenenv3)
-        setOrdenEnv4(result[0].ordenenv4)
-        setOrdenEmp(result[0].ordenemp)
-        setTiempoRetencion(result[0].tiempo_retencion)
-        setCalidad((result[0].h_acum_emp * result[0].kg_caja) / result[0].kg_acum_for)
-        setEficiencia((result[0].kg_acum_emp / (result[0].kg_hora * (result[0].ta_linea) / 60)))
-        setDisponibilidad((result[0].ta_linea / (result[0].ti_linea + result[0].ta_linea)))
-
-        setDataTortaFor({
-          datasets: [
-            {
-              data: [0, result[0].ti_for, result[0].ta_for],
-            },
-          ],
-        })
-        setDataTortaEnv3({
-          datasets: [
-            {
-              data: [0, result[0].ti_env3, result[0].ta_env3],
-            },
-          ],
-        })
-        setDataTortaEnv4({
-          datasets: [
-            {
-              data: [0, result[0].ti_env4, result[0].ta_env4],
-            },
-          ],
-        })
-        setDataTortaEnv5({
-          datasets: [
-            {
-              data: [0, result[0].ti_env5, result[0].ta_env5],
-            },
-          ],
-        })
-        setDataTortaEnv6({
-          datasets: [
-            {
-              data: [0, result[0].ti_env6, result[0].ta_env6],
-            },
-          ],
-        })
-        setDataTortaEmp({
-          datasets: [
-            {
-              data: [0, result[0].ti_emp, result[0].ta_emp],
-            },
-          ],
-        })
-      }
-      )
-      .catch(err => {
-        console.error(err);
-      });
-  }
 
   var formatNumber = {
     separador: ".", // separador para los miles
@@ -334,6 +181,7 @@ function FullSceen() {
       return this.formatear(num);
     }
   }
+
   const formatHour = (min) => {
     let horas = min / 60;
     horas = Math.trunc(horas)
@@ -341,35 +189,293 @@ function FullSceen() {
     return horas === 0 ? minutos + " Min" : horas + " Hrs " + minutos + " Min"
   }
 
+  const [tiempoOrden, setTiempoOrden] = useState("00:00");
+  const [reportesSelected, setReportesSelected] = useState([]);
+  const loadReportes = () => {
+    fetch(global.api.dashboard.getReportesByOrden, {
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json",
+        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+      },
+      body: JSON.stringify({
+        id_orden: ordenSelected.id_sub_orden
+      }),
+    })
+    .then(response => response.json())
+    .then(r => {
+      var reportesSel = r.filter(rep => !rep.hora_inicio.includes('05:55') && rep.id_sub_orden === ordenSelected.id_sub_orden && rep.id_tipo != 4);
+      
+      /* Se settea el tiempo de producción de la orden en curso */
+      const startMoment = moment(reportesSel[0].hora_inicio);
+      const endMoment = moment(reportesSel[reportesSel.length-1].hora_termino);
+      const diff = endMoment.diff(startMoment);
+      const diffDuration = moment.duration(diff);
+
+      var hours = 0, minutes = 0;
+      if (diffDuration.hours() === 0){
+        hours = "00:"
+      } else if (diffDuration.hours() < 10){
+        hours = "0" + diffDuration.hours() + ":"
+      } else{
+        hours = diffDuration.hours() + ":"
+      }
+
+      if (diffDuration.minutes() === 0){
+        minutes = "00"
+      } else if (diffDuration.minutes() < 10){
+        minutes = "0" + diffDuration.minutes()
+      } else{
+        minutes = diffDuration.minutes()
+      }
+      setTiempoOrden(hours + minutes);
+
+      setReportesSelected(r);
+    })
+    .catch(err => {
+      console.error(err);
+    });
+  }
+
+  /* Se crean las variables para cálculo de Disponibilidad, Eficiencia, Calidad y OEE. Así como también las que representan a la orden en curso en cada máquina. */
+  const [disponibilidadFormadora, setDisponibilidadFormadora] = useState(0);
+  const [disponibilidadEnvasadoras, setDisponibilidadEnvasadoras] = useState(0);
+  const [disponibilidadEmpaquetadora, setDisponibilidadEmpaquetadora] = useState(0);
+
+  const [eficienciaFormadora, setEficienciaFormadora] = useState(0);
+  const [eficienciaEnvasadoras, setEficienciaEnvasadoras] = useState(0);
+  const [eficienciaEmpaquetadora, setEficienciaEmpaquetadora] = useState(0);
+
+  const [ordenActivaFormadora, setOrdenActivaFormadora] = useState({});
+  const [ordenActivaEnvasadoras, setOrdenActivaEnvasadoras] = useState({});
+  const [ordenActivaEmpaquetadora, setOrdenActivaEmpaquetadora] = useState({});
+
+  const [tActivoFormadora, setTActivoFormadora] = useState(0);
+  const [tActivoEnvasadora3, setTActivoEnvasadora3] = useState(0);
+  const [tActivoEnvasadora4, setTActivoEnvasadora4] = useState(0);
+  const [tActivoEnvasadora5, setTActivoEnvasadora5] = useState(0);
+  const [tActivoEnvasadora6, setTActivoEnvasadora6] = useState(0);
+  const [tActivoEmpaquetadora, setTActivoEmpaquetadora] = useState(0);
+
+  const [tInactivoFormadora, setTInactivoFormadora] = useState(0);
+  const [tInactivoEnvasadora3, setTInactivoEnvasadora3] = useState(0);
+  const [tInactivoEnvasadora4, setTInactivoEnvasadora4] = useState(0);
+  const [tInactivoEnvasadora5, setTInactivoEnvasadora5] = useState(0);
+  const [tInactivoEnvasadora6, setTInactivoEnvasadora6] = useState(0);
+  const [tInactivoEmpaquetadora, setTInactivoEmpaquetadora] = useState(0);
+
+  useEffect(() => {
+    var t_activo_formadora = 0, t_activo_envasadoras = 0, t_activo_empaquetadora = 0;
+    var t_inactivo_formadora = 0, t_inactivo_envasadoras = 0, t_inactivo_empaquetadora = 0;
+    var t_activo_env3 = 0, t_activo_env4 = 0, t_activo_env5 = 0, t_activo_env6 = 0;
+    var t_inactivo_env3 = 0, t_inactivo_env4 = 0, t_inactivo_env5 = 0, t_inactivo_env6 = 0;
+
+    if (reportesSelected.length > 0){
+      var reportesSel = reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55'));
+      for (var i=0; i<reportesSel.length; i++){
+          const startDate = moment(reportesSel[i].hora_inicio);
+          const timeEnd = moment(reportesSel[i].hora_termino);
+          const diff = timeEnd.diff(startDate);
+          const diffDuration = moment.duration(diff);
+
+          if (reportesSel[i].id_tipo === 1){
+              if (reportesSel[i].id_tipo_vibot === 2)
+                  t_inactivo_formadora += diffDuration.hours()*60 + diffDuration.minutes();
+              else if (reportesSel[i].id_tipo_vibot === 4){
+                if (reportesSel[i].id_vibot != 34828){
+                  t_inactivo_envasadoras += diffDuration.hours()*60 + diffDuration.minutes();
+
+                  if (reportesSel[i].id_vibot === 23608)
+                    t_inactivo_env4 += diffDuration.hours()*60 + diffDuration.minutes();
+                  else if (reportesSel[i].id_vibot === 30776)
+                    t_inactivo_env5 += diffDuration.hours()*60 + diffDuration.minutes();
+                  else if (reportesSel[i].id_vibot === 32818)
+                    t_inactivo_env6 += diffDuration.hours()*60 + diffDuration.minutes();
+                } else {
+                  t_inactivo_env3 += diffDuration.hours()*60 + diffDuration.minutes();
+                }
+              }
+              else if (reportesSel[i].id_tipo_vibot === 5)
+                  t_inactivo_empaquetadora += diffDuration.hours()*60 + diffDuration.minutes();
+          }
+          else if (reportesSel[i].id_tipo === 2)
+              if (reportesSel[i].id_tipo_vibot === 2)
+                  t_activo_formadora += diffDuration.hours()*60 + diffDuration.minutes();
+              else if (reportesSel[i].id_tipo_vibot === 4){
+                t_activo_envasadoras += diffDuration.hours()*60 + diffDuration.minutes();
+
+                if (reportesSel[i].id_vibot === 34828)
+                  t_activo_env3 += diffDuration.hours()*60 + diffDuration.minutes();
+                else if (reportesSel[i].id_vibot === 23608)
+                  t_activo_env4 += diffDuration.hours()*60 + diffDuration.minutes();
+                else if (reportesSel[i].id_vibot === 30776)
+                  t_activo_env5 += diffDuration.hours()*60 + diffDuration.minutes();
+                else if (reportesSel[i].id_vibot === 32818)
+                  t_activo_env6 += diffDuration.hours()*60 + diffDuration.minutes();
+              }
+              else if (reportesSel[i].id_tipo_vibot === 5)
+                  t_activo_empaquetadora += diffDuration.hours()*60 + diffDuration.minutes();
+      }
+
+      /* Se actualiza las métricas de la Formadora */
+      setDisponibilidadFormadora(
+          isNaN(t_activo_formadora/(t_activo_formadora+t_inactivo_formadora)) ? 0 :
+          t_activo_formadora/(t_activo_formadora+t_inactivo_formadora) * 100
+      );
+
+      setEficienciaFormadora(
+          isNaN(ordenSelected.kg_formados/(ordenSelected.kg_hora * ((t_activo_formadora+t_inactivo_formadora)/60))) ? 0 :
+          ordenSelected.kg_formados/(ordenSelected.kg_hora * ((t_activo_formadora+t_inactivo_formadora)/60)) * 100
+      );
+
+      var repsFor = reportesSel.filter(r => r.id_tipo_vibot === 2);
+      var subOrd = repsFor[repsFor.length-1].id_sub_orden;
+      setOrdenActivaFormadora(ordenes.find(ord => ord.id_sub_orden === subOrd));
+
+      /* Se actualiza las métricas de las Envasadoras */
+      setDisponibilidadEnvasadoras(
+          isNaN(t_activo_envasadoras/(t_activo_envasadoras+t_inactivo_envasadoras)) ? 0 :
+          t_activo_envasadoras/(t_activo_envasadoras+t_inactivo_envasadoras) * 100
+      );
+
+      setEficienciaEnvasadoras(
+          isNaN(ordenSelected.kg_envasados/(ordenSelected.kg_hora * ((t_activo_envasadoras+t_inactivo_envasadoras)/60/3))) ? 0 :
+          ordenSelected.kg_envasados/(ordenSelected.kg_hora * ((t_activo_envasadoras+t_inactivo_envasadoras)/60/3)) * 100
+      );
+
+      var repsEnv = reportesSel.filter(r => r.id_tipo_vibot === 4);
+      var subOrd = repsEnv[repsEnv.length-1].id_sub_orden;
+      setOrdenActivaEnvasadoras(ordenes.find(ord => ord.id_sub_orden === subOrd));
+
+      /* Se actualiza las métricas de la Empaquetadora */
+      setDisponibilidadEmpaquetadora(
+          isNaN(t_activo_empaquetadora/(t_activo_empaquetadora+t_inactivo_empaquetadora)) ? 0 :
+          t_activo_empaquetadora/(t_activo_empaquetadora+t_inactivo_empaquetadora) * 100
+      );
+
+      setEficienciaEmpaquetadora(
+          isNaN(ordenSelected.real_kg/(ordenSelected.kg_hora * ((t_activo_empaquetadora+t_inactivo_empaquetadora)/60))) ? 0 :
+          ordenSelected.real_kg/(ordenSelected.kg_hora * ((t_activo_empaquetadora+t_inactivo_empaquetadora)/60)) * 100
+      );
+
+      var repsEmp = reportesSel.filter(r => r.id_tipo_vibot === 5);
+      var subOrd = repsEmp[repsEmp.length-1].id_sub_orden;
+      setOrdenActivaEmpaquetadora(ordenes.find(ord => ord.id_sub_orden === subOrd));
+
+      setTActivoFormadora(t_activo_formadora); setTInactivoFormadora(t_inactivo_formadora);
+      setTActivoEnvasadora3(t_activo_env3); setTInactivoEnvasadora3(t_inactivo_env3);
+      setTActivoEnvasadora4(t_activo_env4); setTInactivoEnvasadora4(t_inactivo_env4);
+      setTActivoEnvasadora5(t_activo_env5); setTInactivoEnvasadora5(t_inactivo_env5);
+      setTActivoEnvasadora6(t_activo_env6); setTInactivoEnvasadora6(t_inactivo_env6);
+      setTActivoEmpaquetadora(t_activo_empaquetadora); setTInactivoEmpaquetadora(t_inactivo_empaquetadora);
+      
+      setDataTortaFor({
+        datasets: [
+          {
+            data: [0, t_inactivo_formadora, t_activo_formadora],
+          },
+        ],
+      });
+      
+      setDataTortaEnv3({
+        datasets: [
+          {
+            data: [0, t_inactivo_env3, t_activo_env3],
+          },
+        ],
+      });
+
+      setDataTortaEnv4({
+        datasets: [
+          {
+            data: [0, t_inactivo_env4, t_activo_env4],
+          },
+        ],
+      });
+
+      setDataTortaEnv5({
+        datasets: [
+          {
+            data: [0, t_inactivo_env5, t_activo_env5],
+          },
+        ],
+      });
+      
+      setDataTortaEnv6({
+        datasets: [
+          {
+            data: [0, t_inactivo_env6, t_activo_env6],
+          },
+        ],
+      });
+
+      setDataTortaEmp({
+        datasets: [
+          {
+            data: [0, t_inactivo_empaquetadora, t_activo_empaquetadora],
+          },
+        ],
+      });
+    }
+  }, [reportesSelected]);
+
+  useEffect(() => {
+    /* Se actualizan las métricas globales */
+    console.log(disponibilidadFormadora + " - " + disponibilidadEnvasadoras + " - " + disponibilidadEmpaquetadora);
+    setCalidad(ordenSelected.real_kg/ordenSelected.kg_formados * 100)
+    setEficiencia((eficienciaFormadora+eficienciaEnvasadoras+eficienciaEmpaquetadora)/3);
+    setDisponibilidad((disponibilidadFormadora+disponibilidadEnvasadoras+disponibilidadEmpaquetadora)/3)
+  }, [eficienciaEmpaquetadora]);
+
+  /* Se obtienen las órdenes del día y la orden activa */
+  const [ordenes, setOrdenes] = useState([]); 
+  const [ordenSelected, setOrdenSelected] = useState({});
+  const [fechaOrdenes, setFechaOrdenes] = useState(moment().format('YYYY-MM-DD'));
   const loadOrdenes = () => {
-    fetch(global.api.dashboard.getordenes, {
+    const query = fetch(global.api.dashboard.getOrdenesResumen, {
       method: "POST",
       headers: {
         "content-type": "application/json",
         "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
       },
       body: JSON.stringify({
-        fecha: localStorage.getItem("fechaFinal"),
+        fecha: fechaOrdenes
       }),
     })
-      .then((response) => response.json())
-      .then((result) => {
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.length >= 1) {
         setOrdenes(result);
-
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+        var ord = result.find(e => e.id_estado === 1);
+        if (ord != undefined)
+          setOrdenSelected(ord);
+        else
+          setOrdenSelected(result[0]);
+      } else {
+        setOrdenes([]);
+        setOrdenSelected({});
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+    });
   };
 
+  useEffect(() => {
+    loadReportes();
+    const interval = setInterval(() => {
+      loadReportes();
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [ordenSelected]);
 
   useEffect(() => {
     loadOrdenes();
-    loadData();
+  },[]);
+
+  useEffect(() => {
     const interval = setInterval(() => {
       loadOrdenes();
-      loadData();
-      console.log("recargando")
     }, 60000);
     return () => clearInterval(interval);
   }, []);
@@ -377,51 +483,56 @@ function FullSceen() {
   return (
     <div>
       <Button onClick={handle.enter}>
-        Ver Fullscreen
+        Ver Full Screen
       </Button>
+
       <FullScreen handle={handle} >
         <div className={handle.active ? "fullscreen-space" : "fullscreen-space d-none"} >
           <Row className="fullscreen-nav">
             <Col>
               <div className="app-header__logo2 ">
                 <div className="logo-src2"
-                  style={{
-                    backgroundImage: `url(${localStorage.getItem("img")}) `
-                  }}
+                  style={{ backgroundImage: `url(${localStorage.getItem("img")})` }}
                 />
               </div>
             </Col>
+
             <Col className="bigFont2 mt-4 mr-5" align="right">
               {moment().format('DD-MM-YYYY')}
-
               <WatchLaterOutlinedIcon style={{ fontSize: 30 }} className="mb-1 ml-4 mr-1" />
               {moment().format("HH:mm")}
             </Col>
           </Row>
+
           <Row className="fullscreen-centerSpace">
             <Col xl="4" className="fullscreen-center1" >
               <Row className="fullscreen-center1-head p-3">
                 <Col xl="3" className="font1 mt-3 ">
-                  N° {IdOrden}
+                  Orden N° {ordenSelected.id_sub_orden}
                 </Col>
+                
                 <Col className="font1 mt-3">
-                  {Producto}
+                  {ordenSelected.producto}
                 </Col>
               </Row>
+
               <Row className="fullscreen-center1-body1">
                 <Col xl="4">
-                  <div align="center" className="bigFont3 mt-4">{formatNumber.new(_.round(KgAcumEmp * 100 / KgSol, 2))}%</div>
-                  <div align="center" className="littleFont2">de Produccion en  Linea</div>
+                  <div align="center" className="bigFont3 mt-4">{formatNumber.new(_.round(ordenSelected.kg_porcentual, 2))} %</div>
+                  <div align="center" className="littleFont2">de Produccion en Línea</div>
                 </Col>
+
                 <Col xl="4">
-                  <div align="center" className="bigFont3 mt-4">{formatNumber.new(_.round(HamAcumEmp / (TaLinea + TiLinea), 2))}</div>
-                  <div align="center" className="littleFont2">Caj/min Productividad</div>
+                  <div align="center" className="bigFont3 mt-4">{formatNumber.new(_.round(ordenSelected.cajas_acumuladas/ordenSelected.tiempo_total, 1))} Caj</div>
+                  <div align="center" className="littleFont2">por Minuto</div>
                 </Col>
+
                 <Col xl="4">
-                  <div align="center" className="bigFont3 mt-4"> {formatNumber.new(_.round((TaLinea + TiLinea) / 60, 2))} </div>
-                  <div align="center" className="littleFont2">Horas de Produccion</div>
+                  <div align="center" className="bigFont3 mt-4"> {tiempoOrden}</div>
+                  <div align="center" className="littleFont2">horas de Producción</div>
                 </Col>
               </Row>
+
               <Row className="fullscreen-center1-body2 pt-3 pb-3">
                 <Col md="3">
                   <div className="circle">
@@ -431,9 +542,7 @@ function FullSceen() {
                       responsive={true} // Boolean: Make SVG adapt to parent size
                       size="100" // String: Defines the size of the circle.
                       lineWidth="30" // String: Defines the thickness of the circle's stroke.
-                      progress={(
-                        disponibilidad > 1 ? 100 : disponibilidad * 100
-                      ).toFixed(0)} // String: Update to change the progress and percentage.
+                      progress={(disponibilidad).toFixed(0)} // String: Update to change the progress and percentage.
                       progressColor="#02c39a" // String: Color of "progress" portion of circle.
                       bgColor="#a4a4a4" // String: Color of "empty" portion of circle.
                       textColor="#fff" // String: Color of percentage text color.
@@ -448,6 +557,7 @@ function FullSceen() {
                     <div align="center" className="mt-2">Disponibilidad</div>
                   </div>
                 </Col>
+
                 <Col md="3">
                   <div className="circle">
                     <Circle
@@ -456,9 +566,7 @@ function FullSceen() {
                       responsive={true} // Boolean: Make SVG adapt to parent size
                       size="100" // String: Defines the size of the circle.
                       lineWidth="30" // String: Defines the thickness of the circle's stroke.
-                      progress={(
-                        eficiencia > 1 ? 100 : eficiencia * 100 //(totalKG/capacidad*tiempo que se demoro)
-                      ).toFixed(0)} // String: Update to change the progress and percentage.
+                      progress={(eficiencia).toFixed(0)} // String: Update to change the progress and percentage.
                       progressColor="#02c39a" // String: Color of "progress" portion of circle.
                       bgColor="#a4a4a4" // String: Color of "empty" portion of circle.
                       textColor="#FFF" // String: Color of percentage text color.
@@ -473,6 +581,7 @@ function FullSceen() {
                     <div align="center" className="mt-2">Eficiencia</div>
                   </div>
                 </Col>
+
                 <Col md="3">
                   <div className="circle">
                     <Circle
@@ -481,9 +590,7 @@ function FullSceen() {
                       responsive={true} // Boolean: Make SVG adapt to parent size
                       size="100" // String: Defines the size of the circle.
                       lineWidth="30" // String: Defines the thickness of the circle's stroke.
-                      progress={(
-                        calidad > 1 ? 100 : calidad * 100
-                      ).toFixed(0)} // String: Update to change the progress and percentage.
+                      progress={(calidad).toFixed(0)} // String: Update to change the progress and percentage.
                       progressColor="#02c39a" // String: Color of "progress" portion of circle.
                       bgColor="#a4a4a4" // String: Color of "empty" portion of circle.
                       textColor="#FFF" // String: Color of percentage text color.
@@ -498,6 +605,7 @@ function FullSceen() {
                     <div align="center" className="mt-2">Calidad</div>
                   </div>
                 </Col>
+
                 <Col md="3">
                   <div className="circle">
                     <Circle
@@ -506,9 +614,7 @@ function FullSceen() {
                       responsive={true} // Boolean: Make SVG adapt to parent size
                       size="100" // String: Defines the size of the circle.
                       lineWidth="30" // String: Defines the thickness of the circle's stroke.
-                      progress={(
-                        ((eficiencia > 1 ? 1 : eficiencia) * (disponibilidad > 1 ? 1 : disponibilidad) * (calidad > 1 ? 1 : calidad)) * 100
-                      ).toFixed(0)} // String: Update to change the progress and percentage.
+                      progress={((calidad/100*eficiencia/100*disponibilidad/100) * 100).toFixed(0)} // String: Update to change the progress and percentage.
                       progressColor="#02c39a" // String: Color of "progress" portion of circle.
                       bgColor="#a4a4a4" // String: Color of "empty" portion of circle.
                       textColor="#FFF" // String: Color of percentage text color.
@@ -525,6 +631,7 @@ function FullSceen() {
                 </Col>
               </Row>
             </Col>
+
             <Col>
               <Card className="fullscreen-center2" >
                 <Table className="mt-0 ">
@@ -542,228 +649,201 @@ function FullSceen() {
                     </tr>
                   </thead>
 
-                  <tbody>
-                    {
-
-                      ordenes.map((orden, i) =>
-                      i >4 ? "" :  
-                        orden.id_sub_orden ? (
-
-                          <tr key={i}
-                            className={orden.id_estado == 1 ? "orangeRow" :
-                              "text-center"}
-                          >
-                            <td>{orden.id_sub_orden}</td>
-                            <td>{orden.sku}</td>
-                            <td>{orden.producto}</td>
-                            <td>{formatNumber.new(orden.cajas)}</td>
-                            <td>
-                              {orden.id_estado == 1 ? formatNumber.new(_.round(HamAcumEmp / (TaLinea + TiLinea), 2)) + " Caj/min" : formatNumber.new(_.round(orden.productividad, 2)) + " Caj/min"}
-                            </td>
-                            <td>
-                              {formatNumber.new(_.round(orden.tiempo_estimado, 2)) + " hrs"}
-                            </td>
-                            <td>{formatNumber.new(_.round(orden.kg_solicitados)) + " Kg"}</td>
-                            <td>{formatNumber.new(_.round(orden.real_kg)) + " Kg"}</td>
-                            <td>
-                              {orden.kg_porcentual == null
-                                ? "0 %"
-                                : orden.kg_porcentual > 100
-                                  ? "100%"
-                                  : formatNumber.new(_.round(orden.kg_porcentual, 2)) + " %"}
-                            </td>
-
-                          </tr>
-                        ) : (
-                            ""
-                          )
+                  <tbody>{
+                    ordenes.map((orden, i) => i>4 ? "" :  
+                      orden.id_sub_orden ? (
+                        <tr key={i}
+                          className={orden.id_estado == 1 ? "orangeRow" :
+                            "text-center"}
+                        >
+                          <td>{orden.id_sub_orden}</td>
+                          <td>{orden.sku}</td>
+                          <td>{orden.producto}</td>
+                          <td>{formatNumber.new(orden.cajas)}</td>
+                          <td>
+                            {orden.tiempo_total === 0 ? 0 + " Caj/min" : formatNumber.new(_.round(orden.cajas_acumuladas/orden.tiempo_total, 1)) + " Caj/min"}
+                          </td>
+                          <td>
+                            {formatNumber.new(_.round(orden.tiempo_estimado, 2)) + " hrs"}
+                          </td>
+                          <td>{formatNumber.new(_.round(orden.kg_solicitados)) + " Kg"}</td>
+                          <td>{formatNumber.new(_.round(orden.real_kg)) + " Kg"}</td>
+                          <td>
+                            {orden.kg_porcentual == null ? "0 %"
+                              : orden.kg_porcentual > 100 ? "100%"
+                              : formatNumber.new(_.round(orden.kg_porcentual, 2)) + " %"}
+                          </td>
+                        </tr>
+                      ) : (
+                        ""
                       )
-                    }
-
-
-                  </tbody>
+                    )
+                  }</tbody>
                 </Table>
               </Card>
+
               <Row className="fullscreen-center3">
                 <Col xl="3" className="fullscreen-center3-verde1 pr-0">
-                  <Row className="mx-4 px-4 mt-2 ">
-                    <div className="ml-3">
+                  <Row align="center" className="mx-4 px-4 mt-2 ">
+                    <div align="center" className="ml-3">
                       <img src={icono1} className="" alt="Empaque" width="120%" height="110%" />
                     </div>
                   </Row>
-                  <div align="center" className="bigFont">{formatNumber.new(KgAcumFor)}</div>
-                  <div align="center" className="littleFont">de {formatNumber.new(KgSol)} Kgs</div>
-
-
+                  <div align="center" className="bigFont">{formatNumber.new(_.round(ordenSelected.kg_formados))}</div>
+                  <div align="center" className="littleFont">de {formatNumber.new(ordenSelected.kg_solicitados)} Kgs</div>
                 </Col>
+
                 <Col xl="3" className="fullscreen-center3-verde2">
-                  <Row className="mx-4 px-4 mt-2">
-                    <div className="text-white ml-3" >
+                  <Row align="center" className="mx-4 px-4 mt-2">
+                    <div align="center" className="text-white ml-3" >
                       <img src={icono2} className="" alt="Empaque" width="120%" height="110%" />
                     </div>
                   </Row>
-                  <div align="center" className="bigFont">{formatNumber.new(HamAcumEnv3 + HamAcumEnv4 + HamAcumEnv5 + HamAcumEnv6)}</div>
-                  <div align="center" className="littleFont">de {formatNumber.new(HamSol)} F. Pack</div>
-
-
+                  <div align="center" className="bigFont">{formatNumber.new(ordenSelected.hamb_envasadas)}</div>
+                  <div align="center" className="littleFont">de {formatNumber.new(ordenSelected.hamb_solicitadas)} Packs</div>
                 </Col>
+
                 <Col xl="3" className="fullscreen-center3-verde3 ">
-                  <Row className="mx-4 px-4 mt-2">
-                    <div className="ml-3">
+                  <Row align="center" className="mx-4 px-4 mt-2">
+                    <div align="center" className="ml-3">
                       <img src={icono3} className="" alt="Empaque" width="120%" height="110%" />
                     </div>
                   </Row>
-                  <div align="center" className="bigFont">{formatNumber.new(HamAcumEmp)}</div>
-                  <div align="center" className="littleFont">de {formatNumber.new(CajasSol)} Cajas</div>
-
-
+                  <div align="center" className="bigFont">{formatNumber.new(ordenSelected.cajas_acumuladas)}</div>
+                  <div align="center" className="littleFont">de {formatNumber.new(ordenSelected.cajas)} Cajas</div>
                 </Col>
+
                 <Col xl="3" className="">
                   <Card className="p-0 fullscreen-centerMaquina">
                     <div align="center" className="text-uppercase font-weight-bold title1orange2 mr-2 mt-2">Iqf</div>
-
-                    <div align="center" className="bigFontGreen">{formatNumber.new(_.round(TempFor, 2))}°C</div>
+                    <div align="center" className="bigFontGreen">{formatNumber.new(_.round(ordenSelected.temp_entrada, 2))}° C</div>
                     <div align="center" className="littleFontGreen mb-2">Temp. Entrada</div>
-                    <div align="center" className="bigFontGreen blackBorderTop pt-2">{/* formatNumber.new(_.round(TiempoRetencion, 2)) */ TiempoRetencion} Min</div>
+                    <div align="center" className="bigFontGreen blackBorderTop pt-2">{formatNumber.new(_.round(ordenSelected.tiempo_retencion_iqf, 1))} Min</div>
                     <div align="center" className="littleFontGreen mb-2">Tiempo Retencion</div>
-
                   </Card>
                 </Col>
-
               </Row>
-
             </Col>
-
           </Row>
+          
           <Row className="fullscreen-botSpace ">
+            {/* Tarjeta Formadora */}
             <Col xl="2">
               <Card className=" main-card fullscreen-botMaquina">
-                <div align="center" className="text-uppercase font-weight-bold title1orange2 mb- mr-2 mt-2">Formadora</div>
+                <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Formadora</div>
                 <Doughnut
                   data={dataTortaFor}
                   width="12"
                   height="8  "
                   align="center"
                   options={{
-                    legend: {
-                      display: true,
-                      position: "buttom",
-                    },
+                    legend: { display: true, position: "buttom" },
                     responsive: true,
                     maintainAspectRatio: true,
                   }}
                 />
                 <Row className="ml-2 mt-2">
                   <Brightness1Icon style={{ color: "#2264A7" }} />
-                  Produciendo: {formatHour(TaFor)}
+                  Produciendo: {formatHour(tActivoFormadora)}
                 </Row>
                 <Row className="ml-2 mb-3">
                   <Brightness1Icon style={{ color: "#F7431E" }} />
-                  En Paro: {formatHour(TiFor)}
+                  En Paro: {formatHour(tInactivoFormadora)}
                 </Row>
-
-                {/*             <Row className="ml-2">
-                  Desconectado: 3 Hrs
-                </Row> */}
-                <div className=" fullscreen-botMaquina-bot pl-2 pt-2">{"Orden: " + ordenFor}</div>
+                <div align="center" style={{ fontWeight: 'bold' }} className="fullscreen-botMaquina-bot pl-2 pt-2">{
+                  "Orden Activa: SKU " + ordenActivaFormadora.sku + " (" + parseInt(ordenActivaFormadora.kg_formados/ordenActivaFormadora.kg_solicitados*100) + "%)"
+                }</div>
               </Card>
             </Col>
+
+            {/* Tarjeta Envasadora 3 */}
             <Col xl="2">
               <Card className="main-card fullscreen-botMaquina ">
                 <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Envasadora 3</div>
-
                 <Doughnut
                   data={dataTortaEnv3}
                   width="12"
                   height="8  "
                   align="center"
                   options={{
-                    legend: {
-                      display: true,
-                      position: "buttom",
-                    },
+                    legend: { display: true, position: "buttom" },
                     responsive: true,
                     maintainAspectRatio: true,
                   }}
                 />
                 <Row className="ml-2 mt-2">
                   <Brightness1Icon style={{ color: "#2264A7" }} />
-                  Produciendo: {formatHour(TaEnv3)}
+                  Produciendo: {formatHour(tActivoEnvasadora3)}
                 </Row>
                 <Row className="ml-2">
                   <Brightness1Icon style={{ color: "#F7431E" }} />
-                  En Paro: {formatHour(TiEnv3)}
+                  En Paro: {formatHour(tInactivoEnvasadora3)}
                 </Row>
-                {/*                 <Row className="ml-2">
-                  Desconectado: 3 Hrs
-                </Row> */}
-                <div className="fullscreen-botMaquina-bot pl-2 pt-2 ">{"Orden: " + ordenEnv1}</div>
+                <div align="center" style={{ fontWeight: 'bold' }} className="fullscreen-botMaquina-bot pl-2 pt-2">{
+                  "Orden Activa: SKU " + ordenActivaEnvasadoras.sku + " (" + parseInt(ordenActivaEnvasadoras.kg_envasados/ordenActivaEnvasadoras.kg_solicitados*100) + "%)"
+                }</div>
               </Card>
             </Col>
+            
+            {/* Tarjeta Envasadora 4 */}
             <Col xl="2">
               <Card className=" main-card fullscreen-botMaquina">
                 <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Envasadora 4</div>
-
                 <Doughnut
                   data={dataTortaEnv4}
                   width="12"
                   height="8  "
                   align="center"
                   options={{
-                    legend: {
-                      display: true,
-                      position: "buttom",
-                    },
+                    legend: { display: true, position: "buttom" },
                     responsive: true,
                     maintainAspectRatio: true,
                   }}
                 />
                 <Row className="ml-2 mt-2">
                   <Brightness1Icon style={{ color: "#2264A7" }} />
-                  Produciendo: {formatHour(TaEnv4)}
+                  Produciendo: {formatHour(tActivoEnvasadora4)}
                 </Row>
                 <Row className="ml-2">
                   <Brightness1Icon style={{ color: "#F7431E" }} />
-                  En Paro: {formatHour(TiEnv4)}
+                  En Paro: {formatHour(tInactivoEnvasadora4)}
                 </Row>
-                {/*                 <Row className="ml-2">
-                  Desconectado: 3 Hrs
-                </Row> */}
-                <div className=" fullscreen-botMaquina-bot pl-2 pt-2">{"Orden: " + ordenEnv2}</div>
+                <div align="center" style={{ fontWeight: 'bold' }} className="fullscreen-botMaquina-bot pl-2 pt-2">{
+                  "Orden Activa: SKU " + ordenActivaEnvasadoras.sku + " (" + parseInt(ordenActivaEnvasadoras.kg_envasados/ordenActivaEnvasadoras.kg_solicitados*100) + "%)"
+                }</div>
               </Card>
             </Col>
+
+            {/* Tarjeta Envasadora 5 */}
             <Col xl="2">
               <Card className="main-card fullscreen-botMaquina">
                 <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Envasadora 5</div>
-
                 <Doughnut
                   data={dataTortaEnv5}
                   width="12"
                   height="8  "
                   align="center"
                   options={{
-                    legend: {
-                      display: true,
-                      position: "buttom",
-                    },
+                    legend: { display: true, position: "buttom" },
                     responsive: true,
                     maintainAspectRatio: true,
                   }}
                 />
                 <Row className="ml-2 mt-2">
                   <Brightness1Icon style={{ color: "#2264A7" }} />
-                  Produciendo: {formatHour(TaEnv5)}
+                  Produciendo: {formatHour(tActivoEnvasadora5)}
                 </Row>
                 <Row className="ml-2">
                   <Brightness1Icon style={{ color: "#F7431E" }} />
-                  En Paro: {formatHour(TiEnv5)}
+                  En Paro: {formatHour(tInactivoEnvasadora5)}
                 </Row>
-                {/*                 <Row className="ml-2">
-                  Desconectado: 3 Hrs
-                </Row> */}
-                <div className=" fullscreen-botMaquina-bot pl-2 pt-2">{"Orden: " + ordenEnv3}</div>
+                <div align="center" style={{ fontWeight: 'bold' }} className="fullscreen-botMaquina-bot pl-2 pt-2">{
+                  "Orden Activa: SKU " + ordenActivaEnvasadoras.sku + " (" + parseInt(ordenActivaEnvasadoras.kg_envasados/ordenActivaEnvasadoras.kg_solicitados*100) + "%)"
+                }</div>
               </Card>
             </Col>
+
+            {/* Tarjeta Envasadora 6 */}
             <Col xl="2">
               <Card className="main-card fullscreen-botMaquina">
                 <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Envasadora 6</div>
@@ -773,58 +853,51 @@ function FullSceen() {
                   height="8  "
                   align="center"
                   options={{
-                    legend: {
-                      display: true,
-                      position: "buttom",
-                    },
+                    legend: { display: true, position: "buttom" },
                     responsive: true,
                     maintainAspectRatio: true,
                   }}
                 />
                 <Row className="ml-2 mt-2">
                   <Brightness1Icon style={{ color: "#2264A7" }} />
-                  Produciendo: {formatHour(TaEnv6)}
+                  Produciendo: {formatHour(tActivoEnvasadora6)}
                 </Row>
                 <Row className="ml-2">
                   <Brightness1Icon style={{ color: "#F7431E" }} />
-                  En Paro: {formatHour(TiEnv6)}
+                  En Paro: {formatHour(tInactivoEnvasadora6)}
                 </Row>
-                {/*                 <Row className="ml-2">
-                  Desconectado: 3 Hrs
-                </Row> */}
-                <div className=" fullscreen-botMaquina-bot pl-2 pt-2">{"Orden: " + ordenEnv4}</div>
+                <div align="center" style={{ fontWeight: 'bold' }} className="fullscreen-botMaquina-bot pl-2 pt-2">{
+                  "Orden Activa: SKU " + ordenActivaEnvasadoras.sku + " (" + parseInt(ordenActivaEnvasadoras.kg_envasados/ordenActivaEnvasadoras.kg_solicitados*100) + "%)"
+                }</div>
               </Card>
             </Col>
+
+            {/* Tarjeta Empaquetadora */}
             <Col xl="2" >
               <Card className="main-card fullscreen-botMaquina">
                 <div align="center" className="text-uppercase font-weight-bold title1orange2 mb-3 mr-2 mt-2">Empaque</div>
-
                 <Doughnut
                   data={dataTortaEmp}
                   width="12"
                   height="8  "
                   align="center"
                   options={{
-                    legend: {
-                      display: true,
-                      position: "buttom",
-                    },
+                    legend: { display: true, position: "buttom" },
                     responsive: true,
                     maintainAspectRatio: true,
                   }}
                 />
                 <Row className="ml-2 mt-2">
                   <Brightness1Icon style={{ color: "#2264A7" }} />
-                  Produciendo: {formatHour(TaEmp)}
+                  Produciendo: {formatHour(tActivoEmpaquetadora)}
                 </Row>
                 <Row className="ml-2">
                   <Brightness1Icon style={{ color: "#F7431E" }} />
-                  En Paro: {formatHour(TiEmp)}
+                  En Paro: {formatHour(tInactivoEmpaquetadora)}
                 </Row>
-                {/*                 <Row className="ml-2">
-                  Desconectado: 3 Hrs
-                </Row> */}
-                <div className="fullscreen-botMaquina-bot pl-2 pt-2 ">{"Orden: " + ordenEmp}</div>
+                <div align="center" style={{ fontWeight: 'bold' }} className="fullscreen-botMaquina-bot pl-2 pt-2">{
+                  "Orden Activa: SKU " + ordenActivaEmpaquetadora.sku + " (" + parseInt(ordenActivaEmpaquetadora.cajas_acumuladas/ordenActivaEmpaquetadora.cajas*100) + "%)"
+                }</div>
               </Card>
             </Col>
           </Row>
