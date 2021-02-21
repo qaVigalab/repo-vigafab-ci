@@ -260,7 +260,8 @@ const Orden = (props) => {
             Producción en línea
           </div>
         </Col>
-        <Col align="left">
+        <Col align="left"></Col>
+        {/*<Col align="left">
           <Button className="buttonOrange2 ml-3 mt-3" size="lg" onClick={(e) => cambiarOrden(1, e)}>
               Cambiar Formadora
             </Button>
@@ -270,8 +271,8 @@ const Orden = (props) => {
             <Button className="buttonOrange2 ml-4 mt-3" size="lg" onClick={(e) => cambiarOrden(3, e)}>
               Cambiar Empaque
             </Button>
-        </Col>
-        <Row style={{ marginRight: '0.5%' }}>
+        </Col>*/}
+        <Row align="right" style={{ marginRight: '0.5%' }}>
           <Col className="mt-4 mr-0">
             <div>Seleccione fecha</div>
           </Col>
