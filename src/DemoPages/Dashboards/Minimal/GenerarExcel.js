@@ -5,29 +5,22 @@ import Workbook from 'react-excel-workbook';
 import DatePicker from "react-datepicker";
 import { connect } from "react-redux";
 import _ from "lodash";
+import moment from 'moment';
 
 const GenerarExcel = (props) => {
-  const [ordenes, setOrdenes] = useState(0)
-  const [paros, setParos] = useState(0)
-  const [startDate, setStartDate] = useState(new Date(new Date().getTime() - (7 * 24 * 60 * 60 * 1000)))
-  const [endDate, setEndDate] = useState(new Date())
+  const [ordenes, setOrdenes] = useState(0);
+  const [paros, setParos] = useState(0);
+  const [startDate, setStartDate] = useState(new Date(new Date().getTime() - (7 * 24 * 60 * 60 * 1000)));
+  const [endDate, setEndDate] = useState(new Date());
 
   const handleChange3 = (date) =>{
-    console.log(date);
     setStartDate(date);
-    setTimeout(() => {
-      loadParo()
-      loadOrden()
-    }, 700);
+    console.log("Fecha original: " + date + " | Fecha tratada: " + moment(date).format('YYYY-MM-DD'))
   }
 
   const handleChange4= (date) => {
-    console.log(date.toISOString().substr(0, 10));
     setEndDate(date);
-    setTimeout(() => {
-      loadParo()
-      loadOrden()
-    }, 2000);
+    console.log("Fecha original: " + date + " | Fecha tratada: " + moment(date).format('YYYY-MM-DD'))
   }
 
   const loadOrden = () => {
@@ -41,8 +34,8 @@ const GenerarExcel = (props) => {
       },
 
       body: JSON.stringify({
-        fecha_inicio: startDate.toISOString().substr(0, 10),
-        fecha_termino: endDate.toISOString().substr(0, 10)
+        fecha_inicio: moment(startDate).add(1, 'days').format('YYYY-MM-DD'),
+        fecha_termino: moment(endDate).add(1, 'days').format('YYYY-MM-DD')
       }),
     })
       .then(response => response.json())
@@ -80,11 +73,6 @@ const GenerarExcel = (props) => {
       });
   }
 
-  useEffect(() => {
-    loadParo()
-    loadOrden()
-  }, [props.id_orden]);
-
   return (
     <div>
       <Row>
@@ -96,9 +84,10 @@ const GenerarExcel = (props) => {
 
       <Row>
         <Row>
-          <Col align="right">
+          <Col className="ml-2" align="right">
             <Label className="mt-2">Seleccione fechas:</Label>
           </Col>
+
           <Col>
             <DatePicker
               className="form-control"
@@ -160,8 +149,5 @@ const GenerarExcel = (props) => {
   );
 }
 
-const mapStateToProps = (state) => ({
-  id_orden: state.dashboardReducers.id_orden,
-});
-
+const mapStateToProps = (state) => ({});
 export default connect(mapStateToProps)(GenerarExcel);
