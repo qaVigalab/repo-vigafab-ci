@@ -217,9 +217,9 @@ const Orden = (props) => {
 
   const fechaChange = (e) => {
     var date = new Date(e.target.value);
-    props.updateFecha(moment(date).add(3, 'hours').format('YYYY-MM-DD'));
+    props.updateFecha(moment(date).add(1, 'days').format('YYYY-MM-DD'));
 
-    var date1 = new Date(moment(date).add(3, 'hours'));
+    var date1 = new Date(moment(date).add(1, 'days'));
     var date2 = new Date();
 
     console.log(date1);
