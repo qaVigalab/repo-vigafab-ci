@@ -140,7 +140,6 @@ const Produciendo = (props) => {
 
     useEffect(() => {
         /* Se actualizan las métricas globales */
-        console.log(disponibilidadFormadora + " - " + disponibilidadEnvasadoras + " - " + disponibilidadEmpaquetadora);
         setCalidad(props.ordenSelected.real_kg/props.ordenSelected.kg_formados * 100)
         setEficiencia((eficienciaFormadora+eficienciaEnvasadoras+eficienciaEmpaquetadora)/3);
         setDisponibilidad((disponibilidadFormadora+disponibilidadEnvasadoras+disponibilidadEmpaquetadora)/3)

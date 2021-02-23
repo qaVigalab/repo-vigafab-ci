@@ -147,7 +147,6 @@ const CialWidget = (props) => {
   useEffect(() => {
     if (reportes.length > 0)
       loadTimeLine();
-    console.log("Kgs Envasadoras: " + props.ordenSelected.kg_formados + "kg VS " + props.ordenSelected.kg_hora*(tActivo+tInactivo)/60 + "kg")
   }, [reportes]);
 
   const loadTimeLine = () => {

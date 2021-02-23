@@ -181,8 +181,6 @@ const MinimalDashboard1 = () => {
   /* Debug: Se imprime el listado de órdenes del día en curso y la orden seleccionada en el listado */
   /* Se actualiza el detalle de los reportes asociados a la orden seleccionada */
   useEffect(() => {
-    console.log(ordenes);
-    console.log(ordenSelected);
     if (ordenSelected != {})
       loadReportes();
   }, [ordenSelected]);
