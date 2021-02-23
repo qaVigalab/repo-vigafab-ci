@@ -11,7 +11,7 @@ import NuevaOrden from "./NuevaOrden";
 import Orden from "./Orden";
 import Produciendo from "./Produciendo";
 import Formadora2 from "./Formadora2";
-import Iqf2 from "./Iqf2";
+//import Iqf2 from "./Iqf2";
 import CialWidget from "./CialWidget";
 import TotalEnvasadoras from "./TotalEnvasadoras";
 import Empaque from "./Empaque";
@@ -183,7 +183,8 @@ const MinimalDashboard1 = () => {
   useEffect(() => {
     console.log(ordenes);
     console.log(ordenSelected);
-    loadReportes();
+    if (ordenSelected != {})
+      loadReportes();
   }, [ordenSelected]);
 
   return (
@@ -273,7 +274,7 @@ const MinimalDashboard1 = () => {
           </Row>
 
           {/*
-          <div class="columns-parent">
+          <div className="columns-parent">
             <Row>
               <Col xs="12" xl="12">
                 <Card className="main-card mb-3">
@@ -283,7 +284,7 @@ const MinimalDashboard1 = () => {
             </Row>
           */}
 
-          <div class="columns-parent"> {/* sacar al agregar iqf */}
+          <div className="columns-parent"> {/* sacar al agregar iqf */}
             {modo === 2 || modo === 0 ? (
               <Row>
                 {maquinas.map((maquina) => (

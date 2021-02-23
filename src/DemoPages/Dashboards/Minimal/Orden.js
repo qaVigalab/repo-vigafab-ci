@@ -15,7 +15,7 @@ import _ from "lodash";
 import moment from 'moment';
 
 const Orden = (props) => {
-  const [perfil, setPerfil] = useState(localStorage.getItem("perfil"));
+  const [perfil] = useState(localStorage.getItem("perfil"));
   const [sku, setSku] = useState("");
   const [cajas, setCajas] = useState("");
   const [producto, setProducto] = useState("");
@@ -72,7 +72,7 @@ const Orden = (props) => {
   const [ordenPassed, setOrdenPassed] = useState(false);
   const [messagePassed, setMessagePassed] = useState("");
 
-  const cambiarOrden = (opcion, e) => {
+  /*const cambiarOrden = (opcion, e) => {
     e.preventDefault();
     let api = "";
     if (opcion === 1) api = global.api.dashboard.nextorden;
@@ -104,7 +104,7 @@ const Orden = (props) => {
       .catch(err => {
         console.error(err);
       });
-  }
+  }*/
 
   const [modalEdit, setModalEdit] = useState(false);
   const [productos, setProductos] = useState([]);
@@ -388,7 +388,7 @@ const Orden = (props) => {
                     </td>
                     {perfil == 1 || perfil == 2 ? (
                       <td>
-                        {editable == true && orden.id_estado != 3 ? (
+                        {editable === true && orden.id_estado !== 3 ? (
                         <IconButton
                           aria-label="edit"
                           style={orden.id_estado === 1 ? { color: "#ffebee" } : {}}

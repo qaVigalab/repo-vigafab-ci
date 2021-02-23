@@ -145,56 +145,55 @@ const CialWidget = (props) => {
   }, [props.reportesSelected]);
 
   useEffect(() => {
-    loadTimeLine();
+    if (reportes.length > 0)
+      loadTimeLine();
     console.log("Kgs Envasadoras: " + props.ordenSelected.kg_formados + "kg VS " + props.ordenSelected.kg_hora*(tActivo+tInactivo)/60 + "kg")
   }, [reportes]);
 
   const loadTimeLine = () => {
-    if (reportes.length > 0) {
-        var objetos = [{
-            x: 'Prod',
-            y: [new Date(reportes[0].hora_inicio).getTime(),
-            new Date(reportes[0].hora_inicio).getTime()],
-            fillColor: '#2264A7'
-        }, {
-            x: 'Paro',
-            y: [new Date(reportes[0].hora_inicio).getTime(),
-            new Date(reportes[0].hora_inicio).getTime()],
-            fillColor: '#F7431E'
-        }, {
-            x: 'Cambio',
-            y: [new Date(reportes[0].hora_inicio).getTime(),
-            new Date(reportes[0].hora_inicio).getTime()],
-            fillColor: '#02c39a'
-        }];
-        
-        for (let i = 0; i < reportes.length; i++) {
-            var x_ = "", color_ = null;
-            if (reportes[i].id_tipo == 1) {
-                x_ = "Paro";
-                color_ = '#F7431E';
-            } else if (reportes[i].id_tipo == 2) {
-                x_ = "Prod";
-                color_ = '#2264A7';
-            } else {
-                x_ = "Cambio";
-                color_ = '#02c39a';
-            }
-
-            var objeto = {
-                x: x_,
-                y: [
-                    new Date(reportes[i].hora_inicio).getTime(),
-                    new Date(reportes[i].hora_termino).getTime()
-                ],
-                fillColor: color_
-            }
-            objetos.push(objeto)
+    var objetos = [{
+        x: 'Prod',
+        y: [new Date(reportes[0].hora_inicio).getTime(),
+        new Date(reportes[0].hora_inicio).getTime()],
+        fillColor: '#2264A7'
+    }, {
+        x: 'Paro',
+        y: [new Date(reportes[0].hora_inicio).getTime(),
+        new Date(reportes[0].hora_inicio).getTime()],
+        fillColor: '#F7431E'
+    }, {
+        x: 'Cambio',
+        y: [new Date(reportes[0].hora_inicio).getTime(),
+        new Date(reportes[0].hora_inicio).getTime()],
+        fillColor: '#02c39a'
+    }];
+    
+    for (let i = 0; i < reportes.length; i++) {
+        var x_ = "", color_ = null;
+        if (reportes[i].id_tipo == 1) {
+            x_ = "Paro";
+            color_ = '#F7431E';
+        } else if (reportes[i].id_tipo == 2) {
+            x_ = "Prod";
+            color_ = '#2264A7';
+        } else {
+            x_ = "Cambio";
+            color_ = '#02c39a';
         }
-        setSeriesTimeLine([{
-            data: objetos
-        }]);
+
+        var objeto = {
+            x: x_,
+            y: [
+                new Date(reportes[i].hora_inicio).getTime(),
+                new Date(reportes[i].hora_termino).getTime()
+            ],
+            fillColor: color_
+        }
+        objetos.push(objeto)
     }
+    setSeriesTimeLine([{
+        data: objetos
+    }]);
   }
 
   return (
@@ -263,7 +262,7 @@ const CialWidget = (props) => {
                 </Col>
               </Row>
 
-              <Row lassName="mr-1">
+              <Row className="mr-1">
                 <Col align="right">
                   <div className="mr-1">Tiempo de Actividad</div>
                 </Col>
@@ -277,8 +276,8 @@ const CialWidget = (props) => {
                 <Container>
                   <Doughnut
                     data={dataTorta}
-                    width="10"
-                    height="10"
+                    width={10}
+                    height={10}
                     align="center"
                     options={{
                       legend: {

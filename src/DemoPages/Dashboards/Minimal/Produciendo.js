@@ -377,8 +377,8 @@ const Produciendo = (props) => {
                         <div className="centralbodydetail" style={{ paddingBottom: '15px' }}>
                             <Doughnut
                                 data={dataTorta}
-                                width="12"
-                                height="11"
+                                width={12}
+                                height={11}
                                 align="left"
                                 options={{
                                     legend: {

@@ -23,7 +23,7 @@ const GenerarExcel = (props) => {
     console.log("Fecha original: " + date + " | Fecha tratada: " + moment(date).format('YYYY-MM-DD'))
   }
 
-  const loadOrden = () => {
+  const loadOrdenes = () => {
     let link
      link = global.api.dashboard.Agrosuper_excel_ordenes
     fetch(link, {
@@ -48,7 +48,7 @@ const GenerarExcel = (props) => {
       });
   }
 
-  const loadParo = () => {
+  const loadParos = () => {
     let link
      link =  global.api.dashboard.agrosuper_excel_paros
     fetch(link, {
@@ -59,8 +59,8 @@ const GenerarExcel = (props) => {
       },
 
       body: JSON.stringify({
-        fecha_inicio: startDate.toISOString().substr(0, 10),
-        fecha_termino: endDate.toISOString().substr(0, 10)
+        fecha_inicio: moment(startDate).add(1, 'days').format('YYYY-MM-DD'),
+        fecha_termino: moment(endDate).add(1, 'days').format('YYYY-MM-DD')
       }),
     })
       .then(response => response.json())
@@ -74,8 +74,14 @@ const GenerarExcel = (props) => {
   }
 
   const loadData = () => {
-    
+    loadOrdenes();
+    loadParos();
   };
+
+  useEffect(() => {
+    console.log(ordenes);
+    console.log(paros);
+  }, [paros]);
 
   return (
     <div>
