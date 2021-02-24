@@ -137,6 +137,74 @@ const GenerarExcel = (props) => {
         }
       }
     }
+
+    console.log(ordenes);
+    /* Se obtienen los indicadores para cada máquina */
+    var Indicadores = {};
+    for (var i=0; i<ordenes.length; i++){
+      if (ordenes[i].fecha.split("T")[0] in Indicadores){
+        if ([ordenes[i].maquina] in Indicadores[ordenes[i].fecha.split("T")[0]]){
+          if (ordenes[i].tipo_reporte === 1){
+            Indicadores[ordenes[i].fecha.split("T")[0]][ordenes[i].maquina].tiempoInactivo += ordenes[i].minutos;
+            Indicadores[ordenes[i].fecha.split("T")[0]][ordenes[i].maquina].kgSolic += ordenes[i].kg_solic;
+          } else{
+            Indicadores[ordenes[i].fecha.split("T")[0]][ordenes[i].maquina].tiempoActivo += ordenes[i].minutos;
+            Indicadores[ordenes[i].fecha.split("T")[0]][ordenes[i].maquina].cantOrdenes += 1;
+          }
+
+          Indicadores[ordenes[i].fecha.split("T")[0]][ordenes[i].maquina].kgProd += ordenes[i].kg_prod;
+          Indicadores[ordenes[i].fecha.split("T")[0]][ordenes[i].maquina].eficiencia += ordenes[i].eficiencia;
+        } else{
+          if (ordenes[i].tipo_reporte === 1){
+            Indicadores[ordenes[i].fecha.split("T")[0]][ordenes[i].maquina] = {
+              tiempoInactivo: ordenes[i].minutos,
+              tiempoActivo: 0,
+
+              kgSolic: ordenes[i].kg_solic,
+              kgProd: ordenes[i].kg_prod,
+              eficiencia: ordenes[i].eficiencia,
+              cantOrdenes: 0
+            }
+          } else{
+            Indicadores[ordenes[i].fecha.split("T")[0]][ordenes[i].maquina] = {
+              tiempoInactivo: 0,
+              tiempoActivo: ordenes[i].minutos,
+
+              kgSolic: ordenes[i].kg_solic,
+              kgProd: ordenes[i].kg_prod,
+              eficiencia: ordenes[i].eficiencia,
+              cantOrdenes: 0
+            }
+          }
+        }
+      } else{
+        Indicadores[ordenes[i].fecha.split("T")[0]] = {};
+
+        if (ordenes[i].tipo_reporte === 1){
+          Indicadores[ordenes[i].fecha.split("T")[0]][ordenes[i].maquina] = {
+            tiempoInactivo: ordenes[i].minutos,
+            tiempoActivo: 0,
+
+            kgSolic: ordenes[i].kg_solic,
+            kgProd: ordenes[i].kg_prod,
+            eficiencia: ordenes[i].eficiencia,
+            cantOrdenes: 0
+          }
+        } else{
+          Indicadores[ordenes[i].fecha.split("T")[0]][ordenes[i].maquina] = {
+            tiempoInactivo: 0,
+            tiempoActivo: ordenes[i].minutos,
+
+            kgSolic: ordenes[i].kg_solic,
+            kgProd: ordenes[i].kg_prod,
+            eficiencia: ordenes[i].eficiencia,
+            cantOrdenes: 0
+          };
+        }
+      }
+    }
+    console.log(Indicadores);
+
     setParosPorMaquina(parosPorMaquina);
   }, [ordenes]);
 
