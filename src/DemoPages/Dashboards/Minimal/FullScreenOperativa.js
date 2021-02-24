@@ -55,21 +55,34 @@ function FullSceen() {
         const diffDuration = moment.duration(diff);
   
         var reportesCambioFormato = reportesSel.filter(rep => rep.id_tipo === 4);
-        startMoment = moment(reportesCambioFormato[0].hora_inicio);
-        endMoment = moment(reportesCambioFormato[0].hora_termino);
-        diff = endMoment.diff(startMoment);
-        const diffFormatChange = moment.duration(diff);
-  
-        if ((diffDuration.hours() + diffDuration.minutes()/60 - ((diffFormatChange.hours() + diffFormatChange.minutes()/60) + (ordenSelected.tiempo_retencion_iqf+5)/60)) >= 0){
-          setTiempoOrden(diffDuration.hours() + diffDuration.minutes()/60);
-          setTiempoCambioFormato(diffFormatChange.hours() + diffFormatChange.minutes()/60);
-          setTiempoRetencion((ordenSelected.tiempo_retencion_iqf+5));
-        }
-        else {
-          setTiempoOrden(0);
+        if (reportesCambioFormato.length > 0){
+          startMoment = moment(reportesCambioFormato[0].hora_inicio);
+          endMoment = moment(reportesCambioFormato[0].hora_termino);
+          diff = endMoment.diff(startMoment);
+          const diffFormatChange = moment.duration(diff);
+    
+          if ((diffDuration.hours() + diffDuration.minutes()/60 - ((diffFormatChange.hours() + diffFormatChange.minutes()/60) + (ordenSelected.tiempo_retencion_iqf+5)/60)) >= 0){
+            setTiempoOrden(diffDuration.hours() + diffDuration.minutes()/60);
+            setTiempoCambioFormato(diffFormatChange.hours() + diffFormatChange.minutes()/60);
+            setTiempoRetencion((ordenSelected.tiempo_retencion_iqf+5));
+          }
+          else {
+            setTiempoOrden(0);
+            setTiempoCambioFormato(0);
+            setTiempoRetencion(0);
+          }
+        } else{
           setTiempoCambioFormato(0);
-          setTiempoRetencion(0);
+          if ((diffDuration.hours() + diffDuration.minutes()/60 - (ordenSelected.tiempo_retencion_iqf+5)/60) >= 0){
+            setTiempoOrden(diffDuration.hours() + diffDuration.minutes()/60);
+            setTiempoRetencion((ordenSelected.tiempo_retencion_iqf+5));
+          }
+          else {
+            setTiempoOrden(0);
+            setTiempoRetencion(0);
+          }
         }
+        
         setHoraTermino(moment(reportesSel[0].hora_inicio).add(ordenSelected.tiempo_estimado + 3, 'hours').format('HH:MM'));
         setReportesSelected(r);
       }
