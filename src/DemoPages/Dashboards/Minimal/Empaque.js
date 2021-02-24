@@ -8,7 +8,6 @@ import _ from "lodash";
 import moment from 'moment';
 
 const Empaque = (props) => {
-    const [productividad, setProductividad] = useState(0)
     const [dataTorta, setDataTorta] = useState(
         {
             legend: [
@@ -63,7 +62,6 @@ const Empaque = (props) => {
     };
     const [seriesTimeLine, setSeriesTimeLine] = useState([])
     const [optionsTimeLine, setOptionsTimeLine] = useState(
-
         {
 
             dataLabels: labels,
@@ -97,15 +95,9 @@ const Empaque = (props) => {
             }
         }
     )
-    const [hacumuladas, setHacumuladas] = useState(0)
+
     const [tActivo, setTActivo] = useState(0)
     const [tInactivo, setTInactivo] = useState(0)
-    const [kgacumulados, setKgacumulados] = useState(0)
-    const [estado, setEstado] = useState(0)
-    const [kgsolicitados, setKgsolicitados] = useState(0)
-    const [hsolicitadas, setHsolicitadas] = useState(0)
-    const [capacidad, setCapacidad] = useState(0)
-
     const [reportes, setReportes] = useState(props.reportesSelected.filter(rep => rep.hora_inicio.includes('05:55')));
     useEffect(() => {
         var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55'));
@@ -138,7 +130,8 @@ const Empaque = (props) => {
     }, [props.reportesSelected]);
 
     useEffect(() => {
-        loadTimeLine();
+        if (reportes.length > 0)
+            loadTimeLine();
     }, [reportes]);
 
     const loadTimeLine = () => {
@@ -236,7 +229,7 @@ const Empaque = (props) => {
             <div className="blackBorderBot">
                 <Row>
                     <Col md="5" className="blackBorderRight">
-                        <div class="noSpace ">
+                        <div className="noSpace ">
                             <div className="blackBorderBot">
                                 <Row className="mt-4">
                                     <div align="center" className="ml-auto indi">{props.formatNumber.new(_.round(props.ordenSelected.cajas_acumuladas))}</div>
@@ -318,8 +311,8 @@ const Empaque = (props) => {
                                 <div className="centralbodydetail">
                                     <Doughnut
                                         data={dataTorta}
-                                        width="12"
-                                        height="12"
+                                        width={12}
+                                        height={12}
                                         align="center"
                                         options={{
                                             legend: {

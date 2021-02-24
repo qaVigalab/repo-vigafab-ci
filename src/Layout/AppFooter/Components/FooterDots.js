@@ -117,18 +117,18 @@ class FooterDots extends React.Component {
         return (
             <Fragment>
                 <div className="footer-dots">
-                    <a href="javascript:void(0);" onClick={this.toggle1} className="dot-btn-wrapper"
+                    <a href="/" onClick={this.toggle1} className="dot-btn-wrapper"
                        id="PopoverFooter-1">
                         <i className="dot-btn-icon lnr-bullhorn icon-gradient bg-mean-fruit"/>
                         <div className="badge badge-dot badge-abs badge-dot-sm badge-danger">Notifications</div>
                     </a>
                     <div className="dots-separator"/>
-                    <a href="javascript:void(0);" onClick={this.toggle2} className="dot-btn-wrapper"
+                    <a href="/" onClick={this.toggle2} className="dot-btn-wrapper"
                        id="PopoverFooter-2">
                         <i className="dot-btn-icon lnr-earth icon-gradient bg-happy-itmeo"/>
                     </a>
                     <div className="dots-separator"/>
-                    <a href="javascript:void(0);" onClick={this.toggle3} className="dot-btn-wrapper"
+                    <a href="/" onClick={this.toggle3} className="dot-btn-wrapper"
                        id="PopoverFooter-3">
                         <i className="dot-btn-icon lnr-pie-chart icon-gradient bg-love-kiss"/>
                         <div className="badge badge-dot badge-abs badge-dot-sm badge-warning">Notifications</div>

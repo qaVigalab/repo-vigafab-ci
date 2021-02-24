@@ -139,7 +139,7 @@ const Formadora2 = (props) => {
     )
 
     const [seriesTimeLine, setSeriesTimeLine] = useState([])
-    const [optionsTimeLine, setOptionsTimeLine] = useState({
+    const [optionsTimeLine] = useState({
             dataLabels: labels,
             markers: markers,
             tooltip: tooltips,
@@ -186,19 +186,18 @@ const Formadora2 = (props) => {
         })
             .then(response => response.json())
             .then(result => {
-                result.map(r => (
-                    fecha.push(r.fecha),
-                    temperatura.push(r.temperatura)
-                ))
-            }
-            ).then(() => {
+                result.map(r => {
+                    fecha.push(r.fecha);
+                    temperatura.push(r.temperatura);
+                })
+            })
+            .then(() => {
                 setSeries3([{
                     data: temperatura
                 }]);
                 setOptions3({ xaxis: { categories: fecha } });
 
-            }
-            )
+            })
             .catch(err => {
                 console.error(err);
             });
@@ -206,8 +205,6 @@ const Formadora2 = (props) => {
 
     const [reportes, setReportes] = useState(props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55')));
     useEffect(() => {
-        loadGraphTemp();
-        
         var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55'));
         var tiempo_activo = 0, tiempo_inactivo = 0;
         for (var i=0; i<reportesSel.length; i++){
@@ -236,55 +233,56 @@ const Formadora2 = (props) => {
     }, [props.reportesSelected]);
 
     useEffect(() => {
-        loadTimeLine();
+        if (reportes.length > 0)
+            loadTimeLine();
     }, [reportes]);
 
     const loadTimeLine = () => {
-        if (reportes.length > 0) {
-            var objetos = [{
-                x: 'Prod',
-                y: [new Date(reportes[0].hora_inicio).getTime(),
-                new Date(reportes[0].hora_inicio).getTime()],
-                fillColor: '#2264A7'
-            }, {
-                x: 'Paro',
-                y: [new Date(reportes[0].hora_inicio).getTime(),
-                new Date(reportes[0].hora_inicio).getTime()],
-                fillColor: '#F7431E'
-            }, {
-                x: 'Cambio',
-                y: [new Date(reportes[0].hora_inicio).getTime(),
-                new Date(reportes[0].hora_inicio).getTime()],
-                fillColor: '#02c39a'
-            }];
-            
-            for (let i = 0; i < reportes.length; i++) {
-                var x_ = "", color_ = null;
-                if (reportes[i].id_tipo == 1) {
-                    x_ = "Paro";
-                    color_ = '#F7431E';
-                } else if (reportes[i].id_tipo == 2) {
-                    x_ = "Prod";
-                    color_ = '#2264A7';
-                } else {
-                    x_ = "Cambio";
-                    color_ = '#02c39a';
-                }
-    
-                var objeto = {
-                    x: x_,
-                    y: [
-                        new Date(reportes[i].hora_inicio).getTime(),
-                        new Date(reportes[i].hora_termino).getTime()
-                    ],
-                    fillColor: color_
-                }
-                objetos.push(objeto)
+        var objetos = [{
+            x: 'Prod',
+            y: [new Date(reportes[0].hora_inicio).getTime(),
+            new Date(reportes[0].hora_inicio).getTime()],
+            fillColor: '#2264A7'
+        }, {
+            x: 'Paro',
+            y: [new Date(reportes[0].hora_inicio).getTime(),
+            new Date(reportes[0].hora_inicio).getTime()],
+            fillColor: '#F7431E'
+        }, {
+            x: 'Cambio',
+            y: [new Date(reportes[0].hora_inicio).getTime(),
+            new Date(reportes[0].hora_inicio).getTime()],
+            fillColor: '#02c39a'
+        }];
+        
+        for (let i = 0; i < reportes.length; i++) {
+            var x_ = "", color_ = null;
+            if (reportes[i].id_tipo === 1) {
+                x_ = "Paro";
+                color_ = '#F7431E';
+            } else if (reportes[i].id_tipo === 2) {
+                x_ = "Prod";
+                color_ = '#2264A7';
+            } else {
+                x_ = "Cambio";
+                color_ = '#02c39a';
             }
-            setSeriesTimeLine([{
-                data: objetos
-            }]);
+
+            var objeto = {
+                x: x_,
+                y: [
+                    new Date(reportes[i].hora_inicio).getTime(),
+                    new Date(reportes[i].hora_termino).getTime()
+                ],
+                fillColor: color_
+            }
+            objetos.push(objeto)
         }
+        setSeriesTimeLine([{
+            data: objetos
+        }]);
+
+        loadGraphTemp();
     }
 
     return (
@@ -302,13 +300,13 @@ const Formadora2 = (props) => {
                             <Col align="right">
                                 <div className="font2 my-4">Estado: </div>
                             </Col>
-                            <div className={props.ordenSelected.id_estado != 1 ? "font2gray my-4" : "font2Blue my-4"}>{
+                            <div className={props.ordenSelected.id_estado !== 1 ? "font2gray my-4" : "font2Blue my-4"}>{
                                 props.ordenSelected.id_estado === 3 ? "Terminada"
                                 : props.ordenSelected.id_estado === 2 ? "En espera"
                                 : "Produciendo"
                             }</div>
                             <div className="font2 ml-4 my-4">Tiempo de Actividad: </div>
-                            {parseInt(tActivo/60) == 1 ?
+                            {parseInt(tActivo/60) === 1 ?
                                 <div className="font2Blue ml-1 my-4">
                                     {parseInt(tActivo/60)} hr,
                                     {" " + parseInt(tActivo%60)} min
@@ -329,7 +327,7 @@ const Formadora2 = (props) => {
             <Row>
                 {/* Resumen Formadora */}
                 <Col md="2" className="blackBorderRight">
-                    <div class="noSpace">
+                    <div className="noSpace">
                         <div className="blackBorderBot">
                             <Row className="my-4">
                                 <div align="center" className="ml-auto indi">{props.formatNumber.new(_.round(props.ordenSelected.kg_formados))}</div>
@@ -416,8 +414,8 @@ const Formadora2 = (props) => {
                             <div className="centralbodydetail" style={{ paddingBottom: '10px' }}>
                                 <Doughnut
                                     data={dataTorta}
-                                    width="12"
-                                    height="12"
+                                    width={12}
+                                    height={12}
                                     align="left"
                                     options={{
                                         legend: {

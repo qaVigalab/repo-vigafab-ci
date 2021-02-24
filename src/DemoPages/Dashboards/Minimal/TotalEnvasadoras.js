@@ -57,46 +57,48 @@ const TotalEnvasadoras = (props) => {
     const [tActivo, setTActivo] = useState(0);
 
     useEffect(() => {
-        var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55'));
-        var t_activo = 0, t_inactivo = 0;
-        for (var j=0; j<props.maquinas.length; j++){
-            for (var i=0; i<reportesSel.length; i++){
-                /* Se calculan los tiempos de actividad y paro */
-                const startDate = moment(reportesSel[i].hora_inicio);
-                const timeEnd = moment(reportesSel[i].hora_termino);
-                const diff = timeEnd.diff(startDate);
-                const diffDuration = moment.duration(diff);
-
-                if (reportesSel[i].id_tipo === 1 && reportesSel[i].id_vibot === props.maquinas[j].id && props.maquinas[j].id != 34828){
-                    t_inactivo += diffDuration.hours()*60 + diffDuration.minutes();
-                }
-                else if (reportesSel[i].id_tipo === 2 && reportesSel[i].id_vibot === props.maquinas[j].id){
-                    t_activo += diffDuration.hours()*60 + diffDuration.minutes();
+        if (props.reportesSelected.length > 0){
+            var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55'));
+            var t_activo = 0, t_inactivo = 0;
+            for (var j=0; j<props.maquinas.length; j++){
+                for (var i=0; i<reportesSel.length; i++){
+                    /* Se calculan los tiempos de actividad y paro */
+                    const startDate = moment(reportesSel[i].hora_inicio);
+                    const timeEnd = moment(reportesSel[i].hora_termino);
+                    const diff = timeEnd.diff(startDate);
+                    const diffDuration = moment.duration(diff);
+    
+                    if (reportesSel[i].id_tipo === 1 && reportesSel[i].id_vibot === props.maquinas[j].id && props.maquinas[j].id != 34828){
+                        t_inactivo += diffDuration.hours()*60 + diffDuration.minutes();
+                    }
+                    else if (reportesSel[i].id_tipo === 2 && reportesSel[i].id_vibot === props.maquinas[j].id){
+                        t_activo += diffDuration.hours()*60 + diffDuration.minutes();
+                    }
                 }
             }
-        }
-        
-        setDisponibilidad(isNaN(t_activo/(t_activo+t_inactivo)) ? 0: t_activo/(t_activo+t_inactivo));
-        setEficiencia(props.ordenSelected.kg_envasados/(props.ordenSelected.kg_hora * (t_activo+t_inactivo)/60/3));
-        setTActivo(t_activo/3);
-
-        var sumMaquinas = 0;
-        for (var i=0; i<props.maquinas.length; i++){
-            var reportesMaq = reportesSel.filter(rep => rep.id_vibot === props.maquinas[i].id);
-            if (reportesMaq[reportesMaq.length-1] != undefined && reportesMaq[reportesMaq.length-1].id_tipo === 2)
-                sumMaquinas += 1
-        }
-        setCantMaquinas(sumMaquinas);
-
-        setDataTorta(
-            {
-            datasets: [
+            
+            setDisponibilidad(isNaN(t_activo/(t_activo+t_inactivo)) ? 0: t_activo/(t_activo+t_inactivo));
+            setEficiencia(props.ordenSelected.kg_envasados/(props.ordenSelected.kg_hora * (t_activo+t_inactivo)/60/3));
+            setTActivo(t_activo/3);
+    
+            var sumMaquinas = 0;
+            for (var i=0; i<props.maquinas.length; i++){
+                var reportesMaq = reportesSel.filter(rep => rep.id_vibot === props.maquinas[i].id);
+                if (reportesMaq[reportesMaq.length-1] != undefined && reportesMaq[reportesMaq.length-1].id_tipo === 2)
+                    sumMaquinas += 1
+            }
+            setCantMaquinas(sumMaquinas);
+    
+            setDataTorta(
                 {
-                data: [0, t_inactivo/3, t_activo/3]
+                datasets: [
+                    {
+                    data: [0, t_inactivo/3, t_activo/3]
+                    }
+                ],
                 }
-            ],
-            }
-        );
+            );
+        }
     }, [props.reportesSelected]);
 
     return (
@@ -138,7 +140,7 @@ const TotalEnvasadoras = (props) => {
 
             <Row>
                 <Col md="5" className="blackBorderRight">
-                    <div class="noSpace ">
+                    <div className="noSpace ">
                         <div className="blackBorderBot">
                             <Row className="mt-4">
                                 <div align="center" className="ml-auto indi">{props.formatNumber.new(_.round(props.ordenSelected.hamb_envasadas))}</div>
@@ -220,8 +222,8 @@ const TotalEnvasadoras = (props) => {
                             <div className="centralbodydetail">
                                 <Doughnut
                                     data={dataTorta}
-                                    width="12"
-                                    height="12"
+                                    width={12}
+                                    height={12}
                                     align="center"
                                     options={optionTorta}
                                 /></div>

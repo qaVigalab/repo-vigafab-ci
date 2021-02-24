@@ -140,7 +140,6 @@ const Produciendo = (props) => {
 
     useEffect(() => {
         /* Se actualizan las métricas globales */
-        console.log(disponibilidadFormadora + " - " + disponibilidadEnvasadoras + " - " + disponibilidadEmpaquetadora);
         setCalidad(props.ordenSelected.real_kg/props.ordenSelected.kg_formados * 100)
         setEficiencia((eficienciaFormadora+eficienciaEnvasadoras+eficienciaEmpaquetadora)/3);
         setDisponibilidad((disponibilidadFormadora+disponibilidadEnvasadoras+disponibilidadEmpaquetadora)/3)
@@ -377,8 +376,8 @@ const Produciendo = (props) => {
                         <div className="centralbodydetail" style={{ paddingBottom: '15px' }}>
                             <Doughnut
                                 data={dataTorta}
-                                width="12"
-                                height="11"
+                                width={12}
+                                height={11}
                                 align="left"
                                 options={{
                                     legend: {
