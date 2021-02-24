@@ -53,14 +53,30 @@ const TotalEnvasadoras = (props) => {
 
     const [cantMaquinas, setCantMaquinas] = useState(0);
     const [disponibilidad, setDisponibilidad] = useState(0);
-    const [eficiencia, setEficiencia] = useState();
+    const [eficiencia, setEficiencia] = useState(0);
     const [tActivo, setTActivo] = useState(0);
 
     useEffect(() => {
         if (props.reportesSelected.length > 0){
-            var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55'));
             var t_activo = 0, t_inactivo = 0;
             for (var j=0; j<props.maquinas.length; j++){
+                var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55') && rep.id_vibot === props.maquinas[j].id && rep.id_tipo !== 4 && rep.hora_inicio !== rep.hora_termino);
+                console.log(reportesSel);
+
+                if (props.maquinas[j].id === 34828){
+                    reportesSel = props.reportesSelected.filter(rep => rep.id_vibot === props.maquinas[j].id);
+                } else{
+                    /* Se descartan los reportes de paro al inicio para el cálculo de los indicadores */
+                    while (reportesSel[0].id_tipo === 1){
+                        reportesSel.splice(0,1);
+                    }
+
+                    /* Se descartan los reportes de paro al final para el cálculo de los indicadores */
+                    while (reportesSel[reportesSel.length-1].id_tipo === 1){
+                        reportesSel.splice(-1,1);
+                    }
+                }
+
                 for (var i=0; i<reportesSel.length; i++){
                     /* Se calculan los tiempos de actividad y paro */
                     const startDate = moment(reportesSel[i].hora_inicio);
@@ -68,38 +84,49 @@ const TotalEnvasadoras = (props) => {
                     const diff = timeEnd.diff(startDate);
                     const diffDuration = moment.duration(diff);
     
-                    if (reportesSel[i].id_tipo === 1 && reportesSel[i].id_vibot === props.maquinas[j].id && props.maquinas[j].id != 34828){
-                        t_inactivo += diffDuration.hours()*60 + diffDuration.minutes();
+                    if (reportesSel[i].id_tipo === 1 && props.maquinas[j].id != 34828){
+                        t_inactivo += diffDuration.hours()*60 + diffDuration.minutes() + diffDuration.seconds()/60;
                     }
                     else if (reportesSel[i].id_tipo === 2 && reportesSel[i].id_vibot === props.maquinas[j].id){
-                        t_activo += diffDuration.hours()*60 + diffDuration.minutes();
+                        t_activo += diffDuration.hours()*60 + diffDuration.minutes() + diffDuration.seconds()/60;
                     }
                 }
             }
             
-            setDisponibilidad(isNaN(t_activo/(t_activo+t_inactivo)) ? 0: t_activo/(t_activo+t_inactivo));
-            setEficiencia(props.ordenSelected.kg_envasados/(props.ordenSelected.kg_hora * (t_activo+t_inactivo)/60/3));
+            setDisponibilidad(
+                isNaN(t_activo/(t_activo+t_inactivo)) ? 0 : 
+                t_activo/(t_activo+t_inactivo) * 100
+            );
+
+            setEficiencia(
+                isNaN(props.ordenSelected.kg_envasados/(props.ordenSelected.kg_hora * (t_activo+t_inactivo)/60/3)) ? 0 :
+                props.ordenSelected.kg_envasados/(props.ordenSelected.kg_hora * (t_activo+t_inactivo)/60/3) * 100
+            );
+
             setTActivo(t_activo/3);
     
             var sumMaquinas = 0;
             for (var i=0; i<props.maquinas.length; i++){
-                var reportesMaq = reportesSel.filter(rep => rep.id_vibot === props.maquinas[i].id);
+                var reportesMaq = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55')).filter(rep => rep.id_vibot === props.maquinas[i].id);
                 if (reportesMaq[reportesMaq.length-1] != undefined && reportesMaq[reportesMaq.length-1].id_tipo === 2)
                     sumMaquinas += 1
             }
             setCantMaquinas(sumMaquinas);
-    
             setDataTorta(
                 {
                 datasets: [
                     {
-                    data: [0, t_inactivo/3, t_activo/3]
+                    data: [0, parseInt(t_inactivo/3), parseInt(t_activo/3)]
                     }
                 ],
                 }
             );
         }
     }, [props.reportesSelected]);
+
+    useEffect(() => {
+        props.updateKPIs(4, disponibilidad, eficiencia);
+    }, [cantMaquinas]);
 
     return (
         <div>
@@ -163,12 +190,7 @@ const TotalEnvasadoras = (props) => {
                                             responsive={true} // Boolean: Make SVG adapt to parent size
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
-                                            progress={(
-                                                disponibilidad * 100 === Infinity ? 0 :
-                                                disponibilidad * 100 > 0 ?
-                                                disponibilidad * 100 :
-                                                0
-                                            ).toFixed(0)} // String: Update to change the progress and percentage.
+                                            progress={(disponibilidad).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                             textColor="#6b778c" // String: Color of percentage text color.
@@ -192,11 +214,7 @@ const TotalEnvasadoras = (props) => {
                                             responsive={true} // Boolean: Make SVG adapt to parent size
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
-                                            progress={(
-                                                eficiencia > 0 ? 
-                                                eficiencia * 100 : //(totalKG/capacidad*tiempo que se demoro)
-                                                0
-                                               ).toFixed(0)} // String: Update to change the progress and percentage.
+                                            progress={(eficiencia).toFixed(0)} // String: Update to change the progress and percentage.
                                             progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                             bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                             textColor="#6b778c" // String: Color of percentage text color.

@@ -9,9 +9,6 @@ import _ from "lodash";
 import moment from 'moment';
 
 const CialWidget = (props) => {
-  const [tActivo, setTActivo] = useState(0)
-  const [tInactivo, setTInactivo] = useState(0)
-
   const labels = {
     enabled: false
   };
@@ -99,17 +96,33 @@ const CialWidget = (props) => {
   );
 
   const [reportes, setReportes] = useState(props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55')));
+  const [tActivo, setTActivo] = useState(0);
+  const [disponibilidad, setDisponibilidad] = useState(0);
+  const [eficiencia, setEficiencia] = useState(0);
   const [hambEnvasadas, setHambEnvasadas] = useState(0);
   const [kgEnvasados, setKgEnvasados] = useState(0);
   useEffect(() => {
-    var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55'));
-    if (props.id_vibot === 34828){
-      reportesSel = props.reportesSelected;
-    }
-    var tiempo_activo = 0, tiempo_inactivo = 0;
-    var hamburguesas_envasadas = 0, kilos_envasados = 0;
+    if (props.reportesSelected.length > 0){
+      var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55') && rep.id_tipo !== 4 && rep.hora_inicio !== rep.hora_termino);
 
-    for (var i=0; i<reportesSel.length; i++){
+      if (props.id_vibot === 34828){
+        reportesSel = props.reportesSelected;
+      } else{
+        /* Se descartan los reportes de paro al inicio para el cálculo de los indicadores */
+        while (reportesSel[0].id_tipo === 1){
+          reportesSel.splice(0,1);
+        }
+
+        /* Se descartan los reportes de paro al final para el cálculo de los indicadores */
+        while (reportesSel[reportesSel.length-1].id_tipo === 1){
+          reportesSel.splice(-1,1);
+        }
+      }
+
+      var tiempo_activo = 0, tiempo_inactivo = 0;
+      var hamburguesas_envasadas = 0, kilos_envasados = 0;
+
+      for (var i=0; i<reportesSel.length; i++){
         /* Se calculan los tiempos de actividad y paro */
         const startDate = moment(reportesSel[i].hora_inicio);
         const timeEnd = moment(reportesSel[i].hora_termino);
@@ -117,31 +130,41 @@ const CialWidget = (props) => {
         const diffDuration = moment.duration(diff);
 
         if (reportesSel[i].id_tipo === 1)
-            tiempo_inactivo += diffDuration.hours()*60 + diffDuration.minutes();
+            tiempo_inactivo += diffDuration.hours()*60 + diffDuration.minutes() + diffDuration.seconds()/60;
         else if (reportesSel[i].id_tipo === 2)
-            tiempo_activo += diffDuration.hours()*60 + diffDuration.minutes();
+            tiempo_activo += diffDuration.hours()*60 + diffDuration.minutes() + diffDuration.seconds()/60;
         
         /* Se obtiene la cantidad de hamburguesas envasadas y sus kg acumulados */
         if (reportesSel[i].id_tipo === 2) {
           hamburguesas_envasadas += reportesSel[i].hamburguesas_acumuladas;
           kilos_envasados += reportesSel[i].real_kg;
         }
-    }
+      }
+      
+      setDisponibilidad(
+        isNaN(tiempo_activo/(tiempo_activo+tiempo_inactivo)) ? 0 :
+        tiempo_activo/(tiempo_activo+tiempo_inactivo) * 100
+      );
 
-    setTInactivo(tiempo_inactivo);
-    setTActivo(tiempo_activo);
-    setHambEnvasadas(hamburguesas_envasadas);
-    setKgEnvasados(kilos_envasados);
-    setDataTorta(
-        {
-          datasets: [
-            {
-              data: [0, tiempo_inactivo, tiempo_activo]
-            }
-          ],
-        }
-    );
-    setReportes(reportesSel);
+      setEficiencia(
+          isNaN(kilos_envasados/(props.ordenSelected.kg_hora/3 * (tiempo_activo+tiempo_inactivo)/60)) ? 0 :
+          kilos_envasados/(props.ordenSelected.kg_hora/3 * (tiempo_activo+tiempo_inactivo)/60) * 100
+      );
+
+      setTActivo(tiempo_activo);
+      setHambEnvasadas(hamburguesas_envasadas);
+      setKgEnvasados(kilos_envasados);
+      setDataTorta(
+          {
+            datasets: [
+              {
+                data: [0, parseInt(tiempo_inactivo), parseInt(tiempo_activo)]
+              }
+            ],
+          }
+      );
+      setReportes(props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55')));
+    }
   }, [props.reportesSelected]);
 
   useEffect(() => {
@@ -307,12 +330,7 @@ const CialWidget = (props) => {
                   responsive={true} // Boolean: Make SVG adapt to parent size
                   size="14rem" // String: Defines the size of the circle.
                   lineWidth="30" // String: Defines the thickness of the circle's stroke.
-                  progress={(
-                    (tActivo/(tInactivo + tActivo))*100 === Infinity ? 0 :
-                    (tActivo/(tInactivo + tActivo))*100 > 0 ?
-                    (tActivo/(tInactivo + tActivo))*100 
-                    : 0
-                  ).toFixed(0)} // String: Update to change the progress and percentage.
+                  progress={(disponibilidad).toFixed(0)} // String: Update to change the progress and percentage.
                   progressColor="#02c39a" // String: Color of "progress" portion of circle.
                   bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                   textColor="#6b778c" // String: Color of percentage text color.
@@ -335,12 +353,7 @@ const CialWidget = (props) => {
                   responsive={true} // Boolean: Make SVG adapt to parent size
                   size="50" // String: Defines the size of the circle.
                   lineWidth="30" // String: Defines the thickness of the circle's stroke.
-                  progress={(
-                    kgEnvasados/(props.ordenSelected.kg_hora/3 * (tActivo+tInactivo)/60)* 100 === Infinity ? 0 :
-                    kgEnvasados/(props.ordenSelected.kg_hora/3 * (tActivo+tInactivo)/60) > 0 ?
-                    kgEnvasados/(props.ordenSelected.kg_hora/3 * (tActivo+tInactivo)/60)* 100  //(totalKG/capacidad*tiempo que se demoro)
-                    : 0
-                  ).toFixed(0)} // String: Update to change the progress and percentage.
+                  progress={(eficiencia).toFixed(0)} // String: Update to change the progress and percentage.
                   progressColor="#02c39a" // String: Color of "progress" portion of circle.
                   bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                   textColor="#6b778c" // String: Color of percentage text color.

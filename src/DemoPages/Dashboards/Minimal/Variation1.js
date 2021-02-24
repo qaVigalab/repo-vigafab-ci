@@ -185,6 +185,28 @@ const MinimalDashboard1 = () => {
       loadReportes();
   }, [ordenSelected]);
 
+  /* Se crean las variables de estado que almacenarán la disponibildad y eficiencia de cada máquina */
+  const [disponibilidadFormadora, setDisponibilidadFormadora] = useState(0);
+  const [disponibilidadEnvasadoras, setDisponibilidadEnvasadoras] = useState(0);
+  const [disponibilidadEmpaquetadora, setDisponibilidadEmpaquetadora] = useState(0);
+
+  const [eficienciaFormadora, setEficienciaFormadora] = useState(0);
+  const [eficienciaEnvasadoras, setEficienciaEnvasadoras] = useState(0);
+  const [eficienciaEmpaquetadora, setEficienciaEmpaquetadora] = useState(0);
+
+  const updateKPIs = (tipo, disp, efi) => {
+    if (tipo === 2){
+      setDisponibilidadFormadora(disp);
+      setEficienciaFormadora(efi);
+    } else if (tipo === 4){
+      setDisponibilidadEnvasadoras(disp);
+      setEficienciaEnvasadoras(efi);
+    } else if (tipo === 5){
+      setDisponibilidadEmpaquetadora(disp);
+      setEficienciaEmpaquetadora(efi);
+    }
+  };
+
   return (
     <div>
       <Fragment>
@@ -253,7 +275,13 @@ const MinimalDashboard1 = () => {
                   maquinas={maquinas}
                   ordenes={ordenes}
                   ordenSelected={ordenSelected}
-                  reportesSelected={reportesSelected} 
+                  reportesSelected={reportesSelected}
+                  disponibilidadFormadora={disponibilidadFormadora}
+                  disponibilidadEnvasadoras={disponibilidadEnvasadoras}
+                  disponibilidadEmpaquetadora={disponibilidadEmpaquetadora}
+                  eficienciaFormadora={eficienciaFormadora}
+                  eficienciaEnvasadoras={eficienciaEnvasadoras}
+                  eficienciaEmpaquetadora={eficienciaEmpaquetadora}
                 />
               </Card>
             </Col>
@@ -266,6 +294,7 @@ const MinimalDashboard1 = () => {
                   formatNumber={formatNumber}
                   ordenSelected={ordenSelected}
                   reportesSelected={reportesSelected.filter(reporte => reporte.id_tipo_vibot === 2)}
+                  updateKPIs={(tipo, disp, efi) => updateKPIs(tipo, disp, efi)}
                 />
               </Card>
             </Col>
@@ -332,6 +361,7 @@ const MinimalDashboard1 = () => {
                   formatNumber={formatNumber}
                   ordenSelected={ordenSelected}
                   reportesSelected={reportesSelected.filter(reporte => reporte.id_tipo_vibot === 4)}
+                  updateKPIs={(tipo, disp, efi) => updateKPIs(tipo, disp, efi)}
                 />
               </Card>
             </Col>
@@ -342,6 +372,7 @@ const MinimalDashboard1 = () => {
                   formatNumber={formatNumber}
                   ordenSelected={ordenSelected}
                   reportesSelected={reportesSelected.filter(reporte => reporte.id_tipo_vibot === 5)}
+                  updateKPIs={(tipo, disp, efi) => updateKPIs(tipo, disp, efi)}
                 />
               </Card>
             </Col>
