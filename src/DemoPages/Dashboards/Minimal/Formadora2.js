@@ -208,26 +208,21 @@ const Formadora2 = (props) => {
         if (props.reportesSelected.length > 0){
             var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55') && rep.id_tipo !== 4 && rep.hora_inicio !== rep.hora_termino);
             /* Se descartan los reportes de paro al inicio para el cálculo de los indicadores */
-            while (reportesSel[0].id_tipo === 1 && reportesSel.length > 1){
+            while (reportesSel.length > 1 && reportesSel[0].id_tipo === 1){
                 reportesSel.splice(0,1);
             }
     
             /* Se descartan los reportes de paro al final para el cálculo de los indicadores */
-            while (reportesSel[reportesSel.length-1].id_tipo === 1 && reportesSel.length > 1){
+            while (reportesSel.length > 1 && reportesSel[reportesSel.length-1].id_tipo === 1){
                 reportesSel.splice(-1,1);
             }
 
             var tiempo_activo = 0, tiempo_inactivo = 0;
             for (var i=0; i<reportesSel.length; i++){
-                const startDate = moment(reportesSel[i].hora_inicio);
-                const timeEnd = moment(reportesSel[i].hora_termino);
-                const diff = timeEnd.diff(startDate);
-                const diffDuration = moment.duration(diff);
-
                 if (reportesSel[i].id_tipo === 1)
-                    tiempo_inactivo += diffDuration.hours()*60 + diffDuration.minutes() + diffDuration.seconds()/60;
+                    tiempo_inactivo += reportesSel[i].minutos;
                 else if (reportesSel[i].id_tipo === 2)
-                    tiempo_activo += diffDuration.hours()*60 + diffDuration.minutes() + diffDuration.seconds()/60;
+                    tiempo_activo += reportesSel[i].minutos;
             }
 
             setDisponibilidad(
@@ -323,7 +318,7 @@ const Formadora2 = (props) => {
                                 <div className="font2 my-4">Estado: </div>
                             </Col>
                             <div className={props.ordenSelected.id_estado !== 1 ? "font2gray my-4" : "font2Blue my-4"}>{
-                                props.ordenSelected.id_estado === 3 ? "Terminada"
+                                props.ordenSelected.id_estado === 3 ? "Detenida"
                                 : props.ordenSelected.id_estado === 2 ? "En espera"
                                 : "Produciendo"
                             }</div>

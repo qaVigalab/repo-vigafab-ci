@@ -109,33 +109,26 @@ const CialWidget = (props) => {
         reportesSel = props.reportesSelected;
       } else{
         /* Se descartan los reportes de paro al inicio para el cálculo de los indicadores */
-        while (reportesSel[0].id_tipo === 1 && reportesSel.length > 1){
+        while (reportesSel.length > 1 && reportesSel[0].id_tipo === 1){
           reportesSel.splice(0,1);
         }
 
         /* Se descartan los reportes de paro al final para el cálculo de los indicadores */
-        while (reportesSel[reportesSel.length-1].id_tipo === 1 && reportesSel.length > 1){
+        while (reportesSel.length > 1 && reportesSel[reportesSel.length-1].id_tipo === 1){
           reportesSel.splice(-1,1);
         }
       }
 
+      /* Se calculan los tiempos de actividad y paro */
       var tiempo_activo = 0, tiempo_inactivo = 0;
       var hamburguesas_envasadas = 0, kilos_envasados = 0;
-
       for (var i=0; i<reportesSel.length; i++){
-        /* Se calculan los tiempos de actividad y paro */
-        const startDate = moment(reportesSel[i].hora_inicio);
-        const timeEnd = moment(reportesSel[i].hora_termino);
-        const diff = timeEnd.diff(startDate);
-        const diffDuration = moment.duration(diff);
-
         if (reportesSel[i].id_tipo === 1)
-            tiempo_inactivo += diffDuration.hours()*60 + diffDuration.minutes() + diffDuration.seconds()/60;
-        else if (reportesSel[i].id_tipo === 2)
-            tiempo_activo += diffDuration.hours()*60 + diffDuration.minutes() + diffDuration.seconds()/60;
-        
-        /* Se obtiene la cantidad de hamburguesas envasadas y sus kg acumulados */
-        if (reportesSel[i].id_tipo === 2) {
+          tiempo_inactivo += reportesSel[i].minutos;
+        else if (reportesSel[i].id_tipo === 2){
+          tiempo_activo += reportesSel[i].minutos;
+          
+          /* Se obtiene la cantidad de hamburguesas envasadas y sus kg acumulados */
           hamburguesas_envasadas += reportesSel[i].hamburguesas_acumuladas;
           kilos_envasados += reportesSel[i].real_kg;
         }
@@ -255,13 +248,13 @@ const CialWidget = (props) => {
                 <Col align="right">
                   {reportes.length > 0 ?
                     <div className={props.ordenSelected.id_estado != 1 || reportes.filter(rep => rep.id_tipo != 4)[reportes.filter(rep => rep.id_tipo != 4).length-1].id_tipo === 1 ? "font2gray my-1" : "font2Blue my-1"}>{
-                      props.ordenSelected.id_estado === 3 ? "Terminada"
+                      props.ordenSelected.id_estado === 3 ? "Detenida"
                       : props.ordenSelected.id_estado === 2 ? "En espera"
                       : reportes.filter(rep => rep.id_tipo != 4)[reportes.filter(rep => rep.id_tipo != 4).length-1].id_tipo === 1 ? "Detenida"
                       : "Produciendo"
                     }</div> :
                     <div className={props.ordenSelected.id_estado != 1 ? "font2gray my-1" : "font2Blue my-1"}>{
-                      props.ordenSelected.id_estado === 3 ? "Terminada"
+                      props.ordenSelected.id_estado === 3 ? "Detenida"
                       : props.ordenSelected.id_estado === 2 ? "En espera"
                       : "Produciendo"
                     }</div>

@@ -13,8 +13,8 @@ const GenerarExcel = (props) => {
   const [loading, setLoading] = useState(false);
   const [dateError, setDateError] = useState(false);
   const [dateErrorMsg, setDateErrorMsg] = useState("");
-  const [startDate, setStartDate] = useState(new Date(moment().add(-6, 'days').format('YYYY-MM-DD')));
-  const [endDate, setEndDate] = useState(new Date(moment().add(1, 'days').format('YYYY-MM-DD')));
+  const [startDate, setStartDate] = useState(new Date(moment().add(-7, 'days').format('YYYY-MM-DD')));
+  const [endDate, setEndDate] = useState(new Date(moment().add(0, 'days').format('YYYY-MM-DD')));
 
   const handleChange3 = (date) =>{
     if (date > endDate){
@@ -24,7 +24,7 @@ const GenerarExcel = (props) => {
   
       setTimeout(() => {
         setDateError(false);
-      }, 1500);
+      }, 3000);
     } else {
       setStartDate(date);
       setLoading(true);
@@ -36,14 +36,14 @@ const GenerarExcel = (props) => {
   }
 
   const handleChange4= (date) => {
-    if (date < startDate){
-      setEndDate(startDate);
+    if (date > new Date(moment().format('YYYY-MM-DD'))){
+      setEndDate(endDate);
       setDateError(true);
-      setDateErrorMsg("No es posible seleccionar una fecha de término anterior a la de inicio.");
+      setDateErrorMsg("No es posible seleccionar una fecha con órdenes en espera.");
   
       setTimeout(() => {
         setDateError(false);
-      }, 1500);
+      }, 3000);
     } else {
       setEndDate(date);
       setLoading(true);
@@ -111,12 +111,10 @@ const GenerarExcel = (props) => {
   }, [paros]);
 
   /* Construcción del objeto que contiene los valores que se registrarán en el reporte */
-  const [parosPorMaquina, setParosPorMaquina] = useState({});
+  const [indicadores, setIndicadores] = useState({});
 
   useEffect(() => {
-    setLoading(false);
-    
-    /* Se construyen los Paros según Máquina y Día */
+    /* Se obtiene la cantidad los paros y minutos perdidos para cada Máquina */
     var PPM = {};
     for (var i=0; i<paros.length; i++){
       if (paros[i].fecha.split("T")[0] in PPM){
@@ -137,9 +135,8 @@ const GenerarExcel = (props) => {
         }
       }
     }
-    console.log(PPM);
 
-    /* Se obtienen los indicadores para cada máquina */
+    /* Se obtienen los indicadores de Disponibilidad, Eficiencia, Kg Producidos, Kg Solicitados y % de Cumplimiento para cada Máquina */
     var Indicadores = {};
     for (var i=0; i<ordenes.length; i++){
       if (ordenes[i].fecha.split("T")[0] in Indicadores){
@@ -204,11 +201,59 @@ const GenerarExcel = (props) => {
       }
     }
     
-    Object.keys(Indicadores).map((key, i) => {
-      console.log(key + " - " + i);
+    Object.keys(Indicadores).map((fecha, i) => {
+      Object.keys(Indicadores[fecha]).map((maq, i) => {
+        Indicadores[fecha][maq].disponibilidad = _.round(Indicadores[fecha][maq].tiempoActivo/(Indicadores[fecha][maq].tiempoActivo + Indicadores[fecha][maq].tiempoInactivo), 2);
+        Indicadores[fecha][maq].eficiencia = _.round(Indicadores[fecha][maq].eficiencia/Indicadores[fecha][maq].cantOrdenes, 2);
+
+        Indicadores[fecha][maq].cantParos = PPM[fecha][maq].cantParos;
+        Indicadores[fecha][maq].minPerdidos = PPM[fecha][maq].minPerdidos;
+
+        if (maq.includes("Envasadora"))
+          Indicadores[fecha][maq].cumplimiento = _.round(Indicadores[fecha][maq].kgProd/(Indicadores[fecha][maq].kgSolic/3), 2);
+        else
+          Indicadores[fecha][maq].cumplimiento = _.round(Indicadores[fecha][maq].kgProd/Indicadores[fecha][maq].kgSolic, 2);
+
+        delete Indicadores[fecha][maq].cantOrdenes
+      });
+    });
+    
+    /* Se calculan los indicadores de Disponibilidad, Calidad y Eficiencia para la OEE */
+    Object.keys(Indicadores).map((fecha, i) => {
+      Object.keys(Indicadores[fecha]).map((maq, i) => {
+        if ("OEE" in Indicadores[fecha]){
+          Indicadores[fecha]["OEE"].disponibilidad += Indicadores[fecha][maq].disponibilidad;
+          Indicadores[fecha]["OEE"].eficiencia += Indicadores[fecha][maq].eficiencia;
+
+          Indicadores[fecha]["OEE"].cantMaquinas += 1;
+        } else{
+          Indicadores[fecha]["OEE"] = {
+            disponibilidad: Indicadores[fecha][maq].disponibilidad,
+            calidad: _.round(Indicadores[fecha]["Empaquetadora"].kgProd / Indicadores[fecha]["Formadora"].kgProd, 2),
+            eficiencia: Indicadores[fecha][maq].eficiencia,
+            cantMaquinas: 1
+          }
+        }
+      });
     });
 
-    setParosPorMaquina(parosPorMaquina);
+    Object.keys(Indicadores).map((fecha, i) => {
+      Object.keys(Indicadores[fecha]).map((maq, i) => {
+        if (maq === "OEE"){
+          Indicadores[fecha][maq].disponibilidad = _.round(Indicadores[fecha][maq].disponibilidad / Indicadores[fecha][maq].cantMaquinas, 2);
+          Indicadores[fecha][maq].eficiencia = _.round(Indicadores[fecha][maq].eficiencia / Indicadores[fecha][maq].cantMaquinas, 2);
+
+          delete Indicadores[fecha][maq].cantMaquinas;
+        }
+      });
+    });
+    console.log(Indicadores);
+
+    /* Se obtiene la cantidad total de Paros y Minutos Perdidos según Categoría y Máquinas */
+
+
+    setLoading(false);
+    setIndicadores(Indicadores);
   }, [ordenes]);
 
   return (
