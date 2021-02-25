@@ -208,12 +208,12 @@ const Formadora2 = (props) => {
         if (props.reportesSelected.length > 0){
             var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55') && rep.id_tipo !== 4 && rep.hora_inicio !== rep.hora_termino);
             /* Se descartan los reportes de paro al inicio para el cálculo de los indicadores */
-            while (reportesSel[0].id_tipo === 1){
+            while (reportesSel[0].id_tipo === 1 && reportesSel.length > 1){
                 reportesSel.splice(0,1);
             }
-
+    
             /* Se descartan los reportes de paro al final para el cálculo de los indicadores */
-            while (reportesSel[reportesSel.length-1].id_tipo === 1){
+            while (reportesSel[reportesSel.length-1].id_tipo === 1 && reportesSel.length > 1){
                 reportesSel.splice(-1,1);
             }
 

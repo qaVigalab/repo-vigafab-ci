@@ -109,12 +109,12 @@ const CialWidget = (props) => {
         reportesSel = props.reportesSelected;
       } else{
         /* Se descartan los reportes de paro al inicio para el cálculo de los indicadores */
-        while (reportesSel[0].id_tipo === 1){
+        while (reportesSel[0].id_tipo === 1 && reportesSel.length > 1){
           reportesSel.splice(0,1);
         }
 
         /* Se descartan los reportes de paro al final para el cálculo de los indicadores */
-        while (reportesSel[reportesSel.length-1].id_tipo === 1){
+        while (reportesSel[reportesSel.length-1].id_tipo === 1 && reportesSel.length > 1){
           reportesSel.splice(-1,1);
         }
       }
