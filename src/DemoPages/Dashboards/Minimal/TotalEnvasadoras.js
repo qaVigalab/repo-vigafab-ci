@@ -66,29 +66,22 @@ const TotalEnvasadoras = (props) => {
                     reportesSel = props.reportesSelected.filter(rep => rep.id_vibot === props.maquinas[j].id);
                 } else{
                     /* Se descartan los reportes de paro al inicio para el cálculo de los indicadores */
-                    while (reportesSel[0].id_tipo === 1 && reportesSel.length > 1){
+                    while (reportesSel.length > 1 && reportesSel[0].id_tipo === 1){
                         reportesSel.splice(0,1);
                     }
             
                     /* Se descartan los reportes de paro al final para el cálculo de los indicadores */
-                    while (reportesSel[reportesSel.length-1].id_tipo === 1 && reportesSel.length > 1){
+                    while (reportesSel.length > 1 && reportesSel[reportesSel.length-1].id_tipo === 1){
                         reportesSel.splice(-1,1);
                     }
                 }
 
                 for (var i=0; i<reportesSel.length; i++){
                     /* Se calculan los tiempos de actividad y paro */
-                    const startDate = moment(reportesSel[i].hora_inicio);
-                    const timeEnd = moment(reportesSel[i].hora_termino);
-                    const diff = timeEnd.diff(startDate);
-                    const diffDuration = moment.duration(diff);
-    
-                    if (reportesSel[i].id_tipo === 1 && props.maquinas[j].id != 34828){
-                        t_inactivo += diffDuration.hours()*60 + diffDuration.minutes() + diffDuration.seconds()/60;
-                    }
-                    else if (reportesSel[i].id_tipo === 2 && reportesSel[i].id_vibot === props.maquinas[j].id){
-                        t_activo += diffDuration.hours()*60 + diffDuration.minutes() + diffDuration.seconds()/60;
-                    }
+                    if (reportesSel[i].id_tipo === 1 && props.maquinas[j].id !== 34828)
+                        t_inactivo += reportesSel[i].minutos;
+                    else if (reportesSel[i].id_tipo === 2)
+                        t_activo += reportesSel[i].minutos;
                 }
             }
             
@@ -139,7 +132,7 @@ const TotalEnvasadoras = (props) => {
                         <Row align="right">
                             <div className="font2 my-4">Estado:</div>
                             <div className={cantMaquinas == 0 || props.ordenSelected.id_estado != 1  ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>
-                                {props.ordenSelected.id_estado === 3 ? "Terminada"
+                                {props.ordenSelected.id_estado === 3 ? "Detenidas"
                                 : props.ordenSelected.id_estado === 2 ? "En espera"
                                 : cantMaquinas  + "/4 Produciendo"}
                             </div>

@@ -234,7 +234,9 @@ const MinimalDashboard1 = () => {
           <Row>
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
-                <GenerarExcel />
+                <GenerarExcel 
+                  formatNumber={formatNumber}
+                />
               </Card>
             </Col>
           </Row>
