@@ -119,26 +119,26 @@ const GenerarExcel = (props) => {
     /* Se construyen los Paros según Máquina y Día */
     var PPM = {};
     for (var i=0; i<paros.length; i++){
-      if (paros[i].maquina in PPM){
-        if (paros[i].fecha.split("T")[0] in PPM[paros[i].maquina]){
-          PPM[paros[i].maquina][paros[i].fecha.split("T")[0]].cantParos += paros[i].cant_paros;
-          PPM[paros[i].maquina][paros[i].fecha.split("T")[0]].minPerdidos += paros[i].min_perdidos;
+      if (paros[i].fecha.split("T")[0] in PPM){
+        if (PPM[paros[i].maquina] in PPM[paros[i].fecha.split("T")[0]]){
+          PPM[paros[i].fecha.split("T")[0]][paros[i].maquina].cantParos += paros[i].cant_paros;
+          PPM[paros[i].fecha.split("T")[0]][paros[i].maquina].minPerdidos += paros[i].min_perdidos;
         } else{
-          PPM[paros[i].maquina][paros[i].fecha.split("T")[0]] = {
+          PPM[paros[i].fecha.split("T")[0]][paros[i].maquina] = {
             cantParos: paros[i].cant_paros,
             minPerdidos: paros[i].min_perdidos,
           }
         }
       } else{
-        PPM[paros[i].maquina] = {};
-        PPM[paros[i].maquina][paros[i].fecha.split("T")[0]] = {
+        PPM[paros[i].fecha.split("T")[0]] = {};
+        PPM[paros[i].fecha.split("T")[0]][paros[i].maquina] = {
           cantParos: paros[i].cant_paros,
           minPerdidos: paros[i].min_perdidos,
         }
       }
     }
+    console.log(PPM);
 
-    console.log(ordenes);
     /* Se obtienen los indicadores para cada máquina */
     var Indicadores = {};
     for (var i=0; i<ordenes.length; i++){
@@ -203,7 +203,10 @@ const GenerarExcel = (props) => {
         }
       }
     }
-    console.log(Indicadores);
+    
+    Object.keys(Indicadores).map((key, i) => {
+      console.log(key + " - " + i);
+    });
 
     setParosPorMaquina(parosPorMaquina);
   }, [ordenes]);

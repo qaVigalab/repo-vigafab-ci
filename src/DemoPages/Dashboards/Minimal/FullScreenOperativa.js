@@ -61,9 +61,9 @@ function FullSceen() {
           diff = endMoment.diff(startMoment);
           const diffFormatChange = moment.duration(diff);
     
-          if ((diffDuration.hours() + diffDuration.minutes()/60 - ((diffFormatChange.hours() + diffFormatChange.minutes()/60) + (ordenSelected.tiempo_retencion_iqf+5)/60)) >= 0){
-            setTiempoOrden(diffDuration.hours() + diffDuration.minutes()/60);
-            setTiempoCambioFormato(diffFormatChange.hours() + diffFormatChange.minutes()/60);
+          if ((diffDuration.hours() + diffDuration.minutes()/60 + diffDuration.seconds()/3600 - ((diffFormatChange.hours() + diffFormatChange.minutes()/60 + diffFormatChange.seconds()/3600) + (ordenSelected.tiempo_retencion_iqf+5)/60)) >= 0){
+            setTiempoOrden(diffDuration.hours() + diffDuration.minutes()/60 + diffDuration.seconds()/3600);
+            setTiempoCambioFormato(diffFormatChange.hours() + diffFormatChange.minutes()/60 + diffFormatChange.seconds()/3600);
             setTiempoRetencion((ordenSelected.tiempo_retencion_iqf+5));
           }
           else {
@@ -73,8 +73,8 @@ function FullSceen() {
           }
         } else{
           setTiempoCambioFormato(0);
-          if ((diffDuration.hours() + diffDuration.minutes()/60 - (ordenSelected.tiempo_retencion_iqf+5)/60) >= 0){
-            setTiempoOrden(diffDuration.hours() + diffDuration.minutes()/60);
+          if ((diffDuration.hours() + diffDuration.minutes()/60 + diffDuration.seconds()/3600 - (ordenSelected.tiempo_retencion_iqf+5)/60) >= 0){
+            setTiempoOrden(diffDuration.hours() + diffDuration.minutes()/60 + diffDuration.seconds()/3600);
             setTiempoRetencion((ordenSelected.tiempo_retencion_iqf+5));
           }
           else {
@@ -83,7 +83,9 @@ function FullSceen() {
           }
         }
         
-        setHoraTermino(moment(reportesSel[0].hora_inicio).add(ordenSelected.tiempo_estimado + 3, 'hours').format('HH:MM'));
+        var dt = new Date(reportesSel[0].hora_inicio);
+        dt.setHours(dt.getHours() + ordenSelected.tiempo_estimado + (ordenSelected.tiempo_retencion_iqf + 5)/60 + 3);
+        setHoraTermino(dt.getHours() + ":" + (dt.getMinutes()<10 ? '0':'') + dt.getMinutes());
         setReportesSelected(r);
       }
     })
