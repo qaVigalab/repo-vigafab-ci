@@ -118,7 +118,7 @@ const TotalEnvasadoras = (props) => {
 
     useEffect(() => {
         props.updateKPIs(4, disponibilidad, eficiencia);
-    }, [cantMaquinas]);
+    }, [dataTorta]);
 
     return (
         <div>

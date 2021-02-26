@@ -112,6 +112,9 @@ const GenerarExcel = (props) => {
 
   /* Construcción del objeto que contiene los valores que se registrarán en el reporte */
   const [indicadores, setIndicadores] = useState({});
+  const [cantParos, setCantParos] = useState({});
+  const [minPerdidos, setMinPerdidos] = useState({});
+  const [detenciones, setDetenciones] = useState({});
 
   useEffect(() => {
     /* Se obtiene la cantidad los paros y minutos perdidos para cada Máquina */
@@ -242,25 +245,54 @@ const GenerarExcel = (props) => {
         if (maq === "OEE"){
           Indicadores[fecha][maq].disponibilidad = _.round(Indicadores[fecha][maq].disponibilidad / Indicadores[fecha][maq].cantMaquinas, 2);
           Indicadores[fecha][maq].eficiencia = _.round(Indicadores[fecha][maq].eficiencia / Indicadores[fecha][maq].cantMaquinas, 2);
+          Indicadores[fecha][maq].OEE = _.round(Indicadores[fecha][maq].disponibilidad * Indicadores[fecha][maq].eficiencia * Indicadores[fecha][maq].calidad, 2)
 
           delete Indicadores[fecha][maq].cantMaquinas;
+        }
+        else if (maq === "Formadora"){
+          Indicadores[fecha][maq].formado = Indicadores[fecha][maq].kgProd - Indicadores[fecha]["Envasadora 4"].kgProd - Indicadores[fecha]["Envasadora 5"].kgProd - Indicadores[fecha]["Envasadora 6"].kgProd;
+        }
+        else if (maq === "Empaquetadora"){
+          Indicadores[fecha][maq].deformes = Indicadores[fecha]["Envasadora 4"].kgProd + Indicadores[fecha]["Envasadora 5"].kgProd + Indicadores[fecha]["Envasadora 6"].kgProd - Indicadores[fecha][maq].kgProd;
         }
       });
     });
     console.log(Indicadores);
 
     /* Se obtiene la cantidad total de Paros y Minutos Perdidos según Categoría y Máquinas */
+    var justifCantParos = {}, justifCantMinutos = {}, tiempoDetMaq = {};
+    for (var i=0; i<paros.length; i++){
+      if (["Operativo", "Cambio de formato", "Desmonte del film", "Mantenimiento"].includes(paros[i].paro)){
+        if (paros[i].paro in justifCantParos){
+          justifCantParos[paros[i].paro] += paros[i].cant_paros;
+          justifCantMinutos[paros[i].paro] += paros[i].min_perdidos;
+        } else{
+          justifCantParos[paros[i].paro] = paros[i].cant_paros;
+          justifCantMinutos[paros[i].paro] = paros[i].min_perdidos;
+        }
+      }
 
+      if (paros[i].maquina in tiempoDetMaq){
+        tiempoDetMaq[paros[i].maquina] += paros[i].min_perdidos;
+      } else{
+        tiempoDetMaq[paros[i].maquina] = paros[i].min_perdidos;
+      }
+    }
+
+    console.log(tiempoDetMaq);
 
     setLoading(false);
     setIndicadores(Indicadores);
+    setCantParos(justifCantParos);
+    setMinPerdidos(justifCantMinutos);
+    setDetenciones(tiempoDetMaq);
   }, [ordenes]);
 
   return (
     <div>
       <Row>
         <Col align="left">
-          <div className="ml-3 mt-1 text-uppercase font-weight-bold title1orange">Descargar reporte</div>
+          <div className="ml-3 mt-1 text-uppercase font-weight-bold title1orange">Descargar reporte semanal</div>
         </Col>
       </Row>
       <hr />

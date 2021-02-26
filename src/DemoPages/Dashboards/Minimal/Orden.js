@@ -10,6 +10,7 @@ import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
+import WatchLaterIcon from '@material-ui/icons/WatchLater';
 import { FormGroup } from "@material-ui/core";
 import _ from "lodash";
 import moment from 'moment';
@@ -222,13 +223,14 @@ const Orden = (props) => {
     var date1 = new Date(moment(date).add(1, 'days'));
     var date2 = new Date();
 
-    console.log(date1);
-    console.log(date2);
-
     if(date1.getDate() >= date2.getDate()){
-      setEditable(true);
+      setTimeout(() => {
+        setEditable(true);
+      }, 750);
     } else{
-      setEditable(false);
+      setTimeout(() => {
+        setEditable(false);
+      }, 750);
     }
   };
 
@@ -389,32 +391,36 @@ const Orden = (props) => {
                     {perfil == 1 || perfil == 2 ? (
                       <td>
                         {editable === true && orden.id_estado !== 3 ? (
-                        <IconButton
-                          aria-label="edit"
-                          style={orden.id_estado === 1 ? { color: "#ffebee" } : {}}
-                          onClick={() => toggleEdit(
-                            orden.prioridad, 
-                            orden.id_sub_orden, 
-                            orden.sku, 
-                            orden.producto, 
-                            orden.cajas,
-                            orden.kg_solicitados,
-                            orden.tiempo_estimado,
-                            fechaOrdenes
-                          )}
-                        >
-                          <EditIcon />
-                        </IconButton>
+                          <IconButton
+                            aria-label="edit"
+                            style={orden.id_estado === 1 ? { color: "#ffebee" } : {}}
+                            onClick={() => toggleEdit(
+                              orden.prioridad, 
+                              orden.id_sub_orden, 
+                              orden.sku, 
+                              orden.producto, 
+                              orden.cajas,
+                              orden.kg_solicitados,
+                              orden.tiempo_estimado,
+                              fechaOrdenes
+                            )}
+                          >
+                            <EditIcon />
+                          </IconButton>
                         ) : (
-                          <IconButton aria-label="edit" disabled style={{ opacity: 0 }}> <EditIcon /> </IconButton>
+                          <IconButton aria-label="edit"> <WatchLaterIcon /> </IconButton>
                         )}
-                        <IconButton
-                          aria-label="delete"
-                          style={orden.id_estado == 1 ? { color: "#ffebee" } : {}}
-                          onClick={() => toggle(orden.cajas, orden.id_sub_orden, orden.sku, orden.producto)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
+                        {orden.id_estado !== 3 ?
+                          <IconButton
+                            aria-label="delete"
+                            style={orden.id_estado == 1 ? { color: "#ffebee" } : {}}
+                            onClick={() => toggle(orden.cajas, orden.id_sub_orden, orden.sku, orden.producto)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        :
+                          ""
+                        }
                       </td>
                     ) : (
                       ""

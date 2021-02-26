@@ -317,11 +317,20 @@ const Formadora2 = (props) => {
                             <Col align="right">
                                 <div className="font2 my-4">Estado: </div>
                             </Col>
-                            <div className={props.ordenSelected.id_estado !== 1 ? "font2gray my-4" : "font2Blue my-4"}>{
-                                props.ordenSelected.id_estado === 3 ? "Detenida"
-                                : props.ordenSelected.id_estado === 2 ? "En espera"
-                                : "Produciendo"
-                            }</div>
+                            {reportes.length > 0 ?
+                                <div className={props.ordenSelected.id_estado != 1 || reportes.filter(rep => rep.id_tipo != 4)[reportes.filter(rep => rep.id_tipo != 4).length-1].id_tipo === 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>{
+                                    props.ordenSelected.id_estado === 3 ? "Detenida"
+                                    : props.ordenSelected.id_estado === 2 ? "En espera"
+                                    : reportes.filter(rep => rep.id_tipo != 4)[reportes.filter(rep => rep.id_tipo != 4).length-1].id_tipo === 1 ? "Detenida"
+                                    : "Produciendo"
+                                }</div>
+                            :
+                                <div className={props.ordenSelected.id_estado != 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>{
+                                    props.ordenSelected.id_estado === 3 ? "Detenida"
+                                    : props.ordenSelected.id_estado === 2 ? "En espera"
+                                    : "Produciendo"
+                                }</div>
+                            }
                             <div className="font2 ml-4 my-4">Tiempo de Actividad: </div>
                             {parseInt(tActivo/60) === 1 ?
                                 <div className="font2Blue ml-1 my-4">
