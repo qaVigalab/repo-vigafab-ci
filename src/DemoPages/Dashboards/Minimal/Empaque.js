@@ -211,11 +211,20 @@ const Empaque = (props) => {
                     <Col xl="3" md="3">
                         <Row align="right">
                             <div className="my-4">Estado: </div>
-                            <div className={props.ordenSelected.id_estado != 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>{
-                                props.ordenSelected.id_estado === 3 ? "Detenida"
-                                : props.ordenSelected.id_estado === 2 ? "En espera"
-                                : "Produciendo"
-                            }</div>
+                            {reportes.length > 0 ?
+                                <div className={props.ordenSelected.id_estado != 1 || reportes.filter(rep => rep.id_tipo != 4)[reportes.filter(rep => rep.id_tipo != 4).length-1].id_tipo === 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>{
+                                    props.ordenSelected.id_estado === 3 ? "Detenida"
+                                    : props.ordenSelected.id_estado === 2 ? "En espera"
+                                    : reportes.filter(rep => rep.id_tipo != 4)[reportes.filter(rep => rep.id_tipo != 4).length-1].id_tipo === 1 ? "Detenida"
+                                    : "Produciendo"
+                                }</div>
+                            :
+                                <div className={props.ordenSelected.id_estado != 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>{
+                                    props.ordenSelected.id_estado === 3 ? "Detenida"
+                                    : props.ordenSelected.id_estado === 2 ? "En espera"
+                                    : "Produciendo"
+                                }</div>
+                            }
                         </Row>
                     </Col>
 
