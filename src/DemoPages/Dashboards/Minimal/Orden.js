@@ -10,7 +10,7 @@ import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
-import WatchLaterIcon from '@material-ui/icons/WatchLater';
+import UpdateIcon from '@material-ui/icons/Update';
 import { FormGroup } from "@material-ui/core";
 import _ from "lodash";
 import moment from 'moment';
@@ -21,7 +21,6 @@ const Orden = (props) => {
   const [cajas, setCajas] = useState("");
   const [producto, setProducto] = useState("");
   const [ordenes, setOrdenes] = useState([]);
-  const [idSubOrden, setIdSubOrden] = useState("");
   const [prioridad, setPrioridad] = useState("");
   const [fechaOrdenes, setFechaOrdenes] = useState(props.fechaOrdenes);
 
@@ -58,55 +57,18 @@ const Orden = (props) => {
 
     //props.setIdOrden(!props.id_orden)
     props.updateOrden(id_orden);
-    console.log(id_orden);
   }
 
+  /* Permite actualizar la orden seleccionada en este componente visual */
   const [modal, setModal] = useState(false);
-  const toggle = (cajas, id_sub_orden, sku, producto) => {
+  const toggle = (cajas, sku, producto) => {
     setCajas(cajas);
-    setIdSubOrden(id_sub_orden);
     setSku(sku);
     setProducto(producto);
     setModal(!modal);
   };
 
-  const [ordenPassed, setOrdenPassed] = useState(false);
-  const [messagePassed, setMessagePassed] = useState("");
-
-  /*const cambiarOrden = (opcion, e) => {
-    e.preventDefault();
-    let api = "";
-    if (opcion === 1) api = global.api.dashboard.nextorden;
-    else if (opcion === 2) api = global.api.dashboard.siguienteordenenvasadoras;
-    else if (opcion === 3) api = global.api.dashboard.siguienteordenempaque;
-    fetch(api, {
-      "method": "POST",
-      "headers": {
-        "Content-Type": "application/json",
-        "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
-      },
-      "body": false
-    })
-      .then(response => {
-        if (opcion === 1){
-          setMessagePassed("¡Se ha modificado satisfactoriamente la orden productiva en la Formadora!");
-        } else if (opcion === 2){
-          setMessagePassed("¡Se ha modificado satisfactoriamente la orden productiva en las Envasadoras!");
-        } else if (opcion === 3){
-          setMessagePassed("¡Se ha modificado satisfactoriamente la orden productiva en la Empaquetadora!");
-        }
-        setOrdenPassed(true);
-        props.updateOrden("");
-
-        setTimeout(() => {
-          setOrdenPassed(false);
-        }, 3000);
-      })
-      .catch(err => {
-        console.error(err);
-      });
-  }*/
-
+  /* Permite editar una orden seleccionada del listado */
   const [modalEdit, setModalEdit] = useState(false);
   const [productos, setProductos] = useState([]);
   const [nombre, setNombre] = useState("");
@@ -116,13 +78,11 @@ const Orden = (props) => {
   const [fechaEdit, setFechaEdit] = useState("");
   const [confirmEdit, setConfirmEdit] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [editable, setEditable] = useState(true);
 
-  const toggleEdit = (prioridad, id_sub_orden, sku, producto, cajas, kg, tiempo, fecha_sub) => {
+  const toggleEdit = (prioridad, sku, producto, cajas, kg, tiempo, fecha_sub) => {
     changeSku({target: {value: sku}});
 
     setPrioridad(prioridad);
-    setIdSubOrden(id_sub_orden);
     setSku(sku);
     setNombre(producto);
     setCajas(cajas);
@@ -133,6 +93,47 @@ const Orden = (props) => {
     console.log(productos.find((p) => p.sku.includes(sku)));
     setModalEdit(!modalEdit);
   };
+
+  const editOrden = (event) => {
+    event.preventDefault();
+    if (existeSku === true) {
+      fetch(
+        global.api.dashboard.editOrden,
+        {
+          method: "PUT",
+          headers: {
+            "content-type": "application/json",
+            "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
+          },
+          body: JSON.stringify({
+            id: props.ordenSelected.id_sub_orden,
+            prioridad: prioridad,
+            cajas: cajas,
+            kg_solicitados: kg,
+            id_producto: producto.id,
+            tiempo_estimado: tiempo,
+            fecha_orden: fechaEdit
+          }),
+        }
+      )
+      .then(response => {
+        console.log(response);
+        setConfirmEdit(true);
+        props.updateOrden(props.ordenSelected.id_sub_orden);
+
+        setTimeout(() => {
+          setConfirmEdit(false);
+        }, 3000);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  
+      setModalEdit(!modalEdit)
+    } else {
+      setExisteSku(false);
+    }
+  }
 
   const changeSku = (event) => {
     const sku = event.target.value;
@@ -171,88 +172,54 @@ const Orden = (props) => {
     setPrioridad(e.target.value);
   }
 
-  const editOrden = (event) => {
-    event.preventDefault();
-    if (existeSku === true) {
-      fetch(
-        global.api.dashboard.editOrden,
-        {
-          method: "PUT",
-          headers: {
-            "content-type": "application/json",
-            "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
-          },
-          body: JSON.stringify({
-            id: idSubOrden,
-            prioridad: prioridad,
-            cajas: cajas,
-            kg_solicitados: kg,
-            id_producto: producto.id,
-            tiempo_estimado: tiempo,
-            fecha_orden: fechaEdit
-          }),
-        }
-      )
-      .then(response => {
-        console.log(response);
-        setConfirmEdit(true);
-        props.updateOrden(idSubOrden);
-
-        setTimeout(() => {
-          setConfirmEdit(false);
-        }, 3000);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  
-      setModalEdit(!modalEdit)
-    } else {
-      setExisteSku(false);
-    }
-  }
-
   const fechaEditChange = (e) => {
     setFechaEdit(e.target.value);
   };
 
+  /* Otras funciones de utilidad para el componente visual */
   const fechaChange = (e) => {
     var date = new Date(e.target.value);
     props.updateFecha(moment(date).add(1, 'days').format('YYYY-MM-DD'));
-
-    var date1 = new Date(moment(date).add(1, 'days'));
-    var date2 = new Date();
-
-    if(date1.getDate() >= date2.getDate()){
-      setTimeout(() => {
-        setEditable(true);
-      }, 750);
-    } else{
-      setTimeout(() => {
-        setEditable(false);
-      }, 750);
-    }
+    setChangeHours(false);
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      props.updateOrden(idSubOrden);
-    }, 300000);
-    return () => clearInterval(interval);
-  }, [idSubOrden]);
-
+  /* Actualizaciones de estado */
   useEffect(() => {
     setFechaOrdenes(props.fechaOrdenes);
   }, [props.fechaOrdenes]);
 
   useEffect(() => {
     setOrdenes(props.ordenes);
-    setIdSubOrden(props.ordenSelected.id_sub_orden);
+    const interval = setInterval(() => {
+      props.updateOrden(props.ordenSelected.id_sub_orden);
+    }, 300000);
+    return () => clearInterval(interval);
   }, [props.ordenSelected]);
 
   useEffect(() => {
     setProductos(props.productos);
   }, [props.productos]);
+
+  /* Permite modificar el horario de inicio y término de una orden, de acuerdo al tipo de máquina */
+  const [changeHours, setChangeHours] = useState(false);
+  const [changeDone, setChangeDone] = useState(false);
+  const updateHours = () => {
+
+    setChangeDone(true);
+    //props.updateOrden(props.ordenSelected.id_sub_orden);
+    setTimeout(() => {
+      setChangeHours(false);
+      setChangeDone(false);
+    }, 3000);
+  };
+
+  const toggleUpdate = () => {
+    setChangeHours(true);
+  };
+
+  useEffect(() => {
+    console.log(changeHours);
+  }, [changeHours]);
 
   return (
     <div>
@@ -263,17 +230,7 @@ const Orden = (props) => {
           </div>
         </Col>
         <Col align="left"></Col>
-        {/*<Col align="left">
-          <Button className="buttonOrange2 ml-3 mt-3" size="lg" onClick={(e) => cambiarOrden(1, e)}>
-              Cambiar Formadora
-            </Button>
-            <Button className="buttonOrange2 ml-4 mt-3" size="lg" onClick={(e) => cambiarOrden(2, e)}>
-              Cambiar Envasadoras
-            </Button>
-            <Button className="buttonOrange2 ml-4 mt-3" size="lg" onClick={(e) => cambiarOrden(3, e)}>
-              Cambiar Empaque
-            </Button>
-        </Col>*/}
+
         <Row align="right" style={{ marginRight: '0.5%' }}>
           <Col className="mt-4 mr-0">
             <div>Seleccione fecha</div>
@@ -293,13 +250,6 @@ const Orden = (props) => {
       {ordenes.length === 0 ? (
         <Alert color="warning" className="mb-0">
           <a className="alert-link">No existen órdenes para mostrar.</a>
-        </Alert>
-      ) : (
-        ""
-      )}
-      {ordenPassed === true ? (
-        <Alert color="success" className="mb-0">
-          <a className="alert-link">{messagePassed}</a>
         </Alert>
       ) : (
         ""
@@ -357,7 +307,7 @@ const Orden = (props) => {
                   <tr key={i} onClick={(e) => verOrden(e, orden.id_sub_orden)}
                     className={
                         orden.id_estado == 1 ? "orangeRow"
-                      : orden.id_sub_orden === idSubOrden ? "grayRow"
+                      : orden.id_sub_orden === props.ordenSelected.id_sub_orden ? "grayRow"
                       : "text-center"
                     }
                   >
@@ -390,13 +340,12 @@ const Orden = (props) => {
                     </td>
                     {perfil == 1 || perfil == 2 ? (
                       <td>
-                        {editable === true && orden.id_estado !== 3 ? (
+                        {orden.id_estado !== 3 ? (
                           <IconButton
                             aria-label="edit"
-                            style={orden.id_estado === 1 ? { color: "#ffebee" } : {}}
+                            style={orden.id_sub_orden === props.ordenSelected.id_sub_orden || orden.id_estado === 1 ? { color: "#ffebee" } : {}}
                             onClick={() => toggleEdit(
-                              orden.prioridad, 
-                              orden.id_sub_orden, 
+                              orden.prioridad,
                               orden.sku, 
                               orden.producto, 
                               orden.cajas,
@@ -407,20 +356,23 @@ const Orden = (props) => {
                           >
                             <EditIcon />
                           </IconButton>
-                        ) : (
-                          <IconButton aria-label="edit"> <WatchLaterIcon /> </IconButton>
+                        ) : (orden.horarios_existen === 0 ?
+                            <IconButton 
+                              aria-label="edit"
+                              style={orden.id_sub_orden === props.ordenSelected.id_sub_orden || orden.id_estado === 1 ? { color: "#ffebee" } : {}}
+                              onClick={() => toggleUpdate(orden.id_sub_orden)}
+                            >
+                              <UpdateIcon />
+                            </IconButton>
+                          : <IconButton disabled></IconButton>
                         )}
-                        {orden.id_estado !== 3 ?
-                          <IconButton
-                            aria-label="delete"
-                            style={orden.id_estado == 1 ? { color: "#ffebee" } : {}}
-                            onClick={() => toggle(orden.cajas, orden.id_sub_orden, orden.sku, orden.producto)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        :
-                          ""
-                        }
+                        <IconButton
+                          aria-label="delete"
+                          style={orden.id_sub_orden === props.ordenSelected.id_sub_orden || orden.id_estado === 1 ? { color: "#ffebee" } : {}}
+                          onClick={() => toggle(orden.cajas, orden.sku, orden.producto)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
                       </td>
                     ) : (
                       ""
@@ -433,10 +385,152 @@ const Orden = (props) => {
             )}
         </tbody>
       </Table>
+      <hr></hr>
+      {changeHours === true ?
+        <Col>
+          <Row>
+            <Col align="left" md="1"></Col>
+            <Col align="left" md="4">
+              <div className="text-uppercase font-weight-bold title1orange ml-3">
+                Orden seleccionada: {props.ordenSelected.id_sub_orden}<br></br>
+                SKU: {props.ordenSelected.sku}
+              </div>
+            </Col>
+          </Row>
 
-      <Modal size="lg" isOpen={modalEdit} toggle={() => toggleEdit(0, 0, 0, 0, 0, 0, 0, 0)}>
+          <Row className="mx-2 mb-3">
+            <Col md="1"></Col>
+            <Col md="10" className="my-3 mx-2">
+              <Form>
+                  <Row>
+                    <Col align="left" md="5">
+                      <div className="font-weight-bold ml-1 mt-2">Hora de Inicio:</div>
+                    </Col>
+                    <Col md="1"></Col>
+
+                    <Col align="left" md="5">
+                      <div className="font-weight-bold ml-1 mt-2">Hora de Término:</div>
+                    </Col>
+
+                    <Col align="left" md="1">
+                      <Button className="buttonOrange" style={{ marginTop: '0px', marginBottom: '0px' }}>Confirmar</Button>
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <Col align="left" md="5">
+                      <hr></hr>
+                    </Col>
+                    <Col md="1"></Col>
+
+                    <Col align="left" md="5">
+                      <hr></hr>
+                    </Col>
+                    <Col md="1"></Col>
+                  </Row>
+
+                  <Row>
+                    <Col md="5">
+                      <Row>
+                        <Col md="3" className="ml-1">
+                          <FormGroup>
+                            <Label for="formStart">Formadora</Label>
+                            <Input
+                              style={{ textAlignLast: 'center' }}
+                              type="datetime"
+                              name="datetime"
+                              id="formStart"
+                              placeholder="--:--"
+                            />
+                          </FormGroup>
+                        </Col>
+
+                        <Col md="3" className="ml-1">
+                          <FormGroup>
+                            <Label for="envStart">Envasadoras</Label>
+                            <Input
+                              style={{ textAlignLast: 'center' }}
+                              type="datetime"
+                              name="datetime"
+                              id="envStart"
+                              placeholder="--:--"
+                            />
+                          </FormGroup>
+                        </Col>
+
+                        <Col md="3" className="ml-1">
+                          <FormGroup>
+                            <Label for="empStart">Empaquetadora</Label>
+                            <Input
+                              style={{ textAlignLast: 'center' }}
+                              type="datetime"
+                              name="datetime"
+                              id="empStart"
+                              placeholder="--:--"
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                    </Col>
+
+                    <Col md="1"></Col>
+                    
+                    <Col md="5">
+                      <Row>
+                        <Col md="3" className="ml-1">
+                          <FormGroup>
+                            <Label for="formStart">Formadora</Label>
+                            <Input
+                              style={{ textAlignLast: 'center' }}
+                              type="datetime"
+                              name="datetime"
+                              id="formStart"
+                              placeholder="--:--"
+                            />
+                          </FormGroup>
+                        </Col>
+
+                        <Col md="3" className="ml-1">
+                          <FormGroup>
+                            <Label for="envStart">Envasadoras</Label>
+                            <Input
+                              style={{ textAlignLast: 'center' }}
+                              type="datetime"
+                              name="datetime"
+                              id="envStart"
+                              placeholder="--:--"
+                            />
+                          </FormGroup>
+                        </Col>
+
+                        <Col md="3" className="ml-1">
+                          <FormGroup>
+                            <Label for="empStart">Empaquetadora</Label>
+                            <Input
+                              style={{ textAlignLast: 'center' }}
+                              type="datetime"
+                              name="datetime"
+                              id="empStart"
+                              placeholder="--:--"
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
+              </Form>
+            </Col>
+            <Col md="1"></Col>
+          </Row>
+          <hr></hr>
+        </Col>
+      :
+        ""
+      }
+      
+      <Modal size="lg" isOpen={modalEdit} toggle={() => toggleEdit(0, 0, 0, 0, 0, 0, 0)}>
         <ModalHeader className="orangeRow" >
-          <Col md="auto">{"Editando orden N° " + idSubOrden + "."}</Col>
+          <Col md="auto">{"Editando orden N° " + props.ordenSelected.id_sub_orden + "."}</Col>
         </ModalHeader>
         <ModalBody>
           <Container align="center">
@@ -581,7 +675,7 @@ const Orden = (props) => {
                   </Button>
                 </Col>
                 <Col md="4" sm="6">
-                  <Button block className="buttonGray" onClick={() => toggleEdit(0, 0, 0, 0, 0, 0, 0, 0)}>
+                  <Button block className="buttonGray" onClick={() => toggleEdit(0, 0, 0, 0, 0, 0, 0)}>
                     Cancelar
                   </Button>
                 </Col>
@@ -591,9 +685,9 @@ const Orden = (props) => {
         </ModalBody>
       </Modal>
 
-      <Modal isOpen={modal} toggle={() => toggle(0, 0, 0, 0)}>
+      <Modal isOpen={modal} toggle={() => toggle(0, 0, 0)}>
         <ModalHeader className="orangeRow" >
-          <Col className="ml-5">{"¿Desea eliminar la orden n° " + idSubOrden + "?"}</Col>
+          <Col className="ml-5">{"¿Desea eliminar la orden n° " + props.ordenSelected.id_sub_orden + "?"}</Col>
         </ModalHeader>
         <ModalBody>
           <Container align="center">
@@ -605,13 +699,13 @@ const Orden = (props) => {
             <Col align="right" md={{ size: 4, offset: 2 }} sm="6" >
               <Button block
                 className="buttonOrange2"
-                onClick={(e) => deleteOrdenes(idSubOrden, e)}
+                onClick={(e) => deleteOrdenes(props.ordenSelected.id_sub_orden, e)}
               >
                 Eliminar
                 </Button>
             </Col>
             <Col md="4" sm="6">
-              <Button block className="buttonGray" onClick={() => toggle(0, 0, 0, 0)}>
+              <Button block className="buttonGray" onClick={() => toggle(0, 0, 0)}>
                 Cancelar
                 </Button>
             </Col>
@@ -622,12 +716,6 @@ const Orden = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  id_orden: state.dashboardReducers.id_orden,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  //setIdOrden: (data) => dispatch(setIdOrden(data)),
-});
-
+const mapStateToProps = (state) => ({});
+const mapDispatchToProps = (dispatch) => ({});
 export default connect(mapStateToProps, mapDispatchToProps)(Orden);
