@@ -103,7 +103,7 @@ const MinimalDashboard1 = () => {
   const [ordenSelected, setOrdenSelected] = useState({});
   const [fechaOrdenes, setFechaOrdenes] = useState(moment().format('YYYY-MM-DD'));
   const loadOrdenes = (id_orden) => {
-    const query = fetch(global.api.dashboard.getOrdenesResumen, {
+    fetch(global.api.dashboard.getOrdenesResumen, {
       method: "POST",
       headers: {
         "content-type": "application/json",

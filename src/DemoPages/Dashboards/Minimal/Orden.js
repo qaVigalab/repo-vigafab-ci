@@ -203,23 +203,97 @@ const Orden = (props) => {
   /* Permite modificar el horario de inicio y término de una orden, de acuerdo al tipo de máquina */
   const [changeHours, setChangeHours] = useState(false);
   const [changeDone, setChangeDone] = useState(false);
-  const updateHours = () => {
+  const [horasInicio, setHorasInicio] = useState({
+    "Formadora": "",
+    "Envasadoras": "",
+    "Empaquetadora": ""
+  });
+  const [horasTermino, setHorasTermino] = useState({
+    "Formadora": "",
+    "Envasadoras": "",
+    "Empaquetadora": ""
+  });
 
-    setChangeDone(true);
-    //props.updateOrden(props.ordenSelected.id_sub_orden);
-    setTimeout(() => {
-      setChangeHours(false);
-      setChangeDone(false);
-    }, 3000);
+  const changeStart = (e, maquina) => {
+    if (maquina === "Formadora")
+      setHorasInicio({
+        "Formadora": e.target.value,
+        "Envasadoras": horasInicio["Envasadoras"],
+        "Empaquetadora": horasInicio["Empaquetadora"]
+      });
+    else if (maquina === "Envasadoras")
+      setHorasInicio({
+        "Formadora": horasInicio["Formadora"],
+        "Envasadoras": e.target.value,
+        "Empaquetadora": horasInicio["Empaquetadora"]
+      });
+    else if (maquina === "Empaquetadora")
+      setHorasInicio({
+        "Formadora": horasInicio["Formadora"],
+        "Envasadoras": horasInicio["Envasadoras"],
+        "Empaquetadora": e.target.value
+      });
   };
 
-  const toggleUpdate = () => {
-    setChangeHours(true);
+  const changeEnd = (e, maquina) => {
+    if (maquina === "Formadora")
+      setHorasTermino({
+        "Formadora": e.target.value,
+        "Envasadoras": horasTermino["Envasadoras"],
+        "Empaquetadora": horasTermino["Empaquetadora"]
+      });
+    else if (maquina === "Envasadoras")
+      setHorasTermino({
+        "Formadora": horasTermino["Formadora"],
+        "Envasadoras": e.target.value,
+        "Empaquetadora": horasTermino["Empaquetadora"]
+      });
+    else if (maquina === "Empaquetadora")
+      setHorasTermino({
+        "Formadora": horasTermino["Formadora"],
+        "Envasadoras": horasTermino["Envasadoras"],
+        "Empaquetadora": e.target.value
+      });
+  };
+
+  const updateHours = () => {
+    fetch(
+      global.api.dashboard.actualizarHorarios,
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
+        },
+        body: JSON.stringify({
+          id_so: props.ordenSelected.id_sub_orden,
+          inicio_form: horasInicio["Formadora"],
+          inicio_env: horasInicio["Envasadoras"],
+          inicio_emp: horasInicio["Empaquetadora"],
+          cierre_form: horasTermino["Formadora"],
+          cierre_env: horasTermino["Envasadoras"],
+          cierre_emp: horasTermino["Empaquetadora"]
+        }),
+      }
+    )
+    .then(response => {
+      setChangeDone(true);
+      props.updateOrden(props.ordenSelected.id_sub_orden);
+      setTimeout(() => {
+        setChangeHours(false);
+        setChangeDone(false);
+      }, 3000);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
   };
 
   useEffect(() => {
     console.log(changeHours);
   }, [changeHours]);
+
+  useEffect(() => {}, [horasInicio, horasTermino]);
 
   return (
     <div>
@@ -360,7 +434,7 @@ const Orden = (props) => {
                             <IconButton 
                               aria-label="edit"
                               style={orden.id_sub_orden === props.ordenSelected.id_sub_orden || orden.id_estado === 1 ? { color: "#ffebee" } : {}}
-                              onClick={() => toggleUpdate(orden.id_sub_orden)}
+                              onClick={() => setChangeHours(true)}
                             >
                               <UpdateIcon />
                             </IconButton>
@@ -413,7 +487,7 @@ const Orden = (props) => {
                     </Col>
 
                     <Col align="left" md="1">
-                      <Button className="buttonOrange" style={{ marginTop: '0px', marginBottom: '0px' }}>Confirmar</Button>
+                      <Button className="buttonOrange" style={{ marginTop: '0px', marginBottom: '0px' }} onClick={updateHours}>Confirmar</Button>
                     </Col>
                   </Row>
 
@@ -436,11 +510,12 @@ const Orden = (props) => {
                           <FormGroup>
                             <Label for="formStart">Formadora</Label>
                             <Input
-                              style={{ textAlignLast: 'center' }}
-                              type="datetime"
-                              name="datetime"
+                              style={{ textAlignLast: 'center', width: '105%' }}
+                              type="time"
                               id="formStart"
                               placeholder="--:--"
+                              defaultValue={horasInicio["Formadora"]}
+                              onChange={(e) => changeStart(e, "Formadora")}
                             />
                           </FormGroup>
                         </Col>
@@ -449,11 +524,12 @@ const Orden = (props) => {
                           <FormGroup>
                             <Label for="envStart">Envasadoras</Label>
                             <Input
-                              style={{ textAlignLast: 'center' }}
-                              type="datetime"
-                              name="datetime"
+                              style={{ textAlignLast: 'center', width: '105%' }}
+                              type="time"
                               id="envStart"
                               placeholder="--:--"
+                              defaultValue={horasInicio["Envasadoras"]}
+                              onChange={(e) => changeStart(e, "Envasadoras")}
                             />
                           </FormGroup>
                         </Col>
@@ -462,11 +538,12 @@ const Orden = (props) => {
                           <FormGroup>
                             <Label for="empStart">Empaquetadora</Label>
                             <Input
-                              style={{ textAlignLast: 'center' }}
-                              type="datetime"
-                              name="datetime"
+                              style={{ textAlignLast: 'center', width: '105%' }}
+                              type="time"
                               id="empStart"
                               placeholder="--:--"
+                              defaultValue={horasInicio["Empaquetadora"]}
+                              onChange={(e) => changeStart(e, "Empaquetadora")}
                             />
                           </FormGroup>
                         </Col>
@@ -479,39 +556,42 @@ const Orden = (props) => {
                       <Row>
                         <Col md="3" className="ml-1">
                           <FormGroup>
-                            <Label for="formStart">Formadora</Label>
+                            <Label for="formEnd">Formadora</Label>
                             <Input
-                              style={{ textAlignLast: 'center' }}
-                              type="datetime"
-                              name="datetime"
-                              id="formStart"
+                              style={{ textAlignLast: 'center', width: '105%' }}
+                              type="time"
+                              id="formEnd"
                               placeholder="--:--"
+                              defaultValue={horasTermino["Formadora"]}
+                              onChange={(e) => changeEnd(e, "Formadora")}
                             />
                           </FormGroup>
                         </Col>
 
                         <Col md="3" className="ml-1">
                           <FormGroup>
-                            <Label for="envStart">Envasadoras</Label>
+                            <Label for="envEnd">Envasadoras</Label>
                             <Input
-                              style={{ textAlignLast: 'center' }}
-                              type="datetime"
-                              name="datetime"
-                              id="envStart"
+                              style={{ textAlignLast: 'center', width: '105%' }}
+                              type="time"
+                              id="envEnd"
                               placeholder="--:--"
+                              defaultValue={horasTermino["Envasadoras"]}
+                              onChange={(e) => changeEnd(e, "Envasadoras")}
                             />
                           </FormGroup>
                         </Col>
 
                         <Col md="3" className="ml-1">
                           <FormGroup>
-                            <Label for="empStart">Empaquetadora</Label>
+                            <Label for="empEnd">Empaquetadora</Label>
                             <Input
-                              style={{ textAlignLast: 'center' }}
-                              type="datetime"
-                              name="datetime"
-                              id="empStart"
+                              style={{ textAlignLast: 'center', width: '105%' }}
+                              type="time"
+                              id="empEnd"
                               placeholder="--:--"
+                              defaultValue={horasTermino["Empaquetadora"]}
+                              onChange={(e) => changeEnd(e, "Empaquetadora")}
                             />
                           </FormGroup>
                         </Col>
@@ -527,6 +607,18 @@ const Orden = (props) => {
       :
         ""
       }
+
+      <Row>
+        <Col>
+          {changeDone === true ? (
+            <Alert color="success">
+              <a className="alert-link">¡Se han ingresado correctamente las horas de arranque y cierre para el SKU {props.ordenSelected.sku}!</a>
+            </Alert>
+          ) : (
+            ""
+          )}
+        </Col>
+      </Row>
       
       <Modal size="lg" isOpen={modalEdit} toggle={() => toggleEdit(0, 0, 0, 0, 0, 0, 0)}>
         <ModalHeader className="orangeRow" >
