@@ -278,6 +278,16 @@ const Orden = (props) => {
     )
     .then(response => {
       setChangeDone(true);
+      setHorasInicio({
+        "Formadora": "",
+        "Envasadoras": "",
+        "Empaquetadora": ""
+      });
+      setHorasTermino({
+        "Formadora": "",
+        "Envasadoras": "",
+        "Empaquetadora": ""
+      });
       props.updateOrden(props.ordenSelected.id_sub_orden);
       setTimeout(() => {
         setChangeHours(false);
