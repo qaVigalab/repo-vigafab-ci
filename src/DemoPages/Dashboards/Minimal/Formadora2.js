@@ -181,23 +181,23 @@ const Formadora2 = (props) => {
                 id_orden: props.ordenSelected.id_sub_orden
             }),
         })
-            .then(response => response.json())
-            .then(result => {
-                result.map(r => {
-                    fecha.push(r.fecha);
-                    temperatura.push(r.temperatura);
-                })
+        .then(response => response.json())
+        .then(result => {
+            result.map(r => {
+                fecha.push(r.fecha);
+                temperatura.push(r.temperatura);
             })
-            .then(() => {
-                setSeries3([{
-                    data: temperatura
-                }]);
-                setOptions3({ xaxis: { categories: fecha } });
+        })
+        .then(() => {
+            setSeries3([{
+                data: temperatura
+            }]);
+            setOptions3({ xaxis: { categories: fecha } });
 
-            })
-            .catch(err => {
-                console.error(err);
-            });
+        })
+        .catch(err => {
+            console.error(err);
+        });
     }
 
     const [reportes, setReportes] = useState(props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55')));
@@ -317,20 +317,11 @@ const Formadora2 = (props) => {
                             <Col align="right">
                                 <div className="font2 my-4">Estado: </div>
                             </Col>
-                            {reportes.length > 0 ?
-                                <div className={props.ordenSelected.id_estado != 1 || reportes.filter(rep => rep.id_tipo != 4)[reportes.filter(rep => rep.id_tipo != 4).length-1].id_tipo === 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>{
-                                    props.ordenSelected.id_estado === 3 ? "Detenida"
-                                    : props.ordenSelected.id_estado === 2 ? "En espera"
-                                    : reportes.filter(rep => rep.id_tipo != 4)[reportes.filter(rep => rep.id_tipo != 4).length-1].id_tipo === 1 ? "Detenida"
-                                    : "Produciendo"
-                                }</div>
-                            :
-                                <div className={props.ordenSelected.id_estado != 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>{
-                                    props.ordenSelected.id_estado === 3 ? "Detenida"
-                                    : props.ordenSelected.id_estado === 2 ? "En espera"
-                                    : "Produciendo"
-                                }</div>
-                            }
+                            <div className={props.ordenSelected.id_estado !== 1 ? "font2gray my-4" : "font2Blue my-4"}>{
+                                props.ordenSelected.id_estado === 3 ? "Detenida"
+                                : props.ordenSelected.id_estado === 2 ? "En espera"
+                                : "Produciendo"
+                            }</div>
                             <div className="font2 ml-4 my-4">Tiempo de Actividad: </div>
                             {parseInt(tActivo/60) === 1 ?
                                 <div className="font2Blue ml-1 my-4">
