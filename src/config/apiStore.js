@@ -1,6 +1,7 @@
 const awsApiUrl2 = "https://fmm8re3i5f.execute-api.us-east-1.amazonaws.com/Agro/"
 //Api dashboard
 const dashboard = {
+    actualizarHorarios:         awsApiUrl2 + "actualizarhorarios",
     Agrosuper_excel_ordenes:    awsApiUrl2 + "Agrosuper_excel_ordenes",
     agrosuper_excel_paros:      awsApiUrl2 + "agrosuper_excel_paros",
     create_user:                awsApiUrl2 + "create-user", 
