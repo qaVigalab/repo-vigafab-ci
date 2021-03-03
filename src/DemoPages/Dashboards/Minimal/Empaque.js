@@ -8,7 +8,6 @@ import _ from "lodash";
 import moment from 'moment';
 
 const Empaque = (props) => {
-    const [productividad, setProductividad] = useState(0)
     const [dataTorta, setDataTorta] = useState(
         {
             legend: [
@@ -63,7 +62,6 @@ const Empaque = (props) => {
     };
     const [seriesTimeLine, setSeriesTimeLine] = useState([])
     const [optionsTimeLine, setOptionsTimeLine] = useState(
-
         {
 
             dataLabels: labels,
@@ -97,48 +95,61 @@ const Empaque = (props) => {
             }
         }
     )
-    const [hacumuladas, setHacumuladas] = useState(0)
-    const [tActivo, setTActivo] = useState(0)
-    const [tInactivo, setTInactivo] = useState(0)
-    const [kgacumulados, setKgacumulados] = useState(0)
-    const [estado, setEstado] = useState(0)
-    const [kgsolicitados, setKgsolicitados] = useState(0)
-    const [hsolicitadas, setHsolicitadas] = useState(0)
-    const [capacidad, setCapacidad] = useState(0)
 
     const [reportes, setReportes] = useState(props.reportesSelected.filter(rep => rep.hora_inicio.includes('05:55')));
+    const [tActivo, setTActivo] = useState(0);
+    const [disponibilidad, setDisponibilidad] = useState(0);
+    const [eficiencia, setEficiencia] = useState(0);
     useEffect(() => {
-        var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55'));
-        var tiempo_activo = 0, tiempo_inactivo = 0;
-        for (var i=0; i<reportesSel.length; i++){
-            /* Se calculan los tiempos de actividad y paro */
-            const startDate = moment(reportesSel[i].hora_inicio);
-            const timeEnd = moment(reportesSel[i].hora_termino);
-            const diff = timeEnd.diff(startDate);
-            const diffDuration = moment.duration(diff);
-
-            if (reportesSel[i].id_tipo === 1)
-                tiempo_inactivo += diffDuration.hours()*60 + diffDuration.minutes();
-            else if (reportesSel[i].id_tipo === 2)
-                tiempo_activo += diffDuration.hours()*60 + diffDuration.minutes();
-        }
-
-        setTInactivo(tiempo_inactivo);
-        setTActivo(tiempo_activo);
-        setDataTorta(
-            {
-            datasets: [
-                {
-                data: [0, tiempo_inactivo, tiempo_activo]
-                }
-            ],
+        if (props.reportesSelected.length > 0){
+            var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55') && rep.id_tipo !== 4 && rep.hora_inicio !== rep.hora_termino);
+            /* Se descartan los reportes de paro al inicio para el cálculo de los indicadores */
+            while (reportesSel.length > 1 && reportesSel[0].id_tipo === 1){
+                reportesSel.splice(0,1);
             }
-        );
-        setReportes(reportesSel);
+    
+            /* Se descartan los reportes de paro al final para el cálculo de los indicadores */
+            while (reportesSel.length > 1 && reportesSel[reportesSel.length-1].id_tipo === 1){
+                reportesSel.splice(-1,1);
+            }
+
+            var tiempo_activo = 0, tiempo_inactivo = 0;
+            for (var i=0; i<reportesSel.length; i++){
+                /* Se calculan los tiempos de actividad y paro */
+                if (reportesSel[i].id_tipo === 1)
+                    tiempo_inactivo += reportesSel[i].minutos;
+                else if (reportesSel[i].id_tipo === 2)
+                    tiempo_activo += reportesSel[i].minutos;
+            }
+      
+            setDisponibilidad(
+              isNaN(tiempo_activo/(tiempo_activo+tiempo_inactivo)) ? 0 :
+              tiempo_activo/(tiempo_activo+tiempo_inactivo) * 100
+            );
+      
+            setEficiencia(
+                isNaN(props.ordenSelected.real_kg/(props.ordenSelected.kg_hora * ((tiempo_activo+tiempo_inactivo)/60))) ? 0 :
+                props.ordenSelected.real_kg/(props.ordenSelected.kg_hora * ((tiempo_activo+tiempo_inactivo)/60)) * 100
+            );
+    
+            setTActivo(tiempo_activo);
+            setDataTorta(
+                {
+                datasets: [
+                    {
+                        data: [0, parseInt(tiempo_inactivo), parseInt(tiempo_activo)]
+                    }
+                ],
+                }
+            );
+            setReportes(props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55')));
+        }
     }, [props.reportesSelected]);
 
     useEffect(() => {
-        loadTimeLine();
+        props.updateKPIs(5, disponibilidad, eficiencia);
+        if (reportes.length > 0)
+            loadTimeLine();
     }, [reportes]);
 
     const loadTimeLine = () => {
@@ -200,11 +211,20 @@ const Empaque = (props) => {
                     <Col xl="3" md="3">
                         <Row align="right">
                             <div className="my-4">Estado: </div>
-                            <div className={props.ordenSelected.id_estado != 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>{
-                                props.ordenSelected.id_estado === 3 ? "Terminada"
-                                : props.ordenSelected.id_estado === 2 ? "En espera"
-                                : "Produciendo"
-                            }</div>
+                            {reportes.length > 0 ?
+                                <div className={props.ordenSelected.id_estado != 1 || reportes.filter(rep => rep.id_tipo != 4)[reportes.filter(rep => rep.id_tipo != 4).length-1].id_tipo === 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>{
+                                    props.ordenSelected.id_estado === 3 ? "Detenida"
+                                    : props.ordenSelected.id_estado === 2 ? "En espera"
+                                    : reportes.filter(rep => rep.id_tipo != 4)[reportes.filter(rep => rep.id_tipo != 4).length-1].id_tipo === 1 ? "Detenida"
+                                    : "Produciendo"
+                                }</div>
+                            :
+                                <div className={props.ordenSelected.id_estado != 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>{
+                                    props.ordenSelected.id_estado === 3 ? "Detenida"
+                                    : props.ordenSelected.id_estado === 2 ? "En espera"
+                                    : "Produciendo"
+                                }</div>
+                            }
                         </Row>
                     </Col>
 
@@ -236,7 +256,7 @@ const Empaque = (props) => {
             <div className="blackBorderBot">
                 <Row>
                     <Col md="5" className="blackBorderRight">
-                        <div class="noSpace ">
+                        <div className="noSpace ">
                             <div className="blackBorderBot">
                                 <Row className="mt-4">
                                     <div align="center" className="ml-auto indi">{props.formatNumber.new(_.round(props.ordenSelected.cajas_acumuladas))}</div>
@@ -258,12 +278,7 @@ const Empaque = (props) => {
                                                 responsive={true} // Boolean: Make SVG adapt to parent size
                                                 size="100" // String: Defines the size of the circle.
                                                 lineWidth="30" // String: Defines the thickness of the circle's stroke.
-                                                progress={(
-                                                    (tActivo/(tInactivo+tActivo)) * 100 === Infinity ? 0 :
-                                                    (tActivo/(tInactivo+tActivo)) * 100 > 0 ?
-                                                    (tActivo/(tInactivo+tActivo)) * 100
-                                                    : 0
-                                                ).toFixed(0)} // String: Update to change the progress and percentage.
+                                                progress={(disponibilidad).toFixed(0)} // String: Update to change the progress and percentage.
                                                 progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                                 bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                                 textColor="#6b778c" // String: Color of percentage text color.
@@ -287,12 +302,7 @@ const Empaque = (props) => {
                                                 responsive={true} // Boolean: Make SVG adapt to parent size
                                                 size="100" // String: Defines the size of the circle.
                                                 lineWidth="30" // String: Defines the thickness of the circle's stroke.
-                                                progress={(
-                                                    props.ordenSelected.real_kg/(props.ordenSelected.kg_hora * ((tActivo+tInactivo)/60)) * 100 === Infinity ? 0 :
-                                                    (props.ordenSelected.real_kg/(props.ordenSelected.kg_hora * ((tActivo+tInactivo)/60))) > 0 ?
-                                                    props.ordenSelected.real_kg/(props.ordenSelected.kg_hora * ((tActivo+tInactivo)/60)) * 100  //(totalKG/capacidad*tiempo que se demoro)
-                                                    : 0
-                                                ).toFixed(0)} // String: Update to change the progress and percentage.
+                                                progress={(eficiencia).toFixed(0)} // String: Update to change the progress and percentage.
                                                 progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                                 bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                                 textColor="#6b778c" // String: Color of percentage text color.
@@ -318,8 +328,8 @@ const Empaque = (props) => {
                                 <div className="centralbodydetail">
                                     <Doughnut
                                         data={dataTorta}
-                                        width="12"
-                                        height="12"
+                                        width={12}
+                                        height={12}
                                         align="center"
                                         options={{
                                             legend: {

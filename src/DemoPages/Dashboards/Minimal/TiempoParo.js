@@ -106,7 +106,7 @@ const TiempoParo = (props) => {
           /* Se settea la información general de los paros */
           var found = false, pos = -1;
           for (var j = 0; j < paros.length; j++) {
-            if (result[i].id_tipo == paros[j].id_tipo) {
+            if (result[i].id_tipo === paros[j].id_tipo) {
                 found = true; pos = j;
                 break;
             }
@@ -126,8 +126,8 @@ const TiempoParo = (props) => {
           /* Se settea el detalle de los operativos */
           if (result[i].nombre === "Operativo") {
             found = false; pos = -1;
-            for (var j = 0; j < operativos.length; j++) {
-              if (result[i].ambito == operativos[j].ambito) {
+            for (j = 0; j < operativos.length; j++) {
+              if (result[i].ambito === operativos[j].ambito) {
                   found = true; pos = j;
                   break;
               }
@@ -136,7 +136,7 @@ const TiempoParo = (props) => {
             if (found) {
               operativos[pos].suma += result[i].suma;
             } else {
-              var obj = {
+              obj = {
                 suma: result[i].suma,
                 ambito: result[i].ambito
               }
@@ -148,8 +148,8 @@ const TiempoParo = (props) => {
           if (result[i].nombre === "Mantenimiento") {
             console.log(result[i].nombre);
             found = false; pos = -1;
-            for (var j = 0; j < mantenimiento.length; j++) {
-              if (result[i].ambito == mantenimiento[j].ambito) {
+            for (j = 0; j < mantenimiento.length; j++) {
+              if (result[i].ambito === mantenimiento[j].ambito) {
                   found = true; pos = j;
                   break;
               }
@@ -158,7 +158,7 @@ const TiempoParo = (props) => {
             if (found) {
               mantenimiento[pos].suma += result[i].suma;
             } else {
-              var obj = {
+              obj = {
                 suma: result[i].suma,
                 ambito: result[i].ambito
               }
@@ -394,7 +394,7 @@ const TiempoParo = (props) => {
                                 <td style={{ width: "33%" }}>
                                   <Brightness1Icon className={paro.id_tipo === 100 ? "blue"
                                     : paro.id_tipo === 99 ? "red"
-                                    : paro.nombre != "Produciendo" && paro.nombre != "Paro no justificado" && i === 0 ? "paro1"
+                                    : paro.nombre !== "Produciendo" && paro.nombre !== "Paro no justificado" && i === 0 ? "paro1"
                                     : i === 1 ? "paro1" : i === 2 ? "paro2"
                                     : i === 3 ? "paro3" : i === 4 ? "paro4"
                                     : i === 5 ? "paro5" : i === 6 ? "paro6"
@@ -405,13 +405,13 @@ const TiempoParo = (props) => {
                                     : i === 15 ? "paro15" : "gray"} style={{marginRight: '2%'}} />
                                   {
                                     paro.nombre === "Operativo" ?
-                                      <a style={{color: '#6e767e'}} href="#"
+                                      <a style={{color: '#6e767e'}} href="/"
                                           onClick={e => updateDetalle(e, "Operativo", detalleOperativos, tiempoOperativo)} 
-                                          class="active">{paro.nombre.slice(0,1).toUpperCase() + paro.nombre.slice(1, paro.nombre.length)}</a>
+                                          className={"active"}>{paro.nombre.slice(0,1).toUpperCase() + paro.nombre.slice(1, paro.nombre.length)}</a>
                                     : paro.nombre === "Mantenimiento" ?
-                                      <a style={{color: '#6e767e'}} href="#"
+                                      <a style={{color: '#6e767e'}} href="/"
                                           onClick={e => updateDetalle(e, "Mantenimiento", detalleMantenimiento, tiempoMantenimiento)}
-                                          class="active">{paro.nombre.slice(0,1).toUpperCase() + paro.nombre.slice(1, paro.nombre.length)}</a>
+                                          className={"active"}>{paro.nombre.slice(0,1).toUpperCase() + paro.nombre.slice(1, paro.nombre.length)}</a>
                                     : paro.nombre.slice(0,1).toUpperCase() + paro.nombre.slice(1, paro.nombre.length)
                                   }
                                 </td>
@@ -421,7 +421,7 @@ const TiempoParo = (props) => {
                                     value={paro.suma / tiempoTotal * 100}
                                     color={paro.id_tipo === 100 ? "blue"
                                     : paro.id_tipo === 99 ? "red"
-                                    : paro.nombre != "Produciendo" && paro.nombre != "Paro no justificado" && i === 0  ? "paro1"
+                                    : paro.nombre !== "Produciendo" && paro.nombre !== "Paro no justificado" && i === 0  ? "paro1"
                                     : i === 1 ? "paro1" : i === 2 ? "paro2"
                                     : i === 3 ? "paro3" : i === 4 ? "paro4"
                                     : i === 5 ? "paro5" : i === 6 ? "paro6"

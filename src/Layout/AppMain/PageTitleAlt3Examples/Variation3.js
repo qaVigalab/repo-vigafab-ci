@@ -1,18 +1,9 @@
 import React, {Component, Fragment} from 'react';
-
-import {
-    Breadcrumb, BreadcrumbItem
-} from 'reactstrap';
-
-import {
-    faHome
-
-} from '@fortawesome/free-solid-svg-icons';
-
+import { Breadcrumb, BreadcrumbItem } from 'reactstrap';
+import { faHome } from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 export default class TitleComponent3 extends Component {
-
     render() {
         let {
             empresa,
@@ -22,19 +13,16 @@ export default class TitleComponent3 extends Component {
         return (
             <Fragment>
                 <Breadcrumb>
-                    <BreadcrumbItem><a href="javascript:void(0);">
-                        <FontAwesomeIcon icon={faHome}/></a>
+                    <BreadcrumbItem>
+                        <a href="/"><FontAwesomeIcon icon={faHome}/></a>
                     </BreadcrumbItem>
                     <BreadcrumbItem>
-        <a href="javascript:void(0);">{empresa}</a>
-                    </BreadcrumbItem>
-                    {
+                        <a href="/">{empresa}</a>
+                    </BreadcrumbItem>{
                         menues.map(x=>(
                             <BreadcrumbItem >{x}</BreadcrumbItem>
                         ))
-                    }
-                  <BreadcrumbItem active>{menu_actual}</BreadcrumbItem>
-                   
+                    }<BreadcrumbItem active>{menu_actual}</BreadcrumbItem>
                 </Breadcrumb>
             </Fragment>
         );

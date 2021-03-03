@@ -11,7 +11,7 @@ import NuevaOrden from "./NuevaOrden";
 import Orden from "./Orden";
 import Produciendo from "./Produciendo";
 import Formadora2 from "./Formadora2";
-import Iqf2 from "./Iqf2";
+//import Iqf2 from "./Iqf2";
 import CialWidget from "./CialWidget";
 import TotalEnvasadoras from "./TotalEnvasadoras";
 import Empaque from "./Empaque";
@@ -103,7 +103,7 @@ const MinimalDashboard1 = () => {
   const [ordenSelected, setOrdenSelected] = useState({});
   const [fechaOrdenes, setFechaOrdenes] = useState(moment().format('YYYY-MM-DD'));
   const loadOrdenes = (id_orden) => {
-    const query = fetch(global.api.dashboard.getOrdenesResumen, {
+    fetch(global.api.dashboard.getOrdenesResumen, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -181,10 +181,31 @@ const MinimalDashboard1 = () => {
   /* Debug: Se imprime el listado de órdenes del día en curso y la orden seleccionada en el listado */
   /* Se actualiza el detalle de los reportes asociados a la orden seleccionada */
   useEffect(() => {
-    console.log(ordenes);
-    console.log(ordenSelected);
-    loadReportes();
+    if (ordenSelected != {})
+      loadReportes();
   }, [ordenSelected]);
+
+  /* Se crean las variables de estado que almacenarán la disponibildad y eficiencia de cada máquina */
+  const [disponibilidadFormadora, setDisponibilidadFormadora] = useState(0);
+  const [disponibilidadEnvasadoras, setDisponibilidadEnvasadoras] = useState(0);
+  const [disponibilidadEmpaquetadora, setDisponibilidadEmpaquetadora] = useState(0);
+
+  const [eficienciaFormadora, setEficienciaFormadora] = useState(0);
+  const [eficienciaEnvasadoras, setEficienciaEnvasadoras] = useState(0);
+  const [eficienciaEmpaquetadora, setEficienciaEmpaquetadora] = useState(0);
+
+  const updateKPIs = (tipo, disp, efi) => {
+    if (tipo === 2){
+      setDisponibilidadFormadora(disp);
+      setEficienciaFormadora(efi);
+    } else if (tipo === 4){
+      setDisponibilidadEnvasadoras(disp);
+      setEficienciaEnvasadoras(efi);
+    } else if (tipo === 5){
+      setDisponibilidadEmpaquetadora(disp);
+      setEficienciaEmpaquetadora(efi);
+    }
+  };
 
   return (
     <div>
@@ -213,7 +234,9 @@ const MinimalDashboard1 = () => {
           <Row>
             <Col md="12" xl="12">
               <Card className="main-card mb-3">
-                <GenerarExcel />
+                <GenerarExcel 
+                  formatNumber={formatNumber}
+                />
               </Card>
             </Col>
           </Row>
@@ -254,7 +277,13 @@ const MinimalDashboard1 = () => {
                   maquinas={maquinas}
                   ordenes={ordenes}
                   ordenSelected={ordenSelected}
-                  reportesSelected={reportesSelected} 
+                  reportesSelected={reportesSelected}
+                  disponibilidadFormadora={disponibilidadFormadora}
+                  disponibilidadEnvasadoras={disponibilidadEnvasadoras}
+                  disponibilidadEmpaquetadora={disponibilidadEmpaquetadora}
+                  eficienciaFormadora={eficienciaFormadora}
+                  eficienciaEnvasadoras={eficienciaEnvasadoras}
+                  eficienciaEmpaquetadora={eficienciaEmpaquetadora}
                 />
               </Card>
             </Col>
@@ -267,13 +296,14 @@ const MinimalDashboard1 = () => {
                   formatNumber={formatNumber}
                   ordenSelected={ordenSelected}
                   reportesSelected={reportesSelected.filter(reporte => reporte.id_tipo_vibot === 2)}
+                  updateKPIs={(tipo, disp, efi) => updateKPIs(tipo, disp, efi)}
                 />
               </Card>
             </Col>
           </Row>
 
           {/*
-          <div class="columns-parent">
+          <div className="columns-parent">
             <Row>
               <Col xs="12" xl="12">
                 <Card className="main-card mb-3">
@@ -283,7 +313,7 @@ const MinimalDashboard1 = () => {
             </Row>
           */}
 
-          <div class="columns-parent"> {/* sacar al agregar iqf */}
+          <div className="columns-parent"> {/* sacar al agregar iqf */}
             {modo === 2 || modo === 0 ? (
               <Row>
                 {maquinas.map((maquina) => (
@@ -333,6 +363,7 @@ const MinimalDashboard1 = () => {
                   formatNumber={formatNumber}
                   ordenSelected={ordenSelected}
                   reportesSelected={reportesSelected.filter(reporte => reporte.id_tipo_vibot === 4)}
+                  updateKPIs={(tipo, disp, efi) => updateKPIs(tipo, disp, efi)}
                 />
               </Card>
             </Col>
@@ -343,6 +374,7 @@ const MinimalDashboard1 = () => {
                   formatNumber={formatNumber}
                   ordenSelected={ordenSelected}
                   reportesSelected={reportesSelected.filter(reporte => reporte.id_tipo_vibot === 5)}
+                  updateKPIs={(tipo, disp, efi) => updateKPIs(tipo, disp, efi)}
                 />
               </Card>
             </Col>
