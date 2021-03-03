@@ -346,7 +346,7 @@ const Orden = (props) => {
         ""
       )}
       {confirmDelete === true ? (
-        <Alert color="danger" className="mb-0">
+        <Alert color="success" className="mb-0">
           <a className="alert-link">¡La orden ha sido eliminada satisfactoriamente!</a>
         </Alert>
       ) : (

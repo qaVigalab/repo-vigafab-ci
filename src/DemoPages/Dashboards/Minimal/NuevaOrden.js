@@ -2,10 +2,9 @@ import { FormGroup } from "@material-ui/core";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Button, Col, Form, Input, Label, Row, Alert } from "reactstrap";
-import { setIdOrden } from '../../../actions/dashboardActions'
 import moment from 'moment';
-
 import CargaExcel from "./CargaExcel";
+
 class NuevaOrden extends Component {
   constructor(props) {
     super(props);
@@ -19,7 +18,7 @@ class NuevaOrden extends Component {
     this.changeSku = this.changeSku.bind(this);
 
     this.state = {
-      existeSku: "",
+      existeSku: true,
       kg: 0,
       tiempo: 0,
       cajas: 0,
@@ -27,8 +26,11 @@ class NuevaOrden extends Component {
       producto: {},
       prioridad: 1,
       nombre: "",
-      fecha: new Date(),
-      confirmCreate: false
+      fecha: moment(new Date()).format('YYYY-MM-DD'),
+      message: "",
+      messageState: "",
+      confirmCreate: false,
+      confirmError: false
     };
   }
 
@@ -53,22 +55,32 @@ class NuevaOrden extends Component {
           }),
         }
       )
-      .then((res) => {
+      .then(response => response.json())
+      .then((response) => {
         this.limpiarForm();
-        this.props.setIdOrden(!this.props.id_orden);
-        this.setState({confirmCreate: true});
+        if (response.code === "AGRO001"){
+          this.setState({
+            message: response.message,
+            messageState: "danger",
+            confirmError: true
+          });
+        } else{
+          this.setState({
+            message: response.message,
+            messageState: "success",
+            confirmCreate: true
+          });
+        }
 
         setTimeout(() => {
-          this.setState({confirmCreate: false})
+          this.setState({ confirmError: false, confirmCreate: false })
         }, 3000);
       })
       .catch((err) => {
         console.error(err);
       });
     } else {
-      this.props.setIdOrden(!this.props.id_orden);
-      this.setState({existeSku:false});
-      this.setState({confirmCreate: false})
+      this.setState({ existeSku:false, confirmError: false, confirmCreate: false });
     }
   }
 
@@ -117,7 +129,6 @@ class NuevaOrden extends Component {
 
   componentDidMount() {
     this.loadProductos();
-    localStorage.setItem("refresh", "NO")
   }
 
   changePrioridad(e) {
@@ -154,7 +165,8 @@ class NuevaOrden extends Component {
       cajas: 0,
       kg: 0,
       tiempo: 0,
-      nombre: "Producto"
+      nombre: "Producto",
+      fecha: moment(new Date()).format('YYYY-MM-DD')
     });
   }
 
@@ -174,21 +186,15 @@ class NuevaOrden extends Component {
                 <Col md="4">
                   <FormGroup>
                     <Label>SKU</Label>
-                    {this.state.existeSku === false ? (
-                      <Input invalid
-                        type="text"
-                        name="sku"
-                        id="sku"
-                        onChange={this.changeSku}
-                        placeholder="SKU"
-                      />
-                    ) : <Input
-                        type="text"
-                        name="sku"
-                        id="sku"
-                        onChange={this.changeSku}
-                        placeholder="SKU"
-                      />}
+                    <Input
+                      type="text"
+                      name="sku"
+                      id="sku"
+                      onChange={this.changeSku}
+                      placeholder="SKU"
+                      required
+                      invalid={!this.state.existeSku}
+                    />
                   </FormGroup>
                 </Col>
                 <Col md="6">
@@ -200,6 +206,8 @@ class NuevaOrden extends Component {
                       id="prod"
                       value={this.state.nombre}
                       placeholder="Producto"
+                      required
+                      invalid={!this.state.existeSku}
                     >
                     </Input>
                   </FormGroup>
@@ -215,6 +223,8 @@ class NuevaOrden extends Component {
                       id="prio"
                       placeholder="with a placeholder"
                       onChange={this.changePrioridad}
+                      required
+                      invalid={this.state.confirmError}
                     >
                       <option value="1">1</option>
                       <option value="2">2</option>
@@ -244,6 +254,7 @@ class NuevaOrden extends Component {
                       placeholder="Numero"
                       value={this.state.cajas}
                       onChange={this.cajasChange}
+                      required
                     />
                   </FormGroup>
                 </Col>
@@ -256,6 +267,7 @@ class NuevaOrden extends Component {
                       id="kg_sol"
                       placeholder="Numero"
                       value={this.state.kg + " kg"}
+                      required
                     />
                   </FormGroup>
                 </Col>
@@ -270,6 +282,7 @@ class NuevaOrden extends Component {
                       value={
                         Math.round(this.state.tiempo * 100) / 100 + " hrs"
                       }
+                      required
                     />
                   </FormGroup>
                 </Col>
@@ -282,6 +295,7 @@ class NuevaOrden extends Component {
                       id="tiempo"
                       value={this.state.fecha}
                       onChange={this.fechaChange}
+                      required
                     />
                   </FormGroup>
                 </Col>
@@ -294,9 +308,9 @@ class NuevaOrden extends Component {
             </Col>
           </Row>
         </Form>
-        {this.state.confirmCreate === true ? (
-          <Alert color="success" className="mb-0">
-            <a className="alert-link">¡La orden ha sido creada exitosamente!</a>
+        {this.state.confirmCreate === true || this.state.confirmError === true ? (
+          <Alert color={this.state.messageState} className="mb-0">
+            <a className="alert-link">{this.state.message}</a>
           </Alert>
         ) : (
           ""
@@ -308,11 +322,6 @@ class NuevaOrden extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  id_orden: state.dashboardReducers.id_orden,
-});
-const mapDispatchToProps = dispatch => ({
-  setIdOrden: data => dispatch(setIdOrden(data)),
-});
-
+const mapStateToProps = (state) => ({});
+const mapDispatchToProps = dispatch => ({});
 export default connect(mapStateToProps, mapDispatchToProps)(NuevaOrden);
