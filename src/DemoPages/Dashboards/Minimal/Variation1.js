@@ -247,6 +247,7 @@ const MinimalDashboard1 = () => {
                 <Card className="main-card mb-3">
                   <NuevaOrden
                     productos={productos}
+                    updateOrden={id_orden => updateOrden(id_orden)}
                   />
                 </Card>
               </Col>
