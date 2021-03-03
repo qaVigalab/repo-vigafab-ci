@@ -245,7 +245,9 @@ const MinimalDashboard1 = () => {
             <Row>
               <Col md="12" xl="12">
                 <Card className="main-card mb-3">
-                  <NuevaOrden/>
+                  <NuevaOrden
+                    productos={productos}
+                  />
                 </Card>
               </Col>
             </Row>

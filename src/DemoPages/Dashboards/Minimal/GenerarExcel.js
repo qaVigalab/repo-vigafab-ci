@@ -14,42 +14,23 @@ const GenerarExcel = (props) => {
   const [loading, setLoading] = useState(false);
   const [dateError, setDateError] = useState(false);
   const [dateErrorMsg, setDateErrorMsg] = useState("");
-  const [startDate, setStartDate] = useState(new Date(moment().add(-7, 'days').format('YYYY-MM-DD')));
+  const [startDate, setStartDate] = useState(new Date(moment().add(-6, 'days').format('YYYY-MM-DD')));
   const [endDate, setEndDate] = useState(new Date(moment().add(0, 'days').format('YYYY-MM-DD')));
   const [titulos, setTitulos] = useState(["FORMADORA", "ENVASADORA 4", "ENVASADORA 5", "ENVASADORA 6", "EMPAQUETADORA"]);
 
   const handleChange3 = (date) =>{
-    if (date > endDate){
-      setStartDate(endDate);
+    if (date > new Date(moment().add(-6, 'days').format('YYYY-MM-DD'))){
       setDateError(true);
-      setDateErrorMsg("No es posible seleccionar una fecha de inicio posterior a la de término.");
+      setDateErrorMsg("No es posible seleccionar una fecha de inicio dentro de los últimos 7 días.");
   
       setTimeout(() => {
         setDateError(false);
       }, 3000);
     } else {
       setStartDate(date);
+      setEndDate(new Date(moment(date).add(7, 'days').format('YYYY-MM-DD')));
       setLoading(true);
   
-      setTimeout(() => {
-        setLoading(false);
-      }, 1500);
-    }
-  }
-
-  const handleChange4= (date) => {
-    if (date > new Date(moment().format('YYYY-MM-DD'))){
-      setEndDate(endDate);
-      setDateError(true);
-      setDateErrorMsg("No es posible seleccionar una fecha con órdenes en espera.");
-  
-      setTimeout(() => {
-        setDateError(false);
-      }, 3000);
-    } else {
-      setEndDate(date);
-      setLoading(true);
-
       setTimeout(() => {
         setLoading(false);
       }, 1500);
@@ -291,7 +272,7 @@ const GenerarExcel = (props) => {
   useEffect(() => {
     if (Object.keys(indicadores).length > 0 && loading === true){
       setLoading(false);
-      print('Reporte Semanal ' + moment(startDate).format('DD-MM-YYYY') + "_" + moment(endDate).format('DD-MM-YYYY'), 'reporteSemanal');
+      print('Reporte Semanal ' + moment(startDate).format('DD-MM-YY') + "_" + moment(endDate).format('DD-MM-YY'), 'reporteSemanal');
     }
   }, [indicadores]);
 
@@ -305,8 +286,8 @@ const GenerarExcel = (props) => {
       <hr />
       <Row>
         <Row>
-          <Col md="3" className="ml-2" align="right">
-            <Label className="mt-2">Seleccione fechas:</Label>
+          <Col md="4" className="ml-2" align="right">
+            <Label className="mt-2">Seleccione rango de fechas:</Label>
           </Col>
 
           <Col md="3">
@@ -314,7 +295,7 @@ const GenerarExcel = (props) => {
               className="form-control"
               selected={startDate}
               onChange={(cambio) => {handleChange3(cambio);}}
-              selectsStart
+              dateFormat="dd/MM/yyyy"
               startDate={startDate}
               endDate={endDate}
             />
@@ -324,11 +305,11 @@ const GenerarExcel = (props) => {
             <DatePicker
               className="form-control"
               selected={endDate}
-              onChange={(cambio) => {handleChange4(cambio);}}
-              selectsEnd
+              dateFormat="dd/MM/yyyy"
               startDate={startDate}
               endDate={endDate}
               minDate={startDate}
+              disabled
             />
           </Col>
 
@@ -339,6 +320,8 @@ const GenerarExcel = (props) => {
           }</Col>
         </Row>
       </Row>
+
+      {/* REPORTE */}
       <Row style={{ display: 'none' }}>
         <Preview id={'reporteSemanal'}>
           <Row style={{ backgroundColor: '#2264A7', borderBottom: '0.5px solid #13395E' }}>
