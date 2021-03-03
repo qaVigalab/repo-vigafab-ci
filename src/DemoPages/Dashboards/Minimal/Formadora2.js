@@ -7,7 +7,6 @@ import Circle from "react-circle";
 import ReactApexChart from "react-apexcharts";
 import "moment/locale/es";
 import _ from "lodash";
-import moment from 'moment';
 
 const Formadora2 = (props) => {
     var temperatura = [];
@@ -193,7 +192,6 @@ const Formadora2 = (props) => {
                 data: temperatura
             }]);
             setOptions3({ xaxis: { categories: fecha } });
-
         })
         .catch(err => {
             console.error(err);
@@ -299,7 +297,8 @@ const Formadora2 = (props) => {
         setSeriesTimeLine([{
             data: objetos
         }]);
-        loadGraphTemp();
+
+        //loadGraphTemp();
     }
 
     return (

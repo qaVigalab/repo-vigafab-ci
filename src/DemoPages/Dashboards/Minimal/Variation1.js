@@ -144,7 +144,8 @@ const MinimalDashboard1 = () => {
 
   /* Se actualiza la fecha de las órdenes a cargar desde el componente Orden */
   const updateFecha = (fecha) => {
-    setFechaOrdenes(fecha);
+    if (fechaOrdenes !== fecha)
+      setFechaOrdenes(fecha);
   }
 
   /* Se obtiene el listado de órdenes correspondiente a la fecha seleccionada */
@@ -159,7 +160,7 @@ const MinimalDashboard1 = () => {
   /* Se consulta a la API el detalle de los reportes por máquina de la orden en curso */
   const [reportesSelected, setReportesSelected] = useState([]);
   const loadReportes = () => {
-    const query = fetch(global.api.dashboard.getReportesByOrden, {
+    fetch(global.api.dashboard.getReportesByOrden, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -181,7 +182,7 @@ const MinimalDashboard1 = () => {
   /* Debug: Se imprime el listado de órdenes del día en curso y la orden seleccionada en el listado */
   /* Se actualiza el detalle de los reportes asociados a la orden seleccionada */
   useEffect(() => {
-    if (ordenSelected != {})
+    if (Object.keys(ordenSelected).length > 0)
       loadReportes();
   }, [ordenSelected]);
 

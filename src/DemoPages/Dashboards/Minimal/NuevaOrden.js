@@ -9,7 +9,6 @@ class NuevaOrden extends Component {
   constructor(props) {
     super(props);
 
-    this.loadProductos = this.loadProductos.bind(this);
     this.cajasChange = this.cajasChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.changePrioridad = this.changePrioridad.bind(this);
@@ -22,7 +21,7 @@ class NuevaOrden extends Component {
       kg: 0,
       tiempo: 0,
       cajas: 0,
-      productos: [],
+      productos: this.props.productos,
       producto: {},
       prioridad: 1,
       nombre: "",
@@ -86,27 +85,6 @@ class NuevaOrden extends Component {
     }
   }
 
-  loadProductos() {
-    fetch(
-      global.api.dashboard.getproducto,
-      {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
-        },
-        body: false,
-      }
-    )
-      .then((response) => response.json())
-      .then((result) => {
-        this.setState({ productos: result });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }
-
   fechaChange(event) {
     this.setState({ fecha: event.target.value })
   }
@@ -119,8 +97,8 @@ class NuevaOrden extends Component {
       tiempo: (caja * this.state.producto.kg_caja / this.state.producto.kg_hora),
     });
   }
-  cajasChange2() {
 
+  cajasChange2() {
     var caja = this.state.cajas;
     this.setState({ nombre: this.state.producto.producto })
     this.setState({ kg: caja * this.state.producto.kg_caja });
@@ -129,15 +107,12 @@ class NuevaOrden extends Component {
     });
   }
 
-  componentDidMount() {
-    this.loadProductos();
-  }
-
   changePrioridad(e) {
     this.setState({ prioridad: e.target.value });
   }
 
   changeSku(event) {
+    this.setState({ productos: this.props.productos });
     if (event.target.value.length === 0) {
       this.limpiarForm()
     } else {
