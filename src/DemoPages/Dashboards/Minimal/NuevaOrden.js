@@ -70,6 +70,8 @@ class NuevaOrden extends Component {
             messageState: "success",
             confirmCreate: true
           });
+
+          this.props.updateOrden("");
         }
 
         setTimeout(() => {
