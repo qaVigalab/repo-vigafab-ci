@@ -42,7 +42,7 @@ const AppMain = () => {
                             <Loader type="ball-grid-beat"/>
                         </div>
                         <h6 className="mt-3">
-                        Espere un momento, porfavor.
+                            Espere un momento, por favor...
                         </h6>
                     </div>
                 </div>
