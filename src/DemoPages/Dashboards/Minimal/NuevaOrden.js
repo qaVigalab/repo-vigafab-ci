@@ -57,20 +57,20 @@ class NuevaOrden extends Component {
       .then(response => response.json())
       .then((response) => {
         this.limpiarForm();
-        if (response.code === "AGRO001"){
+        if (response[0].code === "AGRO001"){
           this.setState({
-            message: response.message,
+            message: response[0].message,
             messageState: "danger",
             confirmError: true
           });
         } else{
           this.setState({
-            message: response.message,
+            message: response[0].message,
             messageState: "success",
             confirmCreate: true
           });
 
-          this.props.updateOrden("");
+          this.props.updateOrden("", false);
         }
 
         setTimeout(() => {
@@ -185,6 +185,7 @@ class NuevaOrden extends Component {
                       placeholder="Producto"
                       required
                       invalid={!this.state.existeSku}
+                      disabled
                     >
                     </Input>
                   </FormGroup>
@@ -245,6 +246,7 @@ class NuevaOrden extends Component {
                       placeholder="Numero"
                       value={this.state.kg + " kg"}
                       required
+                      disabled
                     />
                   </FormGroup>
                 </Col>
@@ -260,6 +262,7 @@ class NuevaOrden extends Component {
                         Math.round(this.state.tiempo * 100) / 100 + " hrs"
                       }
                       required
+                      disabled
                     />
                   </FormGroup>
                 </Col>
@@ -277,7 +280,7 @@ class NuevaOrden extends Component {
                   </FormGroup>
                 </Col>
                 <Col md="3">
-                  <Button className="buttonOrange" size="lg" block>
+                  <Button className="buttonOrange" style={{ height: '45%' }} block>
                     Generar Orden
                   </Button>
                 </Col>

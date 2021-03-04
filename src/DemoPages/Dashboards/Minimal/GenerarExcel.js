@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { Col, Row, Label, Spinner, Alert } from "reactstrap";
+import { Col, Row, Label, Spinner, Alert, Button } from "reactstrap";
 
 import DatePicker from "react-datepicker";
 import { connect } from "react-redux";
@@ -271,8 +271,8 @@ const GenerarExcel = (props) => {
 
   useEffect(() => {
     if (Object.keys(indicadores).length > 0 && loading === true){
-      setLoading(false);
       print('Reporte Semanal ' + moment(startDate).format('DD-MM-YY') + "_" + moment(endDate).format('DD-MM-YY'), 'reporteSemanal');
+      setLoading(false);
     }
   }, [indicadores]);
 
@@ -316,7 +316,15 @@ const GenerarExcel = (props) => {
           <Col>{
             loading === true ?
               <Spinner animation="border" variant="info" />
-            : <button className="btn btn-lg btn-primary" onClick={loadData}>Descargar</button>
+            : 
+              <Button 
+                block
+                className="buttonGray"
+                style={{ height: '100%', backgroundColor: '#2264A7', borderColor: '#2264A7' }}
+                onClick={loadData}
+              >
+                Descargar
+              </Button>
           }</Col>
         </Row>
       </Row>

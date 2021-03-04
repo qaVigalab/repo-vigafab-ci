@@ -95,7 +95,7 @@ const CialWidget = (props) => {
     }
   );
 
-  const [reportes, setReportes] = useState(props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55')));
+  const [reportes, setReportes] = useState(props.reportesSelected);
   const [tActivo, setTActivo] = useState(0);
   const [disponibilidad, setDisponibilidad] = useState(0);
   const [eficiencia, setEficiencia] = useState(0);
