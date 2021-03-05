@@ -16,7 +16,7 @@ const GenerarExcel = (props) => {
   const [dateErrorMsg, setDateErrorMsg] = useState("");
   const [startDate, setStartDate] = useState(new Date(moment().add(-6, 'days').format('YYYY-MM-DD')));
   const [endDate, setEndDate] = useState(new Date(moment().add(0, 'days').format('YYYY-MM-DD')));
-  const [titulos, setTitulos] = useState(["FORMADORA", "ENVASADORA 4", "ENVASADORA 5", "ENVASADORA 6", "EMPAQUETADORA"]);
+  const [titulos, setTitulos] = useState(["FORMADORA", "ENVASADORA 6", "ENVASADORA 5", "ENVASADORA 4", "EMPAQUETADORA"]);
 
   const handleChange3 = (date) =>{
     if (date > new Date(moment().add(-6, 'days').format('YYYY-MM-DD'))){

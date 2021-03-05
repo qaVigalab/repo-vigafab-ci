@@ -143,6 +143,20 @@ const Empaque = (props) => {
                 }
             );
             setReportes(props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55')));
+        } else{
+            setDisponibilidad(0);
+            setEficiencia(0);
+            setTActivo(0);
+            setDataTorta(
+                {
+                datasets: [
+                    {
+                    data: [0, 0, 0]
+                    }
+                ],
+                }
+            );
+            setReportes([]);
         }
     }, [props.reportesSelected]);
 
@@ -150,6 +164,26 @@ const Empaque = (props) => {
         props.updateKPIs(5, disponibilidad, eficiencia);
         if (reportes.length > 0)
             loadTimeLine();
+        else{
+            setSeriesTimeLine([{
+                data: [{
+                    x: 'Prod',
+                    y: [new Date().getTime(),
+                    new Date().getTime()],
+                    fillColor: '#2264A7'
+                }, {
+                    x: 'Paro',
+                    y: [new Date().getTime(),
+                    new Date().getTime()],
+                    fillColor: '#F7431E'
+                }, {
+                    x: 'Cambio',
+                    y: [new Date().getTime(),
+                    new Date().getTime()],
+                    fillColor: '#02c39a'
+                }]
+            }]);
+        }
     }, [reportes]);
 
     const loadTimeLine = () => {
@@ -205,21 +239,21 @@ const Empaque = (props) => {
             <div className="blackBorder2" >
                 <Row>
                     <br />
-                    <Col align="center" xl="3" md="3">
+                    <Col align="center" md="3">
                         <div className="text-uppercase ml-2 font-weight-bold title1orange my-1">Empaque</div>
                     </Col>
-                    <Col xl="3" md="3">
+                    <Col md="3">
                         <Row align="right">
                             <div className="my-4">Estado: </div>
                             {reportes.length > 0 ?
-                                <div className={props.ordenSelected.id_estado != 1 || reportes.filter(rep => rep.id_tipo != 4)[reportes.filter(rep => rep.id_tipo != 4).length-1].id_tipo === 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>{
+                                <div className={props.ordenSelected.id_estado != 1 || reportes.filter(rep => rep.id_tipo != 4)[reportes.filter(rep => rep.id_tipo != 4).length-1].id_tipo === 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"} style={{ fontSize: '15px' }}>{
                                     props.ordenSelected.id_estado === 3 ? "Detenida"
                                     : props.ordenSelected.id_estado === 2 ? "En espera"
                                     : reportes.filter(rep => rep.id_tipo != 4)[reportes.filter(rep => rep.id_tipo != 4).length-1].id_tipo === 1 ? "Detenida"
                                     : "Produciendo"
                                 }</div>
                             :
-                                <div className={props.ordenSelected.id_estado != 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>{
+                                <div className={props.ordenSelected.id_estado != 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"} style={{ fontSize: '15px' }}>{
                                     props.ordenSelected.id_estado === 3 ? "Detenida"
                                     : props.ordenSelected.id_estado === 2 ? "En espera"
                                     : "Produciendo"
@@ -228,15 +262,15 @@ const Empaque = (props) => {
                         </Row>
                     </Col>
 
-                    <Col xl="3" md="3">
+                    <Col md="3">
                         <Row align="right">
-                            <div className="ml-1 my-4">Actividad: </div>
+                            <div className="my-4">Actividad: </div>
                             {parseInt(tActivo/60) == 1 ?
-                                <div className="font2Blue ml-1 my-4">
+                                <div className={props.ordenSelected.id_estado !== 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"} style={{ fontSize: '15px' }}>
                                     {parseInt(tActivo/60)} hr,
                                     {" " + parseInt(tActivo%60)} min
                                 </div> :
-                                <div className="font2Blue ml-1 my-4">
+                                <div className={props.ordenSelected.id_estado !== 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"} style={{ fontSize: '15px' }}>
                                     {parseInt(tActivo/60)} hrs,
                                     {" " + parseInt(tActivo%60)} min
                                 </div> 
@@ -244,10 +278,12 @@ const Empaque = (props) => {
                         </Row>
                     </Col>
 
-                    <Col xl="3" md="3">
+                    <Col md="3">
                         <Row align="right">
                             <div className="my-4">Productividad: </div>
-                            <div className="font2Blue ml-1 my-4">{props.formatNumber.new(_.round(props.ordenSelected.cajas_acumuladas/tActivo)) + " caj/min"}</div>
+                            <div className={props.ordenSelected.id_estado !== 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"} style={{ fontSize: '15px' }}>
+                                {tActivo === 0 ? 0 : props.formatNumber.new(_.round(props.ordenSelected.cajas_acumuladas/tActivo))} caj/min
+                            </div>
                         </Row>
                     </Col>
                 </Row>
