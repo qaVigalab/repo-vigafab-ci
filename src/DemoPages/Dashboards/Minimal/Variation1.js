@@ -337,6 +337,7 @@ const MinimalDashboard1 = () => {
                     formatNumber={formatNumber}
                     nombre={maquina.maquina}
                     id_vibot={maquina.id}
+                    recambio={maquina.recambio}
                     ordenSelected={ordenSelected}
                     reportesSelected={reportesSelected.filter(reporte => reporte.id_vibot === maquina.id)}
                   />
