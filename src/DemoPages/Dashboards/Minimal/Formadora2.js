@@ -263,8 +263,10 @@ const Formadora2 = (props) => {
 
     useEffect(() => {
         props.updateKPIs(2, disponibilidad, eficiencia);
-        if (reportes.length > 0)
+        if (reportes.length > 0){
+            loadGraphTemp();
             loadTimeLine();
+        }
         else{
             setSeriesTimeLine([{
                 data: [{
@@ -331,8 +333,6 @@ const Formadora2 = (props) => {
         setSeriesTimeLine([{
             data: objetos
         }]);
-
-        //loadGraphTemp();
     }
 
     return (
