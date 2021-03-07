@@ -38,18 +38,19 @@ const Orden = (props) => {
         id: id_sub,
       }),
     })
-    .then(response => {})
+    .then(response => {response.json()})
+    .then((response) => {
+      setModal(!modal);
+      setConfirmDelete(true);
+      props.updateOrden("", false);
+
+      setTimeout(() => {
+        setConfirmDelete(false);
+      }, 3000);
+    })
     .catch((err) => {
       console.error(err);
     });
-
-    setModal(!modal);
-    setConfirmDelete(true);
-    props.updateOrden("", false);
-
-    setTimeout(() => {
-      setConfirmDelete(false);
-    }, 3000);
   };
 
   /* Permite actualizar la orden actual por una nueva orden seleccionada */
@@ -72,6 +73,7 @@ const Orden = (props) => {
   /* Permite actualizar la orden seleccionada en este componente visual */
   const [modal, setModal] = useState(false);
   const toggle = (cajas, sku, producto) => {
+    setChangeHours(false);
     setCajas(cajas);
     setSku(sku);
     setProducto(producto);
@@ -80,6 +82,7 @@ const Orden = (props) => {
 
   /* Permite editar una orden seleccionada del listado */
   const toggleEdit = (prioridad, sku, producto, cajas, kg, tiempo, fecha_sub) => {
+    setChangeHours(false);
     changeSku({target: {value: sku}});
     setPrioridad(prioridad);
     setSku(sku);
