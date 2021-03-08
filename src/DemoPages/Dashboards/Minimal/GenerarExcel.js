@@ -188,13 +188,21 @@ const GenerarExcel = (props) => {
         }
       }
 
+      console.log(PPM);
+      console.log(Indicadores);
+
       Object.keys(Indicadores).map((fecha, i) => {
         Object.keys(Indicadores[fecha]).map((maq, i) => {
           Indicadores[fecha][maq].disponibilidad = _.round(Indicadores[fecha][maq].tiempoActivo/(Indicadores[fecha][maq].tiempoActivo + Indicadores[fecha][maq].tiempoInactivo), 2);
           Indicadores[fecha][maq].eficiencia = _.round(Indicadores[fecha][maq].eficiencia/Indicadores[fecha][maq].cantOrdenes, 2);
 
-          Indicadores[fecha][maq].cantParos = PPM[fecha][maq].cantParos;
-          Indicadores[fecha][maq].minPerdidos = PPM[fecha][maq].minPerdidos;
+          if (PPM[fecha][maq] != undefined){
+            Indicadores[fecha][maq].cantParos = PPM[fecha][maq].cantParos;
+            Indicadores[fecha][maq].minPerdidos = PPM[fecha][maq].minPerdidos;
+          } else{
+            Indicadores[fecha][maq].cantParos = 0;
+            Indicadores[fecha][maq].minPerdidos = 0;
+          }
 
           if (maq.includes("Envasadora"))
             Indicadores[fecha][maq].cumplimiento = _.round(Indicadores[fecha][maq].kgProd/(Indicadores[fecha][maq].kgSolic/3), 2);
