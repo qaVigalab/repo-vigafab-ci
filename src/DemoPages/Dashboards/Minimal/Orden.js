@@ -481,13 +481,20 @@ const Orden = (props) => {
                               <EditIcon style={{ color: 'transparent' }} />
                             </IconButton>
                         )}
-                        <IconButton
-                          aria-label="delete"
-                          style={orden.id_sub_orden === props.ordenSelected.id_sub_orden || orden.id_estado === 1 ? { color: "#ffebee" } : {}}
-                          onClick={() => toggle(orden.cajas, orden.sku, orden.producto)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
+                        {orden.id_estado === 2 ?
+                          <IconButton
+                            aria-label="delete"
+                            style={orden.id_sub_orden === props.ordenSelected.id_sub_orden || orden.id_estado === 1 ? { color: "#ffebee" } : {}}
+                            onClick={() => toggle(orden.cajas, orden.sku, orden.producto)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        :
+                          <IconButton disabled>
+                            <DeleteIcon style={{ color: 'transparent' }} />
+                          </IconButton>
+                        }
+                        
                       </td>
                     ) : (
                       ""

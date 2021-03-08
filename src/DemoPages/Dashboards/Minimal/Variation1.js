@@ -195,6 +195,8 @@ const MinimalDashboard1 = () => {
   useEffect(() => {
     if (Object.keys(ordenSelected).length > 0)
       loadReportes();
+    else
+      setModalLoading(false);
   }, [ordenSelected]);
 
   /* Se crean las variables de estado que almacenarán la disponibildad y eficiencia de cada máquina */
