@@ -2,15 +2,13 @@ import { FormGroup } from "@material-ui/core";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Button, Col, Form, Input, Label, Row, Alert } from "reactstrap";
-import { setIdOrden } from '../../../actions/dashboardActions'
 import moment from 'moment';
-
 import CargaExcel from "./CargaExcel";
+
 class NuevaOrden extends Component {
   constructor(props) {
     super(props);
 
-    this.loadProductos = this.loadProductos.bind(this);
     this.cajasChange = this.cajasChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.changePrioridad = this.changePrioridad.bind(this);
@@ -19,16 +17,19 @@ class NuevaOrden extends Component {
     this.changeSku = this.changeSku.bind(this);
 
     this.state = {
-      existeSku: "",
+      existeSku: true,
       kg: 0,
       tiempo: 0,
       cajas: 0,
-      productos: [],
+      productos: this.props.productos,
       producto: {},
       prioridad: 1,
       nombre: "",
-      fecha: new Date(),
-      confirmCreate: false
+      fecha: moment(new Date()).format('YYYY-MM-DD'),
+      message: "",
+      messageState: "",
+      confirmCreate: false,
+      confirmError: false
     };
   }
 
@@ -53,44 +54,35 @@ class NuevaOrden extends Component {
           }),
         }
       )
-      .then((res) => {
+      .then(response => response.json())
+      .then((response) => {
         this.limpiarForm();
-        this.props.setIdOrden(!this.props.id_orden);
-        this.setState({confirmCreate: true});
+        if (response[0].code === "AGRO001"){
+          this.setState({
+            message: response[0].message,
+            messageState: "danger",
+            confirmError: true
+          });
+        } else{
+          this.setState({
+            message: response[0].message,
+            messageState: "success",
+            confirmCreate: true
+          });
+
+          this.props.updateOrden("", false);
+        }
 
         setTimeout(() => {
-          this.setState({confirmCreate: false})
+          this.setState({ confirmError: false, confirmCreate: false })
         }, 3000);
       })
       .catch((err) => {
         console.error(err);
       });
     } else {
-      this.props.setIdOrden(!this.props.id_orden);
-      this.setState({existeSku:false});
-      this.setState({confirmCreate: false})
+      this.setState({ existeSku:false, confirmError: false, confirmCreate: false });
     }
-  }
-
-  loadProductos() {
-    fetch(
-      global.api.dashboard.getproducto,
-      {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m",
-        },
-        body: false,
-      }
-    )
-      .then((response) => response.json())
-      .then((result) => {
-        this.setState({ productos: result });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
   }
 
   fechaChange(event) {
@@ -105,8 +97,8 @@ class NuevaOrden extends Component {
       tiempo: (caja * this.state.producto.kg_caja / this.state.producto.kg_hora),
     });
   }
-  cajasChange2() {
 
+  cajasChange2() {
     var caja = this.state.cajas;
     this.setState({ nombre: this.state.producto.producto })
     this.setState({ kg: caja * this.state.producto.kg_caja });
@@ -115,16 +107,12 @@ class NuevaOrden extends Component {
     });
   }
 
-  componentDidMount() {
-    this.loadProductos();
-    localStorage.setItem("refresh", "NO")
-  }
-
   changePrioridad(e) {
     this.setState({ prioridad: e.target.value });
   }
 
   changeSku(event) {
+    this.setState({ productos: this.props.productos });
     if (event.target.value.length === 0) {
       this.limpiarForm()
     } else {
@@ -154,7 +142,8 @@ class NuevaOrden extends Component {
       cajas: 0,
       kg: 0,
       tiempo: 0,
-      nombre: "Producto"
+      nombre: "Producto",
+      fecha: moment(new Date()).format('YYYY-MM-DD')
     });
   }
 
@@ -174,21 +163,15 @@ class NuevaOrden extends Component {
                 <Col md="4">
                   <FormGroup>
                     <Label>SKU</Label>
-                    {this.state.existeSku === false ? (
-                      <Input invalid
-                        type="text"
-                        name="sku"
-                        id="sku"
-                        onChange={this.changeSku}
-                        placeholder="SKU"
-                      />
-                    ) : <Input
-                        type="text"
-                        name="sku"
-                        id="sku"
-                        onChange={this.changeSku}
-                        placeholder="SKU"
-                      />}
+                    <Input
+                      type="text"
+                      name="sku"
+                      id="sku"
+                      onChange={this.changeSku}
+                      placeholder="SKU"
+                      required
+                      invalid={!this.state.existeSku}
+                    />
                   </FormGroup>
                 </Col>
                 <Col md="6">
@@ -200,6 +183,9 @@ class NuevaOrden extends Component {
                       id="prod"
                       value={this.state.nombre}
                       placeholder="Producto"
+                      required
+                      invalid={!this.state.existeSku}
+                      disabled
                     >
                     </Input>
                   </FormGroup>
@@ -215,6 +201,8 @@ class NuevaOrden extends Component {
                       id="prio"
                       placeholder="with a placeholder"
                       onChange={this.changePrioridad}
+                      required
+                      invalid={this.state.confirmError}
                     >
                       <option value="1">1</option>
                       <option value="2">2</option>
@@ -244,6 +232,7 @@ class NuevaOrden extends Component {
                       placeholder="Numero"
                       value={this.state.cajas}
                       onChange={this.cajasChange}
+                      required
                     />
                   </FormGroup>
                 </Col>
@@ -256,6 +245,8 @@ class NuevaOrden extends Component {
                       id="kg_sol"
                       placeholder="Numero"
                       value={this.state.kg + " kg"}
+                      required
+                      disabled
                     />
                   </FormGroup>
                 </Col>
@@ -270,6 +261,8 @@ class NuevaOrden extends Component {
                       value={
                         Math.round(this.state.tiempo * 100) / 100 + " hrs"
                       }
+                      required
+                      disabled
                     />
                   </FormGroup>
                 </Col>
@@ -282,11 +275,12 @@ class NuevaOrden extends Component {
                       id="tiempo"
                       value={this.state.fecha}
                       onChange={this.fechaChange}
+                      required
                     />
                   </FormGroup>
                 </Col>
                 <Col md="3">
-                  <Button className="buttonOrange" size="lg" block>
+                  <Button className="buttonOrange" style={{ height: '45%' }} block>
                     Generar Orden
                   </Button>
                 </Col>
@@ -294,9 +288,9 @@ class NuevaOrden extends Component {
             </Col>
           </Row>
         </Form>
-        {this.state.confirmCreate === true ? (
-          <Alert color="success" className="mb-0">
-            <a className="alert-link">¡La orden ha sido creada exitosamente!</a>
+        {this.state.confirmCreate === true || this.state.confirmError === true ? (
+          <Alert color={this.state.messageState} className="mb-0">
+            <a className="alert-link">{this.state.message}</a>
           </Alert>
         ) : (
           ""
@@ -308,11 +302,6 @@ class NuevaOrden extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  id_orden: state.dashboardReducers.id_orden,
-});
-const mapDispatchToProps = dispatch => ({
-  setIdOrden: data => dispatch(setIdOrden(data)),
-});
-
+const mapStateToProps = (state) => ({});
+const mapDispatchToProps = dispatch => ({});
 export default connect(mapStateToProps, mapDispatchToProps)(NuevaOrden);

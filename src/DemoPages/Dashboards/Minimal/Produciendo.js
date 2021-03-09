@@ -43,38 +43,57 @@ const Produciendo = (props) => {
     }
 
     useEffect(() => {
-        setnOrden(props.ordenSelected.id_sub_orden)
-        setTiempoActivo(props.ordenSelected.tiempo_activo)
-        setTiempoInactivo(props.ordenSelected.tiempo_inactivo)
-        
-        setPerdidaEnvasado((props.ordenSelected.kg_formados - props.ordenSelected.kg_envasados) / props.ordenSelected.kg_formados)
-        setPerdidaEmpaquetadora((props.ordenSelected.kg_envasados - props.ordenSelected.real_kg) / props.ordenSelected.kg_envasados)
-        setPerdidaTotal((props.ordenSelected.kg_formados - props.ordenSelected.real_kg) / props.ordenSelected.kg_formados)
+        setnOrden(props.ordenSelected.id_sub_orden);
+        setPerdidaEnvasadoKg(props.ordenSelected.kg_formados - props.ordenSelected.kg_envasados);
+        setPerdidaEmpaquetadoraKg(props.ordenSelected.kg_envasados - props.ordenSelected.real_kg);
+        setPerdidaTotalKg(props.ordenSelected.kg_formados - props.ordenSelected.real_kg);
 
-        setPerdidaEnvasadoKg(props.ordenSelected.kg_formados - props.ordenSelected.kg_envasados)
-        setPerdidaEmpaquetadoraKg(props.ordenSelected.kg_envasados - props.ordenSelected.real_kg)
-        setPerdidaTotalKg(props.ordenSelected.kg_formados - props.ordenSelected.real_kg)
+        if (props.ordenSelected.id_estado !== 2){
+            setTiempoActivo(props.ordenSelected.tiempo_activo);
+            setTiempoInactivo(props.ordenSelected.tiempo_inactivo);
+            
+            setPerdidaEnvasado((props.ordenSelected.kg_formados - props.ordenSelected.kg_envasados) / props.ordenSelected.kg_formados);
+            setPerdidaEmpaquetadora((props.ordenSelected.kg_envasados - props.ordenSelected.real_kg) / props.ordenSelected.kg_envasados);
+            setPerdidaTotal((props.ordenSelected.kg_formados - props.ordenSelected.real_kg) / props.ordenSelected.kg_formados);
 
-        setDataTorta({
-            datasets: [{
-                data: [Math.round(0 / 60 * 100) / 100, Math.round(props.ordenSelected.tiempo_inactivo / 60 * 100) / 100, 
-                Math.round(0 / 60 * 100) / 100, Math.round(props.ordenSelected.tiempo_activo / 60 * 100) / 100]
-            }],
-        })
+            setDataTorta({
+                datasets: [{
+                    data: [Math.round(0 / 60 * 100) / 100, Math.round(props.ordenSelected.tiempo_inactivo / 60 * 100) / 100, 
+                    Math.round(0 / 60 * 100) / 100, Math.round(props.ordenSelected.tiempo_activo / 60 * 100) / 100]
+                }],
+            });
+        } else{
+            setTiempoActivo(0);
+            setTiempoInactivo(0);
+            
+            setPerdidaEnvasado(0);
+            setPerdidaEmpaquetadora(0);
+            setPerdidaTotal(0);
+
+            setDataTorta({
+                datasets: [{
+                    data: [0, 0, 0]
+                }],
+            })
+        }
     }, [props.ordenSelected]);
 
     useEffect(() => {
         /* Se actualizan las métricas globales */
-        setCalidad(props.ordenSelected.real_kg/props.ordenSelected.kg_formados * 100)
         setEficiencia((props.eficienciaFormadora+props.eficienciaEnvasadoras+props.eficienciaEmpaquetadora)/3);
         setDisponibilidad((props.disponibilidadFormadora+props.disponibilidadEnvasadoras+props.disponibilidadEmpaquetadora)/3)
+
+        if (props.ordenSelected.real_kg === 0 && props.ordenSelected.kg_formados === 0)
+            setCalidad(0);
+        else
+            setCalidad(props.ordenSelected.real_kg/props.ordenSelected.kg_formados * 100)
     }, [props.disponibilidadFormadora, props.disponibilidadEnvasadoras, props.disponibilidadEmpaquetadora,
         props.eficienciaFormadora, props.eficienciaEnvasadoras, props.eficienciaEmpaquetadora]);
 
     return (
         <div>
             <div className="title2Orange">
-                <Row className='sticky-row'>
+                <Row className='sticky-row my-1'>
                     <br />
                     <Col md="2">
                         <div align="left" className="text-uppercase font-weight-bold my-1 ml-4">{
@@ -91,7 +110,7 @@ const Produciendo = (props) => {
                     </Col>
                     <Col md="2">
                         <Row>
-                            <div align="left" className="font2 my-1">Sku:</div>
+                            <div align="left" className="font2 my-1">SKU:</div>
                             <div align="left" className="font3 my-1">{props.ordenSelected.sku}</div>
                         </Row>
                     </Col>
@@ -149,50 +168,56 @@ const Produciendo = (props) => {
                 <Row>
                     {/* Producción en cada máquina */}
                     <Col className="blueRow " md="3">
-                        <div className="whiteBorder">
-                            <Row className="mb-2">
+                        <div className="text-uppercase font-weight-bold mb-3 mt-4">Control de producción</div>
+                        <div className="whiteBorder"></div>
+
+                        <div className="">
+                            <Row className="my-2">
+                                <Col md="1"></Col>
                                 <Col md="3">
-                                    <div className=" ml-4 my-3  ">
+                                    <div className="ml-4 my-3  ">
                                         <img src={icono1} className="rounded float-left mb-2" alt="Balanza" />
                                     </div>
                                 </Col>
-                                <Col md="9">
-                                    <div align="center" className="bigFont mt-4">{props.formatNumber.new(_.round(props.ordenSelected.kg_formados))}</div>
+                                <Col md="8">
+                                    <div align="center" className="bigFont mt-3">{props.formatNumber.new(_.round(props.ordenSelected.kg_formados))}</div>
                                     <div align="center" className="littleFont">de {" " + props.formatNumber.new(_.round(props.ordenSelected.kg_solicitados)) + " "} Kgs</div>
                                 </Col>
 
                             </Row>
                         </div>
 
-                        <div className="whiteBorder">
-                            <Row className="mb-2" >
+                        <div className="">
+                            <Row className="my-2" >
+                                <Col md="1"></Col>
                                 <Col md="3">
-                                    <div className="ml-3 my-3 ">
+                                    <div className="ml-4 my-3 ">
                                         <img src={icono2} className="rounded float-left mb-2" alt="Empaque" />
                                     </div>
                                 </Col>
-                                <Col md="9">
-                                    <div align="center" className="bigFont mt-4">{props.formatNumber.new(_.round(props.ordenSelected.hamb_envasadas))}</div>
+                                <Col md="8">
+                                    <div align="center" className="bigFont mt-3">{props.formatNumber.new(_.round(props.ordenSelected.hamb_envasadas))}</div>
                                     <div align="center" className="littleFont">de {" " + props.formatNumber.new(_.round(props.ordenSelected.hamb_solicitadas)) + " "} Packs</div>
                                 </Col>
 
                             </Row>
                         </div>
+
                         <div className="">
-                            <Row className="mb-2">
+                            <Row className="my-2">
+                                <Col md="1"></Col>
                                 <Col md="3">
                                     <div className="ml-4 my-3 ">
                                         <img src={icono3} className="rounded float-left mb-3" alt="Caja" />
                                     </div>
                                 </Col>
-                                <Col md="9">
-                                    <div align="center" className="bigFont mt-4">{props.formatNumber.new(_.round(props.ordenSelected.cajas_acumuladas))}</div>
+                                <Col md="8">
+                                    <div align="center" className="bigFont mt-3">{props.formatNumber.new(_.round(props.ordenSelected.cajas_acumuladas))}</div>
                                     <div align="center" className="littleFont">de {" " + props.formatNumber.new(_.round(props.ordenSelected.cajas)) + " "} Cajas</div>
                                 </Col>
 
                             </Row>
                         </div>
-
                     </Col>
                     
                     {/* Gráficos de donas */}
@@ -203,7 +228,7 @@ const Produciendo = (props) => {
                                     <div className="circle">
                                         <Circle
                                             animate={true} // Boolean: Animated/Static progress
-                                            animationDuration="3s" // String: Length of animation
+                                            animationDuration="1s" // String: Length of animation
                                             responsive={true} // Boolean: Make SVG adapt to parent size
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
@@ -222,11 +247,12 @@ const Produciendo = (props) => {
                                         <div align="center" className="mt-2">Disponibilidad</div>
                                     </div>
                                 </Col>
+                                
                                 <Col md="5">
                                     <div className="circle">
                                         <Circle
                                             animate={true} // Boolean: Animated/Static progress
-                                            animationDuration="3s" // String: Length of animation
+                                            animationDuration="1s" // String: Length of animation
                                             responsive={true} // Boolean: Make SVG adapt to parent size
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
@@ -246,12 +272,13 @@ const Produciendo = (props) => {
                                     </div>
                                 </Col>
                             </Row>
+
                             <Row className="mt-4">
                                 <Col md="5">
                                     <div className="circle">
                                         <Circle
                                             animate={true} // Boolean: Animated/Static progress
-                                            animationDuration="3s" // String: Length of animation
+                                            animationDuration="1s" // String: Length of animation
                                             responsive={true} // Boolean: Make SVG adapt to parent size
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
@@ -270,11 +297,12 @@ const Produciendo = (props) => {
                                         <div align="center" className="mt-2">Calidad</div>
                                     </div>
                                 </Col>
+
                                 <Col md="5">
                                     <div className="circle">
                                         <Circle
                                             animate={true} // Boolean: Animated/Static progress
-                                            animationDuration="3s" // String: Length of animation
+                                            animationDuration="1s" // String: Length of animation
                                             responsive={true} // Boolean: Make SVG adapt to parent size
                                             size="100" // String: Defines the size of the circle.
                                             lineWidth="30" // String: Defines the thickness of the circle's stroke.
@@ -298,7 +326,7 @@ const Produciendo = (props) => {
                     </Col>
                     
                     {/* Gráfico de torta */}
-                    <Col md="3">
+                    <Col md="3" className="mb-3">
                         <div className="centralbodydetail" style={{ paddingBottom: '15px' }}>
                             <Doughnut
                                 data={dataTorta}
@@ -314,20 +342,22 @@ const Produciendo = (props) => {
                                 }} /></div>
                         <Row className="ml-5 mt-1">
                             <Brightness1Icon style={{ color: "#2264A7", marginRight: '1% !important' }} />
-                            Produciendo: {formatHour(TiempoActivo)}
+                            <div className="ml-2 mt-1">Produciendo: {formatHour(TiempoActivo)}</div>
                         </Row>
                         <Row className="ml-5">
                             <Brightness1Icon style={{ color: "#F7431E", marginRight: '1% !important' }} />
-                            En Paro: {formatHour(TiempoInactivo)}
+                            <div className="ml-2 mt-1">En Paro: {formatHour(TiempoInactivo)}</div>
                         </Row>
                     </Col>
                     {/* Control de pérdida */}
                     <Col className="blueRow" md="3">
-                        <div className="text-uppercase font-weight-bold my-3">Control de Pérdida</div>
-                        <div className="">
+                        <div className="text-uppercase font-weight-bold mb-3 mt-4">Control de Pérdida</div>
+                        <div className="whiteBorder"></div>
+
+                        <div className="my-3">
                             <Row className="mt-2 ml-2">
                                 <Col md="4" className="p-0">
-                                    <div className="circle pl-3 mt-1 ">
+                                    <div className="circle pl-5 mt-1 ">
                                         <Circle
                                             animate={true} // Boolean: Animated/Static progress
                                             animationDuration="3s" // String: Length of animation
@@ -364,10 +394,11 @@ const Produciendo = (props) => {
 
                             </Row>
                         </div>
-                        <div className="">
+
+                        <div className="my-4">
                             <Row className="mt-2 ml-2">
                                 <Col md="4" className="p-0">
-                                    <div className="circle pl-3 mt-1 ">
+                                    <div className="circle pl-5 mt-1 ">
                                         <Circle
                                             animate={true} // Boolean: Animated/Static progress
                                             animationDuration="3s" // String: Length of animation
@@ -404,10 +435,11 @@ const Produciendo = (props) => {
 
                             </Row>
                         </div>
-                        <div className="">
+
+                        <div className="my-3">
                             <Row className="mt-2 ml-2">
                                 <Col md="4" className="noSpace">
-                                    <div className="circle pl-3 mt-1 ">
+                                    <div className="circle pl-5 mt-1 ">
                                         <Circle
                                             animate={true} // Boolean: Animated/Static progress
                                             animationDuration="3s" // String: Length of animation

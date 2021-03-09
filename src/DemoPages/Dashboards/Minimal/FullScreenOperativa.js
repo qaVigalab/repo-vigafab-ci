@@ -268,7 +268,7 @@ function FullSceen() {
                 <div align="center" className="bigFontGreen mb-3 ">{formatNumber.new(_.round(ordenSelected.tiempo_retencion_iqf, 1))} Min</div>
 
                 <div align="center" className="littleFontGreen blackBorderTop pt-3 mb-1">Temp. Salida</div>
-                <div align="center" className="bigFontGreen mb-3 ">{/* formatNumber.new(_.round(TiempoRetencion, 2)) */} -18° C </div>
+                <div align="center" className="bigFontGreen mb-3 ">{formatNumber.new(_.round(ordenSelected.temp_salida, 2))}° C</div>
               </Card>
             </Col>
           </Row>

@@ -113,6 +113,20 @@ const TotalEnvasadoras = (props) => {
                 ],
                 }
             );
+        } else{
+            setDisponibilidad(0);
+            setEficiencia(0);
+            setTActivo(0);
+            setCantMaquinas(0);
+            setDataTorta(
+                {
+                datasets: [
+                    {
+                    data: [0, 0, 0]
+                    }
+                ],
+                }
+            );
         }
     }, [props.reportesSelected]);
 
@@ -143,11 +157,11 @@ const TotalEnvasadoras = (props) => {
                         <Row align="right">
                             <div className="font2 ml-4 my-4">Tiempo de Actividad: </div>
                             {parseInt(tActivo/60) == 1 ?
-                                <div className="font2Blue ml-1 my-4">
+                                <div className={props.ordenSelected.id_estado !== 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>
                                     {parseInt(tActivo/60)} hr,
                                     {" " + parseInt(tActivo%60)} min
                                 </div> :
-                                <div className="font2Blue ml-1 my-4">
+                                <div className={props.ordenSelected.id_estado !== 1 ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>
                                     {parseInt(tActivo/60)} hrs,
                                     {" " + parseInt((tActivo)%60)} min
                                 </div> 

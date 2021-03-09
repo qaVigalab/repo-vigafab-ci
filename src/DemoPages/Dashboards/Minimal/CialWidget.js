@@ -95,7 +95,7 @@ const CialWidget = (props) => {
     }
   );
 
-  const [reportes, setReportes] = useState(props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55')));
+  const [reportes, setReportes] = useState(props.reportesSelected);
   const [tActivo, setTActivo] = useState(0);
   const [disponibilidad, setDisponibilidad] = useState(0);
   const [eficiencia, setEficiencia] = useState(0);
@@ -103,11 +103,12 @@ const CialWidget = (props) => {
   const [kgEnvasados, setKgEnvasados] = useState(0);
   useEffect(() => {
     if (props.reportesSelected.length > 0){
-      var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55') && rep.id_tipo !== 4 && rep.hora_inicio !== rep.hora_termino);
+      var reportesSel;
 
-      if (props.id_vibot === 34828){
+      if (props.recambio === 1){
         reportesSel = props.reportesSelected;
       } else{
+        reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55') && rep.id_tipo !== 4 && rep.hora_inicio !== rep.hora_termino);
         /* Se descartan los reportes de paro al inicio para el cálculo de los indicadores */
         while (reportesSel.length > 1 && reportesSel[0].id_tipo === 1){
           reportesSel.splice(0,1);
@@ -156,13 +157,52 @@ const CialWidget = (props) => {
             ],
           }
       );
-      setReportes(props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55')));
+      if (props.recambio === 1)
+        setReportes(props.reportesSelected);
+      else
+        setReportes(props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55')));
+    } else{
+      setDisponibilidad(0);
+      setEficiencia(0);
+      setTActivo(0);
+      setHambEnvasadas(0);
+      setKgEnvasados(0);
+      setDataTorta(
+          {
+          datasets: [
+              {
+              data: [0, 0, 0]
+              }
+          ],
+          }
+      );
+      setReportes([]);
     }
   }, [props.reportesSelected]);
 
   useEffect(() => {
     if (reportes.length > 0)
       loadTimeLine();
+    else{
+      setSeriesTimeLine([{
+        data: [{
+            x: 'Prod',
+            y: [new Date().getTime(),
+            new Date().getTime()],
+            fillColor: '#2264A7'
+        }, {
+            x: 'Paro',
+            y: [new Date().getTime(),
+            new Date().getTime()],
+            fillColor: '#F7431E'
+        }, {
+            x: 'Cambio',
+            y: [new Date().getTime(),
+            new Date().getTime()],
+            fillColor: '#02c39a'
+        }]
+      }]);
+    }
   }, [reportes]);
 
   const loadTimeLine = () => {
@@ -247,13 +287,13 @@ const CialWidget = (props) => {
               <Row className="mt-2">
                 <Col align="right">
                   {reportes.length > 0 ?
-                    <div className={props.ordenSelected.id_estado != 1 || reportes.filter(rep => rep.id_tipo != 4)[reportes.filter(rep => rep.id_tipo != 4).length-1].id_tipo === 1 ? "font2gray my-1" : "font2Blue my-1"}>{
+                    <div className={props.ordenSelected.id_estado != 1 || reportes.filter(rep => rep.id_tipo != 4)[reportes.filter(rep => rep.id_tipo != 4).length-1].id_tipo === 1 ? "font2gray my-1 mr-1" : "font2Blue my-1 mr-1"}>{
                       props.ordenSelected.id_estado === 3 ? "Detenida"
                       : props.ordenSelected.id_estado === 2 ? "En espera"
                       : reportes.filter(rep => rep.id_tipo != 4)[reportes.filter(rep => rep.id_tipo != 4).length-1].id_tipo === 1 ? "Detenida"
                       : "Produciendo"
                     }</div> :
-                    <div className={props.ordenSelected.id_estado != 1 ? "font2gray my-1" : "font2Blue my-1"}>{
+                    <div className={props.ordenSelected.id_estado != 1 ? "font2gray my-1 mr-1" : "font2Blue my-1 mr-1"}>{
                       props.ordenSelected.id_estado === 3 ? "Detenida"
                       : props.ordenSelected.id_estado === 2 ? "En espera"
                       : "Produciendo"
@@ -265,19 +305,19 @@ const CialWidget = (props) => {
               <Row>
                 <Col align="right">
                   {parseInt(tActivo/60) == 1 ?
-                      <div className="font2Blue">
-                          {parseInt(tActivo/60)} hr,
-                          {" " + parseInt(tActivo%60)} min
+                      <div className={props.ordenSelected.id_estado !== 1 ? "font2gray mr-1" : "font2Blue mr-1"}>
+                        {parseInt(tActivo/60)} hr,
+                        {" " + parseInt(tActivo%60)} min
                       </div> :
-                      <div className="font2Blue">
-                          {parseInt(tActivo/60)} hrs,
-                          {" " + parseInt(tActivo%60)} min
+                      <div className={props.ordenSelected.id_estado !== 1 ? "font2gray mr-1" : "font2Blue mr-1"}>
+                        {parseInt(tActivo/60)} hrs,
+                        {" " + parseInt(tActivo%60)} min
                       </div> 
                   }
                 </Col>
               </Row>
 
-              <Row className="mr-1">
+              <Row>
                 <Col align="right">
                   <div className="mr-1">Tiempo de Actividad</div>
                 </Col>

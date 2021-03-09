@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { Col, Row, Label, Spinner, Alert } from "reactstrap";
+import { Col, Row, Label, Spinner, Alert, Button } from "reactstrap";
 
 import DatePicker from "react-datepicker";
 import { connect } from "react-redux";
@@ -14,42 +14,23 @@ const GenerarExcel = (props) => {
   const [loading, setLoading] = useState(false);
   const [dateError, setDateError] = useState(false);
   const [dateErrorMsg, setDateErrorMsg] = useState("");
-  const [startDate, setStartDate] = useState(new Date(moment().add(-7, 'days').format('YYYY-MM-DD')));
+  const [startDate, setStartDate] = useState(new Date(moment().add(-6, 'days').format('YYYY-MM-DD')));
   const [endDate, setEndDate] = useState(new Date(moment().add(0, 'days').format('YYYY-MM-DD')));
-  const [titulos, setTitulos] = useState(["FORMADORA", "ENVASADORA 4", "ENVASADORA 5", "ENVASADORA 6", "EMPAQUETADORA"]);
+  const [titulos, setTitulos] = useState(["FORMADORA", "ENVASADORA 6", "ENVASADORA 5", "ENVASADORA 4", "EMPAQUETADORA"]);
 
   const handleChange3 = (date) =>{
-    if (date > endDate){
-      setStartDate(endDate);
+    if (date > new Date(moment().add(-6, 'days').format('YYYY-MM-DD'))){
       setDateError(true);
-      setDateErrorMsg("No es posible seleccionar una fecha de inicio posterior a la de término.");
+      setDateErrorMsg("No es posible seleccionar una fecha de inicio dentro de los últimos 7 días.");
   
       setTimeout(() => {
         setDateError(false);
       }, 3000);
     } else {
       setStartDate(date);
+      setEndDate(new Date(moment(date).add(7, 'days').format('YYYY-MM-DD')));
       setLoading(true);
   
-      setTimeout(() => {
-        setLoading(false);
-      }, 1500);
-    }
-  }
-
-  const handleChange4= (date) => {
-    if (date > new Date(moment().format('YYYY-MM-DD'))){
-      setEndDate(endDate);
-      setDateError(true);
-      setDateErrorMsg("No es posible seleccionar una fecha con órdenes en espera.");
-  
-      setTimeout(() => {
-        setDateError(false);
-      }, 3000);
-    } else {
-      setEndDate(date);
-      setLoading(true);
-
       setTimeout(() => {
         setLoading(false);
       }, 1500);
@@ -143,123 +124,122 @@ const GenerarExcel = (props) => {
       }
 
       /* Se obtienen los indicadores de Disponibilidad, Eficiencia, Kg Producidos, Kg Solicitados y % de Cumplimiento para cada Máquina */
-      var Indicadores = {};
-      for (var i=0; i<ordenes.length; i++){
-        if (ordenes[i].fecha.split("T")[0] in Indicadores){
-          if ([ordenes[i].maquina] in Indicadores[ordenes[i].fecha.split("T")[0]]){
-            if (ordenes[i].tipo_reporte === 1){
-              Indicadores[ordenes[i].fecha.split("T")[0]][ordenes[i].maquina].tiempoInactivo += ordenes[i].minutos;
-              Indicadores[ordenes[i].fecha.split("T")[0]][ordenes[i].maquina].kgSolic += ordenes[i].kg_solic;
-            } else{
-              Indicadores[ordenes[i].fecha.split("T")[0]][ordenes[i].maquina].tiempoActivo += ordenes[i].minutos;
-              Indicadores[ordenes[i].fecha.split("T")[0]][ordenes[i].maquina].cantOrdenes += 1;
-            }
+      var Indicadores = {}
+      for (i=0; i<ordenes.length; i++){
+        var fecha = ordenes[i].fecha.split("T")[0];
+        if (fecha in Indicadores){
+          if (ordenes[i].maquina in Indicadores[fecha]){
+            if (ordenes[i].sub_orden in Indicadores[fecha][ordenes[i].maquina]){
+              Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].kgProd += ordenes[i].kg_prod;
+              Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].eficiencia += ordenes[i].eficiencia;
+              Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].disponibilidad += _.round(ordenes[i].minutos/(ordenes[i].minutos + Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].tiempoInactivo), 2);
+              delete Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].tiempoInactivo;
 
-            Indicadores[ordenes[i].fecha.split("T")[0]][ordenes[i].maquina].kgProd += ordenes[i].kg_prod;
-            Indicadores[ordenes[i].fecha.split("T")[0]][ordenes[i].maquina].eficiencia += ordenes[i].eficiencia;
-          } else{
-            if (ordenes[i].tipo_reporte === 1){
-              Indicadores[ordenes[i].fecha.split("T")[0]][ordenes[i].maquina] = {
+              Indicadores[fecha][ordenes[i].maquina]["Total"].kgProdTotal += ordenes[i].kg_prod;
+              Indicadores[fecha][ordenes[i].maquina]["Total"].kgSolicTotal += ordenes[i].kg_solic;
+            } else{
+              Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden] = {
                 tiempoInactivo: ordenes[i].minutos,
-                tiempoActivo: 0,
-
                 kgSolic: ordenes[i].kg_solic,
-                kgProd: ordenes[i].kg_prod,
-                eficiencia: ordenes[i].eficiencia,
-                cantOrdenes: 0
-              }
-            } else{
-              Indicadores[ordenes[i].fecha.split("T")[0]][ordenes[i].maquina] = {
-                tiempoInactivo: 0,
-                tiempoActivo: ordenes[i].minutos,
 
-                kgSolic: ordenes[i].kg_solic,
-                kgProd: ordenes[i].kg_prod,
-                eficiencia: ordenes[i].eficiencia,
-                cantOrdenes: 0
-              }
-            }
-          }
-        } else{
-          Indicadores[ordenes[i].fecha.split("T")[0]] = {};
-
-          if (ordenes[i].tipo_reporte === 1){
-            Indicadores[ordenes[i].fecha.split("T")[0]][ordenes[i].maquina] = {
-              tiempoInactivo: ordenes[i].minutos,
-              tiempoActivo: 0,
-
-              kgSolic: ordenes[i].kg_solic,
-              kgProd: ordenes[i].kg_prod,
-              eficiencia: ordenes[i].eficiencia,
-              cantOrdenes: 0
+                kgProd: 0,
+                eficiencia: 0,
+                disponibilidad: 0
+              };
             }
           } else{
-            Indicadores[ordenes[i].fecha.split("T")[0]][ordenes[i].maquina] = {
-              tiempoInactivo: 0,
-              tiempoActivo: ordenes[i].minutos,
+            Indicadores[fecha][ordenes[i].maquina] = {};
+            Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden] = {
+              tiempoInactivo: ordenes[i].minutos,
 
               kgSolic: ordenes[i].kg_solic,
-              kgProd: ordenes[i].kg_prod,
-              eficiencia: ordenes[i].eficiencia,
-              cantOrdenes: 0
+              kgProd: 0,
+              eficiencia: 0,
+              disponibilidad: 0
+            };
+
+            Indicadores[fecha][ordenes[i].maquina]["Total"] = {
+              kgSolicTotal: 0,
+              kgProdTotal: 0,
+
+              cantParos: 0,
+              minPerdidos: 0,
+
+              disponibilidad: 0,
+              eficiencia: 0
             };
           }
+        } else{
+          Indicadores[fecha] = {};
+          Indicadores[fecha][ordenes[i].maquina] = {};
+          Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden] = {
+            tiempoInactivo: ordenes[i].minutos,
+
+            kgSolic: ordenes[i].kg_solic,
+            kgProd: 0,
+            eficiencia: 0,
+            disponibilidad: 0
+          };
+
+          Indicadores[fecha][ordenes[i].maquina]["Total"] = {
+            kgSolicTotal: 0,
+            kgProdTotal: 0,
+
+            cantParos: 0,
+            minPerdidos: 0,
+
+            disponibilidad: 0,
+            eficiencia: 0
+          };
         }
       }
 
       Object.keys(Indicadores).map((fecha, i) => {
-        Object.keys(Indicadores[fecha]).map((maq, i) => {
-          Indicadores[fecha][maq].disponibilidad = _.round(Indicadores[fecha][maq].tiempoActivo/(Indicadores[fecha][maq].tiempoActivo + Indicadores[fecha][maq].tiempoInactivo), 2);
-          Indicadores[fecha][maq].eficiencia = _.round(Indicadores[fecha][maq].eficiencia/Indicadores[fecha][maq].cantOrdenes, 2);
+        Object.keys(Indicadores[fecha]).map((maq, j) => {
+          Object.keys(Indicadores[fecha][maq]).map((sub_ord, k) => {
+            if (sub_ord !== "Total"){
+              Indicadores[fecha][maq]["Total"].disponibilidad += Indicadores[fecha][maq][sub_ord].disponibilidad * Indicadores[fecha][maq][sub_ord].kgProd / Indicadores[fecha][maq]["Total"].kgProdTotal;
+              Indicadores[fecha][maq]["Total"].eficiencia += Indicadores[fecha][maq][sub_ord].eficiencia * Indicadores[fecha][maq][sub_ord].kgProd / Indicadores[fecha][maq]["Total"].kgProdTotal;
+            }
+          });
 
-          Indicadores[fecha][maq].cantParos = PPM[fecha][maq].cantParos;
-          Indicadores[fecha][maq].minPerdidos = PPM[fecha][maq].minPerdidos;
+          Indicadores[fecha][maq]["Total"].disponibilidad = _.round(Indicadores[fecha][maq]["Total"].disponibilidad, 2);
+          Indicadores[fecha][maq]["Total"].eficiencia = _.round(Indicadores[fecha][maq]["Total"].eficiencia, 2);
+        });
+      });
 
-          if (maq.includes("Envasadora"))
-            Indicadores[fecha][maq].cumplimiento = _.round(Indicadores[fecha][maq].kgProd/(Indicadores[fecha][maq].kgSolic/3), 2);
-          else
-            Indicadores[fecha][maq].cumplimiento = _.round(Indicadores[fecha][maq].kgProd/Indicadores[fecha][maq].kgSolic, 2);
+      Object.keys(Indicadores).map((fecha, i) => {
+        Object.keys(Indicadores[fecha]).map((maq, j) => {
+          Object.keys(Indicadores[fecha][maq]).map((sub_ord, k) => {
+            if (PPM[fecha][maq] != undefined){
+              Indicadores[fecha][maq]["Total"].cantParos = PPM[fecha][maq].cantParos;
+              Indicadores[fecha][maq]["Total"].minPerdidos = PPM[fecha][maq].minPerdidos;
+            } else{
+              Indicadores[fecha][maq]["Total"].cantParos = 0;
+              Indicadores[fecha][maq]["Total"].minPerdidos = 0;
+            }
 
-          delete Indicadores[fecha][maq].cantOrdenes
+            if (maq.includes("Envasadora"))
+              Indicadores[fecha][maq]["Total"].cumplimiento = _.round(Indicadores[fecha][maq]["Total"].kgProdTotal/(Indicadores[fecha][maq]["Total"].kgSolicTotal/3), 2);
+            else
+              Indicadores[fecha][maq]["Total"].cumplimiento = _.round(Indicadores[fecha][maq]["Total"].kgProdTotal/Indicadores[fecha][maq]["Total"].kgSolicTotal, 2);
+          });
         });
       });
 
       /* Se calculan los indicadores de Disponibilidad, Calidad y Eficiencia para la OEE */
       Object.keys(Indicadores).map((fecha, i) => {
-        Object.keys(Indicadores[fecha]).map((maq, i) => {
-          if ("OEE" in Indicadores[fecha]){
-            Indicadores[fecha]["OEE"].disponibilidad += Indicadores[fecha][maq].disponibilidad;
-            Indicadores[fecha]["OEE"].eficiencia += Indicadores[fecha][maq].eficiencia;
-
-            Indicadores[fecha]["OEE"].cantMaquinas += 1;
-          } else{
-            Indicadores[fecha]["OEE"] = {
-              disponibilidad: Indicadores[fecha][maq].disponibilidad,
-              calidad: _.round(Indicadores[fecha]["Empaquetadora"].kgProd / Indicadores[fecha]["Formadora"].kgProd, 2),
-              eficiencia: Indicadores[fecha][maq].eficiencia,
-              cantMaquinas: 1
-            }
-          }
-        });
+        Indicadores[fecha]["OEE"] = {};
+        Indicadores[fecha]["OEE"].disponibilidad = _.round((Indicadores[fecha]["Formadora"]["Total"].disponibilidad + Indicadores[fecha]["Empaquetadora"]["Total"].disponibilidad)/2, 2);
+        Indicadores[fecha]["OEE"].eficiencia = _.round((Indicadores[fecha]["Formadora"]["Total"].eficiencia + Indicadores[fecha]["Empaquetadora"]["Total"].eficiencia)/2, 2);
+        Indicadores[fecha]["OEE"].calidad = _.round(Indicadores[fecha]["Empaquetadora"]["Total"].kgProdTotal/Indicadores[fecha]["Formadora"]["Total"].kgProdTotal, 2);
+        
+        Indicadores[fecha]["OEE"].OEE = _.round(Indicadores[fecha]["OEE"].disponibilidad * Indicadores[fecha]["OEE"].eficiencia * Indicadores[fecha]["OEE"].calidad, 2);
+        Indicadores[fecha]["Formadora"]["Total"].formado = Indicadores[fecha]["Formadora"]["Total"].kgProdTotal - Indicadores[fecha]["Envasadora 4"]["Total"].kgProdTotal - Indicadores[fecha]["Envasadora 5"]["Total"].kgProdTotal - Indicadores[fecha]["Envasadora 6"]["Total"].kgProdTotal;
+        Indicadores[fecha]["Empaquetadora"]["Total"].deformes = Indicadores[fecha]["Envasadora 4"]["Total"].kgProdTotal + Indicadores[fecha]["Envasadora 5"]["Total"].kgProdTotal + Indicadores[fecha]["Envasadora 6"]["Total"].kgProdTotal - Indicadores[fecha]["Empaquetadora"]["Total"].kgProdTotal;
       });
 
-      Object.keys(Indicadores).map((fecha, i) => {
-        Object.keys(Indicadores[fecha]).map((maq, i) => {
-          if (maq === "OEE"){
-            Indicadores[fecha][maq].disponibilidad = _.round(Indicadores[fecha][maq].disponibilidad / Indicadores[fecha][maq].cantMaquinas, 2);
-            Indicadores[fecha][maq].eficiencia = _.round(Indicadores[fecha][maq].eficiencia / Indicadores[fecha][maq].cantMaquinas, 2);
-            Indicadores[fecha][maq].OEE = _.round(Indicadores[fecha][maq].disponibilidad * Indicadores[fecha][maq].eficiencia * Indicadores[fecha][maq].calidad, 2)
-
-            delete Indicadores[fecha][maq].cantMaquinas;
-          }
-          else if (maq === "Formadora"){
-            Indicadores[fecha][maq].formado = Indicadores[fecha][maq].kgProd - Indicadores[fecha]["Envasadora 4"].kgProd - Indicadores[fecha]["Envasadora 5"].kgProd - Indicadores[fecha]["Envasadora 6"].kgProd;
-          }
-          else if (maq === "Empaquetadora"){
-            Indicadores[fecha][maq].deformes = Indicadores[fecha]["Envasadora 4"].kgProd + Indicadores[fecha]["Envasadora 5"].kgProd + Indicadores[fecha]["Envasadora 6"].kgProd - Indicadores[fecha][maq].kgProd;
-          }
-        });
-      });
+      console.log(Indicadores);
 
       /* Se obtiene la cantidad total de Paros y Minutos Perdidos según Categoría y Máquinas */
       var justifCantParos = {}, justifCantMinutos = {}, tiempoDetMaq = {};
@@ -290,8 +270,8 @@ const GenerarExcel = (props) => {
 
   useEffect(() => {
     if (Object.keys(indicadores).length > 0 && loading === true){
+      print('Reporte Semanal ' + moment(startDate).format('DD-MM-YY') + "_" + moment(endDate).format('DD-MM-YY'), 'reporteSemanal');
       setLoading(false);
-      print('Reporte Semanal ' + moment(startDate).format('DD-MM-YYYY') + "_" + moment(endDate).format('DD-MM-YYYY'), 'reporteSemanal');
     }
   }, [indicadores]);
 
@@ -305,8 +285,8 @@ const GenerarExcel = (props) => {
       <hr />
       <Row>
         <Row>
-          <Col md="3" className="ml-2" align="right">
-            <Label className="mt-2">Seleccione fechas:</Label>
+          <Col md="4" className="ml-2" align="right">
+            <Label className="mt-2">Seleccione rango de fechas:</Label>
           </Col>
 
           <Col md="3">
@@ -314,7 +294,7 @@ const GenerarExcel = (props) => {
               className="form-control"
               selected={startDate}
               onChange={(cambio) => {handleChange3(cambio);}}
-              selectsStart
+              dateFormat="dd/MM/yyyy"
               startDate={startDate}
               endDate={endDate}
             />
@@ -324,21 +304,31 @@ const GenerarExcel = (props) => {
             <DatePicker
               className="form-control"
               selected={endDate}
-              onChange={(cambio) => {handleChange4(cambio);}}
-              selectsEnd
+              dateFormat="dd/MM/yyyy"
               startDate={startDate}
               endDate={endDate}
               minDate={startDate}
+              disabled
             />
           </Col>
 
           <Col>{
             loading === true ?
               <Spinner animation="border" variant="info" />
-            : <button className="btn btn-lg btn-primary" onClick={loadData}>Descargar</button>
+            : 
+              <Button 
+                block
+                className="buttonGray"
+                style={{ height: '100%', backgroundColor: '#2264A7', borderColor: '#2264A7' }}
+                onClick={loadData}
+              >
+                Descargar
+              </Button>
           }</Col>
         </Row>
       </Row>
+
+      {/* REPORTE */}
       <Row style={{ display: 'none' }}>
         <Preview id={'reporteSemanal'}>
           <Row style={{ backgroundColor: '#2264A7', borderBottom: '0.5px solid #13395E' }}>
@@ -449,48 +439,48 @@ const GenerarExcel = (props) => {
                         </Row>
 
                         <Row style={{ fontStyle: 'italic', fontSize: '0.075rem' }}>
-                          <div className="ml-4 mt-1">{_.round(indicadores[fecha][maq].disponibilidad * 100, 0)} %</div>
+                          <div className="ml-4 mt-1">{_.round(indicadores[fecha][maq]["Total"].disponibilidad * 100, 0)} %</div>
                         </Row>
                         <Row style={{ fontStyle: 'italic', fontSize: '0.075rem' }}>
-                          <div className="ml-4 mt-1">{_.round(indicadores[fecha][maq].eficiencia * 100, 0)} %</div>
+                          <div className="ml-4 mt-1">{_.round(indicadores[fecha][maq]["Total"].eficiencia * 100, 0)} %</div>
                         </Row>
                         <Row style={{ fontStyle: 'italic', fontSize: '0.075rem' }}>
-                          <div className="ml-4 mt-1">{props.formatNumber.new(_.round(indicadores[fecha][maq].cantParos, 0))}</div>
+                          <div className="ml-4 mt-1">{props.formatNumber.new(_.round(indicadores[fecha][maq]["Total"].cantParos, 0))}</div>
                         </Row>
                         <Row style={{ fontStyle: 'italic', fontSize: '0.075rem' }}>
-                          <div className="ml-4 mt-1">{props.formatNumber.new(_.round(indicadores[fecha][maq].minPerdidos, 0))}</div>
+                          <div className="ml-4 mt-1">{props.formatNumber.new(_.round(indicadores[fecha][maq]["Total"].minPerdidos, 0))}</div>
                         </Row>
                         <Row style={{ fontStyle: 'italic', fontSize: '0.075rem' }}>
-                          <div className="ml-4 mt-1">{props.formatNumber.new(_.round(indicadores[fecha][maq].kgProd, 0))} kg</div>
+                          <div className="ml-4 mt-1">{props.formatNumber.new(_.round(indicadores[fecha][maq]["Total"].kgProdTotal, 0))} kg</div>
                         </Row>
 
                         {maq.includes("Envasadora") ? 
                           <Row style={{ fontStyle: 'italic', fontSize: '0.075rem' }}>
-                            <div className="ml-4 mt-1">{props.formatNumber.new(_.round(indicadores[fecha][maq].kgSolic/3, 0))} kg</div>
+                            <div className="ml-4 mt-1">{props.formatNumber.new(_.round(indicadores[fecha][maq]["Total"].kgSolicTotal/3, 0))} kg</div>
                           </Row>
                         :
                         <Row style={{ fontStyle: 'italic', fontSize: '0.075rem' }}>
-                          <div className="ml-4 mt-1">{props.formatNumber.new(_.round(indicadores[fecha][maq].kgSolic, 0))} kg</div>
+                          <div className="ml-4 mt-1">{props.formatNumber.new(_.round(indicadores[fecha][maq]["Total"].kgSolicTotal, 0))} kg</div>
                         </Row>
                         }
 
                         {maq.includes("Envasadora") ? 
                           <Row style={{ fontStyle: 'italic', fontSize: '0.075rem' }}>
-                            <div className="ml-4 mt-1 mb-1">{_.round(indicadores[fecha][maq].cumplimiento * 100, 0)} %</div>
+                            <div className="ml-4 mt-1 mb-1">{_.round(indicadores[fecha][maq]["Total"].cumplimiento * 100, 0)} %</div>
                           </Row>
                         :
                           <Row style={{ fontStyle: 'italic', fontSize: '0.075rem' }}>
-                            <div className="ml-4 mt-1">{_.round(indicadores[fecha][maq].cumplimiento * 100, 0)} %</div>
+                            <div className="ml-4 mt-1">{_.round(indicadores[fecha][maq]["Total"].cumplimiento * 100, 0)} %</div>
                           </Row>
                         }
 
                         {maq === "Formadora" ?
                           <Row style={{ fontStyle: 'italic', fontSize: '0.075rem', fontWeight: 'bold' }}>
-                            <div className="ml-4 mt-1 mb-1">{props.formatNumber.new(_.round(indicadores[fecha][maq].formado, 0))} kg</div>
+                            <div className="ml-4 mt-1 mb-1">{props.formatNumber.new(_.round(indicadores[fecha][maq]["Total"].formado, 0))} kg</div>
                           </Row>
                         : (maq === "Empaquetadora" ?
                           <Row style={{ fontStyle: 'italic', fontSize: '0.075rem', fontWeight: 'bold' }}>
-                            <div className="ml-4 mt-1 mb-1">{props.formatNumber.new(_.round(indicadores[fecha][maq].deformes, 0))} kg</div>
+                            <div className="ml-4 mt-1 mb-1">{props.formatNumber.new(_.round(indicadores[fecha][maq]["Total"].deformes, 0))} kg</div>
                           </Row>
                         : ""
                         )}

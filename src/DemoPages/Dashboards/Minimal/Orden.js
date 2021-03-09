@@ -22,6 +22,7 @@ const Orden = (props) => {
   const [producto, setProducto] = useState("");
   const [ordenes, setOrdenes] = useState([]);
   const [prioridad, setPrioridad] = useState("");
+  const [idSubOrden, setIdSubOrden] = useState(props.ordenSelected.id_sub_orden);
   const [fechaOrdenes, setFechaOrdenes] = useState(props.fechaOrdenes);
 
   /* Permite borrar una orden seleccionada */
@@ -37,31 +38,42 @@ const Orden = (props) => {
         id: id_sub,
       }),
     })
-    .then(response => {})
+    .then(response => {response.json()})
+    .then((response) => {
+      setModal(!modal);
+      setConfirmDelete(true);
+      props.updateOrden("", false);
+
+      setTimeout(() => {
+        setConfirmDelete(false);
+      }, 3000);
+    })
     .catch((err) => {
       console.error(err);
     });
-
-    setModal(!modal);
-    setConfirmDelete(true);
-    props.updateOrden("");
-
-    setTimeout(() => {
-      setConfirmDelete(false);
-    }, 3000);
   };
 
   /* Permite actualizar la orden actual por una nueva orden seleccionada */
-  const verOrden = (e, id_orden) => {
+  const verOrden = (e, id_orden, is_button) => {
     e.preventDefault();
 
-    //props.setIdOrden(!props.id_orden)
-    props.updateOrden(id_orden);
+    if (is_button)
+      props.updateOrden(id_orden, false);
+    else {
+      if (id_orden !== idSubOrden)
+      props.updateOrden(id_orden, true);
+      else
+        props.updateOrden(id_orden, false);
+    }
+    setIdSubOrden(id_orden);
   }
+
+  useEffect(() => {}, [idSubOrden]);
 
   /* Permite actualizar la orden seleccionada en este componente visual */
   const [modal, setModal] = useState(false);
   const toggle = (cajas, sku, producto) => {
+    setChangeHours(false);
     setCajas(cajas);
     setSku(sku);
     setProducto(producto);
@@ -69,19 +81,9 @@ const Orden = (props) => {
   };
 
   /* Permite editar una orden seleccionada del listado */
-  const [modalEdit, setModalEdit] = useState(false);
-  const [productos, setProductos] = useState([]);
-  const [nombre, setNombre] = useState("");
-  const [kg, setKg] = useState(0);
-  const [tiempo, setTiempo] = useState(0);
-  const [existeSku, setExisteSku] = useState(false);
-  const [fechaEdit, setFechaEdit] = useState("");
-  const [confirmEdit, setConfirmEdit] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(false);
-
   const toggleEdit = (prioridad, sku, producto, cajas, kg, tiempo, fecha_sub) => {
+    setChangeHours(false);
     changeSku({target: {value: sku}});
-
     setPrioridad(prioridad);
     setSku(sku);
     setNombre(producto);
@@ -89,10 +91,20 @@ const Orden = (props) => {
     setKg(kg);
     setTiempo(tiempo);
     setFechaEdit(fecha_sub);
-
-    console.log(productos.find((p) => p.sku.includes(sku)));
     setModalEdit(!modalEdit);
   };
+
+  const [modalEdit, setModalEdit] = useState(false);
+  const [productos, setProductos] = useState([]);
+  const [nombre, setNombre] = useState("");
+  const [kg, setKg] = useState(0);
+  const [tiempo, setTiempo] = useState(0);
+  const [existeSku, setExisteSku] = useState(false);
+  const [fechaEdit, setFechaEdit] = useState("");
+  const [editAlert, setEditAlert] = useState(false);
+  const [editMessage, setEditMessage] = useState("");
+  const [editState, setEditState] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const editOrden = (event) => {
     event.preventDefault();
@@ -116,14 +128,29 @@ const Orden = (props) => {
           }),
         }
       )
-      .then(response => {
-        console.log(response);
-        setConfirmEdit(true);
-        props.updateOrden(props.ordenSelected.id_sub_orden);
+      .then(response => response.json())
+      .then((response) => {
+        setEditMessage(response[0].message);
+        if (response[0].code === "AGRO001"){
+          setEditAlert(true);
+          setEditState("danger");
+          setEditMessage(response[0].message);
 
-        setTimeout(() => {
-          setConfirmEdit(false);
-        }, 3000);
+          setTimeout(() => {
+            setEditAlert(false);
+          }, 3000);
+        
+        } else{
+          setEditAlert(true);
+          setEditState("success");
+          setEditMessage(response[0].message);
+
+          props.updateOrden(props.ordenSelected.id_sub_orden, true);
+
+          setTimeout(() => {
+            setEditAlert(false);
+          }, 3000);
+        }
       })
       .catch((err) => {
         console.error(err);
@@ -178,6 +205,7 @@ const Orden = (props) => {
 
   /* Otras funciones de utilidad para el componente visual */
   const fechaChange = (e) => {
+    props.setModalLoading(true);
     var date = new Date(e.target.value);
     props.updateFecha(moment(date).add(1, 'days').format('YYYY-MM-DD'));
     setChangeHours(false);
@@ -189,9 +217,10 @@ const Orden = (props) => {
   }, [props.fechaOrdenes]);
 
   useEffect(() => {
+    setIdSubOrden(props.ordenSelected.id_sub_orden);
     setOrdenes(props.ordenes);
     const interval = setInterval(() => {
-      props.updateOrden(props.ordenSelected.id_sub_orden);
+      props.updateOrden(props.ordenSelected.id_sub_orden, false);
     }, 300000);
     return () => clearInterval(interval);
   }, [props.ordenSelected]);
@@ -288,7 +317,7 @@ const Orden = (props) => {
         "Envasadoras": "",
         "Empaquetadora": ""
       });
-      props.updateOrden(props.ordenSelected.id_sub_orden);
+      props.updateOrden(props.ordenSelected.id_sub_orden, true);
       setTimeout(() => {
         setChangeHours(false);
         setChangeDone(false);
@@ -338,15 +367,15 @@ const Orden = (props) => {
       ) : (
         ""
       )}
-      {confirmEdit === true ? (
-        <Alert color="success" className="mb-0">
-          <a className="alert-link">¡La orden ha sido editada satisfactoriamente!</a>
+      {editAlert === true ? (
+        <Alert color={editState} className="mb-0">
+          <a className="alert-link">{editMessage}</a>
         </Alert>
       ) : (
         ""
       )}
       {confirmDelete === true ? (
-        <Alert color="danger" className="mb-0">
+        <Alert color="success" className="mb-0">
           <a className="alert-link">¡La orden ha sido eliminada satisfactoriamente!</a>
         </Alert>
       ) : (
@@ -388,34 +417,34 @@ const Orden = (props) => {
           ) : (
               ordenes.map((orden, i) =>
                 orden.id_sub_orden ? (
-                  <tr key={i} onClick={(e) => verOrden(e, orden.id_sub_orden)}
+                  <tr key={i}
                     className={
                         orden.id_estado == 1 ? "orangeRow"
-                      : orden.id_sub_orden === props.ordenSelected.id_sub_orden ? "grayRow"
+                      : orden.id_sub_orden === idSubOrden ? "grayRow"
                       : "text-center"
                     }
                   >
-                    <td>{orden.prioridad}</td>
-                    <td>{orden.id_sub_orden}</td>
-                    <td>{orden.sku}</td>
-                    <td>{orden.producto}</td>
-                    <td>{props.formatNumber.new(orden.cajas)}</td>
-                    <td>
+                    <td onClick={(e) => verOrden(e, orden.id_sub_orden, false)}>{orden.prioridad}</td>
+                    <td onClick={(e) => verOrden(e, orden.id_sub_orden, false)}>{orden.id_sub_orden}</td>
+                    <td onClick={(e) => verOrden(e, orden.id_sub_orden, false)}>{orden.sku}</td>
+                    <td onClick={(e) => verOrden(e, orden.id_sub_orden, false)}>{orden.producto}</td>
+                    <td onClick={(e) => verOrden(e, orden.id_sub_orden, false)}>{props.formatNumber.new(orden.cajas)}</td>
+                    <td onClick={(e) => verOrden(e, orden.id_sub_orden, false)}>
                       {props.formatNumber.new(_.round(orden.productividad, 2)) + " ham/min"}
                     </td>
-                    <td>
+                    <td onClick={(e) => verOrden(e, orden.id_sub_orden, false)}>
                       {props.formatNumber.new(_.round(orden.tiempo_estimado, 2)) + " hrs"}
                     </td>
-                    <td>{props.formatNumber.new(parseInt(orden.kg_solicitados)) + " kg"}</td>
-                    <td>{props.formatNumber.new(parseInt(orden.real_kg)) + " kg"}</td>
-                    <td>
+                    <td onClick={(e) => verOrden(e, orden.id_sub_orden, false)}>{props.formatNumber.new(parseInt(orden.kg_solicitados)) + " kg"}</td>
+                    <td onClick={(e) => verOrden(e, orden.id_sub_orden, false)}>{props.formatNumber.new(parseInt(orden.real_kg)) + " kg"}</td>
+                    <td onClick={(e) => verOrden(e, orden.id_sub_orden, false)}>
                       {
                         orden.kg_porcentual == null ? "0 %"
                         : orden.kg_porcentual > 100 ? "100 %"
                         : props.formatNumber.new(_.round(orden.kg_porcentual, 2)) + " %"
                       }
                     </td>
-                    <td>
+                    <td onClick={(e) => verOrden(e, orden.id_sub_orden, false)}>
                       {orden.id_estado == 3 ? (
                         <CheckCircleIcon style={{ color: green[500] }} />
                       ) : (
@@ -423,7 +452,7 @@ const Orden = (props) => {
                       )}
                     </td>
                     {perfil == 1 || perfil == 2 ? (
-                      <td>
+                      <td onClick={(e) => verOrden(e, orden.id_sub_orden, true)}>
                         {orden.id_estado !== 3 ? (
                           <IconButton
                             aria-label="edit"
@@ -448,15 +477,24 @@ const Orden = (props) => {
                             >
                               <UpdateIcon />
                             </IconButton>
-                          : <IconButton disabled></IconButton>
+                          : <IconButton disabled>
+                              <EditIcon style={{ color: 'transparent' }} />
+                            </IconButton>
                         )}
-                        <IconButton
-                          aria-label="delete"
-                          style={orden.id_sub_orden === props.ordenSelected.id_sub_orden || orden.id_estado === 1 ? { color: "#ffebee" } : {}}
-                          onClick={() => toggle(orden.cajas, orden.sku, orden.producto)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
+                        {orden.id_estado === 2 ?
+                          <IconButton
+                            aria-label="delete"
+                            style={orden.id_sub_orden === props.ordenSelected.id_sub_orden || orden.id_estado === 1 ? { color: "#ffebee" } : {}}
+                            onClick={() => toggle(orden.cajas, orden.sku, orden.producto)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        :
+                          <IconButton disabled>
+                            <DeleteIcon style={{ color: 'transparent' }} />
+                          </IconButton>
+                        }
+                        
                       </td>
                     ) : (
                       ""
@@ -635,7 +673,7 @@ const Orden = (props) => {
           <Col md="auto">{"Editando orden N° " + props.ordenSelected.id_sub_orden + "."}</Col>
         </ModalHeader>
         <ModalBody>
-          <Container align="center">
+          <Container>
             <Form onSubmit={existeSku === false ? "" : editOrden}>
               <Row>
                 <Col md="12">
@@ -644,22 +682,16 @@ const Orden = (props) => {
                     <Col md="3">
                       <FormGroup>
                         <Label>SKU</Label>
-                        {existeSku === "false" ? (
-                          <Input invalid
-                            type="text"
-                            name="sku"
-                            id="sku"
-                            onChange={changeSku}
-                            placeholder="SKU"
-                          />
-                        ) : <Input
-                            type="text"
-                            name="sku"
-                            id="sku"
-                            onChange={changeSku}
-                            placeholder="SKU"
-                            value={sku}
-                          />}
+                        <Input
+                          type="text"
+                          name="sku"
+                          id="sku"
+                          onChange={changeSku}
+                          placeholder="SKU"
+                          value={sku}
+                          required
+                          invalid={!existeSku}
+                        />
                       </FormGroup>
                     </Col>
                     <Col md="5">
@@ -671,6 +703,8 @@ const Orden = (props) => {
                           id="prod"
                           value={nombre}
                           placeholder="Producto"
+                          required
+                          disabled
                         >
                         </Input>
                       </FormGroup>
@@ -686,12 +720,18 @@ const Orden = (props) => {
                           id="prio"
                           placeholder="with a placeholder"
                           onChange={changePrioridad}
+                          required
                         >
                           <option value="1">1</option>
                           <option value="2">2</option>
                           <option value="3">3</option>
                           <option value="4">4</option>
                           <option value="5">5</option>
+                          <option value="6">6</option>
+                          <option value="7">7</option>
+                          <option value="8">8</option>
+                          <option value="9">9</option>
+                          <option value="10">10</option>
                         </Input>
                       </FormGroup>
                     </Col>
@@ -715,6 +755,7 @@ const Orden = (props) => {
                           placeholder="Numero"
                           value={cajas}
                           onChange={cajasChange}
+                          required
                         />
                       </FormGroup>
                     </Col>
@@ -727,6 +768,8 @@ const Orden = (props) => {
                           id="kg_sol"
                           placeholder="Numero"
                           value={kg + " kg"}
+                          required
+                          disabled
                         />
                       </FormGroup>
                     </Col>
@@ -738,9 +781,9 @@ const Orden = (props) => {
                           name="tiempo"
                           id="tiempo"
                           placeholder="Hora"
-                          value={
-                            Math.round(tiempo * 100) / 100 + " hrs"
-                          }
+                          value={Math.round(tiempo * 100) / 100 + " hrs"}
+                          required
+                          disabled
                         />
                       </FormGroup>
                     </Col>
@@ -770,14 +813,18 @@ const Orden = (props) => {
                 </Col>
               </Row>
               <div><br></br></div>
-              <Row className="mt-4 pr-0">
+              <Row className="mt-4 pr-0" style={{ paddingBottom: '2%' }}>
                 <Col align="right" md={{ size: 4, offset: 2 }} sm="6" >
-                  <Button block className="buttonOrange2">
+                  <Button block className="buttonOrange2" style={{ height: '125%' }}>
                     Confirmar
                   </Button>
                 </Col>
                 <Col md="4" sm="6">
-                  <Button block className="buttonGray" onClick={() => toggleEdit(0, 0, 0, 0, 0, 0, 0)}>
+                  <Button 
+                    block
+                    className="buttonGray" 
+                    style={{ height: '125%', backgroundColor: '#2264A7', borderColor: '#2264A7' }}
+                    onClick={() => toggleEdit(0, 0, 0, 0, 0, 0, 0)}>
                     Cancelar
                   </Button>
                 </Col>

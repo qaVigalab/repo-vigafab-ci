@@ -7,7 +7,6 @@ import Circle from "react-circle";
 import ReactApexChart from "react-apexcharts";
 import "moment/locale/es";
 import _ from "lodash";
-import moment from 'moment';
 
 const Formadora2 = (props) => {
     var temperatura = [];
@@ -193,7 +192,6 @@ const Formadora2 = (props) => {
                 data: temperatura
             }]);
             setOptions3({ xaxis: { categories: fecha } });
-
         })
         .catch(err => {
             console.error(err);
@@ -246,13 +244,49 @@ const Formadora2 = (props) => {
                 }
             );
             setReportes(props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55')));
+        } else{
+            setDisponibilidad(0);
+            setEficiencia(0);
+            setTActivo(0);
+            setDataTorta(
+                {
+                datasets: [
+                    {
+                    data: [0, 0, 0]
+                    }
+                ],
+                }
+            );
+            setReportes([]);
         }
     }, [props.reportesSelected]);
 
     useEffect(() => {
         props.updateKPIs(2, disponibilidad, eficiencia);
-        if (reportes.length > 0)
+        if (reportes.length > 0){
+            loadGraphTemp();
             loadTimeLine();
+        }
+        else{
+            setSeriesTimeLine([{
+                data: [{
+                    x: 'Prod',
+                    y: [new Date().getTime(),
+                    new Date().getTime()],
+                    fillColor: '#2264A7'
+                }, {
+                    x: 'Paro',
+                    y: [new Date().getTime(),
+                    new Date().getTime()],
+                    fillColor: '#F7431E'
+                }, {
+                    x: 'Cambio',
+                    y: [new Date().getTime(),
+                    new Date().getTime()],
+                    fillColor: '#02c39a'
+                }]
+            }]);
+        }
     }, [reportes]);
 
     const loadTimeLine = () => {
@@ -299,7 +333,6 @@ const Formadora2 = (props) => {
         setSeriesTimeLine([{
             data: objetos
         }]);
-        loadGraphTemp();
     }
 
     return (
@@ -322,19 +355,23 @@ const Formadora2 = (props) => {
                                 : props.ordenSelected.id_estado === 2 ? "En espera"
                                 : "Produciendo"
                             }</div>
+                            
                             <div className="font2 ml-4 my-4">Tiempo de Actividad: </div>
                             {parseInt(tActivo/60) === 1 ?
-                                <div className="font2Blue ml-1 my-4">
+                                <div className={props.ordenSelected.id_estado !== 1 ? "font2gray ml-2 my-4" : "font2Blue ml-2 my-4"}>
                                     {parseInt(tActivo/60)} hr,
                                     {" " + parseInt(tActivo%60)} min
                                 </div> :
-                                <div className="font2Blue ml-1 my-4">
+                                <div className={props.ordenSelected.id_estado !== 1 ? "font2gray ml-2 my-4" : "font2Blue ml-2 my-4"}>
                                     {parseInt(tActivo/60)} hrs,
                                     {" " + parseInt(tActivo%60)} min
                                 </div> 
                             }
+
                             <div className="font2 ml-4 my-4">Productividad: </div>
-                            <div className="font2Blue ml-1 mr-5 my-4">{props.formatNumber.new(_.round(props.ordenSelected.hamb_formadas/tActivo)) + " ham/min"}</div>
+                            <div className={props.ordenSelected.id_estado !== 1 ? "font2gray ml-2 mr-5 my-4" : "font2Blue ml-2 mr-5 my-4"}>
+                                {tActivo === 0 ? 0 : props.formatNumber.new(_.round(props.ordenSelected.hamb_formadas/tActivo))} ham/min
+                            </div>
                         </Row>
                     </Col>
                 </Row>
@@ -354,7 +391,7 @@ const Formadora2 = (props) => {
 
                         <div className="blackBorderBot">
                             <Row className="" >
-                                <Col md="12">
+                                <Col md="12" style={{ textAlignLast: 'center' }}>
                                     <div align="center" className="indi mt-3">{props.formatNumber.new(_.round(props.ordenSelected.hamb_formadas))}</div>
                                     <div align="left" className="font2 mb-3">Hamburguesas formadas</div>
                                 </Col>

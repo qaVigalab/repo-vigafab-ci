@@ -3,7 +3,7 @@ import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 
 import moment from 'moment';
 import { connect } from "react-redux";
-import { Card, Col, Row } from "reactstrap";
+import { Card, Col, Row, Modal, ModalHeader, ModalBody, Spinner } from "reactstrap";
 
 import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
 import GenerarExcel from "./GenerarExcel";
@@ -102,6 +102,7 @@ const MinimalDashboard1 = () => {
   const [ordenes, setOrdenes] = useState([]);
   const [ordenSelected, setOrdenSelected] = useState({});
   const [fechaOrdenes, setFechaOrdenes] = useState(moment().format('YYYY-MM-DD'));
+  const [modalLoading, setModalLoading] = useState(false);
   const loadOrdenes = (id_orden) => {
     fetch(global.api.dashboard.getOrdenesResumen, {
       method: "POST",
@@ -138,13 +139,17 @@ const MinimalDashboard1 = () => {
   };
 
   /* Se cargan las órdenes del día, actualizando la variable que define a la orden seleccionada */
-  const updateOrden = (orden) => {
+  const updateOrden = (orden, modal) => {
+    setModalLoading(modal);
     loadOrdenes(orden);
   }
 
+  useEffect(() => {}, [modalLoading]);
+
   /* Se actualiza la fecha de las órdenes a cargar desde el componente Orden */
   const updateFecha = (fecha) => {
-    setFechaOrdenes(fecha);
+    if (fechaOrdenes !== fecha)
+      setFechaOrdenes(fecha);
   }
 
   /* Se obtiene el listado de órdenes correspondiente a la fecha seleccionada */
@@ -159,7 +164,7 @@ const MinimalDashboard1 = () => {
   /* Se consulta a la API el detalle de los reportes por máquina de la orden en curso */
   const [reportesSelected, setReportesSelected] = useState([]);
   const loadReportes = () => {
-    const query = fetch(global.api.dashboard.getReportesByOrden, {
+    fetch(global.api.dashboard.getReportesByOrden, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -172,6 +177,13 @@ const MinimalDashboard1 = () => {
     .then((response) => response.json())
     .then((result) => {
       setReportesSelected(result);
+      if (result.length === 0)
+        setModalLoading(false);
+      else{
+        setTimeout(() => {
+          setModalLoading(false);
+        }, 3000);
+      }
     })
     .catch((err) => {
       console.error(err);
@@ -181,8 +193,10 @@ const MinimalDashboard1 = () => {
   /* Debug: Se imprime el listado de órdenes del día en curso y la orden seleccionada en el listado */
   /* Se actualiza el detalle de los reportes asociados a la orden seleccionada */
   useEffect(() => {
-    if (ordenSelected != {})
+    if (Object.keys(ordenSelected).length > 0)
       loadReportes();
+    else
+      setModalLoading(false);
   }, [ordenSelected]);
 
   /* Se crean las variables de estado que almacenarán la disponibildad y eficiencia de cada máquina */
@@ -245,7 +259,10 @@ const MinimalDashboard1 = () => {
             <Row>
               <Col md="12" xl="12">
                 <Card className="main-card mb-3">
-                  <NuevaOrden/>
+                  <NuevaOrden
+                    productos={productos}
+                    updateOrden={(id_orden, modal) => updateOrden(id_orden, modal)}
+                  />
                 </Card>
               </Col>
             </Row>
@@ -262,8 +279,9 @@ const MinimalDashboard1 = () => {
                   ordenes={ordenes}
                   ordenSelected={ordenSelected}
                   fechaOrdenes={fechaOrdenes}
-                  updateOrden={id_orden => updateOrden(id_orden)}
+                  updateOrden={(id_orden, modal) => updateOrden(id_orden, modal)}
                   updateFecha={fecha => updateFecha(fecha)}
+                  setModalLoading={modal => setModalLoading(modal)}
                 />
               </Card>
             </Col>
@@ -321,6 +339,7 @@ const MinimalDashboard1 = () => {
                     formatNumber={formatNumber}
                     nombre={maquina.maquina}
                     id_vibot={maquina.id}
+                    recambio={maquina.recambio}
                     ordenSelected={ordenSelected}
                     reportesSelected={reportesSelected.filter(reporte => reporte.id_vibot === maquina.id)}
                   />
@@ -381,6 +400,29 @@ const MinimalDashboard1 = () => {
           </Row>
         </ReactCSSTransitionGroup>
       </Fragment>
+
+      <Modal size="md" isOpen={modalLoading} style={{ marginTop: '15%' }}>
+        <ModalBody>
+          <Row className="mt-4 pr-0">
+            <Col md="4"></Col>
+            <Col md="4" style={{ textAlign: 'center' }}>
+            <Spinner type="grow" color="primary" />
+            <Spinner type="grow" color="primary" />
+            <Spinner type="grow" color="primary" />
+            </Col>
+            <Col md="4"></Col>
+          </Row>
+          <br></br>
+          <Row>
+            <Col md="3"></Col>
+            <Col md="6">
+              <div style={{ fontSize: '1rem', fontWeight: 400, display: 'flex', justifyContent: 'center' }}>Cargando reportes...</div>
+            </Col>
+            <Col md="3"></Col>
+          </Row>
+          <hr></hr>
+        </ModalBody>
+      </Modal>
     </div>
   );
 }
