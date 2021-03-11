@@ -103,12 +103,9 @@ const CialWidget = (props) => {
   const [kgEnvasados, setKgEnvasados] = useState(0);
   useEffect(() => {
     if (props.reportesSelected.length > 0){
-      var reportesSel;
+      var reportesSel = props.reportesSelected.filter(rep => rep.id_tipo !== 4);
 
-      if (props.recambio === 1){
-        reportesSel = props.reportesSelected;
-      } else{
-        reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55') && rep.id_tipo !== 4 && rep.hora_inicio !== rep.hora_termino);
+      if (props.recambio === 0){
         /* Se descartan los reportes de paro al inicio para el cálculo de los indicadores */
         while (reportesSel.length > 1 && reportesSel[0].id_tipo === 1){
           reportesSel.splice(0,1);
@@ -157,10 +154,7 @@ const CialWidget = (props) => {
             ],
           }
       );
-      if (props.recambio === 1)
-        setReportes(props.reportesSelected);
-      else
-        setReportes(props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55')));
+      setReportes(props.reportesSelected);
     } else{
       setDisponibilidad(0);
       setEficiencia(0);

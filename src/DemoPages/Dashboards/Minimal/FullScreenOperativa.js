@@ -262,13 +262,13 @@ function FullSceen() {
               <Card className="p-0 fullscreen-centerMaquina-op">
                 <div align="center" className="text-uppercase font-weight-bold title1orange2 mr-2 mt-2 mb-2">Iqf</div>
                 <div align="center" className="littleFontGreen blackBorderTop pt-3 mb-1">Temp. Entrada</div>
-                <div align="center" className="bigFontGreen mb-3">{formatNumber.new(_.round(ordenSelected.temp_entrada, 2))}° C</div>
+                <div align="center" className="bigFontGreen mb-3">{/*formatNumber.new(_.round(ordenSelected.temp_entrada, 2))*/}--° C</div>
 
                 <div align="center" className="littleFontGreen blackBorderTop pt-3 mb-1">Tiempo Retencion</div>
                 <div align="center" className="bigFontGreen mb-3 ">{formatNumber.new(_.round(ordenSelected.tiempo_retencion_iqf, 1))} Min</div>
 
                 <div align="center" className="littleFontGreen blackBorderTop pt-3 mb-1">Temp. Salida</div>
-                <div align="center" className="bigFontGreen mb-3 ">{formatNumber.new(_.round(ordenSelected.temp_salida, 2))}° C</div>
+                <div align="center" className="bigFontGreen mb-3 ">{/*formatNumber.new(_.round(ordenSelected.temp_salida, 2))*/}--° C</div>
               </Card>
             </Col>
           </Row>

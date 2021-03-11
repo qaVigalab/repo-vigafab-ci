@@ -198,13 +198,14 @@ const Formadora2 = (props) => {
         });
     }
 
-    const [reportes, setReportes] = useState(props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55')));
+    const [reportes, setReportes] = useState(props.reportesSelected);
     const [tActivo, setTActivo] = useState(0);
     const [disponibilidad, setDisponibilidad] = useState(0);
     const [eficiencia, setEficiencia] = useState(0);
     useEffect(() => {
         if (props.reportesSelected.length > 0){
-            var reportesSel = props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55') && rep.id_tipo !== 4 && rep.hora_inicio !== rep.hora_termino);
+            var reportesSel = props.reportesSelected.filter(rep => rep.id_tipo !== 4);
+            
             /* Se descartan los reportes de paro al inicio para el cálculo de los indicadores */
             while (reportesSel.length > 1 && reportesSel[0].id_tipo === 1){
                 reportesSel.splice(0,1);
@@ -243,7 +244,7 @@ const Formadora2 = (props) => {
                 ],
                 }
             );
-            setReportes(props.reportesSelected.filter(rep => !rep.hora_inicio.includes('05:55')));
+            setReportes(props.reportesSelected);
         } else{
             setDisponibilidad(0);
             setEficiencia(0);
