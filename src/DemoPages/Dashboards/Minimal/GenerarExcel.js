@@ -129,38 +129,27 @@ const GenerarExcel = (props) => {
         var fecha = ordenes[i].fecha.split("T")[0];
         if (fecha in Indicadores){
           if (ordenes[i].maquina in Indicadores[fecha]){
-            if (ordenes[i].sub_orden in Indicadores[fecha][ordenes[i].maquina]){
-              Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].kgProd += ordenes[i].kg_prod;
-              Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].eficiencia += ordenes[i].eficiencia;
-              Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].disponibilidad += _.round(ordenes[i].minutos/(ordenes[i].minutos + Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].tiempoInactivo), 2);
-              delete Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].tiempoInactivo;
+            Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden] = {
+              kgSolic: ordenes[i].kg_solic,
+              kgProd: ordenes[i].kg_prod,
+              eficiencia: ordenes[i].eficiencia,
+              disponibilidad: _.round(ordenes[i].minutos_activos/ordenes[i].minutos_totales, 2)
+            };
 
-              Indicadores[fecha][ordenes[i].maquina]["Total"].kgProdTotal += ordenes[i].kg_prod;
-              Indicadores[fecha][ordenes[i].maquina]["Total"].kgSolicTotal += ordenes[i].kg_solic;
-            } else{
-              Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden] = {
-                tiempoInactivo: ordenes[i].minutos,
-                kgSolic: ordenes[i].kg_solic,
-
-                kgProd: 0,
-                eficiencia: 0,
-                disponibilidad: 0
-              };
-            }
+            Indicadores[fecha][ordenes[i].maquina]["Total"].kgProdTotal += ordenes[i].kg_prod;
+            Indicadores[fecha][ordenes[i].maquina]["Total"].kgSolicTotal += ordenes[i].kg_solic;
           } else{
             Indicadores[fecha][ordenes[i].maquina] = {};
             Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden] = {
-              tiempoInactivo: ordenes[i].minutos,
-
               kgSolic: ordenes[i].kg_solic,
-              kgProd: 0,
-              eficiencia: 0,
-              disponibilidad: 0
+              kgProd: ordenes[i].kg_prod,
+              eficiencia: ordenes[i].eficiencia,
+              disponibilidad: _.round(ordenes[i].minutos_activos/ordenes[i].minutos_totales, 2)
             };
 
             Indicadores[fecha][ordenes[i].maquina]["Total"] = {
-              kgSolicTotal: 0,
-              kgProdTotal: 0,
+              kgSolicTotal: ordenes[i].kg_solic,
+              kgProdTotal: ordenes[i].kg_prod,
 
               cantParos: 0,
               minPerdidos: 0,
@@ -173,17 +162,15 @@ const GenerarExcel = (props) => {
           Indicadores[fecha] = {};
           Indicadores[fecha][ordenes[i].maquina] = {};
           Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden] = {
-            tiempoInactivo: ordenes[i].minutos,
-
             kgSolic: ordenes[i].kg_solic,
-            kgProd: 0,
-            eficiencia: 0,
-            disponibilidad: 0
+            kgProd: ordenes[i].kg_prod,
+            eficiencia: ordenes[i].eficiencia,
+            disponibilidad: _.round(ordenes[i].minutos_activos/ordenes[i].minutos_totales, 2)
           };
 
           Indicadores[fecha][ordenes[i].maquina]["Total"] = {
-            kgSolicTotal: 0,
-            kgProdTotal: 0,
+            kgSolicTotal: ordenes[i].kg_solic,
+            kgProdTotal: ordenes[i].kg_prod,
 
             cantParos: 0,
             minPerdidos: 0,
@@ -490,7 +477,7 @@ const GenerarExcel = (props) => {
 
                   <Row style={{ backgroundColor: '#31869b', color: 'white', fontWeight: 'bold', fontSize: '0.15rem' }}>
                     <div className="ml-4 mt-1 mb-1" style={{ textAlign: 'center' }}>
-                      {props.formatNumber.new(_.round(indicadores[fecha]["Formadora"].formado + indicadores[fecha]["Empaquetadora"].deformes, 0))} kg
+                      {props.formatNumber.new(_.round(indicadores[fecha]["Formadora"]["Total"].formado + indicadores[fecha]["Empaquetadora"]["Total"].deformes, 0))} kg
                     </div>
                   </Row>
                 </Col>
