@@ -60,10 +60,14 @@ const Orden = (props) => {
     if (is_button)
       props.updateOrden(id_orden, false);
     else {
-      if (id_orden !== idSubOrden)
-      props.updateOrden(id_orden, true);
-      else
+      if (id_orden !== idSubOrden){
+        setChangeHours(false);
+        props.updateOrden(id_orden, true);
+      }
+      else{
+        setChangeHours(false);
         props.updateOrden(id_orden, false);
+      }
     }
     setIdSubOrden(id_orden);
   }
@@ -446,7 +450,7 @@ const Orden = (props) => {
                     </td>
                     <td onClick={(e) => verOrden(e, orden.id_sub_orden, false)}>
                       {orden.id_estado == 3 ? (
-                        <CheckCircleIcon style={{ color: green[500] }} />
+                        <CheckCircleIcon style={orden.id_sub_orden === idSubOrden || orden.id_estado === 1 ? { color: 'white' } : { color: green[500] }} />
                       ) : (
                         <RadioButtonUncheckedIcon />
                       )}
@@ -456,7 +460,7 @@ const Orden = (props) => {
                         {orden.id_estado !== 3 ? (
                           <IconButton
                             aria-label="edit"
-                            style={orden.id_sub_orden === props.ordenSelected.id_sub_orden || orden.id_estado === 1 ? { color: "#ffebee" } : {}}
+                            style={orden.id_sub_orden === idSubOrden || orden.id_estado === 1 ? { color: "#ffebee" } : {}}
                             onClick={() => toggleEdit(
                               orden.prioridad,
                               orden.sku, 
@@ -472,7 +476,7 @@ const Orden = (props) => {
                         ) : (orden.horarios_existen === 0 ?
                             <IconButton 
                               aria-label="edit"
-                              style={orden.id_sub_orden === props.ordenSelected.id_sub_orden || orden.id_estado === 1 ? { color: "#ffebee" } : {}}
+                              style={orden.id_sub_orden === idSubOrden || orden.id_estado === 1 ? { color: "#ffebee" } : {}}
                               onClick={() => setChangeHours(true)}
                             >
                               <UpdateIcon />
@@ -484,7 +488,7 @@ const Orden = (props) => {
                         {orden.id_estado === 2 ?
                           <IconButton
                             aria-label="delete"
-                            style={orden.id_sub_orden === props.ordenSelected.id_sub_orden || orden.id_estado === 1 ? { color: "#ffebee" } : {}}
+                            style={orden.id_sub_orden === idSubOrden || orden.id_estado === 1 ? { color: "#ffebee" } : {}}
                             onClick={() => toggle(orden.cajas, orden.sku, orden.producto)}
                           >
                             <DeleteIcon />
