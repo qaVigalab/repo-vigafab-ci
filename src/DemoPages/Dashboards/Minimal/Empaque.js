@@ -102,16 +102,7 @@ const Empaque = (props) => {
     const [eficiencia, setEficiencia] = useState(0);
     useEffect(() => {
         if (props.reportesSelected.length > 0){
-            var reportesSel = props.reportesSelected.filter(rep => rep.id_tipo !== 4);
-            /* Se descartan los reportes de paro al inicio para el cálculo de los indicadores */
-            while (reportesSel.length > 1 && reportesSel[0].id_tipo === 1){
-                reportesSel.splice(0,1);
-            }
-    
-            /* Se descartan los reportes de paro al final para el cálculo de los indicadores */
-            while (reportesSel.length > 1 && reportesSel[reportesSel.length-1].id_tipo === 1){
-                reportesSel.splice(-1,1);
-            }
+            var reportesSel = props.reportesSelected.filter(rep => rep.id_tipo !== 4 && !rep.hora_inicio.includes("05:55:"));
 
             var tiempo_activo = 0, tiempo_inactivo = 0;
             for (var i=0; i<reportesSel.length; i++){

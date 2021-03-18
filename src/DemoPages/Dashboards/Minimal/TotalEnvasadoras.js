@@ -60,19 +60,9 @@ const TotalEnvasadoras = (props) => {
         if (props.reportesSelected.length > 0){
             var t_activo = 0, t_inactivo = 0;
             for (var j=0; j<props.maquinas.length; j++){
-                var reportesSel = props.reportesSelected.filter(rep => rep.id_vibot === props.maquinas[j].id && rep.id_tipo !== 4);
+                var reportesSel = props.reportesSelected.filter(rep => rep.id_vibot === props.maquinas[j].id && rep.id_tipo !== 4 && !rep.hora_inicio.includes("05:55:"));
                 
                 if (props.maquinas[j].recambio !== 1){
-                    /* Se descartan los reportes de paro al inicio para el cálculo de los indicadores */
-                    while (reportesSel.length > 1 && reportesSel[0].id_tipo === 1){
-                        reportesSel.splice(0,1);
-                    }
-            
-                    /* Se descartan los reportes de paro al final para el cálculo de los indicadores */
-                    while (reportesSel.length > 1 && reportesSel[reportesSel.length-1].id_tipo === 1){
-                        reportesSel.splice(-1,1);
-                    }
-
                     for (var i=0; i<reportesSel.length; i++){
                         /* Se calculan los tiempos de actividad y paro */
                         if (reportesSel[i].id_tipo === 1 && props.maquinas[j].recambio === 0)
