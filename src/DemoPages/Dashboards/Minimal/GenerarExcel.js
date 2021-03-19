@@ -6,11 +6,12 @@ import DatePicker from "react-datepicker";
 import { connect } from "react-redux";
 import _ from "lodash";
 import moment from 'moment';
-import { Preview, print } from 'react-html2pdf';
-import html2canvas from 'html2canvas';
+import { Preview } from 'react-html2pdf';
 import { jsPDF } from "jspdf";
 import agrosuper from './images/logo-agrosuper.png';
 import vigalab from './images/logo-vigalab.png';
+import ParetoChart from 'pareto-chart';
+import html2canvas from 'html2canvas';
 
 const GenerarExcel = (props) => {
   const [ordenes, setOrdenes] = useState([]);
@@ -208,6 +209,25 @@ const GenerarExcel = (props) => {
         }
       }
 
+      for (i=0; i<ordenes.length; i++){
+        var fecha = ordenes[i].fecha.split("T")[0];
+        if (ordenes[i].id_tipo === 2){
+          if (ordenes[i].maquina === "Formadora"){
+            Indicadores[fecha]["Formadora"][ordenes[i].sub_orden].kgProd -= ordenes[i].reproceso_mezcladora;
+            Indicadores[fecha]["Formadora"]["Total"].kgProdTotal -= ordenes[i].reproceso_mezcladora;
+          } else if (ordenes[i].maquina.includes("Envasadora")){
+            Indicadores[fecha]["Formadora"][ordenes[i].sub_orden].kgProd -= ordenes[i].reproceso_mezcladora;
+            Indicadores[fecha]["Formadora"]["Total"].kgProdTotal -= ordenes[i].reproceso_mezcladora;
+
+            Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].kgProd -= ordenes[i].reproceso_mezcladora;
+            Indicadores[fecha][ordenes[i].maquina]["Total"].kgProdTotal -= ordenes[i].reproceso_mezcladora;
+          } else if (ordenes[i].maquina === "Empaquetadora"){
+            Indicadores[fecha]["Empaquetadora"][ordenes[i].sub_orden].kgProd += ordenes[i].cajas_fuera_linea*ordenes[i].kg_caja;
+            Indicadores[fecha]["Empaquetadora"]["Total"].kgProdTotal += ordenes[i].cajas_fuera_linea*ordenes[i].kg_caja;
+          }
+        }
+      }
+
       Object.keys(Indicadores).map((fecha, i) => {
         Object.keys(Indicadores[fecha]).map((maq, j) => {
           Object.keys(Indicadores[fecha][maq]).map((sub_ord, k) => {
@@ -303,20 +323,32 @@ const GenerarExcel = (props) => {
       for (var i=0; i<paros.length; i++){
         if (["Operativo", "Cambio de formato", "Desmonte del film", "Mantenimiento"].includes(paros[i].paro)){
           if (paros[i].paro in justifCantParos){
-            justifCantParos[paros[i].paro] += paros[i].cant_paros;
-            justifCantMinutos[paros[i].paro] += paros[i].min_perdidos;
+            justifCantParos[paros[i].paro].cantParos += paros[i].cant_paros;
+            justifCantMinutos[paros[i].paro].minPerdidos += paros[i].min_perdidos;
           } else{
-            justifCantParos[paros[i].paro] = paros[i].cant_paros;
-            justifCantMinutos[paros[i].paro] = paros[i].min_perdidos;
+            justifCantParos[paros[i].paro] = {
+              nombre: paros[i].paro,
+              cantParos: paros[i].cant_paros
+            };
+
+            justifCantMinutos[paros[i].paro] = {
+              nombre: paros[i].paro,
+              minPerdidos: paros[i].min_perdidos
+            };
           }
         }
 
         if (paros[i].maquina in tiempoDetMaq){
-          tiempoDetMaq[paros[i].maquina] += paros[i].min_perdidos;
+          tiempoDetMaq[paros[i].maquina].minPerdidos += paros[i].min_perdidos;
         } else{
-          tiempoDetMaq[paros[i].maquina] = paros[i].min_perdidos;
+          tiempoDetMaq[paros[i].maquina] = {
+            maquina: paros[i].maquina,
+            minPerdidos: paros[i].min_perdidos
+          };
         }
       }
+
+      console.log(tiempoDetMaq);
 
       setIndicadores(Indicadores);
       setCantParos(justifCantParos);
@@ -326,22 +358,36 @@ const GenerarExcel = (props) => {
   }, [ordenes]);
 
   useEffect(() => {
-    if (Object.keys(indicadores).length > 0 && loading === true){
-      const pdf = new jsPDF('p', 'mm', [279, 216]);
-      
-      pdf.html(document.getElementById('reporteSemanal'), {
-        callback: function () {
-          pdf.save('Reporte Semanal ' + moment(startDate).format('DD-MM-YY') + "_" + moment(endDate).format('DD-MM-YY') + '.pdf');
-        },
-        html2canvas: {
-            scale: 0.35, //this was my solution, you have to adjust to your size
-        },
-      });
+    if (Object.keys(detenciones).length > 0 && loading === true){
+      setTimeout(() => {
+        const pdf = new jsPDF('p', 'mm', [279, 216]);
+        pdf.html(document.getElementById('reporteSemanal'), {
+          callback: function () {
+              pdf.save('Reporte Semanal ' + moment(startDate).format('DD-MM-YY') + "_" + moment(endDate).format('DD-MM-YY') + '.pdf');
+          },
+          html2canvas: {
+              scale: 0.35, //this was my solution, you have to adjust to your size
+          },
+        });
 
-      //print('Reporte Semanal ' + moment(startDate).format('DD-MM-YY') + "_" + moment(endDate).format('DD-MM-YY'), 'reporteSemanal');
-      setLoading(false);
+        /*html2canvas(document.querySelector("#reporteSemanal")).then(canvas => {  
+          canvas.toBlob(function(blob){
+            var urlCreator = window.URL || window.webkitURL;
+            var imageUrl = urlCreator.createObjectURL(blob);
+            var img = new Image();
+            img.src = imageUrl;
+            img.onload = function(){
+                var pdf = new jsPDF('p','px',[img.height, img.width]);
+                pdf.addImage(img, 'png', 0, 0, img.width, img.height);
+                pdf.save('myPdf.pdf');
+            };
+          });
+        });*/
+
+        setLoading(false);
+      }, 3000);
     }
-  }, [indicadores]);
+  }, [detenciones]);
 
   return (
     <div>
@@ -408,7 +454,7 @@ const GenerarExcel = (props) => {
 
             <Col md="5" align="center">
               <Label className="ml-2 mb-4 font-weight-bold title1orange" style={{ color: '#FFF', fontSize: '0.75rem' }}>
-                REPORTE SEMANAL ONLINE<br></br>
+                REPORTE ONLINE - SEM. {moment(Object.keys(indicadores)[0]).week()}<br></br>
                 {"Desde el " + moment(startDate).format('DD-MMM') + " hasta el " + moment(endDate).format('DD-MMM')}
               </Label>
             </Col>
@@ -420,65 +466,65 @@ const GenerarExcel = (props) => {
             </Col>
           </Row>
 
-          <Row md="12" className="mt-1" style={{ marginLeft: '1%', marginTop: '2.5%', borderRadius: '5px' }}>
-            <Col md="2" style={{ borderTop: '1px solid #13395E', borderLeft: '1px solid #13395E', borderTopLeftRadius: '5px', borderBottom: '1px solid #13395E', borderBottomLeftRadius: '5px' }}>
-              <Row style={{ backgroundColor: '#31869b', color: 'white', fontWeight: 'bold', fontSize: '0.3rem', borderTopLeftRadius: '5px' }}>
+          <Row md="12" className="mt-2" style={{ marginLeft: '1%', borderRadius: '5px' }}>
+            <Col md="2" style={{ borderTopLeftRadius: '5px', borderBottomLeftRadius: '5px' }}>
+              <Row style={{ backgroundColor: '#31869b', color: 'white', fontWeight: 'bold', fontSize: '0.35rem', borderTopLeftRadius: '5px' }}>
                 <div className="ml-4 mt-1 mb-1" style={{ textAlign: 'center' }}>OEE</div>
               </Row>
 
-              <Row style={{ backgroundColor: '#538dd5', color: 'white', fontWeight: 'bold', fontSize: '0.3rem' }}>
+              <Row style={{ backgroundColor: '#538dd5', color: 'white', fontWeight: 'bold', fontSize: '0.35rem' }}>
                 <div className="ml-4 mt-1 mb-1" style={{ textAlign: 'center' }}>LÍNEA COMPLETA OEE</div>
               </Row>
-              <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+              <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                 <div className="ml-4 mt-1" style={{ textAlign: 'right' }}>Disponibilidad [%]</div>
               </Row>
-              <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+              <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                 <div className="ml-4 mt-1" style={{ textAlign: 'right' }}>Calidad [%]</div>
               </Row>
-              <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+              <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                 <div className="ml-4 mt-1 mb-1" style={{ textAlign: 'right' }}>Eficiencia [%]</div>
               </Row>
 
               {titulos.map((tit, i) => (
                 <div>
-                  <Row style={{ backgroundColor: '#538dd5', color: 'white', fontWeight: 'bold', fontSize: '0.3rem' }}>
+                  <Row style={{ backgroundColor: '#538dd5', color: 'white', fontWeight: 'bold', fontSize: '0.35rem' }}>
                     <div className="ml-4 mt-1 mb-1" style={{ textAlign: 'center' }}>{tit}</div>
                   </Row>
-                  <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                  <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                     <div className="ml-4 mt-1" style={{ textAlign: 'right' }}>Disponibilidad [%]</div>
                   </Row>
-                  <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                  <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                     <div className="ml-4 mt-1" style={{ textAlign: 'right' }}>Eficiencia [%]</div>
                   </Row>
-                  <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                  <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                     <div className="ml-4 mt-1" style={{ textAlign: 'right' }}>Cantidad de paros justificados</div>
                   </Row>
-                  <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
-                    <div className="ml-4 mt-1" style={{ textAlign: 'right' }}>Minutos perdidos justificados</div>
+                  <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
+                    <div className="ml-4 mt-1" style={{ textAlign: 'right' }}>Minutos perdidos</div>
                   </Row>
-                  <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                  <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                     <div className="ml-4 mt-1" style={{ textAlign: 'right' }}>Producción real [kg]</div>
                   </Row>
-                  <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                  <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                     <div className="ml-4 mt-1" style={{ textAlign: 'right' }}>Producción solicitada [kg]</div>
                   </Row>
 
                   {tit.includes("ENVASADORA ") ?
-                    <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                    <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                       <div className="ml-4 mt-1 mb-1" style={{ textAlign: 'right' }}>Cumplimiento [%]</div>
                     </Row>
                   :
-                    <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                    <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                       <div className="ml-4 mt-1" style={{ textAlign: 'right' }}>Cumplimiento [%]</div>
                     </Row>
                   }
 
                   {tit === "FORMADORA" ?
-                    <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                    <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                       <div className="ml-4 mt-1 mb-1" style={{ textAlign: 'right', fontWeight: 'bold' }}>Rechazo en envasado [kg]</div>
                     </Row>
                   : (tit === "EMPAQUETADORA" ?
-                    <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                    <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                       <div className="ml-4 mt-1 mb-1" style={{ textAlign: 'right', fontWeight: 'bold' }}>Rechazo en rayos X [kg]</div>
                     </Row>
                   : ""
@@ -486,7 +532,7 @@ const GenerarExcel = (props) => {
                 </div>
               ))}
 
-              <Row style={{ backgroundColor: '#31869b', color: 'white', fontWeight: 'bold', fontSize: '0.3rem', borderBottomLeftRadius: '5px' }}>
+              <Row style={{ backgroundColor: '#31869b', color: 'white', fontWeight: 'bold', fontSize: '0.35rem', borderBottomLeftRadius: '5px' }}>
                 <div className="ml-4 mt-1 mb-1" style={{ textAlign: 'center' }}>PÉRDIDA TOTAL [kg]</div>
               </Row>
             </Col>
@@ -494,12 +540,12 @@ const GenerarExcel = (props) => {
             {Object.keys(indicadores).length > 0 ?
               Object.keys(indicadores).map((fecha, i) => (
                 <Col md="1" style={fecha === "Semana" ?
-                  { borderTop: '1px solid #13395E', borderTopRightRadius: '5px', borderBottom: '1px solid #13395E', borderBottomRightRadius: '5px', borderRight: '1px solid #13395E' } :
-                  { borderTop: '1px solid #13395E', borderBottom: '1px solid #13395E' }
+                  { borderTopRightRadius: '5px', borderBottomRightRadius: '5px' } :
+                  {  }
                 }>
                   <Row style={fecha === "Semana" ?
-                    { backgroundColor: '#31869b', color: 'white', fontWeight: 'bold', fontSize: '0.3rem', borderTopRightRadius: '5px' } :
-                    { backgroundColor: '#31869b', color: 'white', fontWeight: 'bold', fontSize: '0.3rem' }
+                    { backgroundColor: '#31869b', color: 'white', fontWeight: 'bold', fontSize: '0.35rem', borderTopRightRadius: '5px' } :
+                    { backgroundColor: '#31869b', color: 'white', fontWeight: 'bold', fontSize: '0.35rem' }
                   }>
                     {fecha === "Semana" ?
                       <div className="ml-4 mt-1 mb-1">{"Sem. " + moment(Object.keys(indicadores)[0]).week()}</div> :
@@ -507,48 +553,48 @@ const GenerarExcel = (props) => {
                     }
                   </Row>
 
-                  <Row style={{ backgroundColor: '#538dd5', color: 'white', fontWeight: 'bold', fontSize: '0.3rem' }}>
+                  <Row style={{ backgroundColor: '#538dd5', color: 'white', fontWeight: 'bold', fontSize: '0.35rem' }}>
                     <div className="ml-4 mt-1 mb-1" style={{ textAlign: 'left' }}>{_.round(indicadores[fecha]["OEE"].OEE * 100, 0)} %</div>
                   </Row>
-                  <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                  <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                     <div className="ml-4 mt-1">{_.round(indicadores[fecha]["OEE"].disponibilidad * 100, 0)} %</div>
                   </Row>
-                  <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                  <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                     <div className="ml-4 mt-1">{_.round(indicadores[fecha]["OEE"].calidad * 100, 0)} %</div>
                   </Row>
-                  <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                  <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                     <div className="ml-4 mt-1 mb-1">{_.round(indicadores[fecha]["OEE"].eficiencia * 100, 0)} %</div>
                   </Row>
 
                   {Object.keys(indicadores[fecha]).map((maq, i) => (
                     maq !== "OEE" ?
                       <div>
-                        <Row style={{ backgroundColor: '#538dd5', color: 'white', fontWeight: 'bold', fontSize: '0.3rem' }}>
+                        <Row style={{ backgroundColor: '#538dd5', color: 'white', fontWeight: 'bold', fontSize: '0.35rem' }}>
                           {fecha === "Semana" ?
                             <div className="ml-4 mt-1 mb-1">{"Sem. " + moment(Object.keys(indicadores)[0]).week()}</div> :
                             <div className="ml-4 mt-1 mb-1" style={{ textAlign: 'center' }}>{moment(fecha).format('DD-MMM')}</div>
                           }
                         </Row>
 
-                        <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                        <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                           <div className="ml-4 mt-1">{_.round(indicadores[fecha][maq]["Total"].disponibilidad * 100, 0)} %</div>
                         </Row>
-                        <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                        <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                           <div className="ml-4 mt-1">{_.round(indicadores[fecha][maq]["Total"].eficiencia * 100, 0)} %</div>
                         </Row>
-                        <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                        <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                           {fecha === "Semana" ?
                             <div className="ml-4 mt-1">-</div> :
                             <div className="ml-4 mt-1">{props.formatNumber.new(_.round(indicadores[fecha][maq]["Total"].cantParos, 0))}</div>
                           }
                         </Row>
-                        <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                        <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                           {fecha === "Semana" ?
                             <div className="ml-4 mt-1">-</div> :
                             <div className="ml-4 mt-1">{props.formatNumber.new(_.round(indicadores[fecha][maq]["Total"].minPerdidos, 0))}</div>
                           }
                         </Row>
-                        <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                        <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                           {fecha === "Semana" ?
                             <div className="ml-4 mt-1">-</div> :
                             <div className="ml-4 mt-1">{props.formatNumber.new(_.round(indicadores[fecha][maq]["Total"].kgProdTotal, 0))} kg</div>
@@ -556,14 +602,14 @@ const GenerarExcel = (props) => {
                         </Row>
 
                         {maq.includes("Envasadora") ? 
-                          <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                          <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                             {fecha === "Semana" ?
                               <div className="ml-4 mt-1">-</div> :
                               <div className="ml-4 mt-1">{props.formatNumber.new(_.round(indicadores[fecha][maq]["Total"].kgSolicTotal/3, 0))} kg</div>
                             }
                           </Row>
                         :
-                        <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                        <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                           {fecha === "Semana" ?
                             <div className="ml-4 mt-1">-</div> :
                             <div className="ml-4 mt-1">{props.formatNumber.new(_.round(indicadores[fecha][maq]["Total"].kgSolicTotal, 0))} kg</div>
@@ -572,14 +618,14 @@ const GenerarExcel = (props) => {
                         }
 
                         {maq.includes("Envasadora") ? 
-                          <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                          <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                             {fecha === "Semana" ?
                               <div className="ml-4 mt-1 mb-1">-</div> :
                               <div className="ml-4 mt-1 mb-1">{_.round(indicadores[fecha][maq]["Total"].cumplimiento * 100, 0)} %</div>
                             }
                           </Row>
                         :
-                          <Row style={{ fontStyle: 'italic', fontSize: '0.25rem' }}>
+                          <Row style={{ fontStyle: 'italic', fontSize: '0.3rem' }}>
                             {fecha === "Semana" ?
                               <div className="ml-4 mt-1">-</div> :
                               <div className="ml-4 mt-1">{_.round(indicadores[fecha][maq]["Total"].cumplimiento * 100, 0)} %</div>
@@ -588,14 +634,14 @@ const GenerarExcel = (props) => {
                         }
 
                         {maq === "Formadora" ?
-                          <Row style={{ fontStyle: 'italic', fontSize: '0.25rem', fontWeight: 'bold' }}>
+                          <Row style={{ fontStyle: 'italic', fontSize: '0.3rem', fontWeight: 'bold' }}>
                             {fecha === "Semana" ?
                               <div className="ml-4 mt-1 mb-1">-</div> :
                               <div className="ml-4 mt-1 mb-1">{props.formatNumber.new(_.round(indicadores[fecha][maq]["Total"].formado, 0))} kg</div>
                             }
                           </Row>
                         : (maq === "Empaquetadora" ?
-                          <Row style={{ fontStyle: 'italic', fontSize: '0.25rem', fontWeight: 'bold' }}>
+                          <Row style={{ fontStyle: 'italic', fontSize: '0.3rem', fontWeight: 'bold' }}>
                             {fecha === "Semana" ?
                               <div className="ml-4 mt-1 mb-1">-</div> :
                               <div className="ml-4 mt-1 mb-1">{props.formatNumber.new(_.round(indicadores[fecha][maq]["Total"].deformes, 0))} kg</div>
@@ -608,8 +654,8 @@ const GenerarExcel = (props) => {
                   ))}
 
                   <Row style={fecha === "Semana" ?
-                    { backgroundColor: '#31869b', color: 'white', fontWeight: 'bold', fontSize: '0.3rem', borderBottomRightRadius: '5px' } :
-                    { backgroundColor: '#31869b', color: 'white', fontWeight: 'bold', fontSize: '0.3rem' }
+                    { backgroundColor: '#31869b', color: 'white', fontWeight: 'bold', fontSize: '0.35rem', borderBottomRightRadius: '5px' } :
+                    { backgroundColor: '#31869b', color: 'white', fontWeight: 'bold', fontSize: '0.35rem' }
                   }>
                     {fecha === "Semana" ?
                       <div className="ml-4 mt-1 mb-1">-</div> :
@@ -622,6 +668,153 @@ const GenerarExcel = (props) => {
               ))
               : ""
             }
+          </Row>
+          <br></br>
+          <Row md="12" style={{ backgroundColor: '#2264A7', borderBottom: '0.5px solid #13395E', marginTop: '0.9%' }}>
+            <Col md="2" align="center" style={{ alignSelf: 'center' }}>
+              <img src={agrosuper} alt="agrosuper"
+                style={{ width: '85%', marginLeft: '15%' }}
+              />
+            </Col>
+
+            <Col md="5" align="center">
+              <Label className="ml-2 mb-4 font-weight-bold title1orange" style={{ color: '#FFF', fontSize: '0.75rem' }}>
+                REPORTE ONLINE - SEM. {moment(Object.keys(indicadores)[0]).week()}<br></br>
+                {"Desde el " + moment(startDate).format('DD-MMM') + " hasta el " + moment(endDate).format('DD-MMM')}
+              </Label>
+            </Col>
+
+            <Col md="2" align="center" style={{ alignSelf: 'center' }}>
+              <img src={vigalab} alt="vigalab"
+                style={{ width: '115%', marginRight: '15%', marginBottom: '5%' }}
+              />
+            </Col>
+          </Row>
+          
+          <Row md="12" className="mt-2" style={{ marginLeft: '1%' }}>
+            <Col md="9">
+              <Row className="mt-2">
+                <Col>
+                  <Row>
+                    <Col md="1"></Col>
+                    <Col md="10" style={{ border: '1px solid #eaecef', borderRadius: '5px' }}>
+                      <Row style={{ color: 'black', fontWeight: 'bold', fontSize: '0.5rem', justifyContent: 'center' }}>
+                        <div className="ml-4 mt-2 mb-1" style={{ textAlign: 'center' }}>Cantidad de paros por justificación</div>
+                      </Row>
+
+                      <Row>
+                        {Object.values(cantParos).sort(function(a, b){return b.cantParos - a.cantParos}).map((justif, i) => (
+                          <Col md="3" className="mt-2" style={{ textAlign: '-webkit-center' }}>
+                            <div className="mb-1" style={{ fontSize: '0.3rem', textAlignLast: 'center', color: 'dimgrey' }}>
+                              {justif.nombre}
+                            </div>
+
+                            <div style={{
+                                  color: 'transparent',
+                                  backgroundColor: 'lightcoral',
+                                  height: 150*justif.cantParos/Object.values(cantParos).reduce((n, {cantParos}) => n + cantParos, 0) + 'px',
+                                  width: '50%',
+                                  border: '0.5px solid firebrick',
+                                  borderRadius: '5%',
+                                  marginTop: '2.5%'
+                                }}>
+                                  -
+                            </div>
+
+                            <div className="mb-2" style={{ fontSize: '0.25rem', textAlignLast: 'center', color: 'darkgrey', marginTop: '1%', fontWeight: 'bold' }}>
+                              {justif.cantParos}
+                            </div>
+                          </Col>
+                        ))}
+                      </Row>
+                    </Col>
+                    <Col md="1"></Col>
+                  </Row>
+                </Col>
+              </Row>
+              
+              <Row className="mt-4">
+                <Col>
+                  <Row>
+                    <Col md="1"></Col>
+                    <Col md="10" style={{ border: '1px solid #eaecef', borderRadius: '5px' }}>
+                      <Row style={{ color: 'black', fontWeight: 'bold', fontSize: '0.5rem', justifyContent: 'center' }}>
+                        <div className="ml-4 mt-1 mb-1" style={{ textAlign: 'center' }}>Minutos perdidos por justificación</div>
+                      </Row>
+
+                      <Row>
+                        {Object.values(minPerdidos).sort(function(a, b){return b.minPerdidos - a.minPerdidos}).map((justif, i) => (
+                          <Col md="3" className="mt-2" style={{ textAlign: '-webkit-center' }}>
+                            <div className="mb-1" style={{ fontSize: '0.3rem', textAlignLast: 'center', color: 'dimgrey' }}>
+                              {justif.nombre}
+                            </div>
+
+                            <div style={{
+                                  color: 'transparent',
+                                  backgroundColor: '#80e0f0',
+                                  height: 150*justif.minPerdidos/Object.values(minPerdidos).reduce((n, {minPerdidos}) => n + minPerdidos, 0) + 'px',
+                                  width: '50%',
+                                  border: '0.5px solid #2291b2',
+                                  borderRadius: '5%',
+                                  marginTop: '2.5%'
+                                }}>
+                                  -
+                            </div>
+
+                            <div className="mb-2" style={{ fontSize: '0.25rem', textAlignLast: 'center', color: 'darkgrey', marginTop: '1%', fontWeight: 'bold' }}>
+                              {justif.minPerdidos} min
+                            </div>
+                          </Col>
+                        ))}
+                      </Row>
+                    </Col>
+                    <Col md="1"></Col>
+                  </Row>
+                </Col>
+              </Row>
+              
+              <Row className="mt-4 mb-2">
+                <Col>
+                  <Row>
+                    <Col md="1"></Col>
+                    <Col md="10" style={{ border: '1px solid #eaecef', borderRadius: '5px' }}>
+                      <Row style={{ color: 'black', fontWeight: 'bold', fontSize: '0.5rem', justifyContent: 'center' }}>
+                        <div className="ml-4 mt-1 mb-1" style={{ textAlign: 'center' }}>Tiempo de detención por máquina</div>
+                      </Row>
+
+                      <Row>
+                        <Col md="1"></Col>
+                        {Object.values(detenciones).sort(function(a, b){return b.minPerdidos - a.minPerdidos}).map((justif, i) => (
+                          <Col md="2" className="mt-2" style={{ textAlign: '-webkit-center' }}>
+                            <div className="mb-1" style={{ fontSize: '0.3rem', textAlignLast: 'center', color: 'dimgrey' }}>
+                              {justif.maquina}
+                            </div>
+
+                            <div style={{
+                                  color: 'transparent',
+                                  backgroundColor: 'rgb(233 240 128)',
+                                  height: 150*justif.minPerdidos/Object.values(minPerdidos).reduce((n, {minPerdidos}) => n + minPerdidos, 0) + 'px',
+                                  width: '50%',
+                                  border: '0.5px solid rgb(178 167 34)',
+                                  borderRadius: '5%',
+                                  marginTop: '2.5%'
+                                }}>
+                                  -
+                            </div>
+
+                            <div className="mb-2" style={{ fontSize: '0.25rem', textAlignLast: 'center', color: 'darkgrey', marginTop: '1%', fontWeight: 'bold' }}>
+                              {justif.minPerdidos} min
+                            </div>
+                          </Col>
+                        ))}
+                        <Col md="1"></Col>
+                      </Row>
+                    </Col>
+                    <Col md="1"></Col>
+                  </Row>
+                </Col>
+              </Row>
+            </Col>
           </Row>
         </Preview>
       </Row>

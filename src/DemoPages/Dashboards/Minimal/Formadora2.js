@@ -375,7 +375,7 @@ const Formadora2 = (props) => {
                     <div className="noSpace">
                         <div className="blackBorderBot">
                             <Row className="my-4">
-                                <div align="center" className="ml-auto indi">{props.formatNumber.new(_.round(props.ordenSelected.kg_formados))}</div>
+                                <div align="center" className="ml-auto indi">{props.formatNumber.new(_.round(props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc))}</div>
                                 <div align="center" className="font2 mt-3 ml-2 mr-auto">Kg</div>
                             </Row>
                         </div>
@@ -383,7 +383,7 @@ const Formadora2 = (props) => {
                         <div className="blackBorderBot">
                             <Row className="" >
                                 <Col md="12" style={{ textAlignLast: 'center' }}>
-                                    <div align="center" className="indi mt-3">{props.formatNumber.new(_.round(props.ordenSelected.hamb_formadas))}</div>
+                                    <div align="center" className="indi mt-3">{props.formatNumber.new(_.round(props.ordenSelected.hamb_formadas - (props.ordenSelected.reproceso_env_mezc + props.ordenSelected.reproceso_rayos_mezc)*1000/props.ordenSelected.g_hamburguesa))}</div>
                                     <div align="left" className="font2 mb-3">Hamburguesas formadas</div>
                                 </Col>
                             </Row>

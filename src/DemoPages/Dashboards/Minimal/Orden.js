@@ -241,11 +241,18 @@ const Orden = (props) => {
     "Envasadoras": "",
     "Empaquetadora": ""
   });
+
   const [horasTermino, setHorasTermino] = useState({
     "Formadora": "",
     "Envasadoras": "",
     "Empaquetadora": ""
   });
+
+  const [reprEnvMezc, setReprEnvMezc] = useState(0);
+  const [reprEnvCamFr, setReprEnvCamFr] = useState(0);
+  const [reprRayMezc, setReprRayMezc] = useState(0);
+  const [reprRayCamFr, setReprRayCamFr] = useState(0);
+  const [cajasOutOfLine, setCajasOutOfLine] = useState(0);
 
   const changeStart = (e, maquina) => {
     if (maquina === "Formadora")
@@ -305,7 +312,12 @@ const Orden = (props) => {
           inicio_emp: horasInicio["Empaquetadora"],
           cierre_form: horasTermino["Formadora"],
           cierre_env: horasTermino["Envasadoras"],
-          cierre_emp: horasTermino["Empaquetadora"]
+          cierre_emp: horasTermino["Empaquetadora"],
+          repr_env_mezc: parseFloat(reprEnvMezc),
+          repr_env_camara: parseFloat(reprEnvCamFr),
+          repr_rayos_mezc: parseFloat(reprRayMezc),
+          repr_rayos_camara: parseFloat(reprRayCamFr),
+          cajas_fuera_linea: parseInt(cajasOutOfLine)
         }),
       }
     )
@@ -316,11 +328,13 @@ const Orden = (props) => {
         "Envasadoras": "",
         "Empaquetadora": ""
       });
+
       setHorasTermino({
         "Formadora": "",
         "Envasadoras": "",
         "Empaquetadora": ""
       });
+      
       props.updateOrden(props.ordenSelected.id_sub_orden, true);
       setTimeout(() => {
         setChangeHours(false);
@@ -336,7 +350,7 @@ const Orden = (props) => {
     console.log(changeHours);
   }, [changeHours]);
 
-  useEffect(() => {}, [horasInicio, horasTermino]);
+  useEffect(() => {}, [horasInicio, horasTermino, reprEnvMezc, reprEnvCamFr, reprRayMezc, reprRayCamFr, cajasOutOfLine]);
 
   return (
     <div>
@@ -513,149 +527,286 @@ const Orden = (props) => {
       </Table>
       <hr></hr>
       {changeHours === true ?
-        <Col>
-          <Row>
-            <Col align="left" md="1"></Col>
-            <Col align="left" md="4">
-              <div className="text-uppercase font-weight-bold title1orange ml-3">
-                Orden seleccionada: {props.ordenSelected.id_sub_orden}<br></br>
-                SKU: {props.ordenSelected.sku}
-              </div>
-            </Col>
-          </Row>
+        <Form>
+          <Col>
+            <Row>
+              <Col align="left" md="1"></Col>
+              <Col align="left" md="4">
+                <div className="text-uppercase font-weight-bold title1orange ml-3">
+                  Orden seleccionada: {props.ordenSelected.id_sub_orden}<br></br>
+                  SKU: {props.ordenSelected.sku}
+                </div>
+              </Col>
 
-          <Row className="mx-2 mb-3">
-            <Col md="1"></Col>
-            <Col md="10" className="my-3 mx-2">
-              <Form>
-                  <Row>
-                    <Col align="left" md="5">
-                      <div className="font-weight-bold ml-1 mt-2">Hora de Inicio:</div>
-                    </Col>
-                    <Col md="1"></Col>
+              <Col align="left" md="4"></Col>
+              <Col align="left" md="1">
+                <div className="text-uppercase font-weight-bold title1orange ml-3 mt-2">
+                  <Button className="buttonOrange" style={{ marginTop: '0px', marginBottom: '0px' }} onClick={updateHours}>
+                    Confirmar
+                  </Button>
+                </div>
+              </Col>
+            </Row>
 
-                    <Col align="left" md="5">
-                      <div className="font-weight-bold ml-1 mt-2">Hora de Término:</div>
-                    </Col>
+            <Row className="mx-2 mb-3">
+              <Col md="1"></Col>
+              <Col md="10" className="my-3 mx-2">
+                    <Row>
+                      <Col align="left" md="5">
+                        <div className="font-weight-bold ml-1 mt-2">Hora de Inicio:</div>
+                      </Col>
+                      <Col md="1"></Col>
 
-                    <Col align="left" md="1">
-                      <Button className="buttonOrange" style={{ marginTop: '0px', marginBottom: '0px' }} onClick={updateHours}>Confirmar</Button>
-                    </Col>
-                  </Row>
+                      <Col align="left" md="5">
+                        <div className="font-weight-bold ml-1 mt-2">Hora de Término:</div>
+                      </Col>
+                    </Row>
 
-                  <Row>
-                    <Col align="left" md="5">
-                      <hr></hr>
-                    </Col>
-                    <Col md="1"></Col>
+                    <Row>
+                      <Col align="left" md="5">
+                        <hr></hr>
+                      </Col>
+                      <Col md="1"></Col>
 
-                    <Col align="left" md="5">
-                      <hr></hr>
-                    </Col>
-                    <Col md="1"></Col>
-                  </Row>
+                      <Col align="left" md="5">
+                        <hr></hr>
+                      </Col>
+                      <Col md="1"></Col>
+                    </Row>
 
-                  <Row>
-                    <Col md="5">
-                      <Row>
-                        <Col md="3" className="ml-1">
-                          <FormGroup>
-                            <Label for="formStart">Formadora</Label>
-                            <Input
-                              style={{ textAlignLast: 'center', width: '105%' }}
-                              type="time"
-                              id="formStart"
-                              placeholder="--:--"
-                              defaultValue={horasInicio["Formadora"]}
-                              onChange={(e) => changeStart(e, "Formadora")}
-                            />
-                          </FormGroup>
-                        </Col>
+                    <Row>
+                      <Col md="5">
+                        <Row>
+                          <Col md="3" className="ml-1">
+                            <FormGroup>
+                              <Label for="formStart">Formadora</Label>
+                              <Input
+                                style={{ textAlignLast: 'center', width: '105%' }}
+                                type="time"
+                                id="formStart"
+                                placeholder="--:--"
+                                required
+                                defaultValue={horasInicio["Formadora"]}
+                                onChange={(e) => changeStart(e, "Formadora")}
+                              />
+                            </FormGroup>
+                          </Col>
 
-                        <Col md="3" className="ml-1">
-                          <FormGroup>
-                            <Label for="envStart">Envasadoras</Label>
-                            <Input
-                              style={{ textAlignLast: 'center', width: '105%' }}
-                              type="time"
-                              id="envStart"
-                              placeholder="--:--"
-                              defaultValue={horasInicio["Envasadoras"]}
-                              onChange={(e) => changeStart(e, "Envasadoras")}
-                            />
-                          </FormGroup>
-                        </Col>
+                          <Col md="3" className="ml-1">
+                            <FormGroup>
+                              <Label for="envStart">Envasadoras</Label>
+                              <Input
+                                style={{ textAlignLast: 'center', width: '105%' }}
+                                type="time"
+                                id="envStart"
+                                placeholder="--:--"
+                                required
+                                defaultValue={horasInicio["Envasadoras"]}
+                                onChange={(e) => changeStart(e, "Envasadoras")}
+                              />
+                            </FormGroup>
+                          </Col>
 
-                        <Col md="3" className="ml-1">
-                          <FormGroup>
-                            <Label for="empStart">Empaquetadora</Label>
-                            <Input
-                              style={{ textAlignLast: 'center', width: '105%' }}
-                              type="time"
-                              id="empStart"
-                              placeholder="--:--"
-                              defaultValue={horasInicio["Empaquetadora"]}
-                              onChange={(e) => changeStart(e, "Empaquetadora")}
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                    </Col>
+                          <Col md="3" className="ml-1">
+                            <FormGroup>
+                              <Label for="empStart">Empaquetadora</Label>
+                              <Input
+                                style={{ textAlignLast: 'center', width: '105%' }}
+                                type="time"
+                                id="empStart"
+                                placeholder="--:--"
+                                required
+                                defaultValue={horasInicio["Empaquetadora"]}
+                                onChange={(e) => changeStart(e, "Empaquetadora")}
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                      </Col>
 
-                    <Col md="1"></Col>
+                      <Col md="1"></Col>
+                      
+                      <Col md="5">
+                        <Row>
+                          <Col md="3" className="ml-1">
+                            <FormGroup>
+                              <Label for="formEnd">Formadora</Label>
+                              <Input
+                                style={{ textAlignLast: 'center', width: '105%' }}
+                                type="time"
+                                id="formEnd"
+                                placeholder="--:--"
+                                required
+                                defaultValue={horasTermino["Formadora"]}
+                                onChange={(e) => changeEnd(e, "Formadora")}
+                              />
+                            </FormGroup>
+                          </Col>
+
+                          <Col md="3" className="ml-1">
+                            <FormGroup>
+                              <Label for="envEnd">Envasadoras</Label>
+                              <Input
+                                style={{ textAlignLast: 'center', width: '105%' }}
+                                type="time"
+                                id="envEnd"
+                                placeholder="--:--"
+                                required
+                                defaultValue={horasTermino["Envasadoras"]}
+                                onChange={(e) => changeEnd(e, "Envasadoras")}
+                              />
+                            </FormGroup>
+                          </Col>
+
+                          <Col md="3" className="ml-1">
+                            <FormGroup>
+                              <Label for="empEnd">Empaquetadora</Label>
+                              <Input
+                                style={{ textAlignLast: 'center', width: '105%' }}
+                                type="time"
+                                id="empEnd"
+                                placeholder="--:--"
+                                required
+                                defaultValue={horasTermino["Empaquetadora"]}
+                                onChange={(e) => changeEnd(e, "Empaquetadora")}
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                      </Col>
+                    </Row>
+                    <br></br>
                     
-                    <Col md="5">
-                      <Row>
-                        <Col md="3" className="ml-1">
-                          <FormGroup>
-                            <Label for="formEnd">Formadora</Label>
-                            <Input
-                              style={{ textAlignLast: 'center', width: '105%' }}
-                              type="time"
-                              id="formEnd"
-                              placeholder="--:--"
-                              defaultValue={horasTermino["Formadora"]}
-                              onChange={(e) => changeEnd(e, "Formadora")}
-                            />
-                          </FormGroup>
-                        </Col>
+                    <Row>
+                      <Col md="1"></Col>
+                      <Col md="9">
+                        <hr></hr>
+                      </Col>
+                      <Col md="2"></Col>
+                    </Row>
 
-                        <Col md="3" className="ml-1">
-                          <FormGroup>
-                            <Label for="envEnd">Envasadoras</Label>
-                            <Input
-                              style={{ textAlignLast: 'center', width: '105%' }}
-                              type="time"
-                              id="envEnd"
-                              placeholder="--:--"
-                              defaultValue={horasTermino["Envasadoras"]}
-                              onChange={(e) => changeEnd(e, "Envasadoras")}
-                            />
-                          </FormGroup>
-                        </Col>
+                    <br></br>
+                    <Row>
+                      <Col align="left" md="4">
+                        <div className="font-weight-bold ml-1 mt-2">Reproceso de Envasado (en kg):</div>
+                      </Col>
 
-                        <Col md="3" className="ml-1">
-                          <FormGroup>
-                            <Label for="empEnd">Empaquetadora</Label>
-                            <Input
-                              style={{ textAlignLast: 'center', width: '105%' }}
-                              type="time"
-                              id="empEnd"
-                              placeholder="--:--"
-                              defaultValue={horasTermino["Empaquetadora"]}
-                              onChange={(e) => changeEnd(e, "Empaquetadora")}
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                    </Col>
-                  </Row>
-              </Form>
-            </Col>
-            <Col md="1"></Col>
-          </Row>
-          <hr></hr>
-        </Col>
+                      <Col align="left" md="4">
+                        <div className="font-weight-bold ml-1 mt-2">Reproceso de Rayos X (en kg):</div>
+                      </Col>
+
+                      <Col align="left" md="3">
+                        <div className="font-weight-bold ml-1 mt-2">Empaques fuera de línea:</div>
+                      </Col>
+
+                      <Col align="left" md="1"></Col>
+                    </Row>
+
+                    <Row>
+                      <Col align="left" md="4">
+                        <hr style={{ width: '75%', position: 'absolute' }}></hr>
+                      </Col>
+
+                      <Col align="left" md="4">
+                        <hr style={{ width: '75%', position: 'absolute' }}></hr>
+                      </Col>
+
+                      <Col align="left" md="3">
+                        <hr></hr>
+                      </Col>
+                      <Col md="1"></Col>
+                    </Row>
+
+                    <Row>
+                      <Col md="4">
+                        <Row>
+                          <Col md="4" className="ml-1">
+                            <FormGroup>
+                              <Label for="mezclEnv">Mezcladora</Label>
+                              <Input
+                                style={{ textAlignLast: 'center', width: '100%' }}
+                                type="number"
+                                id="mezclEnv"
+                                placeholder="0"
+                                required
+                                defaultValue={reprEnvMezc}
+                                onChange={(e) => setReprEnvMezc(e.target.value)}
+                              />
+                            </FormGroup>
+                          </Col>
+
+                          <Col md="5">
+                            <FormGroup>
+                              <Label for="camEnv">Cámara frigorífica</Label>
+                              <Input
+                                style={{ textAlignLast: 'center', width: '72.5%' }}
+                                type="number"
+                                id="camEnv"
+                                placeholder="0"
+                                required
+                                defaultValue={reprEnvCamFr}
+                                onChange={(e) => setReprEnvCamFr(e.target.value)}
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                      </Col>
+                      
+                      <Col md="4">
+                        <Row>
+                          <Col md="4" className="ml-1">
+                            <FormGroup>
+                              <Label for="mezclRay">Mezcladora</Label>
+                              <Input
+                                style={{ textAlignLast: 'center', width: '100%' }}
+                                type="number"
+                                id="mezclRay"
+                                placeholder="0"
+                                required
+                                defaultValue={reprRayMezc}
+                                onChange={(e) => setReprRayMezc(e.target.value)}
+                              />
+                            </FormGroup>
+                          </Col>
+
+                          <Col md="5">
+                            <FormGroup>
+                              <Label for="camRay">Cámara frigorífica</Label>
+                              <Input
+                                style={{ textAlignLast: 'center', width: '72.5%' }}
+                                type="number"
+                                id="camRay"
+                                placeholder="0"
+                                required
+                                defaultValue={reprRayCamFr}
+                                onChange={(e) => setReprRayCamFr(e.target.value)}
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                      </Col>
+
+                      <Col md="2" className="ml-1">
+                        <FormGroup>
+                          <Label for="cajasOut">Cajas</Label>
+                          <Input
+                            style={{ textAlignLast: 'center', width: '50%' }}
+                            type="number"
+                            id="cajasOut"
+                            placeholder="0"
+                            required
+                            defaultValue={cajasOutOfLine}
+                            onChange={(e) => setCajasOutOfLine(e.target.value)}
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+              </Col>
+              <Col md="1"></Col>
+            </Row>
+            <hr></hr>
+          </Col>
+        </Form>
       :
         ""
       }

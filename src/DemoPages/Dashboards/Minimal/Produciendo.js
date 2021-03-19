@@ -44,17 +44,17 @@ const Produciendo = (props) => {
 
     useEffect(() => {
         setnOrden(props.ordenSelected.id_sub_orden);
-        setPerdidaEnvasadoKg(props.ordenSelected.kg_formados - props.ordenSelected.kg_envasados);
-        setPerdidaEmpaquetadoraKg(props.ordenSelected.kg_envasados - props.ordenSelected.real_kg);
-        setPerdidaTotalKg(props.ordenSelected.kg_formados - props.ordenSelected.real_kg);
+        setPerdidaEnvasadoKg((props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc) - (props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc));
+        setPerdidaEmpaquetadoraKg((props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc) - (props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja));
+        setPerdidaTotalKg((props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc) - (props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja));
 
         if (props.ordenSelected.id_estado !== 2){
             setTiempoActivo(props.ordenSelected.tiempo_activo);
             setTiempoInactivo(props.ordenSelected.tiempo_inactivo);
             
-            setPerdidaEnvasado((props.ordenSelected.kg_formados - props.ordenSelected.kg_envasados) / props.ordenSelected.kg_formados);
-            setPerdidaEmpaquetadora((props.ordenSelected.kg_envasados - props.ordenSelected.real_kg) / props.ordenSelected.kg_envasados);
-            setPerdidaTotal((props.ordenSelected.kg_formados - props.ordenSelected.real_kg) / props.ordenSelected.kg_formados);
+            setPerdidaEnvasado(((props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc) - (props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc)) / (props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc));
+            setPerdidaEmpaquetadora(((props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc) - (props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja)) / (props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc));
+            setPerdidaTotal(((props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc) - (props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja)) / (props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc));
 
             setDataTorta({
                 datasets: [{
@@ -80,13 +80,13 @@ const Produciendo = (props) => {
 
     useEffect(() => {
         /* Se actualizan las métricas globales */
-        setEficiencia((props.eficienciaFormadora+props.eficienciaEnvasadoras+props.eficienciaEmpaquetadora)/3);
-        setDisponibilidad((props.disponibilidadFormadora+props.disponibilidadEnvasadoras+props.disponibilidadEmpaquetadora)/3)
+        setEficiencia((props.eficienciaFormadora/*+props.eficienciaEnvasadoras*/+props.eficienciaEmpaquetadora)/2);
+        setDisponibilidad((props.disponibilidadFormadora/*+props.disponibilidadEnvasadoras*/+props.disponibilidadEmpaquetadora)/2)
 
-        if (props.ordenSelected.real_kg === 0 && props.ordenSelected.kg_formados === 0)
+        if (isNaN((props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja)/(props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc)))
             setCalidad(0);
         else
-            setCalidad(props.ordenSelected.real_kg/props.ordenSelected.kg_formados * 100)
+            setCalidad((props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja)/(props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc) * 100)
     }, [props.disponibilidadFormadora, props.disponibilidadEnvasadoras, props.disponibilidadEmpaquetadora,
         props.eficienciaFormadora, props.eficienciaEnvasadoras, props.eficienciaEmpaquetadora]);
 
@@ -180,7 +180,7 @@ const Produciendo = (props) => {
                                     </div>
                                 </Col>
                                 <Col md="8">
-                                    <div align="center" className="bigFont mt-3">{props.formatNumber.new(_.round(props.ordenSelected.kg_formados))}</div>
+                                    <div align="center" className="bigFont mt-3">{props.formatNumber.new(_.round(props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc))}</div>
                                     <div align="center" className="littleFont">de {" " + props.formatNumber.new(_.round(props.ordenSelected.kg_solicitados)) + " "} Kgs</div>
                                 </Col>
 
@@ -196,7 +196,7 @@ const Produciendo = (props) => {
                                     </div>
                                 </Col>
                                 <Col md="8">
-                                    <div align="center" className="bigFont mt-3">{props.formatNumber.new(_.round(props.ordenSelected.hamb_envasadas))}</div>
+                                    <div align="center" className="bigFont mt-3">{props.formatNumber.new(_.round(props.ordenSelected.hamb_envasadas - props.ordenSelected.reproceso_rayos_mezc*1000/props.ordenSelected.g_hamburguesa))}</div>
                                     <div align="center" className="littleFont">de {" " + props.formatNumber.new(_.round(props.ordenSelected.hamb_solicitadas)) + " "} Packs</div>
                                 </Col>
 
@@ -212,7 +212,7 @@ const Produciendo = (props) => {
                                     </div>
                                 </Col>
                                 <Col md="8">
-                                    <div align="center" className="bigFont mt-3">{props.formatNumber.new(_.round(props.ordenSelected.cajas_acumuladas))}</div>
+                                    <div align="center" className="bigFont mt-3">{props.formatNumber.new(_.round(props.ordenSelected.cajas_acumuladas + props.ordenSelected.cajas_fuera_de_linea))}</div>
                                     <div align="center" className="littleFont">de {" " + props.formatNumber.new(_.round(props.ordenSelected.cajas)) + " "} Cajas</div>
                                 </Col>
 
@@ -386,12 +386,10 @@ const Produciendo = (props) => {
                                 <Col md="6">
                                     <div align="left" className=" mt-2 ml-2 text-uppercase littleFont font-weight-bold">Envasado</div>
                                     <Row className="">
-                                        <div align="left" className="ml-4 mt-1 bigFont">{/*perdidaEnvasadoKg<0 ? "---" : */props.formatNumber.new(_.round(perdidaEnvasadoKg))}</div>
+                                        <div align="left" className="ml-4 mt-1 bigFont">{props.formatNumber.new(_.round(perdidaEnvasadoKg))}</div>
                                         <div align="center" className="littleFont mt-4 ml-2 mr-auto">Kgs</div>
                                     </Row>
-
                                 </Col>
-
                             </Row>
                         </div>
 
@@ -427,7 +425,7 @@ const Produciendo = (props) => {
                                 <Col md="6">
                                     <div align="left" className=" mt-2 ml-2 text-uppercase littleFont font-weight-bold">Empaque</div>
                                     <Row className="">
-                                        <div align="left" className="ml-4 mt-1 bigFont">{/*perdidaEmpaquetadoraKg<0 ? "---" : */props.formatNumber.new(_.round(perdidaEmpaquetadoraKg))}</div>
+                                        <div align="left" className="ml-4 mt-1 bigFont">{props.formatNumber.new(_.round(perdidaEmpaquetadoraKg))}</div>
                                         <div align="center" className="littleFont mt-4 ml-2 mr-auto">Kgs</div>
                                     </Row>
 
@@ -468,7 +466,7 @@ const Produciendo = (props) => {
                                 <Col md="6">
                                     <div align="left" className=" mt-2 ml-2 text-uppercase littleFont font-weight-bold">Total</div>
                                     <Row className="">
-                                        <div align="left" className="ml-4 mt-1 bigFont">{/*perdidaTotalKg<0 ? "---" : */props.formatNumber.new(_.round(perdidaTotalKg))}</div>
+                                        <div align="left" className="ml-4 mt-1 bigFont">{props.formatNumber.new(_.round(perdidaTotalKg))}</div>
                                         <div align="center" className="littleFont mt-4 ml-2 mr-auto">Kgs</div>
                                     </Row>
 

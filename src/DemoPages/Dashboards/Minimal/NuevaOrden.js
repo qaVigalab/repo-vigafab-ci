@@ -174,6 +174,7 @@ class NuevaOrden extends Component {
                     />
                   </FormGroup>
                 </Col>
+
                 <Col md="6">
                   <FormGroup>
                     <Label>Producto</Label>
@@ -219,6 +220,7 @@ class NuevaOrden extends Component {
                 </Col>
               </Row>
             </Col>
+
             <Col md="7">
               <Row>
                 <Col md="2">
@@ -236,6 +238,7 @@ class NuevaOrden extends Component {
                     />
                   </FormGroup>
                 </Col>
+
                 <Col md="2">
                   <FormGroup>
                     <Label>Kg Solicitados</Label>
@@ -250,9 +253,10 @@ class NuevaOrden extends Component {
                     />
                   </FormGroup>
                 </Col>
+
                 <Col md="2">
                   <FormGroup>
-                    <Label>Tiempo Estimado</Label>
+                    <Label>Tiempo Estim.</Label>
                     <Input
                       type="text"
                       name="tiempo"
@@ -266,7 +270,8 @@ class NuevaOrden extends Component {
                     />
                   </FormGroup>
                 </Col>
-                <Col md="3">
+
+                <Col md="4">
                   <FormGroup>
                     <Label>Fecha de la Orden</Label>
                     <Input
@@ -279,9 +284,10 @@ class NuevaOrden extends Component {
                     />
                   </FormGroup>
                 </Col>
-                <Col md="3">
-                  <Button className="buttonOrange" style={{ height: '45%' }} block>
-                    Generar Orden
+
+                <Col md="2">
+                  <Button className="buttonOrange" style={{ height: '40%' }} block>
+                    Generar
                   </Button>
                 </Col>
               </Row>

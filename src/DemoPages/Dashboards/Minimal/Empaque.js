@@ -286,11 +286,11 @@ const Empaque = (props) => {
                         <div className="noSpace ">
                             <div className="blackBorderBot">
                                 <Row className="mt-4">
-                                    <div align="center" className="ml-auto indi">{props.formatNumber.new(_.round(props.ordenSelected.cajas_acumuladas))}</div>
+                                    <div align="center" className="ml-auto indi">{props.formatNumber.new(_.round(props.ordenSelected.cajas_acumuladas + props.ordenSelected.cajas_fuera_de_linea))}</div>
                                     <div align="center" className="font2 mt-3 ml-2 mr-auto">de {props.formatNumber.new(_.round(props.ordenSelected.cajas))} Cajas </div>
                                 </Row>
                                 <Row className="mt-1 mb-4">
-                                    <div align="left" className="ml-auto indi">{props.formatNumber.new(_.round(props.ordenSelected.real_kg))}</div>
+                                    <div align="left" className="ml-auto indi">{props.formatNumber.new(_.round(props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja))}</div>
                                     <div align="center" className="font2 mt-3 ml-2 mr-auto"> de {props.formatNumber.new(_.round(props.ordenSelected.kg_solicitados))} Kgs</div>
                                 </Row>
                             </div>
