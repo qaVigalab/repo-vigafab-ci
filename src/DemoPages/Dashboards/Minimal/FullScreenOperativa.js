@@ -217,9 +217,8 @@ function FullSceen() {
                       <th>Tiempo</th>
                       <th> Reales vs Program.</th>
                       <th>% Cumplim.</th>
-                      <th className="border2">Rechazo Global<br></br>(Form. - Emp.)</th>
-                      {/*<th>Rechazo Envasado</th>
-                      <th className="border2">Rechazo Rayos x</th>*/}
+                      <th>Rechazo Envasado</th>
+                      <th className="border2">Rechazo Rayos x</th>
                     </tr>
                   </thead>
 
@@ -244,9 +243,8 @@ function FullSceen() {
                                 ? "0 %"
                                   : formatNumber.new(_.round(orden.kg_porcentual, 2)) + " %"}
                             </td>
-                            <td>{formatNumber.new(_.round(orden.hamb_formadas - (orden.cajas_acumuladas*orden.kg_caja*1000/orden.g_hamburguesa))) + " "} U</td>
-                            {/*<td>{formatNumber.new(_.round(orden.hamb_formadas - orden.hamb_envasadas)) + " "} U</td>
-                            <td>{formatNumber.new(_.round(orden.hamb_envasadas - (orden.cajas_acumuladas*orden.kg_caja*1000/orden.g_hamburguesa))) + " "} U</td>*/}
+                            <td>{formatNumber.new(_.round((orden.kg_formados - orden.reproceso_env_mezc - orden.reproceso_rayos_mezc)*1000/orden.g_hamburguesa - (orden.kg_envasados - orden.reproceso_rayos_mezc)*1000/orden.g_hamburguesa)) + " "} U</td>
+                            <td>{formatNumber.new(_.round((orden.kg_envasados - orden.reproceso_rayos_mezc)*1000/orden.g_hamburguesa - (orden.real_kg + orden.cajas_fuera_de_linea*orden.kg_caja)*1000/orden.g_hamburguesa)) + " "} U</td>
                           </tr>
                         ) : (
                           ""

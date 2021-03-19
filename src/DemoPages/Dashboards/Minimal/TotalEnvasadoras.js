@@ -164,12 +164,12 @@ const TotalEnvasadoras = (props) => {
                     <div className="noSpace ">
                         <div className="blackBorderBot">
                             <Row className="mt-4">
-                                <div align="center" className="ml-auto indi">{props.formatNumber.new(_.round(props.ordenSelected.hamb_envasadas))}</div>
+                                <div align="center" className="ml-auto indi">{props.formatNumber.new(_.round(props.ordenSelected.hamb_envasadas - props.ordenSelected.reproceso_rayos_mezc*1000/props.ordenSelected.g_hamburguesa))}</div>
                                 <div align="center" className="font2 mt-3 ml-2 mr-auto">de {props.formatNumber.new(_.round(props.ordenSelected.hamb_solicitadas))} Packs</div>
                             </Row>
 
                             <Row className="mt-1 mb-4">
-                                <div align="left" className="ml-auto indi">{props.formatNumber.new(_.round(props.ordenSelected.kg_envasados))}</div>
+                                <div align="left" className="ml-auto indi">{props.formatNumber.new(_.round(props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc))}</div>
                                 <div align="center" className="font2 mt-3 ml-2 mr-auto"> de {props.formatNumber.new(_.round(props.ordenSelected.kg_solicitados))} Kgs</div>
                             </Row>
                         </div>

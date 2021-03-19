@@ -101,13 +101,20 @@ const CialWidget = (props) => {
   const [eficiencia, setEficiencia] = useState(0);
   const [hambEnvasadas, setHambEnvasadas] = useState(0);
   const [kgEnvasados, setKgEnvasados] = useState(0);
+
   useEffect(() => {
     if (props.reportesSelected.length > 0){
       var reportesSel = props.reportesSelected.filter(rep => rep.id_tipo !== 4 && !rep.hora_inicio.includes("05:55:"));
 
       /* Se calculan los tiempos de actividad y paro */
       var tiempo_activo = 0, tiempo_inactivo = 0;
-      var hamburguesas_envasadas = 0, kilos_envasados = 0;
+      if (props.recambio === 0){
+        var hamburguesas_envasadas = -props.ordenSelected.reproceso_rayos_mezc/3*1000/props.ordenSelected.g_hamburguesa, 
+        kilos_envasados = -props.ordenSelected.reproceso_rayos_mezc/3;
+      } else{
+        var hamburguesas_envasadas = 0, kilos_envasados = 0;
+      }
+
       for (var i=0; i<reportesSel.length; i++){
         if (reportesSel[i].id_tipo === 1)
           tiempo_inactivo += reportesSel[i].minutos;
@@ -252,7 +259,7 @@ const CialWidget = (props) => {
             <Col md="6">
               <Row className="mt-2" align="left">
                 <div className="ml-4 font2gray">{props.formatNumber.new(_.round(hambEnvasadas))} de</div>
-              </Row>
+                </Row>
               <Row align="left">
                 <div className="ml-4">{props.formatNumber.new(_.round(props.ordenSelected.hamb_solicitadas/3))} Packs</div>
               </Row>
