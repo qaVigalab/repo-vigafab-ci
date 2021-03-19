@@ -479,7 +479,7 @@ const Produciendo = (props) => {
             </div>
 
             <Row className="blackBorderTop mx-2">
-                <Col xs="12" className="my-3 mx-2">
+                <Col md="12" className="my-3 mx-2">
                     {/*
                     <TimeLine />
                     */}

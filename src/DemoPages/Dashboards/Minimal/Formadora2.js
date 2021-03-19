@@ -336,8 +336,8 @@ const Formadora2 = (props) => {
                         <div className="text-uppercase font-weight-bold title1orange my-1">Formadora</div>
                     </Col>
 
-                    <Col >
-                        <Row >
+                    <Col>
+                        <Row>
                             <Col align="right">
                                 <div className="font2 my-4">Estado: </div>
                             </Col>
