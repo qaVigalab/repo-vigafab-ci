@@ -141,7 +141,10 @@ const GenerarExcel = (props) => {
               Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].kgSolic += ordenes[i].kg_solic;
 
               var tiempoTotal = Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].tiempoInactivo + ordenes[i].minutos;
-              Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].eficiencia += _.round(ordenes[i].kg_prod/(ordenes[i].cap_nominal * tiempoTotal/60), 2);
+              if (ordenes[i].maquina.includes("Envasadora"))
+                Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].eficiencia += _.round(ordenes[i].kg_prod/(ordenes[i].cap_nominal/3 * tiempoTotal/60), 2);
+              else
+                Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].eficiencia += _.round(ordenes[i].kg_prod/(ordenes[i].cap_nominal * tiempoTotal/60), 2);
               Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].disponibilidad += _.round(ordenes[i].minutos/(tiempoTotal), 2);
   
               Indicadores[fecha][ordenes[i].maquina]["Total"].kgProdTotal += ordenes[i].kg_prod;
@@ -262,8 +265,8 @@ const GenerarExcel = (props) => {
       /* Se calculan los indicadores de Disponibilidad, Calidad y Eficiencia para la OEE */
       Object.keys(Indicadores).map((fecha, i) => {
         Indicadores[fecha]["OEE"] = {};
-        Indicadores[fecha]["OEE"].disponibilidad = _.round((Indicadores[fecha]["Formadora"]["Total"].disponibilidad + Indicadores[fecha]["Empaquetadora"]["Total"].disponibilidad)/2, 2);
-        Indicadores[fecha]["OEE"].eficiencia = _.round((Indicadores[fecha]["Formadora"]["Total"].eficiencia + Indicadores[fecha]["Empaquetadora"]["Total"].eficiencia)/2, 2);
+        Indicadores[fecha]["OEE"].disponibilidad = _.round(Indicadores[fecha]["Formadora"]["Total"].disponibilidad, 2);
+        Indicadores[fecha]["OEE"].eficiencia = _.round(Indicadores[fecha]["Formadora"]["Total"].eficiencia, 2);
         Indicadores[fecha]["OEE"].calidad = _.round(Indicadores[fecha]["Empaquetadora"]["Total"].kgProdTotal/Indicadores[fecha]["Formadora"]["Total"].kgProdTotal, 2);
         
         Indicadores[fecha]["OEE"].OEE = _.round(Indicadores[fecha]["OEE"].disponibilidad * Indicadores[fecha]["OEE"].eficiencia * Indicadores[fecha]["OEE"].calidad, 2);
