@@ -11,7 +11,7 @@ import NuevaOrden from "./NuevaOrden";
 import Orden from "./Orden";
 import Produciendo from "./Produciendo";
 import Formadora2 from "./Formadora2";
-//import Iqf2 from "./Iqf2";
+import Iqf2 from "./Iqf2";
 import CialWidget from "./CialWidget";
 import TotalEnvasadoras from "./TotalEnvasadoras";
 import Empaque from "./Empaque";
@@ -320,16 +320,19 @@ const MinimalDashboard1 = () => {
             </Col>
           </Row>
 
-          {/*
           <div className="columns-parent">
             <Row>
               <Col xs="12" xl="12">
                 <Card className="main-card mb-3">
-                  <Iqf2 estado={1} />
+                  <Iqf2
+                    formatNumber={formatNumber}
+                    ordenSelected={ordenSelected}
+                    reportesSelected={reportesSelected.filter(reporte => reporte.id_tipo_vibot === 3)}
+                  />
                 </Card>
               </Col>
             </Row>
-          */}
+          </div>
 
           <div className="columns-parent"> {/* sacar al agregar iqf */}
             {modo === 2 || modo === 0 ? (

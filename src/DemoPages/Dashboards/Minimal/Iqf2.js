@@ -6,7 +6,7 @@ import ReactApexChart from "react-apexcharts";
 import { connect } from "react-redux";
 
 const Iqf2 = (props) => {
-    const id_vibot = 38058;
+    const id_vibot = 59512;
     var temperatura = [];
     var fecha = [];
     var velocidad = [];
@@ -156,13 +156,13 @@ const Iqf2 = (props) => {
             data: temperatura,
 
         },]
-    )
+    );
 
-    const [tActivo, setTActivo] = useState(0)
-    const [tInactivo, setTInactivo] = useState(0)
-    const [kgacumulados, setKgacumulados] = useState(0)
-    const [estado, setEstado] = useState(0)
-    const [capacidad, setCapacidad] = useState(0)
+    const [tActivo, setTActivo] = useState(0);
+    const [tInactivo, setTInactivo] = useState(0);
+    const [kgacumulados, setKgacumulados] = useState(0);
+    const [estado, setEstado] = useState(0);
+    const [capacidad, setCapacidad] = useState(0);
 
     const labels = {
         enabled: false
@@ -221,7 +221,6 @@ const Iqf2 = (props) => {
         }
     )
 
-
     const loadKpi = () => {
         fetch(global.api.dashboard.getresumenmaquina, {
             "method": "POST",
@@ -232,7 +231,7 @@ const Iqf2 = (props) => {
 
             body: JSON.stringify({
                 id_vibot: id_vibot,
-                id_orden: localStorage.getItem("id_orden")
+                id_orden: props.ordenSelected.id_sub_orden
             }),
         })
             .then(response => response.json())
@@ -250,7 +249,6 @@ const Iqf2 = (props) => {
     }
 
     const loadGraphs = () => {
-
         fetch(global.api.dashboard.gettempiqf, {
             "method": "POST",
             "headers": {
@@ -258,7 +256,7 @@ const Iqf2 = (props) => {
                 "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
             },
             body: JSON.stringify({
-                id_orden: localStorage.getItem("id_orden")
+                id_orden: props.ordenSelected.id_sub_orden
             }),
         })
             .then(response => response.json())
@@ -267,9 +265,7 @@ const Iqf2 = (props) => {
                     fecha.push(r.fecha),
                     temperatura.push(r.temperatura),
                     velocidad.push(r.velocidad)
-
                 ))
-
             }
             ).then(() => {
                 setSeries2([{
@@ -288,7 +284,6 @@ const Iqf2 = (props) => {
     }
 
     const loadTimeLine = () => {
-
         fetch(global.api.dashboard.gettimelinemaquina, {
             "method": "POST",
             "headers": {
@@ -342,25 +337,18 @@ const Iqf2 = (props) => {
     }
 
     useEffect(() => {
-        setTimeout(() => {
-            loadGraphs()
-            loadKpi()
-        }, 2000);
-        const interval = setInterval(() => {
-            loadKpi()
-        }, 30000);
-        return () => clearInterval(interval);
-    }, []);
-
-    useEffect(() => {
-        loadKpi()
-        loadGraphs()
-    }, [props.id_orden]);
+        if (props.ordenSelected.id_sub_orden !== {}){
+            loadKpi();
+            loadGraphs();
+            const interval = setInterval(() => {
+                loadKpi()
+            }, 300000);
+            return () => clearInterval(interval);
+        }
+    }, [props.ordenSelected.id_sub_orden]);
 
     return (
-
         <div>
-
             <div className="blackBorder2" >
                 <Row>
                     <br />
@@ -368,25 +356,40 @@ const Iqf2 = (props) => {
                         <div className="text-uppercase font-weight-bold title1orange my-1">Iqf</div>
                     </Col>
 
-                    <Col  >
-                        <Row >
+                    <Col>
+                        <Row>
                             <Col align="right">
-                                <div className="font2  my-4 ">Estado</div></Col>
-                            <div className={estado == 1 ? "font2gray  my-4" : "font2Blue my-4"}>{
-                                localStorage.getItem("id_orden") !== localStorage.getItem("id_ordenA") ? "Terminada" :
-                                    estado == 1 ? " Detenida" : " Produciendo"}</div>
-                            <div className="font2 ml-3 my-4">Tiempo de Actividad</div>
-                            <div className="font2Blue ml-2 my-4 mr-5">{Math.round(tActivo / 60 * 100) / 100} hrs</div>
+                                <div className="font2 my-4">Estado: </div>
+                            </Col>
+                            <div className={props.ordenSelected.id_estado !== 1 ? "font2gray my-4" : "font2Blue my-4"}>{
+                                props.ordenSelected.id_estado === 3 ? "Detenida"
+                                : props.ordenSelected.id_estado === 2 ? "En espera"
+                                : "Produciendo"
+                            }</div>
+                            
+                            <div className="font2 ml-3 my-4">Tiempo de Actividad: </div>
+                            {parseInt(tActivo/60) === 1 ?
+                                <div className={props.ordenSelected.id_estado !== 1 ? "font2gray ml-2 my-4" : "font2Blue ml-2 my-4"}>
+                                    {parseInt(tActivo/60)} hr,
+                                    {" " + parseInt(tActivo%60)} min
+                                </div> :
+                                <div className={props.ordenSelected.id_estado !== 1 ? "font2gray ml-2 my-4" : "font2Blue ml-2 my-4"}>
+                                    {parseInt(tActivo/60)} hrs,
+                                    {" " + parseInt(tActivo%60)} min
+                                </div> 
+                            }
 
+                            <div className="font2 ml-2 my-4"> </div>
+                            <div className={props.ordenSelected.id_estado !== 1 ? "font2gray ml-2 mr-5 my-4" : "font2Blue ml-2 mr-5 my-4"}>
+                                 
+                            </div>
                         </Row>
-
                     </Col>
-
                 </Row>
             </div >
 
             <Row>
-                <Col md="2" className="blackBorderRight">
+                {/*<Col md="2" className="blackBorderRight">
                     <div class="noSpace">
                         <div className="ml-5 mt-3">
                             <Row >
@@ -449,7 +452,9 @@ const Iqf2 = (props) => {
                             </Row>
                         </div>
                     </div>
-                </Col>
+                </Col>*/}
+
+                <Col md="1"></Col>
                 <Col md="10">
                     <Row>
                         <Col md="6">
@@ -477,17 +482,16 @@ const Iqf2 = (props) => {
                         </Col>
                     </Row>
                 </Col>
+                <Col md="1"></Col>
             </Row>
 
-            <Row>
-                <Col xs="12">
-                    <div id="chart">
+            <Row className="blackBorderTop mx-2">
+                <Col md="12" className="my-3 mx-2">
+                    {/*<div id="chart">
                         <ReactApexChart options={optionsTimeLine} series={seriesTimeLine} type="rangeBar" height={150} />
-
-                    </div>
+                    </div>*/}
                 </Col>
             </Row>
-
 
             {
                 //<div className="bot-description">Receta actual: {" " + producto}</div>
@@ -496,8 +500,5 @@ const Iqf2 = (props) => {
     )
 }
 
-const mapStateToProps = (state) => ({
-    id_orden: state.dashboardReducers.id_orden,
-});
-
+const mapStateToProps = (state) => ({});
 export default connect(mapStateToProps)(Iqf2);
