@@ -7,6 +7,7 @@ const dashboard = {
     create_user:                awsApiUrl2 + "create-user", 
     deletesuborden:             awsApiUrl2 + "deletesuborden",
     editOrden:                  awsApiUrl2 + "editorden",
+    getEficienciaPorMinuto:     awsApiUrl2 + "geteficienciaporminuto",
     getenvasadora:              awsApiUrl2 + "getenvasadora",    
     getdetalleparo:             awsApiUrl2 + "getdetalleparo",
     getfullscreen:              awsApiUrl2 + "getfullscreen",
