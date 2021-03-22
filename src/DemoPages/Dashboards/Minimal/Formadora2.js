@@ -468,14 +468,6 @@ const Formadora2 = (props) => {
             </Row>
             
             {/* Línea de eficiencia operativa */}
-            <Row>
-                <Col xs="12">
-                    <div id="chartEfficiency" className={/*seriesTimeLine.data !== undefined ? "m-3" : "d-none"*/ "m-3"}>
-                        <ReactApexChart options={optionsEficiencia} series={seriesEficiencia} type="line" height={250} />
-                        {/*<ReactApexChart options={optionsEficiencia} series={seriesEficiencia} type="line" height={250} />*/}
-                    </div>
-                </Col>
-            </Row>
         </div>
     )
 }
