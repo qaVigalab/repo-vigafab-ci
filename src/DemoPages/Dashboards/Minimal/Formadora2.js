@@ -9,64 +9,164 @@ import "moment/locale/es";
 import _ from "lodash";
 
 const Formadora2 = (props) => {
-    /* Configuración inicial - Torta */
-    const [dataTorta, setDataTorta] = useState({
-        labels: ["Desconectado", "En Paro", "En Producción"],
-        legend: [{ display: false, position: "top", fullWidth: true, reverse: true }],
-        datasets: [{
-            data: [],
-            backgroundColor: [
-                "#d9d9d9",
-                "#F7431E  ",
-                "#2264A7",
-            ],
-            hoverBackgroundColor: [
-                "#d9d9d9",
-                "#F7431E  ",
-                "#2264A7 ",
-            ],
-        }],
-    });
+    var temperatura = [];
+    var fecha = [];
+    const labels = {
+        enabled: false
+    };
 
-    /* Configuración inicial - Gráfico de Tª */
-    var temperatura = [], fecha = [];
-    const [series3, setSeries3] = useState([{ name: 'Temperatura', data: temperatura }]);
-    const [options3, setOptions3] = useState({
-        chart: { height: 400, type: 'area' },
-        dataLabels: { enabled: false },
-        stroke: { curve: 'smooth', width: 2, colors: "#02c39a" },
-        xaxis: { type: 'datetime', categories: fecha, labels: {datetimeUTC: true} },
-        tooltip: {
-            x: {
-                format: 'dd MMM yyyy HH:mm:ss'
-            },
-            marker: {
-                fillColors: ["#ff6c1c"]
-            }
+    const markers = {
+        size: 0
+    };
+
+    const tooltips = {
+        x: {
+            format: 'dd/MM/yy HH:mm',
         },
-        fill: {
-            type: 'gradient',
-            gradient: {
-                enabled: true,
-                gradientToColors: ["#02c39a", "#02c39a"],
-                inverseColors: true,
-                shadeIntensity: 1,
-                opacityFrom: 1,
-                opacityTo: 1,
-                stops: [0, 100]
-            }
-        },
-        markers: { size: 0, colors: ["#ff6c1c"], strokeColor: "white", strokeWidth: 1 },
-        title: {
-            text: "T° de Salida",
-            align: 'left', margin: 10, offsetX: 0, offsetY: 0, floating: false,
-            style: {
-                fontSize: '16px',
-                fontFamily: "Poppins SemiBold",
-                color: '#606060'
+        y: {
+            formatter: undefined,
+            title: {
+                formatter: '',
             },
+        },
+    };
+
+    const [dataTorta, setDataTorta] = useState(
+        {
+            legend: [
+                {
+                    display: false,
+                    position: "top",
+                    fullWidth: true,
+                    reverse: true,
+                },
+            ],
+
+            labels: [
+                "Desconectado",
+                "Paro sin Justificar",
+                "Producción",
+            ],
+            datasets: [
+                {
+                    data: [],
+                    backgroundColor: [
+                        "#d9d9d9",
+                        "#F7431E  ",
+                        "#2264A7",
+                    ],
+                    hoverBackgroundColor: [
+                        "#d9d9d9",
+                        "#F7431E  ",
+                        "#2264A7 ",
+                    ],
+                },
+            ],
         }
-    });
+    )
+
+    const [options3, setOptions3] = useState(
+        {
+            chart: {
+                height: 350,
+                type: 'area',
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 2,
+                colors: "#02c39a"
+            },
+            xaxis: {
+                type: 'datetime',
+                categories: fecha,
+                labels: {
+                    datetimeUTC: true
+                }
+
+            },
+            tooltip: {
+                x: {
+                    format: 'dd MMM yyyy HH:mm:ss'
+                },
+                marker: {
+                    fillColors: ["#ff6c1c"]
+                }
+            },
+            fill: {
+                //colors:"#72cab8",
+                type: 'gradient',
+                gradient: {
+                    enabled: true,
+                    gradientToColors: ["#02c39a", "#02c39a"],
+                    inverseColors: true,
+                    shadeIntensity: 1,
+                    opacityFrom: 1,
+                    opacityTo: 1,
+                    stops: [0, 100]
+                }
+            },
+            markers: {
+                size: 0,
+                colors: ["#ff6c1c"],
+                strokeColor: "white",
+                strokeWidth: 1,
+
+            },
+            title: {
+                text: "T° de Salida",
+                align: 'left',
+                margin: 10,
+                offsetX: 0,
+                offsetY: 0,
+                floating: false,
+                style: {
+                    fontSize: '16px',
+                    fontFamily: "Poppins SemiBold",
+                    color: '#606060'
+                },
+            }
+        }
+    )
+    const [series3, setSeries3] = useState(
+        [{
+            name: 'Temperatura',
+            data: temperatura,
+        },]
+    )
+
+    const [seriesTimeLine, setSeriesTimeLine] = useState([])
+    const [optionsTimeLine] = useState({
+            dataLabels: labels,
+            markers: markers,
+            tooltip: tooltips,
+            chart: {
+                type: 'rangeBar',
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                    distributed: false,
+                    dataLabels: {
+                        hideOverflowingLabels: false
+                    }
+                }
+            },
+            xaxis: {
+                type: 'datetime',
+                labels: {
+                }
+            },
+            grid: {
+                row: {
+                    colors: ['#f3f4f5', '#fff'],
+                    opacity: 1
+                }
+            }
+        }
+    )
 
     /* Se carga el gráfico de temperaturas asociado a la orden en curso */
     const loadGraphTemp = () => {
@@ -96,133 +196,8 @@ const Formadora2 = (props) => {
         .catch(err => {
             console.error(err);
         });
-    };
+    }
 
-    /* Configuración inicial - Timeline */
-    const [seriesTimeLine, setSeriesTimeLine] = useState([])
-    const [optionsTimeLine] = useState({
-        dataLabels: { enabled: false },
-        markers: { size: 0 },
-        tooltip: {
-            x: {
-                format: 'dd/MM/yy HH:mm',
-            },
-            y: {
-                formatter: undefined,
-                title: {
-                    formatter: '',
-                },
-            },
-        },
-        chart: {
-            type: 'rangeBar',
-        },
-        plotOptions: {
-            bar: {
-                horizontal: true,
-                distributed: false,
-                dataLabels: {
-                    hideOverflowingLabels: false
-                }
-            }
-        },
-        xaxis: {
-            type: 'datetime',
-            labels: { }
-        },
-        grid: {
-            row: {
-                colors: ['#f3f4f5', '#fff'],
-                opacity: 1
-            }
-        }
-    });
-
-    /* Se carga el gráfico de timeline asociado a la orden en curso */
-    const loadTimeLine = () => {
-        var objetos = [{
-            x: 'Prod',
-            y: [new Date(reportes[0].hora_inicio).getTime(),
-            new Date(reportes[0].hora_inicio).getTime()],
-            fillColor: '#2264A7'
-        }, {
-            x: 'Paro',
-            y: [new Date(reportes[0].hora_inicio).getTime(),
-            new Date(reportes[0].hora_inicio).getTime()],
-            fillColor: '#F7431E'
-        }, {
-            x: 'Cambio',
-            y: [new Date(reportes[0].hora_inicio).getTime(),
-            new Date(reportes[0].hora_inicio).getTime()],
-            fillColor: '#02c39a'
-        }];
-        
-        for (let i = 0; i < reportes.length; i++) {
-            var x_ = "", color_ = null;
-            if (reportes[i].id_tipo === 1) {
-                x_ = "Paro";
-                color_ = '#F7431E';
-            } else if (reportes[i].id_tipo === 2) {
-                x_ = "Prod";
-                color_ = '#2264A7';
-            } else {
-                x_ = "Cambio";
-                color_ = '#02c39a';
-            }
-
-            var objeto = {
-                x: x_,
-                y: [
-                    new Date(reportes[i].hora_inicio).getTime(),
-                    new Date(reportes[i].hora_termino).getTime()
-                ],
-                fillColor: color_
-            }
-            objetos.push(objeto)
-        };
-
-        setSeriesTimeLine([{
-            data: objetos
-        }]);
-    };
-
-    /* Configuración inicial - Gráfica de eficiencia */
-    const [seriesEficiencia, setSeriesEficiencia] = useState([]);
-    const [optionsEficiencia, setOptionsEficiencia] = useState({});
-
-    /* Se carga el gráfico de temperaturas asociado a la orden en curso */
-    const loadEfficiency = (id_vb) => {
-        var fecha_hora = [], kg_prod = [], kg_esp = [], efi = [], kg_sum = [], kg_est = [];
-        fetch(global.api.dashboard.getEficienciaPorMinuto, {
-            "method": "POST",
-            "headers": {
-                "content-type": "application/json",
-                "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
-            },
-            body: JSON.stringify({
-                id_sub_orden: props.ordenSelected.id_sub_orden,
-                id_vibot: id_vb
-            }),
-        })
-        .then(response => response.json())
-        .then(result => {
-            if (result.length > 0){
-                result.map(r => {
-                    fecha_hora.push(r.fecha_hora);
-                    kg_prod.push(r.kg_prod);
-                    kg_esp.push(r.kg_esp);
-                    efi.push(r.eficiencia);
-                    kg_sum.push(r.kg_sum);
-                    kg_est.push(r.kg_est);
-                });
-            }
-        })
-        .catch(err => {
-            console.error(err);
-        });
-    };
-
-    /* SE EJECUTA LA TAREA PRINCIPAL DEL WIDGET */
     const [reportes, setReportes] = useState(props.reportesSelected);
     const [tActivo, setTActivo] = useState(0);
     const [disponibilidad, setDisponibilidad] = useState(0);
@@ -282,7 +257,6 @@ const Formadora2 = (props) => {
         if (reportes.length > 0){
             loadGraphTemp();
             loadTimeLine();
-            loadEfficiency(reportes[0].id_vibot);
         }
         else{
             setSeriesTimeLine([{
@@ -306,7 +280,51 @@ const Formadora2 = (props) => {
         }
     }, [reportes]);
 
-    useEffect(() => {}, seriesEficiencia);
+    const loadTimeLine = () => {
+        var objetos = [{
+            x: 'Prod',
+            y: [new Date(reportes[0].hora_inicio).getTime(),
+            new Date(reportes[0].hora_inicio).getTime()],
+            fillColor: '#2264A7'
+        }, {
+            x: 'Paro',
+            y: [new Date(reportes[0].hora_inicio).getTime(),
+            new Date(reportes[0].hora_inicio).getTime()],
+            fillColor: '#F7431E'
+        }, {
+            x: 'Cambio',
+            y: [new Date(reportes[0].hora_inicio).getTime(),
+            new Date(reportes[0].hora_inicio).getTime()],
+            fillColor: '#02c39a'
+        }];
+        
+        for (let i = 0; i < reportes.length; i++) {
+            var x_ = "", color_ = null;
+            if (reportes[i].id_tipo === 1) {
+                x_ = "Paro";
+                color_ = '#F7431E';
+            } else if (reportes[i].id_tipo === 2) {
+                x_ = "Prod";
+                color_ = '#2264A7';
+            } else {
+                x_ = "Cambio";
+                color_ = '#02c39a';
+            }
+
+            var objeto = {
+                x: x_,
+                y: [
+                    new Date(reportes[i].hora_inicio).getTime(),
+                    new Date(reportes[i].hora_termino).getTime()
+                ],
+                fillColor: color_
+            }
+            objetos.push(objeto)
+        }
+        setSeriesTimeLine([{
+            data: objetos
+        }]);
+    }
 
     return (
         <div>
@@ -434,15 +452,14 @@ const Formadora2 = (props) => {
                                     width={12}
                                     height={12}
                                     align="left"
-                                    options={{ 
-                                        legend: { display: false },
+                                    options={{
+                                        legend: {
+                                            display: false,
+                                        },
                                         responsive: true,
                                         maintainAspectRatio: true,
-                                    }}
-                                />
-                            </div>
+                                    }} /></div>
                         </Col>
-
                         <Col md="8">
                             <div className="mt-5 mr-3">
                                 <Chart
@@ -461,13 +478,11 @@ const Formadora2 = (props) => {
             {/* Línea de tiempo operativa */}
             <Row>
                 <Col xs="12">
-                    <div id="chartTimeLine" className={/*seriesTimeLine.data !== undefined ? "m-3" : "d-none"*/ "m-3"}>
+                    <div id="chart" className={/*seriesTimeLine.data !== undefined ? "m-3" : "d-none"*/ "m-3"}>
                         <ReactApexChart options={optionsTimeLine} series={seriesTimeLine} type="rangeBar" height={180} />
                     </div>
                 </Col>
             </Row>
-            
-            {/* Línea de eficiencia operativa */}
         </div>
     )
 }
