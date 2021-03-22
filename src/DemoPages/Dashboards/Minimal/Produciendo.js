@@ -45,16 +45,20 @@ const Produciendo = (props) => {
     useEffect(() => {
         setnOrden(props.ordenSelected.id_sub_orden);
         setPerdidaEnvasadoKg(
-            (props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc
-                - props.ordenSelected.reproceso_env_camara - props.ordenSelected.reproceso_rayos_camara)
-            - (props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc - props.ordenSelected.reproceso_rayos_camara));
+            (props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc)
+            - (props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc)
+            - (props.ordenSelected.reproceso_env_camara + props.ordenSelected.reproceso_rayos_camara)
+        );
         setPerdidaEmpaquetadoraKg(
-            (props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc - props.ordenSelected.reproceso_rayos_camara)
-            - (props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja));
+            (props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc)
+            - (props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja)
+            - props.ordenSelected.reproceso_rayos_camara
+        );
         setPerdidaTotalKg(
-            (props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc
-                - props.ordenSelected.reproceso_env_camara - props.ordenSelected.reproceso_rayos_camara)
-            - (props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja));
+            (props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc)
+            - (props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja)
+            - (props.ordenSelected.reproceso_env_camara + 2*props.ordenSelected.reproceso_rayos_camara)
+        );
 
         if (props.ordenSelected.id_estado !== 2){
             setTiempoActivo(props.ordenSelected.tiempo_activo);
