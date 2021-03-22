@@ -134,49 +134,31 @@ const GenerarExcel = (props) => {
         var fecha = ordenes[i].fecha.split("T")[0];
         if (fecha in Indicadores){
           if (ordenes[i].maquina in Indicadores[fecha]){
-            if (ordenes[i].sub_orden in Indicadores[fecha][ordenes[i].maquina]){
-              Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].tiempoActivo += ordenes[i].minutos;
+            Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden] = {
+              kgProd: ordenes[i].kg_prod,
+              kgSolic: ordenes[i].kg_solic,
+              
+              eficiencia: ordenes[i].eficiencia,
+              disponibilidad: ordenes[i].disponibilidad
+            };
 
-              Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].kgProd += ordenes[i].kg_prod;
-              Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].kgSolic += ordenes[i].kg_solic;
-
-              var tiempoTotal = Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].tiempoInactivo + ordenes[i].minutos;
-              if (ordenes[i].maquina.includes("Envasadora"))
-                Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].eficiencia += _.round(ordenes[i].kg_prod/(ordenes[i].cap_nominal/3 * tiempoTotal/60), 2);
-              else
-                Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].eficiencia += _.round(ordenes[i].kg_prod/(ordenes[i].cap_nominal * tiempoTotal/60), 2);
-              Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].disponibilidad += _.round(ordenes[i].minutos/(tiempoTotal), 2);
-  
-              Indicadores[fecha][ordenes[i].maquina]["Total"].kgProdTotal += ordenes[i].kg_prod;
-              Indicadores[fecha][ordenes[i].maquina]["Total"].kgSolicTotal += ordenes[i].kg_solic;
-            } else{
-              Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden] = {
-                tiempoInactivo: ordenes[i].minutos,
-                tiempoActivo: 0,
-    
-                kgProd: 0,
-                kgSolic: 0,
-
-                eficiencia: 0,
-                disponibilidad: 0
-              };
-            }
+            Indicadores[fecha][ordenes[i].maquina]["Total"].kgProdTotal += ordenes[i].kg_prod;
+            Indicadores[fecha][ordenes[i].maquina]["Total"].kgSolicTotal += ordenes[i].kg_solic;
+            Indicadores[fecha][ordenes[i].maquina]["Total"].kgCamara += ordenes[i].reproceso_camara;
           } else{
             Indicadores[fecha][ordenes[i].maquina] = {};
             Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden] = {
-              tiempoInactivo: ordenes[i].minutos,
-              tiempoActivo: 0,
-  
-              kgProd: 0,
-              kgSolic: 0,
-
-              eficiencia: 0,
-              disponibilidad: 0
+              kgProd: ordenes[i].kg_prod,
+              kgSolic: ordenes[i].kg_solic,
+              
+              eficiencia: ordenes[i].eficiencia,
+              disponibilidad: ordenes[i].disponibilidad
             };
   
             Indicadores[fecha][ordenes[i].maquina]["Total"] = {
-              kgProdTotal: 0,
-              kgSolicTotal: 0,
+              kgProdTotal: ordenes[i].kg_prod,
+              kgSolicTotal: ordenes[i].kg_solic,
+              kgCamara: ordenes[i].reproceso_camara,
   
               cantParos: 0,
               minPerdidos: 0,
@@ -189,19 +171,17 @@ const GenerarExcel = (props) => {
           Indicadores[fecha] = {};
           Indicadores[fecha][ordenes[i].maquina] = {};
           Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden] = {
-            tiempoInactivo: ordenes[i].minutos,
-            tiempoActivo: 0,
-
-            kgProd: 0,
-            kgSolic: 0,
+            kgProd: ordenes[i].kg_prod,
+            kgSolic: ordenes[i].kg_solic,
             
-            eficiencia: 0,
-            disponibilidad: 0
+            eficiencia: ordenes[i].eficiencia,
+            disponibilidad: ordenes[i].disponibilidad
           };
 
           Indicadores[fecha][ordenes[i].maquina]["Total"] = {
-            kgProdTotal: 0,
-            kgSolicTotal: 0,
+            kgProdTotal: ordenes[i].kg_prod,
+            kgSolicTotal: ordenes[i].kg_solic,
+            kgCamara: ordenes[i].reproceso_camara,
 
             cantParos: 0,
             minPerdidos: 0,
@@ -212,25 +192,22 @@ const GenerarExcel = (props) => {
         }
       }
 
+      /* Se restan los kg que fueron formados dos veces producto de los reprocesos a Mezcladora */
       for (i=0; i<ordenes.length; i++){
         var fecha = ordenes[i].fecha.split("T")[0];
-        if (ordenes[i].id_tipo === 2){
-          if (ordenes[i].maquina === "Formadora"){
-            Indicadores[fecha]["Formadora"][ordenes[i].sub_orden].kgProd -= ordenes[i].reproceso_mezcladora;
-            Indicadores[fecha]["Formadora"]["Total"].kgProdTotal -= ordenes[i].reproceso_mezcladora;
-          } else if (ordenes[i].maquina.includes("Envasadora")){
-            Indicadores[fecha]["Formadora"][ordenes[i].sub_orden].kgProd -= ordenes[i].reproceso_mezcladora;
-            Indicadores[fecha]["Formadora"]["Total"].kgProdTotal -= ordenes[i].reproceso_mezcladora;
+        if (ordenes[i].maquina === "Formadora"){
+          Indicadores[fecha]["Formadora"][ordenes[i].sub_orden].kgProd -= ordenes[i].reproceso_mezc;
+          Indicadores[fecha]["Formadora"]["Total"].kgProdTotal -= ordenes[i].reproceso_mezc;
+        } else if (ordenes[i].maquina.includes("Envasadora")){
+          Indicadores[fecha]["Formadora"][ordenes[i].sub_orden].kgProd -= ordenes[i].reproceso_mezc;
+          Indicadores[fecha]["Formadora"]["Total"].kgProdTotal -= ordenes[i].reproceso_mezc;
 
-            Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].kgProd -= ordenes[i].reproceso_mezcladora;
-            Indicadores[fecha][ordenes[i].maquina]["Total"].kgProdTotal -= ordenes[i].reproceso_mezcladora;
-          } else if (ordenes[i].maquina === "Empaquetadora"){
-            Indicadores[fecha]["Empaquetadora"][ordenes[i].sub_orden].kgProd += ordenes[i].cajas_fuera_linea*ordenes[i].kg_caja;
-            Indicadores[fecha]["Empaquetadora"]["Total"].kgProdTotal += ordenes[i].cajas_fuera_linea*ordenes[i].kg_caja;
-          }
+          Indicadores[fecha][ordenes[i].maquina][ordenes[i].sub_orden].kgProd -= ordenes[i].reproceso_mezc;
+          Indicadores[fecha][ordenes[i].maquina]["Total"].kgProdTotal -= ordenes[i].reproceso_mezc;
         }
       }
 
+      /* Se calculan la disponibilidad y eficiencia para cada día, según el "peso" de cada SKU */
       Object.keys(Indicadores).map((fecha, i) => {
         Object.keys(Indicadores[fecha]).map((maq, j) => {
           Object.keys(Indicadores[fecha][maq]).map((sub_ord, k) => {
@@ -245,6 +222,7 @@ const GenerarExcel = (props) => {
         });
       });
 
+      /* Se agregan los paros justificados y la cantidad de minutos totales asociados a éstos */
       Object.keys(Indicadores).map((fecha, i) => {
         Object.keys(Indicadores[fecha]).map((maq, j) => {
           if (PPM[fecha][maq] != undefined){
@@ -270,10 +248,30 @@ const GenerarExcel = (props) => {
         Indicadores[fecha]["OEE"].calidad = _.round(Indicadores[fecha]["Empaquetadora"]["Total"].kgProdTotal/Indicadores[fecha]["Formadora"]["Total"].kgProdTotal, 2);
         
         Indicadores[fecha]["OEE"].OEE = _.round(Indicadores[fecha]["OEE"].disponibilidad * Indicadores[fecha]["OEE"].eficiencia * Indicadores[fecha]["OEE"].calidad, 2);
-        Indicadores[fecha]["Formadora"]["Total"].formado = Indicadores[fecha]["Formadora"]["Total"].kgProdTotal - Indicadores[fecha]["Envasadora 4"]["Total"].kgProdTotal - Indicadores[fecha]["Envasadora 5"]["Total"].kgProdTotal - Indicadores[fecha]["Envasadora 6"]["Total"].kgProdTotal;
-        Indicadores[fecha]["Empaquetadora"]["Total"].deformes = Indicadores[fecha]["Envasadora 4"]["Total"].kgProdTotal + Indicadores[fecha]["Envasadora 5"]["Total"].kgProdTotal + Indicadores[fecha]["Envasadora 6"]["Total"].kgProdTotal - Indicadores[fecha]["Empaquetadora"]["Total"].kgProdTotal;
+        Indicadores[fecha]["Formadora"]["Total"].formado = (
+          Indicadores[fecha]["Formadora"]["Total"].kgProdTotal - 
+          Indicadores[fecha]["Envasadora 4"]["Total"].kgProdTotal - 
+          Indicadores[fecha]["Envasadora 5"]["Total"].kgProdTotal - 
+          Indicadores[fecha]["Envasadora 6"]["Total"].kgProdTotal
+        ) - (
+          Indicadores[fecha]["Formadora"]["Total"].kgCamara + 
+          Indicadores[fecha]["Envasadora 4"]["Total"].kgCamara + 
+          Indicadores[fecha]["Envasadora 5"]["Total"].kgCamara + 
+          Indicadores[fecha]["Envasadora 6"]["Total"].kgCamara
+        );
+
+        Indicadores[fecha]["Empaquetadora"]["Total"].deformes = (
+          Indicadores[fecha]["Envasadora 4"]["Total"].kgProdTotal + 
+          Indicadores[fecha]["Envasadora 5"]["Total"].kgProdTotal + 
+          Indicadores[fecha]["Envasadora 6"]["Total"].kgProdTotal
+        ) - (
+          Indicadores[fecha]["Envasadora 4"]["Total"].kgCamara + 
+          Indicadores[fecha]["Envasadora 5"]["Total"].kgCamara + 
+          Indicadores[fecha]["Envasadora 6"]["Total"].kgCamara
+        ) - Indicadores[fecha]["Empaquetadora"]["Total"].kgProdTotal;
       });
 
+      /* Se calculan los indicadores porcentuales para la semana completa */
       Indicadores["Semana"] = {};
       Object.keys(Indicadores).map((fecha, i) => {
         if (fecha !== "Semana"){
@@ -350,8 +348,6 @@ const GenerarExcel = (props) => {
           };
         }
       }
-
-      console.log(tiempoDetMaq);
 
       setIndicadores(Indicadores);
       setCantParos(justifCantParos);

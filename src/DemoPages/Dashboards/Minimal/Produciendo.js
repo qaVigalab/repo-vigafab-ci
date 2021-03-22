@@ -44,17 +44,38 @@ const Produciendo = (props) => {
 
     useEffect(() => {
         setnOrden(props.ordenSelected.id_sub_orden);
-        setPerdidaEnvasadoKg((props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc) - (props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc));
-        setPerdidaEmpaquetadoraKg((props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc) - (props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja));
-        setPerdidaTotalKg((props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc) - (props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja));
+        setPerdidaEnvasadoKg(
+            (props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc
+                - props.ordenSelected.reproceso_env_camara - props.ordenSelected.reproceso_rayos_camara)
+            - (props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc - props.ordenSelected.reproceso_rayos_camara));
+        setPerdidaEmpaquetadoraKg(
+            (props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc - props.ordenSelected.reproceso_rayos_camara)
+            - (props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja));
+        setPerdidaTotalKg(
+            (props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc
+                - props.ordenSelected.reproceso_env_camara - props.ordenSelected.reproceso_rayos_camara)
+            - (props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja));
 
         if (props.ordenSelected.id_estado !== 2){
             setTiempoActivo(props.ordenSelected.tiempo_activo);
             setTiempoInactivo(props.ordenSelected.tiempo_inactivo);
             
-            setPerdidaEnvasado(((props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc) - (props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc)) / (props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc));
-            setPerdidaEmpaquetadora(((props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc) - (props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja)) / (props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc));
-            setPerdidaTotal(((props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc) - (props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja)) / (props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc));
+            setPerdidaEnvasado(
+                ((props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc
+                        - props.ordenSelected.reproceso_env_camara - props.ordenSelected.reproceso_rayos_camara)
+                    - (props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc - props.ordenSelected.reproceso_rayos_camara))
+                / (props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc
+                    - props.ordenSelected.reproceso_env_camara - props.ordenSelected.reproceso_rayos_camara));
+            setPerdidaEmpaquetadora(
+                ((props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc - props.ordenSelected.reproceso_rayos_camara)
+                    - (props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja))
+                / (props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc - props.ordenSelected.reproceso_rayos_camara));
+            setPerdidaTotal(
+                ((props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc
+                        - props.ordenSelected.reproceso_env_camara - props.ordenSelected.reproceso_rayos_camara)
+                    - (props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja))
+                / (props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc
+                    - props.ordenSelected.reproceso_env_camara - props.ordenSelected.reproceso_rayos_camara));
 
             setDataTorta({
                 datasets: [{
