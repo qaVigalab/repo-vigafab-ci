@@ -21,7 +21,7 @@ const GenerarExcel = (props) => {
   const [dateErrorMsg, setDateErrorMsg] = useState("");
   const [startDate, setStartDate] = useState(new Date(moment().add(-6, 'days').format('YYYY-MM-DD')));
   const [endDate, setEndDate] = useState(new Date(moment().add(0, 'days').format('YYYY-MM-DD')));
-  const [titulos, setTitulos] = useState(["FORMADORA", "ENVASADORA 6", "ENVASADORA 5", "ENVASADORA 4", "EMPAQUETADORA"]);
+  const [titulos, setTitulos] = useState(["FORMADORA", "ENVASADORA 4", "ENVASADORA 5", "ENVASADORA 6", "EMPAQUETADORA"]);
 
   const handleChange3 = (date) =>{
     if (date > new Date(moment().add(-6, 'days').format('YYYY-MM-DD'))){
@@ -349,6 +349,10 @@ const GenerarExcel = (props) => {
         }
       }
 
+      justifCantParos = Object.values(justifCantParos).sort(function(a, b){return b.cantParos - a.cantParos});
+      justifCantMinutos = Object.values(justifCantMinutos).sort(function(a, b){return b.minPerdidos - a.minPerdidos});
+      tiempoDetMaq = Object.values(tiempoDetMaq).sort(function(a, b){return b.minPerdidos - a.minPerdidos});
+
       setIndicadores(Indicadores);
       setCantParos(justifCantParos);
       setMinPerdidos(justifCantMinutos);
@@ -368,21 +372,6 @@ const GenerarExcel = (props) => {
               scale: 0.35, //this was my solution, you have to adjust to your size
           },
         });
-
-        /*html2canvas(document.querySelector("#reporteSemanal")).then(canvas => {  
-          canvas.toBlob(function(blob){
-            var urlCreator = window.URL || window.webkitURL;
-            var imageUrl = urlCreator.createObjectURL(blob);
-            var img = new Image();
-            img.src = imageUrl;
-            img.onload = function(){
-                var pdf = new jsPDF('p','px',[img.height, img.width]);
-                pdf.addImage(img, 'png', 0, 0, img.width, img.height);
-                pdf.save('myPdf.pdf');
-            };
-          });
-        });*/
-
         setLoading(false);
       }, 3000);
     }
@@ -453,7 +442,7 @@ const GenerarExcel = (props) => {
 
             <Col md="5" align="center">
               <Label className="ml-2 mb-4 font-weight-bold title1orange" style={{ color: '#FFF', fontSize: '0.75rem' }}>
-                REPORTE ONLINE - SEM. {moment(Object.keys(indicadores)[0]).week()}<br></br>
+                REPORTE GENERAL - SEM. {moment(startDate).week()}<br></br>
                 {"Desde el " + moment(startDate).format('DD-MMM') + " hasta el " + moment(endDate).format('DD-MMM')}
               </Label>
             </Col>
@@ -547,7 +536,7 @@ const GenerarExcel = (props) => {
                     { backgroundColor: '#31869b', color: 'white', fontWeight: 'bold', fontSize: '0.35rem' }
                   }>
                     {fecha === "Semana" ?
-                      <div className="ml-4 mt-1 mb-1">{"Sem. " + moment(Object.keys(indicadores)[0]).week()}</div> :
+                      <div className="ml-4 mt-1 mb-1">{"Sem. " + moment(startDate).week()}</div> :
                       <div className="ml-4 mt-1 mb-1" style={{ textAlign: 'left' }}>{moment(fecha).format('DD-MMM')}</div>
                     }
                   </Row>
@@ -570,7 +559,7 @@ const GenerarExcel = (props) => {
                       <div>
                         <Row style={{ backgroundColor: '#538dd5', color: 'white', fontWeight: 'bold', fontSize: '0.35rem' }}>
                           {fecha === "Semana" ?
-                            <div className="ml-4 mt-1 mb-1">{"Sem. " + moment(Object.keys(indicadores)[0]).week()}</div> :
+                            <div className="ml-4 mt-1 mb-1">{"Sem. " + moment(startDate).week()}</div> :
                             <div className="ml-4 mt-1 mb-1" style={{ textAlign: 'center' }}>{moment(fecha).format('DD-MMM')}</div>
                           }
                         </Row>
@@ -678,7 +667,7 @@ const GenerarExcel = (props) => {
 
             <Col md="5" align="center">
               <Label className="ml-2 mb-4 font-weight-bold title1orange" style={{ color: '#FFF', fontSize: '0.75rem' }}>
-                REPORTE ONLINE - SEM. {moment(Object.keys(indicadores)[0]).week()}<br></br>
+                REPORTE DE PAROS - SEM. {moment(startDate).week()}<br></br>
                 {"Desde el " + moment(startDate).format('DD-MMM') + " hasta el " + moment(endDate).format('DD-MMM')}
               </Label>
             </Col>
@@ -691,83 +680,91 @@ const GenerarExcel = (props) => {
           </Row>
           
           <Row md="12" className="mt-2" style={{ marginLeft: '1%' }}>
-            <Col md="9">
+            <Col md="12">
               <Row className="mt-2">
                 <Col>
                   <Row>
-                    <Col md="1"></Col>
-                    <Col md="10" style={{ border: '1px solid #eaecef', borderRadius: '5px' }}>
+                    <Col md="4" style={{ border: '1px solid #eaecef', borderRadius: '5px', marginLeft: '2.5%' }}>
                       <Row style={{ color: 'black', fontWeight: 'bold', fontSize: '0.5rem', justifyContent: 'center' }}>
                         <div className="ml-4 mt-2 mb-1" style={{ textAlign: 'center' }}>Cantidad de paros por justificación</div>
                       </Row>
 
                       <Row>
-                        {Object.values(cantParos).sort(function(a, b){return b.cantParos - a.cantParos}).map((justif, i) => (
-                          <Col md="3" className="mt-2" style={{ textAlign: '-webkit-center' }}>
-                            <div className="mb-1" style={{ fontSize: '0.3rem', textAlignLast: 'center', color: 'dimgrey' }}>
+                        {Object.values(cantParos).map((justif, i) => (
+                          <Col md="3" className="mt-2" style={
+                            i === 0 ? { textAlign: '-webkit-center', paddingRight: '0px', }
+                            : i === cantParos.length-1 ? { textAlign: '-webkit-center', paddingLeft: '0px' }
+                            : { textAlign: '-webkit-center', paddingLeft: '5px', paddingRight: '5px' }
+                          }>
+                            <div>
+                              <div style={{ height: (150*cantParos[0].cantParos/Object.values(cantParos).reduce((n, {cantParos}) => n + cantParos, 0)
+                                  - 150*justif.cantParos/Object.values(cantParos).reduce((n, {cantParos}) => n + cantParos, 0)) + 'px' }}>
+                              </div>
+                              <div className="mb-1" style={{ fontSize: '0.25rem', textAlignLast: 'center', color: 'darkgrey', marginTop: '1%', fontWeight: 'bold' }}>
+                                {justif.cantParos}
+                              </div>
+                              <div valign="bottom" style={{
+                                color: 'transparent',
+                                backgroundColor: 'rgb(240 128 128)',
+                                height: 150*justif.cantParos/Object.values(cantParos).reduce((n, {cantParos}) => n + cantParos, 0) + 'px',
+                                width: '50%',
+                                border: '0.5px solid rgb(178 34 34)',
+                                borderRadius: '5%',
+                                marginTop: '2.5%'
+                              }}>
+                                -
+                              </div>
+                            </div>
+
+                            <div className="my-1" style={{ fontSize: '0.2rem', textAlignLast: 'center', color: 'dimgrey' }}>
                               {justif.nombre}
-                            </div>
-
-                            <div style={{
-                                  color: 'transparent',
-                                  backgroundColor: 'lightcoral',
-                                  height: 150*justif.cantParos/Object.values(cantParos).reduce((n, {cantParos}) => n + cantParos, 0) + 'px',
-                                  width: '50%',
-                                  border: '0.5px solid firebrick',
-                                  borderRadius: '5%',
-                                  marginTop: '2.5%'
-                                }}>
-                                  -
-                            </div>
-
-                            <div className="mb-2" style={{ fontSize: '0.25rem', textAlignLast: 'center', color: 'darkgrey', marginTop: '1%', fontWeight: 'bold' }}>
-                              {justif.cantParos}
                             </div>
                           </Col>
                         ))}
                       </Row>
                     </Col>
+
                     <Col md="1"></Col>
-                  </Row>
-                </Col>
-              </Row>
-              
-              <Row className="mt-4">
-                <Col>
-                  <Row>
-                    <Col md="1"></Col>
-                    <Col md="10" style={{ border: '1px solid #eaecef', borderRadius: '5px' }}>
+
+                    <Col md="4" style={{ border: '1px solid #eaecef', borderRadius: '5px', marginLeft: '-5%' }}>
                       <Row style={{ color: 'black', fontWeight: 'bold', fontSize: '0.5rem', justifyContent: 'center' }}>
-                        <div className="ml-4 mt-1 mb-1" style={{ textAlign: 'center' }}>Minutos perdidos por justificación</div>
+                        <div className="ml-4 mt-2 mb-1" style={{ textAlign: 'center' }}>Minutos perdidos por justificación</div>
                       </Row>
 
                       <Row>
-                        {Object.values(minPerdidos).sort(function(a, b){return b.minPerdidos - a.minPerdidos}).map((justif, i) => (
-                          <Col md="3" className="mt-2" style={{ textAlign: '-webkit-center' }}>
-                            <div className="mb-1" style={{ fontSize: '0.3rem', textAlignLast: 'center', color: 'dimgrey' }}>
+                        {Object.values(minPerdidos).map((justif, i) => (
+                          <Col md="3" className="mt-2" style={
+                            i === 0 ? { textAlign: '-webkit-center', paddingRight: '0px' }
+                            : i === cantParos.length-1 ? { textAlign: '-webkit-center', paddingLeft: '0px' }
+                            : { textAlign: '-webkit-center', paddingLeft: '5px', paddingRight: '5px' }
+                          }>
+                            <div>
+                              <div style={{ height: (150*cantParos[0].cantParos/Object.values(cantParos).reduce((n, {cantParos}) => n + cantParos, 0)
+                                  - 150*justif.minPerdidos/Object.values(minPerdidos).reduce((n, {minPerdidos}) => n + minPerdidos, 0)) + 'px' }}>
+                              </div>
+                              <div className="mb-1" style={{ fontSize: '0.25rem', textAlignLast: 'center', color: 'darkgrey', marginTop: '1%', fontWeight: 'bold' }}>
+                                {justif.minPerdidos} min
+                              </div>
+                              <div valign="bottom" style={{
+                                    color: 'transparent',
+                                    backgroundColor: '#80e0f0',
+                                    height: 150*justif.minPerdidos/Object.values(minPerdidos).reduce((n, {minPerdidos}) => n + minPerdidos, 0) + 'px',
+                                    width: '50%',
+                                    border: '0.5px solid #2291b2',
+                                    borderRadius: '5%',
+                                    marginTop: '2.5%'
+                                  }}>
+                                    -
+                              </div>
+                            </div>
+
+                            <div className="my-1" style={{ fontSize: '0.3rem', textAlignLast: 'center', color: 'dimgrey' }}>
                               {justif.nombre}
-                            </div>
-
-                            <div style={{
-                                  color: 'transparent',
-                                  backgroundColor: '#80e0f0',
-                                  height: 150*justif.minPerdidos/Object.values(minPerdidos).reduce((n, {minPerdidos}) => n + minPerdidos, 0) + 'px',
-                                  width: '50%',
-                                  border: '0.5px solid #2291b2',
-                                  borderRadius: '5%',
-                                  marginTop: '2.5%'
-                                }}>
-                                  -
-                            </div>
-
-                            <div className="mb-2" style={{ fontSize: '0.25rem', textAlignLast: 'center', color: 'darkgrey', marginTop: '1%', fontWeight: 'bold' }}>
-                              {justif.minPerdidos} min
                             </div>
                           </Col>
                         ))}
                       </Row>
                     </Col>
-                    <Col md="1"></Col>
                   </Row>
                 </Col>
               </Row>
@@ -776,33 +773,37 @@ const GenerarExcel = (props) => {
                 <Col>
                   <Row>
                     <Col md="1"></Col>
-                    <Col md="10" style={{ border: '1px solid #eaecef', borderRadius: '5px' }}>
+                    <Col md="7" style={{ border: '1px solid #eaecef', borderRadius: '5px' }}>
                       <Row style={{ color: 'black', fontWeight: 'bold', fontSize: '0.5rem', justifyContent: 'center' }}>
-                        <div className="ml-4 mt-1 mb-1" style={{ textAlign: 'center' }}>Tiempo de detención por máquina</div>
+                        <div className="ml-4 mt-2 mb-1" style={{ textAlign: 'center' }}>Tiempo de detención por máquina</div>
                       </Row>
 
                       <Row>
                         <Col md="1"></Col>
-                        {Object.values(detenciones).sort(function(a, b){return b.minPerdidos - a.minPerdidos}).map((justif, i) => (
+                        {Object.values(detenciones).map((justif, i) => (
                           <Col md="2" className="mt-2" style={{ textAlign: '-webkit-center' }}>
-                            <div className="mb-1" style={{ fontSize: '0.3rem', textAlignLast: 'center', color: 'dimgrey' }}>
+                            <div>
+                              <div style={{ height: (250*detenciones[0].minPerdidos/Object.values(detenciones).reduce((n, {minPerdidos}) => n + minPerdidos, 0)
+                                  - 250*justif.minPerdidos/Object.values(detenciones).reduce((n, {minPerdidos}) => n + minPerdidos, 0)) + 'px' }}>
+                              </div>
+                              <div className="mb-1" style={{ fontSize: '0.25rem', textAlignLast: 'center', color: 'darkgrey', marginTop: '1%', fontWeight: 'bold' }}>
+                                {justif.minPerdidos} min
+                              </div>
+                              <div valign="bottom" style={{
+                                    color: 'transparent',
+                                    backgroundColor: 'rgb(240 221 128)',
+                                    height: 250*justif.minPerdidos/Object.values(detenciones).reduce((n, {minPerdidos}) => n + minPerdidos, 0) + 'px',
+                                    width: '50%',
+                                    border: '0.5px solid rgb(169 178 34)',
+                                    borderRadius: '5%',
+                                    marginTop: '2.5%'
+                                  }}>
+                                    -
+                              </div>
+                            </div>
+
+                            <div className="my-1" style={{ fontSize: '0.3rem', textAlignLast: 'center', color: 'dimgrey' }}>
                               {justif.maquina}
-                            </div>
-
-                            <div style={{
-                                  color: 'transparent',
-                                  backgroundColor: 'rgb(233 240 128)',
-                                  height: 150*justif.minPerdidos/Object.values(minPerdidos).reduce((n, {minPerdidos}) => n + minPerdidos, 0) + 'px',
-                                  width: '50%',
-                                  border: '0.5px solid rgb(178 167 34)',
-                                  borderRadius: '5%',
-                                  marginTop: '2.5%'
-                                }}>
-                                  -
-                            </div>
-
-                            <div className="mb-2" style={{ fontSize: '0.25rem', textAlignLast: 'center', color: 'darkgrey', marginTop: '1%', fontWeight: 'bold' }}>
-                              {justif.minPerdidos} min
                             </div>
                           </Col>
                         ))}

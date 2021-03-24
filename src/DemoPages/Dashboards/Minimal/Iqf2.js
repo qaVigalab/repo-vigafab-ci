@@ -241,8 +241,7 @@ const Iqf2 = (props) => {
                 setEstado(result[0].estado)
                 setKgacumulados(result[0].real_kg)
                 setCapacidad(result[0].kg_hora)
-            }
-            )
+            })
             .catch(err => {
                 console.error(err);
             });
