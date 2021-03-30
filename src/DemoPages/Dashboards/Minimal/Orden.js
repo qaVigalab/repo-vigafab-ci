@@ -60,12 +60,11 @@ const Orden = (props) => {
     if (is_button)
       props.updateOrden(id_orden, false);
     else {
+      setChangeHours(false);
       if (id_orden !== idSubOrden){
-        setChangeHours(false);
         props.updateOrden(id_orden, true);
       }
       else{
-        setChangeHours(false);
         props.updateOrden(id_orden, false);
       }
     }
@@ -334,6 +333,9 @@ const Orden = (props) => {
         "Envasadoras": "",
         "Empaquetadora": ""
       });
+
+      setReprEnvMezc(0); setReprEnvCamFr(0);
+      setReprRayMezc(0); setReprRayCamFr(0);
       
       props.updateOrden(props.ordenSelected.id_sub_orden, true);
       setTimeout(() => {

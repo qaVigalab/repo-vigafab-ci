@@ -104,36 +104,45 @@ const Empaque = (props) => {
         if (props.reportesSelected.length > 0){
             var reportesSel = props.reportesSelected.filter(rep => rep.id_tipo !== 4 && !rep.hora_inicio.includes("05:55:"));
 
-            var tiempo_activo = 0, tiempo_inactivo = 0;
-            for (var i=0; i<reportesSel.length; i++){
-                /* Se calculan los tiempos de actividad y paro */
-                if (reportesSel[i].id_tipo === 1)
-                    tiempo_inactivo += reportesSel[i].minutos;
-                else if (reportesSel[i].id_tipo === 2)
-                    tiempo_activo += reportesSel[i].minutos;
-            }
-      
-            setDisponibilidad(
-              isNaN(tiempo_activo/(tiempo_activo+tiempo_inactivo)) ? 0 :
-              tiempo_activo/(tiempo_activo+tiempo_inactivo) * 100
-            );
-      
-            setEficiencia(
-                isNaN(props.ordenSelected.real_kg/(props.ordenSelected.kg_hora * ((tiempo_activo+tiempo_inactivo)/60))) ? 0 :
-                props.ordenSelected.real_kg/(props.ordenSelected.kg_hora * ((tiempo_activo+tiempo_inactivo)/60)) * 100
-            );
-    
-            setTActivo(tiempo_activo);
-            setDataTorta(
-                {
-                datasets: [
-                    {
-                        data: [0, parseInt(tiempo_inactivo), parseInt(tiempo_activo)]
-                    }
-                ],
+            if (reportesSel.length > 0){
+                var tiempo_activo = 0, tiempo_inactivo = 0;
+                for (var i=0; i<reportesSel.length; i++){
+                    /* Se calculan los tiempos de actividad y paro */
+                    if (reportesSel[i].id_tipo === 1)
+                        tiempo_inactivo += reportesSel[i].minutos;
+                    else if (reportesSel[i].id_tipo === 2)
+                        tiempo_activo += reportesSel[i].minutos;
                 }
-            );
-            setReportes(props.reportesSelected);
+        
+                setDisponibilidad(isNaN(tiempo_activo/(tiempo_activo+tiempo_inactivo)) ? 0 :
+                    tiempo_activo/(tiempo_activo+tiempo_inactivo) * 100);
+
+                while (reportesSel.length > 1 && reportesSel[0].id_tipo === 1){
+                    reportesSel.splice(0, 1);
+                }
+        
+                var startMoment = moment(reportesSel[0].hora_inicio);
+                var endMoment = moment(reportesSel[reportesSel.length-1].hora_termino);
+                var diff = endMoment.diff(startMoment);
+                const diffDuration = moment.duration(diff);
+        
+                setEficiencia(
+                    isNaN(props.ordenSelected.real_kg/(props.ordenSelected.kg_hora * (diffDuration.hours() + diffDuration.minutes()/60 + diffDuration.seconds()/3600))) ? 0 :
+                    props.ordenSelected.real_kg/(props.ordenSelected.kg_hora * (diffDuration.hours() + diffDuration.minutes()/60 + diffDuration.seconds()/3600)) * 100
+                );
+        
+                setTActivo(tiempo_activo);
+                setDataTorta(
+                    {
+                    datasets: [
+                        {
+                            data: [0, parseInt(tiempo_inactivo), parseInt(tiempo_activo)]
+                        }
+                    ],
+                    }
+                );
+                setReportes(props.reportesSelected);
+            }
         } else{
             setDisponibilidad(0);
             setEficiencia(0);

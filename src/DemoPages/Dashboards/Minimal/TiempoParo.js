@@ -7,27 +7,14 @@ import DatePicker from "react-datepicker";
 import moment from 'moment'
 
 import { connect } from "react-redux";
-import {
-  Button,
-  Card,
-  CardBody,
-  Col,
-  Container,
-  Input,
-  InputGroup,
-  InputGroupAddon,
-  Progress,
-  Row,
-  Table,
-  FormGroup,
-  Label
+import { 
+  Button, Card, CardBody, Col, Container, Input, InputGroup, InputGroupAddon, Progress, Row, Table, FormGroup, Label
 } from "reactstrap";
 import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
 import TortaParos from "./TortaParos";
 
 const TiempoParo = (props) => {
-  let m = moment();
-  m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+  let m = moment().set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
   const [tiempoTotal, setTiempoTotal] = useState();
   const [tiempoOperativo, setTiempoOperativo] = useState();
   const [tiempoMantenimiento, setTiempoMantenimiento] = useState();
@@ -56,22 +43,23 @@ const TiempoParo = (props) => {
     horas = Math.trunc(horas)
     let minutos = min - (60 * horas)
     return horas === 0 ? minutos + " Min" : horas + " Hrs " + minutos + " Min"
-  }
+  };
 
   const changeBtnSku = (e) => {
     e.preventDefault();
     btnSku === 1 ? setBtnSku(0) : setBtnSku(1)
     if (btnSku === 1) setSku(0);
-  }
+  };
 
   const changeSku = (e) => {
     e.target.value.length === 7 ? setSku(e.target.value) : setSku(0)
-  }
+  };
+
   const changeBtnBuscar = (e) => {
     e.preventDefault();
     setRefresh(!refresh);
     setDetalleSelected([]);
-  }
+  };
 
   const updateDetalle = (e, titulo, detalle, tiempo) => {
     e.preventDefault();
@@ -83,9 +71,10 @@ const TiempoParo = (props) => {
 
   const loadDetalleParo = () => {
     let m = moment();
-    m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
-    m.toISOString()
-    m.format()
+    m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+    m.toISOString();
+    m.format();
+
     fetch(global.api.dashboard.getdetalleparo, {
       "method": "POST",
       "headers": {
@@ -99,101 +88,101 @@ const TiempoParo = (props) => {
         ter: endDate === undefined ? m : endDate
       }),
     })
-      .then(response => response.json())
-      .then(result => {
-        var paros = [], operativos = [], mantenimiento = [];
-        for (var i = 0; i < result.length; i++) {
-          /* Se settea la información general de los paros */
-          var found = false, pos = -1;
-          for (var j = 0; j < paros.length; j++) {
-            if (result[i].id_tipo === paros[j].id_tipo) {
+    .then(response => response.json())
+    .then(result => {
+      var paros = [], operativos = [], mantenimiento = [];
+      for (var i = 0; i < result.length; i++) {
+        /* Se settea la información general de los paros */
+        var found = false, pos = -1;
+        for (var j = 0; j < paros.length; j++) {
+          if (result[i].id_tipo === paros[j].id_tipo) {
+              found = true; pos = j;
+              break;
+          }
+        }
+
+        if (found) {
+          paros[pos].suma += result[i].suma;
+        } else {
+          var obj = {
+            id_tipo: result[i].id_tipo,
+            suma: result[i].suma,
+            nombre: result[i].nombre
+          }
+          paros.push(obj);
+        }
+
+        /* Se settea el detalle de los operativos */
+        if (result[i].nombre === "Operativo") {
+          found = false; pos = -1;
+          for (j = 0; j < operativos.length; j++) {
+            if (result[i].ambito === operativos[j].ambito) {
                 found = true; pos = j;
                 break;
             }
           }
 
           if (found) {
-            paros[pos].suma += result[i].suma;
+            operativos[pos].suma += result[i].suma;
           } else {
-            var obj = {
-              id_tipo: result[i].id_tipo,
+            obj = {
               suma: result[i].suma,
-              nombre: result[i].nombre
+              ambito: result[i].ambito
             }
-            paros.push(obj);
-          }
-
-          /* Se settea el detalle de los operativos */
-          if (result[i].nombre === "Operativo") {
-            found = false; pos = -1;
-            for (j = 0; j < operativos.length; j++) {
-              if (result[i].ambito === operativos[j].ambito) {
-                  found = true; pos = j;
-                  break;
-              }
-            }
-
-            if (found) {
-              operativos[pos].suma += result[i].suma;
-            } else {
-              obj = {
-                suma: result[i].suma,
-                ambito: result[i].ambito
-              }
-              operativos.push(obj);
-            }
-          }
-
-          /* Se settea el detalle de los de mantenimiento */
-          if (result[i].nombre === "Mantenimiento") {
-            console.log(result[i].nombre);
-            found = false; pos = -1;
-            for (j = 0; j < mantenimiento.length; j++) {
-              if (result[i].ambito === mantenimiento[j].ambito) {
-                  found = true; pos = j;
-                  break;
-              }
-            }
-
-            if (found) {
-              mantenimiento[pos].suma += result[i].suma;
-            } else {
-              obj = {
-                suma: result[i].suma,
-                ambito: result[i].ambito
-              }
-              mantenimiento.push(obj);
-            }
+            operativos.push(obj);
           }
         }
 
-        paros.sort((a, b) => b.suma - a.suma);
-        operativos.sort((a, b) => b.suma - a.suma);
-        mantenimiento.sort((a, b) => b.suma - a.suma);
+        /* Se settea el detalle de los de mantenimiento */
+        if (result[i].nombre === "Mantenimiento") {
+          console.log(result[i].nombre);
+          found = false; pos = -1;
+          for (j = 0; j < mantenimiento.length; j++) {
+            if (result[i].ambito === mantenimiento[j].ambito) {
+                found = true; pos = j;
+                break;
+            }
+          }
 
-        setDetalleParos(paros);
-        setDetalleOperativos(operativos);
-        setDetalleMantenimiento(mantenimiento);
+          if (found) {
+            mantenimiento[pos].suma += result[i].suma;
+          } else {
+            obj = {
+              suma: result[i].suma,
+              ambito: result[i].ambito
+            }
+            mantenimiento.push(obj);
+          }
+        }
+      }
 
-        let tiempo_total = 0, tiempo_operativo = 0, tiempo_mantenimiento = 0;
-        paros.forEach(paro => {
-          tiempo_total += paro.suma;
-        });
-        operativos.forEach(paro => {
-          tiempo_operativo += paro.suma;
-        });
-        mantenimiento.forEach(paro => {
-          tiempo_mantenimiento += paro.suma;
-        });
+      paros.sort((a, b) => b.suma - a.suma);
+      operativos.sort((a, b) => b.suma - a.suma);
+      mantenimiento.sort((a, b) => b.suma - a.suma);
 
-        setTiempoTotal(tiempo_total);
-        setTiempoOperativo(tiempo_operativo);
-        setTiempoMantenimiento(tiempo_mantenimiento);
-      })
-      .catch(err => {
-        console.error(err);
+      setDetalleParos(paros);
+      setDetalleOperativos(operativos);
+      setDetalleMantenimiento(mantenimiento);
+
+      let tiempo_total = 0, tiempo_operativo = 0, tiempo_mantenimiento = 0;
+      paros.forEach(paro => {
+        tiempo_total += paro.suma;
       });
-  }
+      operativos.forEach(paro => {
+        tiempo_operativo += paro.suma;
+      });
+      mantenimiento.forEach(paro => {
+        tiempo_mantenimiento += paro.suma;
+      });
+
+      setTiempoTotal(tiempo_total);
+      setTiempoOperativo(tiempo_operativo);
+      setTiempoMantenimiento(tiempo_mantenimiento);
+    })
+    .catch(err => {
+      console.error(err);
+    });
+  };
 
   useEffect(() => {
     loadDetalleParo()
@@ -224,11 +213,10 @@ const TiempoParo = (props) => {
               menu_actual="Control de Tiempo"
             />
           </Col>
-
         </Row>
 
-        <Row>
-          <Col>
+        <Row md="12" xl="12">
+          <Col md="4" xl="3">
             <Card className="main-card mb-3">
               <CardBody>
                 <Container>
@@ -257,6 +245,7 @@ const TiempoParo = (props) => {
               </CardBody>
             </Card>
           </Col>
+
           <Col md="8" xl="9">
             <Card className="main-card mb-3">
               <CardBody>

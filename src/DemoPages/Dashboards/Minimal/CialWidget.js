@@ -106,50 +106,66 @@ const CialWidget = (props) => {
     if (props.reportesSelected.length > 0){
       var reportesSel = props.reportesSelected.filter(rep => rep.id_tipo !== 4 && !rep.hora_inicio.includes("05:55:"));
 
-      /* Se calculan los tiempos de actividad y paro */
-      var tiempo_activo = 0, tiempo_inactivo = 0;
-      if (props.recambio === 0){
-        var hamburguesas_envasadas = -props.ordenSelected.reproceso_rayos_mezc/3*1000/props.ordenSelected.g_hamburguesa, 
-        kilos_envasados = -props.ordenSelected.reproceso_rayos_mezc/3;
-      } else{
-        var hamburguesas_envasadas = 0, kilos_envasados = 0;
-      }
-
-      for (var i=0; i<reportesSel.length; i++){
-        if (reportesSel[i].id_tipo === 1)
-          tiempo_inactivo += reportesSel[i].minutos;
-        else if (reportesSel[i].id_tipo === 2){
-          tiempo_activo += reportesSel[i].minutos;
-          
-          /* Se obtiene la cantidad de hamburguesas envasadas y sus kg acumulados */
-          hamburguesas_envasadas += reportesSel[i].hamburguesas_acumuladas;
-          kilos_envasados += reportesSel[i].real_kg;
+      if (reportesSel.length > 0){
+        /* Se calculan los tiempos de actividad y paro */
+        var tiempo_activo = 0, tiempo_inactivo = 0;
+        if (props.recambio === 0){
+          var hamburguesas_envasadas = -props.ordenSelected.reproceso_rayos_mezc/3*1000/props.ordenSelected.g_hamburguesa, 
+          kilos_envasados = -props.ordenSelected.reproceso_rayos_mezc/3;
+        } else{
+          var hamburguesas_envasadas = 0, kilos_envasados = 0;
         }
-      }
-      
-      setDisponibilidad(
-        isNaN(tiempo_activo/(tiempo_activo+tiempo_inactivo)) ? 0 :
-        tiempo_activo/(tiempo_activo+tiempo_inactivo) * 100
-      );
 
-      setEficiencia(
-          isNaN(kilos_envasados/(props.ordenSelected.kg_hora/3 * (tiempo_activo+tiempo_inactivo)/60)) ? 0 :
-          kilos_envasados/(props.ordenSelected.kg_hora/3 * (tiempo_activo+tiempo_inactivo)/60) * 100
-      );
+        if (hamburguesas_envasadas < 0)
+          hamburguesas_envasadas = 0;
+        if (kilos_envasados < 0)
+          kilos_envasados = 0;
 
-      setTActivo(tiempo_activo);
-      setHambEnvasadas(hamburguesas_envasadas);
-      setKgEnvasados(kilos_envasados);
-      setDataTorta(
-          {
-            datasets: [
-              {
-                data: [0, parseInt(tiempo_inactivo), parseInt(tiempo_activo)]
-              }
-            ],
+        for (var i=0; i<reportesSel.length; i++){
+          if (reportesSel[i].id_tipo === 1)
+            tiempo_inactivo += reportesSel[i].minutos;
+          else if (reportesSel[i].id_tipo === 2){
+            tiempo_activo += reportesSel[i].minutos;
+            
+            /* Se obtiene la cantidad de hamburguesas envasadas y sus kg acumulados */
+            hamburguesas_envasadas += reportesSel[i].hamburguesas_acumuladas;
+            kilos_envasados += reportesSel[i].real_kg;
           }
-      );
-      setReportes(props.reportesSelected);
+        }
+        
+        setDisponibilidad(
+          isNaN(tiempo_activo/(tiempo_activo+tiempo_inactivo)) ? 0 :
+          tiempo_activo/(tiempo_activo+tiempo_inactivo) * 100
+        );
+
+        while (reportesSel.length > 1 && reportesSel[0].id_tipo === 1){
+          reportesSel.splice(0, 1);
+        }
+
+        var startMoment = moment(reportesSel[0].hora_inicio);
+        var endMoment = moment(reportesSel[reportesSel.length-1].hora_termino);
+        var diff = endMoment.diff(startMoment);
+        const diffDuration = moment.duration(diff);
+
+        setEficiencia(
+            isNaN(kilos_envasados/(props.ordenSelected.kg_hora/3 * (diffDuration.hours() + diffDuration.minutes()/60 + diffDuration.seconds()/3600))) ? 0 :
+            kilos_envasados/(props.ordenSelected.kg_hora/3 * (diffDuration.hours() + diffDuration.minutes()/60 + diffDuration.seconds()/3600)) * 100
+        );
+
+        setTActivo(tiempo_activo);
+        setHambEnvasadas(hamburguesas_envasadas);
+        setKgEnvasados(kilos_envasados);
+        setDataTorta(
+            {
+              datasets: [
+                {
+                  data: [0, parseInt(tiempo_inactivo), parseInt(tiempo_activo)]
+                }
+              ],
+            }
+        );
+        setReportes(props.reportesSelected);
+      }
     } else{
       setDisponibilidad(0);
       setEficiencia(0);

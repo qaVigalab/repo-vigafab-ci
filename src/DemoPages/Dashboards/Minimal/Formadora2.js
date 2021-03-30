@@ -5,6 +5,7 @@ import Chart from 'react-apexcharts'
 import { connect } from "react-redux";
 import Circle from "react-circle";
 import ReactApexChart from "react-apexcharts";
+import moment from 'moment'
 import "moment/locale/es";
 import _ from "lodash";
 
@@ -63,7 +64,7 @@ const Formadora2 = (props) => {
                 },
             ],
         }
-    )
+    );
 
     const [options3, setOptions3] = useState(
         {
@@ -129,13 +130,14 @@ const Formadora2 = (props) => {
                 },
             }
         }
-    )
+    );
+
     const [series3, setSeries3] = useState(
         [{
             name: 'Temperatura',
             data: temperatura,
         },]
-    )
+    );
 
     const [seriesTimeLine, setSeriesTimeLine] = useState([])
     const [optionsTimeLine] = useState({
@@ -166,7 +168,7 @@ const Formadora2 = (props) => {
                 }
             }
         }
-    )
+    );
 
     /* Se carga el gráfico de temperaturas asociado a la orden en curso */
     const loadGraphTemp = () => {
@@ -185,9 +187,8 @@ const Formadora2 = (props) => {
             result.map(r => {
                 fecha.push(r.fecha);
                 temperatura.push(r.temperatura);
-            })
-        })
-        .then(() => {
+            });
+
             setSeries3([{
                 data: temperatura
             }]);
@@ -196,45 +197,171 @@ const Formadora2 = (props) => {
         .catch(err => {
             console.error(err);
         });
-    }
+    };
 
-    const [reportes, setReportes] = useState(props.reportesSelected);
+    /* Se carga el gráfico de eficiencia por minuto */
+    const [seriesEfficiency, setSeriesEfficiency] = useState([]);
+    const [optionsEfficiency, setOptionsEfficiency] = useState({});
+    const loadGraphEffic = (id_vb) => {
+        fetch(global.api.dashboard.getEficienciaPorMinuto, {
+            "method": "POST",
+            "headers": {
+                "content-type": "application/json",
+                "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
+            },
+            body: JSON.stringify({
+                id_sub_orden: props.ordenSelected.id_sub_orden,
+                id_vibot: id_vb
+            }),
+        })
+        .then(response => response.json())
+        .then(result => {
+            var kg_prod = [];
+            result.map(r => {
+                kg_prod.push(r.kg_prod);
+            });
+            
+            setSeriesEfficiency([
+                {
+                    name: 'Kg/min reales',
+                    type: 'column',
+                    data: kg_prod
+                },
+            ]);
+
+            setOptionsEfficiency({
+                chart: { height: 350, type: 'bar' },
+                plotOptions: {
+                  bar: {
+                    borderRadius: 10,
+                    dataLabels: {
+                      position: 'top', // top, center, bottom
+                    },
+                  }
+                },
+                dataLabels: {
+                  enabled: true,
+                  formatter: function (val) {
+                    return _.round(val, 0);
+                  },
+                  offsetY: -20,
+                  style: {
+                    fontSize: '12px',
+                    colors: ["#304758"]
+                  }
+                },
+                
+                xaxis: {
+                  categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                  position: 'top',
+                  axisBorder: {
+                    show: false
+                  },
+                  axisTicks: {
+                    show: false
+                  },
+                  crosshairs: {
+                    fill: {
+                      type: 'gradient',
+                      gradient: {
+                        colorFrom: '#D8E3F0',
+                        colorTo: '#BED1E6',
+                        stops: [0, 100],
+                        opacityFrom: 0.4,
+                        opacityTo: 0.5,
+                      }
+                    }
+                  },
+                  tooltip: {
+                    enabled: true,
+                  }
+                },
+                yaxis: {
+                  axisBorder: {
+                    show: false
+                  },
+                  axisTicks: {
+                    show: false,
+                  },
+                  labels: {
+                    show: false,
+                    formatter: function (val) {
+                      return val + "%";
+                    }
+                  }
+                
+                },
+                title: {
+                  text: 'Monthly Inflation in Argentina, 2002',
+                  floating: true,
+                  offsetY: 330,
+                  align: 'center',
+                  style: {
+                    color: '#444'
+                  }
+                }
+            });
+        })
+        .catch(err => {
+            console.error(err);
+        });
+    };
+
     const [tActivo, setTActivo] = useState(0);
     const [disponibilidad, setDisponibilidad] = useState(0);
     const [eficiencia, setEficiencia] = useState(0);
+
+    useEffect(() => {
+        if (Object.keys(props.ordenSelected).length > 0){
+            loadGraphEffic(6296);
+            loadGraphTemp();
+        }
+    }, [props.ordenSelected]);
+
     useEffect(() => {
         if (props.reportesSelected.length > 0){
             var reportesSel = props.reportesSelected.filter(rep => rep.id_tipo !== 4 && !rep.hora_inicio.includes("05:55:"));
 
-            var tiempo_activo = 0, tiempo_inactivo = 0;
-            for (var i=0; i<reportesSel.length; i++){
-                if (reportesSel[i].id_tipo === 1)
-                    tiempo_inactivo += reportesSel[i].minutos;
-                else if (reportesSel[i].id_tipo === 2)
-                    tiempo_activo += reportesSel[i].minutos;
-            }
-
-            setDisponibilidad(
-                isNaN(tiempo_activo/(tiempo_activo+tiempo_inactivo)) ? 0 :
-                tiempo_activo/(tiempo_activo+tiempo_inactivo) * 100
-            );
-
-            setEficiencia(
-                isNaN(props.ordenSelected.kg_formados/(props.ordenSelected.kg_hora * ((tiempo_activo+tiempo_inactivo)/60))) ? 0 :
-                props.ordenSelected.kg_formados/(props.ordenSelected.kg_hora * ((tiempo_activo+tiempo_inactivo)/60)) * 100
-            );
-
-            setTActivo(tiempo_activo);
-            setDataTorta(
-                {
-                datasets: [
-                    {
-                    data: [0, parseInt(tiempo_inactivo), parseInt(tiempo_activo)]
-                    }
-                ],
+            if (reportesSel.length > 0){
+                var tiempo_activo = 0, tiempo_inactivo = 0;
+                for (var i=0; i<reportesSel.length; i++){
+                    if (reportesSel[i].id_tipo === 1)
+                        tiempo_inactivo += reportesSel[i].minutos;
+                    else if (reportesSel[i].id_tipo === 2)
+                        tiempo_activo += reportesSel[i].minutos;
                 }
-            );
-            setReportes(props.reportesSelected);
+
+                setDisponibilidad(
+                    isNaN(tiempo_activo/(tiempo_activo+tiempo_inactivo)) ? 0 :
+                    tiempo_activo/(tiempo_activo+tiempo_inactivo) * 100
+                );
+
+                while (reportesSel.length > 1 && reportesSel[0].id_tipo === 1){
+                    reportesSel.splice(0, 1);
+                }
+
+                var startMoment = moment(reportesSel[0].hora_inicio);
+                var endMoment = moment(reportesSel[reportesSel.length-1].hora_termino);
+                var diff = endMoment.diff(startMoment);
+                const diffDuration = moment.duration(diff);
+
+                setEficiencia(
+                    isNaN(props.ordenSelected.kg_formados/(props.ordenSelected.kg_hora * (diffDuration.hours() + diffDuration.minutes()/60 + diffDuration.seconds()/3600))) ? 0 :
+                    props.ordenSelected.kg_formados/(props.ordenSelected.kg_hora * (diffDuration.hours() + diffDuration.minutes()/60 + diffDuration.seconds()/3600)) * 100
+                );
+
+                setTActivo(tiempo_activo);
+                setDataTorta(
+                    {
+                    datasets: [
+                        {
+                        data: [0, parseInt(tiempo_inactivo), parseInt(tiempo_activo)]
+                        }
+                    ],
+                    }
+                );
+                loadTimeLine();
+            }
         } else{
             setDisponibilidad(0);
             setEficiencia(0);
@@ -248,17 +375,7 @@ const Formadora2 = (props) => {
                 ],
                 }
             );
-            setReportes([]);
-        }
-    }, [props.reportesSelected]);
 
-    useEffect(() => {
-        props.updateKPIs(2, disponibilidad, eficiencia);
-        if (reportes.length > 0){
-            loadGraphTemp();
-            loadTimeLine();
-        }
-        else{
             setSeriesTimeLine([{
                 data: [{
                     x: 'Prod',
@@ -278,32 +395,36 @@ const Formadora2 = (props) => {
                 }]
             }]);
         }
-    }, [reportes]);
+    }, [props.reportesSelected]);
+
+    useEffect(() => {
+        props.updateKPIs(2, disponibilidad, eficiencia);
+    }, [eficiencia]);
 
     const loadTimeLine = () => {
         var objetos = [{
             x: 'Prod',
-            y: [new Date(reportes[0].hora_inicio).getTime(),
-            new Date(reportes[0].hora_inicio).getTime()],
+            y: [new Date(props.reportesSelected[0].hora_inicio).getTime(),
+            new Date(props.reportesSelected[0].hora_inicio).getTime()],
             fillColor: '#2264A7'
         }, {
             x: 'Paro',
-            y: [new Date(reportes[0].hora_inicio).getTime(),
-            new Date(reportes[0].hora_inicio).getTime()],
+            y: [new Date(props.reportesSelected[0].hora_inicio).getTime(),
+            new Date(props.reportesSelected[0].hora_inicio).getTime()],
             fillColor: '#F7431E'
         }, {
             x: 'Cambio',
-            y: [new Date(reportes[0].hora_inicio).getTime(),
-            new Date(reportes[0].hora_inicio).getTime()],
+            y: [new Date(props.reportesSelected[0].hora_inicio).getTime(),
+            new Date(props.reportesSelected[0].hora_inicio).getTime()],
             fillColor: '#02c39a'
         }];
         
-        for (let i = 0; i < reportes.length; i++) {
+        for (let i = 0; i < props.reportesSelected.length; i++) {
             var x_ = "", color_ = null;
-            if (reportes[i].id_tipo === 1) {
+            if (props.reportesSelected[i].id_tipo === 1) {
                 x_ = "Paro";
                 color_ = '#F7431E';
-            } else if (reportes[i].id_tipo === 2) {
+            } else if (props.reportesSelected[i].id_tipo === 2) {
                 x_ = "Prod";
                 color_ = '#2264A7';
             } else {
@@ -314,8 +435,8 @@ const Formadora2 = (props) => {
             var objeto = {
                 x: x_,
                 y: [
-                    new Date(reportes[i].hora_inicio).getTime(),
-                    new Date(reportes[i].hora_termino).getTime()
+                    new Date(props.reportesSelected[i].hora_inicio).getTime(),
+                    new Date(props.reportesSelected[i].hora_termino).getTime()
                 ],
                 fillColor: color_
             }
@@ -478,11 +599,19 @@ const Formadora2 = (props) => {
             {/* Línea de tiempo operativa */}
             <Row>
                 <Col xs="12">
-                    <div id="chart" className={/*seriesTimeLine.data !== undefined ? "m-3" : "d-none"*/ "m-3"}>
+                    <div id="chartTimeLine" className={/*seriesTimeLine.data !== undefined ? "m-3" : "d-none"*/ "m-3"}>
                         <ReactApexChart options={optionsTimeLine} series={seriesTimeLine} type="rangeBar" height={180} />
                     </div>
                 </Col>
             </Row>
+
+            {/*<Row>
+                <Col xs="12">
+                    <div id="chartEfficiency" className="m-3">
+                        <ReactApexChart options={optionsEfficiency} series={seriesEfficiency} type="bar" height={250} />
+                    </div>
+                </Col>
+            </Row>*/}
         </div>
     )
 }
