@@ -189,8 +189,7 @@ const MinimalDashboard1 = () => {
       console.error(err);
     });
   };
-  
-  /* Debug: Se imprime el listado de órdenes del día en curso y la orden seleccionada en el listado */
+
   /* Se actualiza el detalle de los reportes asociados a la orden seleccionada */
   useEffect(() => {
     if (Object.keys(ordenSelected).length > 0)

@@ -116,6 +116,11 @@ const CialWidget = (props) => {
           var hamburguesas_envasadas = 0, kilos_envasados = 0;
         }
 
+        if (hamburguesas_envasadas < 0)
+          hamburguesas_envasadas = 0;
+        if (kilos_envasados < 0)
+          kilos_envasados = 0;
+
         for (var i=0; i<reportesSel.length; i++){
           if (reportesSel[i].id_tipo === 1)
             tiempo_inactivo += reportesSel[i].minutos;
