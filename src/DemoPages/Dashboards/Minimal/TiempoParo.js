@@ -4,7 +4,7 @@ import Brightness1Icon from "@material-ui/icons/Brightness1";
 import React, { useState, Fragment, useEffect } from "react";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 import DatePicker from "react-datepicker";
-import moment from 'moment'
+import moment from 'moment';
 
 import { connect } from "react-redux";
 import { 
