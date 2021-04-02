@@ -30,10 +30,8 @@ function Reportes() {
 
     const [sku, setSku] = useState(0);
     const [btnSku, setBtnSku] = useState(0);
-    const [refresh, setRefresh] = useState(true);
-    const [startDate, setStartDate] = useState(new Date(m));
-    const [endDate, setEndDate] = useState(new Date(m));
-    const [detalleSelected, setDetalleSelected] = useState([]);
+    const [startDate, setStartDate] = useState(new Date(moment().add(0, 'days').format('YYYY-MM-DD')));
+    const [endDate, setEndDate] = useState(new Date(moment().add(0, 'days').format('YYYY-MM-DD')));
 
     const changeBtnSku = (e) => {
         e.preventDefault();
@@ -42,8 +40,8 @@ function Reportes() {
     };
 
     const changeSku = (e) => {
-      e.target.value.length === 7 ? setSku(e.target.value) : setSku(0)
-    };  
+        e.target.value.length === 7 ? setSku(e.target.value) : setSku(0);
+    };
 
     const handleChange = (date) => {
         setStartDate(date)
@@ -53,11 +51,9 @@ function Reportes() {
         setEndDate(date)
     };
 
-    const changeBtnBuscar = (e) => {
-        e.preventDefault();
-        setRefresh(!refresh);
-        setDetalleSelected([]);
-    };
+    useEffect(() => {
+
+    }, [startDate, endDate, sku]);
 
     return (
         <div>
@@ -171,10 +167,6 @@ function Reportes() {
                                                     />
                                                 </FormGroup>
                                             </Col>
-                                            <Col>
-                                                <Label></Label>
-                                                <Button className="mt-3" size="lg" block color="primary" onClick={(e) => changeBtnBuscar(e)}> Buscar</Button>
-                                            </Col>
                                         </Row>
                                     </Container>
                                 </CardBody>
@@ -183,12 +175,12 @@ function Reportes() {
                     </Row>
 
                     <Row md="12" xl="12">
-                        <Col md="2" xl="2"></Col>
-                        <Col md="8" xl="8">
+                        <Col md="1" xl="1"></Col>
+                        <Col md="10" xl="10">
                             <Card className="main-card mb-3">
                                 <Row>
                                     <Col align="left">
-                                        <div className="ml-3 mt-1 text-uppercase font-weight-bold title1orange">Reportes diarios</div>
+                                        <div className="ml-3 mt-3 text-uppercase font-weight-bold title1orange">Reportes diarios</div>
                                     </Col>
                                 </Row>
                                 <hr></hr>
@@ -198,6 +190,14 @@ function Reportes() {
                                         <Row>
                                             <Col className="ml-4 my-2" align="left">
                                                 <div className="font2Blue">Reporte de paros</div>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col className="ml-4 my-2" align="left">
+                                                <Label style={{ textAlign: 'justify' }}>
+                                                    Permite visualizar el reporte de tiempos perdidos para el día seleccionado.
+                                                    Admite visualización de Línea Completa y filtrado según SKU, máquina y/o clasificación de acuerdo al tipo de paro.
+                                                </Label>
                                             </Col>
                                         </Row>
                                         <Row>
@@ -216,6 +216,14 @@ function Reportes() {
                                             </Col>
                                         </Row>
                                         <Row>
+                                            <Col className="ml-4 my-2" align="left">
+                                                <Label style={{ textAlign: 'justify' }}>
+                                                    Permite visualizar el reporte de rechazos en Envasado y Rayos X para el día seleccionado.
+                                                    Admite visualización del día completo, exponiendo el detalle según cada SKU producido.
+                                                </Label>
+                                            </Col>
+                                        </Row>
+                                        <Row>
                                             <Col md="5" xl="5"></Col>
                                             <Col md="6" xl="6">
                                                 <Button className="my-2" size="lg" block onClick={handlePerdidas.enter}>Generar</Button>
@@ -231,7 +239,7 @@ function Reportes() {
                 </ReactCSSTransitionGroup>
             </Fragment>
 
-            <FullScreenParos handle={handleParos} onChange={changeFullScreen} date={startDate} />
+            <FullScreenParos handle={handleParos} onChange={changeFullScreen} date={startDate} sku={sku} />
         </div>
     );
 };
