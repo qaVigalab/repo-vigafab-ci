@@ -401,11 +401,6 @@ const FullScreenParos = (props) => {
 
                                     <Row>
                                         <Col md="12" xl="12">
-                                            <Row>
-                                                <Col align="left">
-                                                </Col>
-                                            </Row>
-
                                             <Row className="ml-3 mt-2">
                                                 <Brightness1Icon className="mr-2" style={{ color: "#2264a7" }} />
                                                 Tiempo Activo: <div className="ml-1" style={{ fontWeight: 'bold' }}>{formatHour(tActivo)}</div>
@@ -416,11 +411,14 @@ const FullScreenParos = (props) => {
                                             </Row>
                                             <Row className="ml-3 my-1">
                                                 <Brightness1Icon className="mr-2" style={{ color: "#d92550" }} />
-                                                Tiempo sin Justificar: <div className="ml-1" style={{ fontWeight: 'bold' }}>{formatHour(tNoJustificado)}</div>
+                                                Tiempo Sin Justificar: <div className="ml-1" style={{ fontWeight: 'bold' }}>{formatHour(tNoJustificado)}</div>
                                             </Row>
                                             <Row className="ml-3 my-1">
                                                 <Brightness1Icon className="mr-2" style={{ color: "#555" }} />
-                                                Tiempo Total: <div className="ml-1" style={{ fontWeight: 'bold' }}>{formatHour(tActivo+tJustificado+tNoJustificado)}</div>
+                                                Tiempo Total: 
+                                                <div className="ml-1" style={{ fontWeight: 'bold' }}>
+                                                    {formatHour(tActivo+tJustificado+tNoJustificado)}
+                                                </div>
                                             </Row>
                                         </Col>
                                     </Row>
