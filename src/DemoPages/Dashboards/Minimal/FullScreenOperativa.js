@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import { Button, Col, Card, Table, Row } from "reactstrap";
 import _ from "lodash";
-import moment from 'moment'
+import moment from 'moment';
 import WatchLaterOutlinedIcon from '@material-ui/icons/WatchLaterOutlined';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import TimeLineOperativo from "./TimeLineOperativo";

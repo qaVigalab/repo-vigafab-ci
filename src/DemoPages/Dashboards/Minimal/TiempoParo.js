@@ -4,7 +4,7 @@ import Brightness1Icon from "@material-ui/icons/Brightness1";
 import React, { useState, Fragment, useEffect } from "react";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 import DatePicker from "react-datepicker";
-import moment from 'moment'
+import moment from 'moment';
 
 import { connect } from "react-redux";
 import { 
@@ -24,8 +24,8 @@ const TiempoParo = (props) => {
   const [detalleSelected, setDetalleSelected] = useState([]);
   const [tituloSelected, setTituloSelected] = useState();
   const [tiempoSelected, setTiempoSelected] = useState();
-  const [startDate, setStartDate] = useState(new Date(m));
-  const [endDate, setEndDate] = useState(new Date(m));
+  const [startDate, setStartDate] = useState(new Date(moment().add(1, 'days').format('YYYY-MM-DD')));
+  const [endDate, setEndDate] = useState(new Date(moment().add(1, 'days').format('YYYY-MM-DD')));
   const [btnSku, setBtnSku] = useState(0);
   const [sku, setSku] = useState(0);
   const [refresh, setRefresh] = useState(true);

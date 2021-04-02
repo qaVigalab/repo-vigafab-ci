@@ -83,7 +83,6 @@ const TortaParos = (props) => {
   }
 
   const loadData = () => {
-
     fetch(global.api.dashboard.getparosmaquina, {
       "method": "POST",
       "headers": {
