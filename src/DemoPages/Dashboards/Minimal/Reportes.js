@@ -12,6 +12,7 @@ import _ from "lodash";
 
 import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
 import FullScreenParos from "./FullScreenParos";
+import FullScreenPerdidas from "./FullScreenPerdidas";
 import { useCallback } from "react";
 
 function Reportes() {
@@ -30,8 +31,8 @@ function Reportes() {
 
     const [sku, setSku] = useState(0);
     const [btnSku, setBtnSku] = useState(0);
-    const [startDate, setStartDate] = useState(new Date(moment().add(0, 'days').format('YYYY-MM-DD')));
-    const [endDate, setEndDate] = useState(new Date(moment().add(0, 'days').format('YYYY-MM-DD')));
+    const [startDate, setStartDate] = useState(new Date(moment().add(-1, 'days')));
+    const [endDate, setEndDate] = useState(new Date(moment().add(-1, 'days')));
 
     const changeBtnSku = (e) => {
         e.preventDefault();
@@ -44,16 +45,15 @@ function Reportes() {
     };
 
     const handleChange = (date) => {
-        setStartDate(date)
+        setStartDate(date);
+        setEndDate(date);
     };
     
     const handleChange2 = (date) => {
-        setEndDate(date)
+        setEndDate(date);
     };
 
-    useEffect(() => {
-
-    }, [startDate, endDate, sku]);
+    useEffect(() => {}, [endDate, sku]);
 
     return (
         <div>
@@ -195,8 +195,8 @@ function Reportes() {
                                         <Row>
                                             <Col className="ml-4 my-2" align="left">
                                                 <Label style={{ textAlign: 'justify' }}>
-                                                    Permite visualizar el reporte de tiempos perdidos para el día seleccionado.
-                                                    Admite visualización de Línea Completa y filtrado según SKU, máquina y/o clasificación de acuerdo al tipo de paro.
+                                                    Permite visualizar el reporte de tiempos perdidos para el día seleccionado para ambos turnos.
+                                                    Admite visualización de Línea Completa y filtrado según SKU y/o máquina.
                                                 </Label>
                                             </Col>
                                         </Row>
@@ -240,6 +240,7 @@ function Reportes() {
             </Fragment>
 
             <FullScreenParos handle={handleParos} onChange={changeFullScreen} date={startDate} sku={sku} />
+            <FullScreenPerdidas handle={handlePerdidas} onChange={changeFullScreen} date={startDate} />
         </div>
     );
 };
