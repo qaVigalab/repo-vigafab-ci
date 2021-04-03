@@ -26,6 +26,7 @@
     "availity-reactstrap-validation": "^2.6.0",
     "bootstrap": "^4.3.1",
     "chart.js": "^2.8.0",
+    "chartjs-plugin-datalabels": "^0.7.0",
     "chroma-js": "^2.0.6",
     "classnames": "^2.2.6",
     "date-arithmetic": "^3.1.0",
