@@ -13,6 +13,7 @@ import moment from 'moment';
 
 const FullScreenParos = (props) => {
     const [fecha, setFecha] = useState(props.date);
+    const [confiabilidad, setConfiabilidad] = useState([]);
 
     const [machineDropdownOpen, setMachineDropdownOpen] = useState(false);
     const toggleMachine = () => setMachineDropdownOpen(!machineDropdownOpen);
@@ -22,6 +23,28 @@ const FullScreenParos = (props) => {
         setMachineSelected(e.currentTarget.textContent);
         toggleMachine();
     };
+
+    /*const getConfiabilidad = () => {
+        var myHeaders = new Headers();
+        myHeaders.append("x-api-key", "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m");
+        myHeaders.append("Content-Type", "application/json");
+        var raw = JSON.stringify({ fecha: fecha });
+        var requestOptions = {
+          method: "POST",
+          headers: myHeaders,
+          body: raw,
+          redirect: "follow",
+        };
+        fetch(
+          global.api.dashboard.getConfiabilidadDia,
+          requestOptions
+        )
+        .then((response) => response.json())
+        .then((result) => {
+            setConfiabilidad(result);
+        })
+        .catch((error) => console.log("error", error));
+    }*/
 
     /****************************************************/
     /* Obtención de datos generales de paro por máquina */
@@ -103,12 +126,14 @@ const FullScreenParos = (props) => {
           },
     
           body: JSON.stringify({
-            fecha: props.date
+            fecha: props.date,
+            sku: props.sku
           }),
         })
         .then(response => response.json())
         .then(result => {
             setQueryParos(result);
+            setNombreProducto(result[0].producto);
             
             var t_activo = 0, t_noJustificado = 0, t_justificado = 0, t_extra = 0;
             result.map(r => {
@@ -240,9 +265,11 @@ const FullScreenParos = (props) => {
     };
 
     useEffect(() => {
-        setFecha(props.date);
-        loadDetalleParo();
-    }, [props.date, props.sku]);
+        if (props.confirmar !== 0){
+            setFecha(props.date);
+            loadDetalleParo();
+        }
+    }, [props.confirmar]);
     
     const [parosMaquina, setParosMaquina] = useState([]);
     const [operativosMaquina, setOperativosMaquina] = useState([]);
@@ -508,7 +535,7 @@ const FullScreenParos = (props) => {
                                             />
                                         </Col>
                                         <Col md="3" xl="3" className="ml-1" style={{ alignSelf: 'center' }}>
-                                            <div className="circle">
+                                            <div className="circle mt-2">
                                                 <Circle
                                                     animate={true} // Boolean: Animated/Static progress
                                                     animationDuration="1s" // String: Length of animation
@@ -528,6 +555,28 @@ const FullScreenParos = (props) => {
                                                     showPercentageSymbol={true} // Boolean: Show/hide only the "%" symbol.
                                                 />
                                                 <div align="center" className="mt-2">Disp.</div>
+                                            </div>
+                                            
+                                            <div className="circle mt-2">
+                                                <Circle
+                                                    animate={true} // Boolean: Animated/Static progress
+                                                    animationDuration="1s" // String: Length of animation
+                                                    responsive={true} // Boolean: Make SVG adapt to parent size
+                                                    size="100" // String: Defines the size of the circle.
+                                                    lineWidth="40" // String: Defines the thickness of the circle's stroke.
+                                                    progress={_.round(confiabilidad.length === 0 ? 100 : confiabilidad.find(maq => maq.maquina === machineSelected).confiabilidad*100, 2).toFixed(0)} // String: Update to change the progress and percentage.
+                                                    progressColor="#02c39a" // String: Color of "progress" portion of circle.
+                                                    bgColor="#ecedf0" // String: Color of "empty" portion of circle.
+                                                    textColor="#6b778c" // String: Color of percentage text color.
+                                                    textStyle={{
+                                                        fontSize: "5rem", // CSSProperties: Custom styling for percentage.
+                                                    }}
+                                                    percentSpacing={5} // Number: Adjust spacing of "%" symbol and number.
+                                                    roundedStroke={true} // Boolean: Rounded/Flat line ends
+                                                    showPercentage={true} // Boolean: Show/hide percentage.
+                                                    showPercentageSymbol={true} // Boolean: Show/hide only the "%" symbol.
+                                                />
+                                                <div align="center" className="mt-2">Conf.</div>
                                             </div>
                                         </Col>
                                     </Row>

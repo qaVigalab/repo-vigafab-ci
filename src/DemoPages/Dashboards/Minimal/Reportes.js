@@ -29,6 +29,12 @@ function Reportes() {
         }
     }, [handleParos, handlePerdidas]);
 
+    const [clicConfirmar, setClicConfirmar] = useState(0);
+    const changeBtnConfirmar = (e) => {
+        e.preventDefault();
+        setClicConfirmar(clicConfirmar + 1);
+    };
+
     const [sku, setSku] = useState(0);
     const [btnSku, setBtnSku] = useState(0);
     const [startDate, setStartDate] = useState(new Date(moment().add(-1, 'days')));
@@ -167,6 +173,10 @@ function Reportes() {
                                                     />
                                                 </FormGroup>
                                             </Col>
+                                            <Col >
+                                                <Label></Label>
+                                                <Button className="mt-3" size="lg" block color="primary" onClick={(e) => changeBtnConfirmar(e)}>Confirmar</Button>
+                                            </Col>
                                         </Row>
                                     </Container>
                                 </CardBody>
@@ -238,8 +248,8 @@ function Reportes() {
                 </ReactCSSTransitionGroup>
             </Fragment>
 
-            <FullScreenParos handle={handleParos} onChange={changeFullScreen} date={startDate} sku={sku} />
-            <FullScreenPerdidas handle={handlePerdidas} onChange={changeFullScreen} date={startDate} />
+            <FullScreenParos handle={handleParos} onChange={changeFullScreen} date={startDate} sku={sku} confirmar={clicConfirmar} />
+            <FullScreenPerdidas handle={handlePerdidas} onChange={changeFullScreen} date={startDate} confirmar={clicConfirmar} />
         </div>
     );
 };

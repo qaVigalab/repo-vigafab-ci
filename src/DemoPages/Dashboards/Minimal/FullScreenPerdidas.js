@@ -40,6 +40,7 @@ const FullScreenPerdidas = (props) => {
     const [query, setQuery] = useState([]);
     const [kgPerdida, setKgPerdida] = useState(0);
     const [kgFormados, setKgFormados] = useState(0);
+    const [kgEmpacados, setKgEmpacados] = useState(0);
 
     const getRechazos = () => {
         fetch(global.api.dashboard.getRechazosDia, {
@@ -55,7 +56,7 @@ const FullScreenPerdidas = (props) => {
         .then(response => response.json())
         .then(result => {
             var labels = [], dataEnvasado = [], dataRayosX = [];
-            var rechazoEnv = 0, rechazoRayosX = 0, maxLimit = 0, perdidas = 0, kgFormados = 0;
+            var rechazoEnv = 0, rechazoRayosX = 0, rechazoGlobal = 0, maxLimit = 0, perdidas = 0, kgFormados = 0, kgEmpacados = 0;
 
             result.map(r => {
                 labels.push(r.producto.split("@"));
@@ -75,6 +76,7 @@ const FullScreenPerdidas = (props) => {
 
                 perdidas += r.rechazo_global;
                 kgFormados += r.kg_formados;
+                kgEmpacados += r.kg_empacados;
             });
 
             setQuery(result);
@@ -84,6 +86,7 @@ const FullScreenPerdidas = (props) => {
 
             setKgPerdida(perdidas);
             setKgFormados(kgFormados);
+            setKgEmpacados(kgEmpacados);
 
             setDataRechazos({
                 labels: labels,
@@ -107,8 +110,9 @@ const FullScreenPerdidas = (props) => {
     };
     
     useEffect(() => {
-        getRechazos();
-    }, [props.date]);
+        if (props.confirmar !== 0)
+            getRechazos();
+    }, [props.confirmar]);
 
     return (
         <FullScreen handle={props.handle} >
@@ -148,11 +152,11 @@ const FullScreenPerdidas = (props) => {
                                 <Container>
                                     <Row className="mb-3">
                                         <Col>
-                                            <div className="titlecard">
+                                            <div className="">
                                                 Pérdidas del día
                                                 <hr></hr>
+                                                <br></br>
                                             </div>
-
                                             <Row>
                                                 <Col md="2" align="center" style={{ alignSelf: 'center' }}>
                                                     <img src={formadora} alt="formadora"
@@ -196,16 +200,47 @@ const FullScreenPerdidas = (props) => {
                         <Card className="main-card mb-3">
                             <CardBody>
                                 <Container>
-                                    <Row className="mb-3">
+                                    <Row>
                                         <Col>
-                                            <div className="titlecard">
-                                                
+                                            <div className="">
+                                                Indicador de cumplimiento
                                                 <hr></hr>
                                             </div>
                                             <Row>
-                                                
+                                                <Col md="12" xl="12">
+                                                    <Table size="sm">
+                                                        <thead className="theadBlue">
+                                                            <tr className="text-center">
+                                                                <th>Producto</th>
+                                                                <th>Cumplimiento</th>
+                                                            </tr>
+                                                        </thead>
+
+                                                        <tbody>
+                                                        {
+                                                            query.map((sku, i) =>
+                                                            <tr key={i}>
+                                                                <td style={{ width: "60%", height: '2.5rem' }}>
+                                                                    { sku.producto }
+                                                                </td>
+                                                                <td style={{ width: "40%", fontWeight: 'bold' }} className="text-center">
+                                                                    { formatNumber.new(_.round(sku.kg_empacados/sku.kg_formados*100, 2)) + " %"}
+                                                                </td>
+                                                            </tr>
+                                                            )
+                                                        }
+                                                            <tr style={{ backgroundColor: '#e9ecefbf' }}>
+                                                                <td style={{ width: "60%", height: '2.5rem', fontWeight: 'bold' }} align="center">
+                                                                    Producción del día
+                                                                </td>
+                                                                <td style={{ width: "40%", fontWeight: 'bold' }} className="text-center">
+                                                                    {formatNumber.new(_.round(kgEmpacados/kgFormados*100, 2)) + " %"}
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </Table>
+                                                </Col>
                                             </Row>
-                                            <br></br>
                                         </Col>
                                     </Row>
                                 </Container>
@@ -215,13 +250,17 @@ const FullScreenPerdidas = (props) => {
                 </Row>
                 
                 <Row md="12" xl="12">
-                    <Col md="5" xl="5" className="ml-5" style={{ flex: '0 0 45.85%', maxWidth: '45.85%' }}>
+                    <Col md="5" xl="5" className="ml-5" style={query.length < 3 ?
+                        { flex: '0 0 45.85%', maxWidth: '45.85%' } : query.length < 4 ?
+                        { flex: '0 0 45.85%', maxWidth: '45.85%', marginTop: '-2%' } :
+                        { flex: '0 0 45.85%', maxWidth: '45.85%', marginTop: '-4%' }
+                    }>
                         <Card className="main-card mb-3">
                             <CardBody>
                                 <Container>
                                     <Row>
                                         <Col>
-                                            <div className="titlecard">
+                                            <div className="">
                                                 Detalle de pérdidas según SKU (<i>en kg.</i>)
                                                 <hr></hr>
                                             </div>
@@ -279,7 +318,7 @@ const FullScreenPerdidas = (props) => {
                                 <Container>
                                     <Row>
                                         <Col>
-                                            <div className="titlecard">
+                                            <div className="">
                                                 Pérdidas sobre la producción de cada SKU
                                                 <hr></hr>
                                             </div>
@@ -288,7 +327,7 @@ const FullScreenPerdidas = (props) => {
                                                     <Table size="sm">
                                                         <thead className="theadBlue">
                                                             <tr className="text-center">
-                                                                <th style={{ height: '2.5rem' }}>Producto</th>
+                                                                <th>Producto</th>
                                                                 <th>Kg de pérdida</th>
                                                                 <th>Kg formados</th>
                                                                 <th>Relación</th>
@@ -316,7 +355,7 @@ const FullScreenPerdidas = (props) => {
                                                         }
                                                             <tr style={{ backgroundColor: '#e9ecefbf' }}>
                                                                 <td style={{ width: "40%", height: '2.5rem', fontWeight: 'bold' }} align="center">
-                                                                    Total
+                                                                    Producción del día
                                                                 </td>
                                                                 <td style={{ width: "20%", fontWeight: 'bold' }} className="text-center">
                                                                     { formatNumber.new(kgPerdida) }

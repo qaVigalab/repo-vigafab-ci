@@ -486,8 +486,6 @@ const TiempoParo = (props) => {
       </ReactCSSTransitionGroup>
     </Fragment>
   );
-
-
 }
 
 const mapStateToProps = (state) => ({
