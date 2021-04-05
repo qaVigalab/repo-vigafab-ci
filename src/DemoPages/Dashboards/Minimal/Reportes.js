@@ -2,7 +2,7 @@ import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import React, { Fragment, useState, useEffect } from "react";
 import { 
-    Button, Card, CardBody, Col, Container, Input, InputGroup, InputGroupAddon, Progress, Row, Table, FormGroup, Label
+    Button, Card, CardBody, Col, Container, Input, InputGroup, InputGroupAddon, Progress, Row, Table, FormGroup, Label, Spinner
 } from "reactstrap";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -30,9 +30,11 @@ function Reportes() {
     }, [handleParos, handlePerdidas]);
 
     const [clicConfirmar, setClicConfirmar] = useState(0);
+    const [confirm, setConfirm] = useState(false);
     const changeBtnConfirmar = (e) => {
         e.preventDefault();
         setClicConfirmar(clicConfirmar + 1);
+        setConfirm(true);
     };
 
     const [sku, setSku] = useState(0);
@@ -59,7 +61,9 @@ function Reportes() {
         setEndDate(date);
     };
 
-    useEffect(() => {}, [endDate, sku]);
+    useEffect(() => {
+        setConfirm(false);
+    }, [endDate, sku]);
 
     return (
         <div>
@@ -175,7 +179,14 @@ function Reportes() {
                                             </Col>
                                             <Col >
                                                 <Label></Label>
-                                                <Button className="mt-3" size="lg" block color="primary" onClick={(e) => changeBtnConfirmar(e)}>Confirmar</Button>
+                                                {confirm === false ?
+                                                    <Button className="mt-3" size="lg" block color="primary" onClick={(e) => changeBtnConfirmar(e)}>
+                                                        Confirmar
+                                                    </Button>
+                                                :   <div align="center" className="font2Blue mt-3" style={{ color: '#3ac47d' }}>
+                                                        ¡Reportes listos!
+                                                    </div>
+                                                }
                                             </Col>
                                         </Row>
                                     </Container>
