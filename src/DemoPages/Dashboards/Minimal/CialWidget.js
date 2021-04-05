@@ -351,6 +351,12 @@ const CialWidget = (props) => {
                             size: '100%'
                           }
                         }
+                      },
+                      plugins: {
+                          datalabels: {
+                             display: false,
+                             color: 'white'
+                          }
                       }
                     }}
                   />

@@ -175,12 +175,11 @@ function Reportes() {
                     </Row>
 
                     <Row md="12" xl="12">
-                        <Col md="1" xl="1"></Col>
-                        <Col md="10" xl="10">
+                        <Col md="12" xl="12">
                             <Card className="main-card mb-3">
                                 <Row>
                                     <Col align="left">
-                                        <div className="ml-3 mt-3 text-uppercase font-weight-bold title1orange">Reportes diarios</div>
+                                        <div className="ml-3 text-uppercase font-weight-bold title1orange">Reportes diarios</div>
                                     </Col>
                                 </Row>
                                 <hr></hr>
@@ -195,8 +194,8 @@ function Reportes() {
                                         <Row>
                                             <Col className="ml-4 my-2" align="left">
                                                 <Label style={{ textAlign: 'justify' }}>
-                                                    Permite visualizar el reporte de tiempos perdidos para el día seleccionado para ambos turnos.
-                                                    Admite visualización de Línea Completa y filtrado según SKU y/o máquina.
+                                                    Permite visualizar el reporte de tiempos perdidos para cada turno del día seleccionado.
+                                                    Admite visualización de Línea Completa disponible y la posibilidad de filtrar según SKU y/o máquina.
                                                 </Label>
                                             </Col>
                                         </Row>
@@ -219,7 +218,7 @@ function Reportes() {
                                             <Col className="ml-4 my-2" align="left">
                                                 <Label style={{ textAlign: 'justify' }}>
                                                     Permite visualizar el reporte de rechazos en Envasado y Rayos X para el día seleccionado.
-                                                    Admite visualización del día completo, exponiendo el detalle según cada SKU producido.
+                                                    Sólo admite visualización del día completo, ya que expone el detalle según cada SKU producido.
                                                 </Label>
                                             </Col>
                                         </Row>

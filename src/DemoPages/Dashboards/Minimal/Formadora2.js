@@ -579,6 +579,12 @@ const Formadora2 = (props) => {
                                         },
                                         responsive: true,
                                         maintainAspectRatio: true,
+                                        plugins: {
+                                            datalabels: {
+                                               display: false,
+                                               color: 'white'
+                                            }
+                                        }
                                     }} /></div>
                         </Col>
                         <Col md="8">

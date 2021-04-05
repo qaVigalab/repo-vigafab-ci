@@ -13,11 +13,33 @@ import _ from "lodash";
 import moment from 'moment';
 
 const FullScreenPerdidas = (props) => {
+    var formatNumber = {
+        separador: ".", // separador para los miles
+        sepDecimal: ',', // separador para los decimales
+        formatear: function (num) {
+            num += '';
+            var splitStr = num.split('.');
+            var splitLeft = splitStr[0];
+            var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
+            var regx = /(\d+)(\d{3})/;
+            while (regx.test(splitLeft)) {
+                splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
+            }
+            return this.simbol + splitLeft + splitRight;
+        },
+        new: function (num, simbol) {
+            this.simbol = simbol || '';
+            return this.formatear(num);
+        }
+    }
+
     const [totalEnvasado, setTotalEnvasado] = useState(0.0);
     const [totalRayosX, setTotalRayosX] = useState(0.0);
-    const [dataEnv, setDataEnv] = useState({});
-    const [dataRayos, setDataRayos] = useState({});
+    const [dataRechazos, setDataRechazos] = useState({});
     const [chartsMaxY, setChartsMaxY] = useState(0);
+    const [query, setQuery] = useState([]);
+    const [kgPerdida, setKgPerdida] = useState(0);
+    const [kgFormados, setKgFormados] = useState(0);
 
     const getRechazos = () => {
         fetch(global.api.dashboard.getRechazosDia, {
@@ -33,43 +55,46 @@ const FullScreenPerdidas = (props) => {
         .then(response => response.json())
         .then(result => {
             var labels = [], dataEnvasado = [], dataRayosX = [];
-            var rechazoEnv = 0, rechazoRayosX = 0;
-            var maxLimit = 0;
+            var rechazoEnv = 0, rechazoRayosX = 0, maxLimit = 0, perdidas = 0, kgFormados = 0;
 
             result.map(r => {
                 labels.push(r.producto.split("@"));
-                dataEnvasado.push(r.rechazo_envasado);
-                dataRayosX.push(r.rechazo_rayos_x);
-                
-                rechazoEnv += r.rechazo_envasado;
-                rechazoRayosX += r.rechazo_rayos_x;
+                if (r.rechazo_global >= r.rechazo_envasado && r.rechazo_global >= r.rechazo_rayos_x){
+                    dataEnvasado.push(r.rechazo_envasado);
+                    dataRayosX.push(r.rechazo_rayos_x);
+                    
+                    rechazoEnv += r.rechazo_envasado;
+                    rechazoRayosX += r.rechazo_rayos_x;
+                } else{
+                    dataEnvasado.push(0);
+                    dataRayosX.push(0);
+                }
 
-                if (r.rechazo_envasado > maxLimit)
-                    maxLimit = r.rechazo_envasado;
-                else if (r.rechazo_rayos_x > maxLimit)
-                    maxLimit = r.rechazo_rayos_x;
+                if (r.rechazo_global > maxLimit)
+                    maxLimit = r.rechazo_global;
+
+                perdidas += r.rechazo_global;
+                kgFormados += r.kg_formados;
             });
 
+            setQuery(result);
             setTotalEnvasado(_.round(rechazoEnv, 0));
             setTotalRayosX(_.round(rechazoRayosX, 0));
-            setChartsMaxY(Math.ceil(maxLimit/100)*100);
+            setChartsMaxY(Math.ceil(maxLimit/50)*50);
 
-            setDataEnv({
+            setKgPerdida(perdidas);
+            setKgFormados(kgFormados);
+
+            setDataRechazos({
                 labels: labels,
                 datasets: [
                     {
-                        label: 'Kilogramos',
+                        label: ' Envasado',
                         backgroundColor: '#f7b924',
                         data: dataEnvasado
-                    }
-                ]
-            });
-
-            setDataRayos({
-                labels: labels,
-                datasets: [
+                    },
                     {
-                        label: 'Kilogramos',
+                        label: ' Rayos X',
                         backgroundColor: '#d92550',
                         data: dataRayosX
                     }
@@ -97,7 +122,7 @@ const FullScreenPerdidas = (props) => {
                     </Col>
 
                     <Col className="bigFont2" align="center" style={{ fontSize: '1.5rem', alignSelf: 'center' }}>
-                        Pérdidas para el día {moment(props.date).format('DD-MM-YYYY')} 
+                        Rechazos para el día {moment(props.date).format('DD-MM-YYYY')} 
                     </Col>
 
 
@@ -131,31 +156,31 @@ const FullScreenPerdidas = (props) => {
                                             <Row>
                                                 <Col md="2" align="center" style={{ alignSelf: 'center' }}>
                                                     <img src={formadora} alt="formadora"
-                                                        style={{ width: '105%' }}
+                                                        style={{ width: '102.5%' }}
                                                     />
                                                 </Col>
                                                 <Col md="3" xl="3" align="center" style={{ alignSelf: 'center' }}>
                                                     <div className="font-weight-bold title1orange">Envasado</div>
-                                                    <hr></hr>
+                                                    <hr style={{ borderTop: '2px solid #2264a7' }}></hr>
                                                     <div align="center" className="font2Blue" style={{ color: 'darkslategrey' }}>
                                                         {totalEnvasado} Kg
                                                     </div>
                                                 </Col>
                                                 <Col md="2" align="center" style={{ alignSelf: 'center' }}>
                                                     <img src={envasadoras} alt="envasadoras"
-                                                        style={{ width: '105%' }}
+                                                        style={{ width: '102.5%' }}
                                                     />
                                                 </Col>
                                                 <Col md="3" xl="3" align="center" style={{ alignSelf: 'center' }}>
                                                     <div className="font-weight-bold title1orange">Rayos X</div>
-                                                    <hr></hr>
+                                                    <hr style={{ borderTop: '2px solid #2264a7' }}></hr>
                                                     <div align="center" className="font2Blue" style={{ color: 'darkslategrey' }}>
                                                         {totalRayosX} Kg
                                                     </div>
                                                 </Col>
                                                 <Col md="2" align="center" style={{ alignSelf: 'center' }}>
                                                     <img src={empaquetadora} alt="empaquetadora"
-                                                        style={{ width: '105%' }}
+                                                        style={{ width: '102.5%' }}
                                                     />
                                                 </Col>
                                             </Row>
@@ -174,15 +199,11 @@ const FullScreenPerdidas = (props) => {
                                     <Row className="mb-3">
                                         <Col>
                                             <div className="titlecard">
-                                                Relación de pérdida
+                                                
                                                 <hr></hr>
                                             </div>
-                                            <Row className="mt-2 mb-2">
-                                                <Col md="6" xl="6">
-                                                </Col>
-
-                                                <Col md="6" xl="6">
-                                                </Col>
+                                            <Row>
+                                                
                                             </Row>
                                             <br></br>
                                         </Col>
@@ -201,21 +222,21 @@ const FullScreenPerdidas = (props) => {
                                     <Row>
                                         <Col>
                                             <div className="titlecard">
-                                                Rechazos de Envasado (según SKU)
+                                                Detalle de pérdidas según SKU (<i>en kg.</i>)
                                                 <hr></hr>
                                             </div>
                                             <Bar
-                                                data={dataEnv}
+                                                data={dataRechazos}
                                                 options={{
                                                     title:{
                                                         display:false,
-                                                        text:'Average Rainfall per month',
                                                         fontSize:20
                                                     },
                                                     legend:{
-                                                        display:false,
-                                                        position:'right'
+                                                        display: true,
+                                                        position:'top'
                                                     },
+                                                    type: 'bar',
                                                     scales: {
                                                         xAxes: [{
                                                             gridLines: {
@@ -252,57 +273,65 @@ const FullScreenPerdidas = (props) => {
                         </Card>
                     </Col>
                     
-                    <Col md="5" xl="5" className="ml-4 mr-4" style={{ flex: '0 0 45.85%', maxWidth: '45.85%' }}>
+                    <Col md="4" xl="4" className="ml-4 mr-4" style={{ flex: '0 0 45.85%', maxWidth: '45.85%' }}>
                         <Card className="main-card mb-3">
                             <CardBody>
                                 <Container>
                                     <Row>
                                         <Col>
                                             <div className="titlecard">
-                                                Rechazos de Rayos X (según SKU)
+                                                Pérdidas sobre la producción de cada SKU
                                                 <hr></hr>
                                             </div>
-                                            <Bar
-                                                data={dataRayos}
-                                                options={{
-                                                    title:{
-                                                        display:false,
-                                                        text:'Average Rainfall per month',
-                                                        fontSize:20
-                                                    },
-                                                    legend:{
-                                                        display:false,
-                                                        position:'right'
-                                                    },
-                                                    scales: {
-                                                        xAxes: [{
-                                                            gridLines: {
-                                                                display: false
-                                                            },
-                                                            ticks: {
-                                                                autoSkip: false,
-                                                                maxRotation: 0,
-                                                                minRotation: 0
-                                                            }
-                                                        }],
-                                                        yAxes: [{
-                                                            ticks: {
-                                                                min: 0,
-                                                                max: chartsMaxY
-                                                            },
-                                                            gridLines: {
-                                                                display: false
-                                                            }
-                                                        }]
-                                                    },
-                                                    plugins: {
-                                                        datalabels: {
-                                                           display: true,
-                                                           color: 'white'
+                                            <Row>
+                                                <Col md="12" xl="12">
+                                                    <Table size="sm">
+                                                        <thead className="theadBlue">
+                                                            <tr className="text-center">
+                                                                <th style={{ height: '2.5rem' }}>Producto</th>
+                                                                <th>Kg de pérdida</th>
+                                                                <th>Kg formados</th>
+                                                                <th>Relación</th>
+                                                            </tr>
+                                                        </thead>
+
+                                                        <tbody>
+                                                        {
+                                                            query.map((sku, i) =>
+                                                            <tr key={i}>
+                                                                <td style={{ width: "40%", height: '2.5rem' }}>
+                                                                    { sku.producto }
+                                                                </td>
+                                                                <td style={{ width: "20%", fontWeight: 'bold' }} className="text-center">
+                                                                    { formatNumber.new(sku.rechazo_global) }
+                                                                </td>
+                                                                <td style={{ width:'20%', fontWeight: 'bold' }} className="text-center">
+                                                                    { formatNumber.new(sku.kg_formados) }
+                                                                </td>
+                                                                <td style={{ width: "20%", fontWeight: 'bold' }} className="text-center">
+                                                                    {formatNumber.new(_.round(sku.rechazo_global/sku.kg_formados*100, 2)) + " %"}
+                                                                </td>
+                                                            </tr>
+                                                            )
                                                         }
-                                                    }
-                                                }}
-                                            />
+                                                            <tr style={{ backgroundColor: '#e9ecefbf' }}>
+                                                                <td style={{ width: "40%", height: '2.5rem', fontWeight: 'bold' }} align="center">
+                                                                    Total
+                                                                </td>
+                                                                <td style={{ width: "20%", fontWeight: 'bold' }} className="text-center">
+                                                                    { formatNumber.new(kgPerdida) }
+                                                                </td>
+                                                                <td style={{ width:'20%', fontWeight: 'bold' }} className="text-center">
+                                                                    { formatNumber.new(kgFormados) }
+                                                                </td>
+                                                                <td style={{ width: "20%", fontWeight: 'bold' }} className="text-center">
+                                                                    {formatNumber.new(_.round(kgPerdida/kgFormados*100, 2)) + " %"}
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </Table>
+                                                </Col>
+                                            </Row>
                                         </Col>
                                     </Row>
                                 </Container>
