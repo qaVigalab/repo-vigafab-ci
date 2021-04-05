@@ -535,7 +535,7 @@ const FullScreenParos = (props) => {
                                             />
                                         </Col>
                                         <Col md="3" xl="3" className="ml-1" style={{ alignSelf: 'center' }}>
-                                            <div className="circle mt-2">
+                                            <div className="circle">
                                                 <Circle
                                                     animate={true} // Boolean: Animated/Static progress
                                                     animationDuration="1s" // String: Length of animation
@@ -557,7 +557,7 @@ const FullScreenParos = (props) => {
                                                 <div align="center" className="mt-2">Disp.</div>
                                             </div>
                                             
-                                            <div className="circle mt-2">
+                                            {/*<div className="circle mt-2">
                                                 <Circle
                                                     animate={true} // Boolean: Animated/Static progress
                                                     animationDuration="1s" // String: Length of animation
@@ -577,7 +577,7 @@ const FullScreenParos = (props) => {
                                                     showPercentageSymbol={true} // Boolean: Show/hide only the "%" symbol.
                                                 />
                                                 <div align="center" className="mt-2">Conf.</div>
-                                            </div>
+                                            </div>*/}
                                         </Col>
                                     </Row>
 
