@@ -45,19 +45,17 @@ const Produciendo = (props) => {
     useEffect(() => {
         setnOrden(props.ordenSelected.id_sub_orden);
         setPerdidaEnvasadoKg(
-            (props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc)
-            - (props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc)
+            props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.kg_envasados
             - (props.ordenSelected.reproceso_env_camara + props.ordenSelected.reproceso_rayos_camara)
         );
         setPerdidaEmpaquetadoraKg(
-            (props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc)
+            props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc - props.ordenSelected.reproceso_rayos_camara
             - (props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja)
-            - props.ordenSelected.reproceso_rayos_camara
         );
         setPerdidaTotalKg(
             (props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc)
+            - props.ordenSelected.reproceso_env_camara
             - (props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja)
-            - (props.ordenSelected.reproceso_env_camara + 2*props.ordenSelected.reproceso_rayos_camara)
         );
 
         if (props.ordenSelected.id_estado !== 2){
@@ -66,10 +64,10 @@ const Produciendo = (props) => {
             
             setPerdidaEnvasado(
                 ((props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc
-                        - props.ordenSelected.reproceso_env_camara - props.ordenSelected.reproceso_rayos_camara)
-                    - (props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc - props.ordenSelected.reproceso_rayos_camara))
+                        - props.ordenSelected.reproceso_env_camara)
+                    - (props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc))
                 / (props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc
-                    - props.ordenSelected.reproceso_env_camara - props.ordenSelected.reproceso_rayos_camara));
+                    - props.ordenSelected.reproceso_env_camara));
             setPerdidaEmpaquetadora(
                 ((props.ordenSelected.kg_envasados - props.ordenSelected.reproceso_rayos_mezc - props.ordenSelected.reproceso_rayos_camara)
                     - (props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja))
@@ -364,6 +362,12 @@ const Produciendo = (props) => {
                                     },
                                     responsive: true,
                                     maintainAspectRatio: true,
+                                    plugins: {
+                                        datalabels: {
+                                           display: false,
+                                           color: 'white'
+                                        }
+                                    }
                                 }} /></div>
                         <Row className="ml-5 mt-1">
                             <Brightness1Icon style={{ color: "#2264A7", marginRight: '1% !important' }} />
@@ -448,7 +452,7 @@ const Produciendo = (props) => {
 
                                 </Col>
                                 <Col md="6">
-                                    <div align="left" className=" mt-2 ml-2 text-uppercase littleFont font-weight-bold">Empaque</div>
+                                    <div align="left" className=" mt-2 ml-2 text-uppercase littleFont font-weight-bold">Rayos X</div>
                                     <Row className="">
                                         <div align="left" className="ml-4 mt-1 bigFont">{props.formatNumber.new(_.round(perdidaEmpaquetadoraKg))}</div>
                                         <div align="center" className="littleFont mt-4 ml-2 mr-auto">Kgs</div>

@@ -250,69 +250,74 @@ const FullScreenParos = (props) => {
 
     useEffect(() => {
         var paros = [], operativos = [], mantenimiento = [];
+        var queryParosLC = queryParos.filter(paro => paro.vibot !== "Envasadora 3");
+        var tiempoExtra = 0;
+
         if (machineSelected === "Línea Completa"){
-            for (var i = 0; i < queryParos.length; i++) {
+            for (var i = 0; i < queryParosLC.length; i++) {
+                if (queryParosLC[i].vibot === "Empaquetadora" && queryParosLC[i].id_tipo === -1)
+                    tiempoExtra += queryParosLC[i].suma;
                 /* Se settea la información general de los paros */
                 var found = false, pos = -1;
                 for (var j = 0; j < paros.length; j++) {
-                    if ((queryParos[i].id_tipo === paros[j].id_tipo || queryParos[i].nombre === paros[j].nombre) && queryParos[i].turno === paros[j].turno) {
+                    if ((queryParosLC[i].id_tipo === paros[j].id_tipo || queryParosLC[i].nombre === paros[j].nombre) && queryParosLC[i].turno === paros[j].turno) {
                         found = true; pos = j;
                         break;
                     }
                 }
         
                 if (found) {
-                    paros[pos].suma += queryParos[i].suma;
+                    paros[pos].suma += queryParosLC[i].suma;
                 } else {
                     var obj = {
-                        id_tipo: queryParos[i].id_tipo,
-                        suma: queryParos[i].suma,
-                        nombre: queryParos[i].nombre,
-                        turno: queryParos[i].turno
+                        id_tipo: queryParosLC[i].id_tipo,
+                        suma: queryParosLC[i].suma,
+                        nombre: queryParosLC[i].nombre,
+                        turno: queryParosLC[i].turno
                     }
                     paros.push(obj);
                 }
         
                 /* Se settea el detalle de los operativos */
-                if (queryParos[i].nombre === "Operativo") {
+                if (queryParosLC[i].nombre === "Operativo") {
                     found = false; pos = -1;
                     for (j = 0; j < operativos.length; j++) {
-                        if ((queryParos[i].ambito === operativos[j].ambito || queryParos[i].nombre === paros[j].nombre) && queryParos[i].turno === operativos[j].turno) {
+                        if ((queryParosLC[i].ambito === operativos[j].ambito || queryParosLC[i].nombre === paros[j].nombre) && queryParosLC[i].turno === operativos[j].turno) {
                             found = true; pos = j;
                             break;
                         }
                     }
         
                     if (found) {
-                        operativos[pos].suma += queryParos[i].suma;
+                        operativos[pos].suma += queryParosLC[i].suma;
                     } else {
                         obj = {
-                            suma: queryParos[i].suma,
-                            ambito: queryParos[i].ambito,
-                            turno: queryParos[i].turno
+                            suma: queryParosLC[i].suma,
+                            ambito: queryParosLC[i].ambito,
+                            turno: queryParosLC[i].turno
                         }
                         operativos.push(obj);
                     }
                 }
         
                 /* Se settea el detalle de los de mantenimiento */
-                if (queryParos[i].nombre === "Mantenimiento") {
-                    console.log(queryParos[i].nombre);
+                if (queryParosLC[i].nombre === "Mantenimiento") {
+                    console.log(queryParosLC[i].nombre);
                     found = false; pos = -1;
                     for (j = 0; j < mantenimiento.length; j++) {
-                        if (queryParos[i].ambito === mantenimiento[j].ambito && queryParos[i].turno === mantenimiento[j].turno) {
+                        if (queryParosLC[i].ambito === mantenimiento[j].ambito && queryParosLC[i].turno === mantenimiento[j].turno) {
                             found = true; pos = j;
                             break;
                         }
                     }
             
                     if (found) {
-                        mantenimiento[pos].suma += queryParos[i].suma;
+                        mantenimiento[pos].suma += queryParosLC[i].suma;
                     } else {
                         obj = {
-                            suma: queryParos[i].suma,
-                            ambito: queryParos[i].ambito,
-                            turno: queryParos[i].turno
+                            suma: queryParosLC[i].suma,
+                            ambito: queryParosLC[i].ambito,
+                            turno: queryParosLC[i].turno
                         }
                         mantenimiento.push(obj);
                     }
@@ -343,8 +348,10 @@ const FullScreenParos = (props) => {
         setTActivo(t_activo);
         setTNoJustificado(t_noJustificado);
         setTJustificado(t_justificado);
-        if (t_extra > 0)
+        if (t_extra > 0 && machineSelected !== "Línea Completa")
             setTExtra(t_extra);
+        else if (t_extra > 0 && machineSelected === "Línea Completa")
+            setTExtra(tiempoExtra);
         else
             setTExtra(0);
 
@@ -508,7 +515,7 @@ const FullScreenParos = (props) => {
                                                     responsive={true} // Boolean: Make SVG adapt to parent size
                                                     size="100" // String: Defines the size of the circle.
                                                     lineWidth="40" // String: Defines the thickness of the circle's stroke.
-                                                    progress={(_.round(tActivo/(tActivo+tJustificado+tNoJustificado), 2)*100).toFixed(0)} // String: Update to change the progress and percentage.
+                                                    progress={tActivo === 0 ? 0 : (_.round(tActivo/(tActivo+tJustificado+tNoJustificado), 2)*100).toFixed(0)} // String: Update to change the progress and percentage.
                                                     progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                                     textColor="#6b778c" // String: Color of percentage text color.

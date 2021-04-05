@@ -373,6 +373,12 @@ const Empaque = (props) => {
                                             },
                                             responsive: true,
                                             maintainAspectRatio: true,
+                                            plugins: {
+                                                datalabels: {
+                                                   display: false,
+                                                   color: 'white'
+                                                }
+                                            }
                                         }} /></div>
                             </Col>
                         </Row>
