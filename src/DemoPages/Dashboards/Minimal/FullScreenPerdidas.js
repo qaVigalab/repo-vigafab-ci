@@ -224,7 +224,10 @@ const FullScreenPerdidas = (props) => {
                                                                     { sku.producto }
                                                                 </td>
                                                                 <td style={{ width: "40%", fontWeight: 'bold' }} className="text-center">
-                                                                    { formatNumber.new(_.round(sku.kg_empacados/sku.kg_formados*100, 2)) + " %"}
+                                                                    {isNaN(sku.kg_empacados/sku.kg_formados) ? 
+                                                                        "-"
+                                                                        : formatNumber.new(_.round(sku.kg_empacados/sku.kg_formados*100, 2)) + " %"
+                                                                    }
                                                                 </td>
                                                             </tr>
                                                             )
@@ -234,7 +237,10 @@ const FullScreenPerdidas = (props) => {
                                                                     Producción del día
                                                                 </td>
                                                                 <td style={{ width: "40%", fontWeight: 'bold' }} className="text-center">
-                                                                    {formatNumber.new(_.round(kgEmpacados/kgFormados*100, 2)) + " %"}
+                                                                    {isNaN(kgEmpacados/kgFormados) ? 
+                                                                        "-"
+                                                                        : formatNumber.new(_.round(kgEmpacados/kgFormados*100, 2)) + " %"
+                                                                    }
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -342,13 +348,22 @@ const FullScreenPerdidas = (props) => {
                                                                     { sku.producto }
                                                                 </td>
                                                                 <td style={{ width: "20%", fontWeight: 'bold' }} className="text-center">
-                                                                    { formatNumber.new(sku.rechazo_global) }
+                                                                    {isNaN(sku.rechazo_global) || !sku.rechazo_global ? 
+                                                                        "-"
+                                                                        : formatNumber.new(sku.rechazo_global)
+                                                                    }
                                                                 </td>
                                                                 <td style={{ width:'20%', fontWeight: 'bold' }} className="text-center">
-                                                                    { formatNumber.new(sku.kg_formados) }
+                                                                    {isNaN(sku.kg_formados) || !sku.kg_formados ? 
+                                                                        "-"
+                                                                        : formatNumber.new(sku.kg_formados)
+                                                                    }
                                                                 </td>
                                                                 <td style={{ width: "20%", fontWeight: 'bold' }} className="text-center">
-                                                                    {formatNumber.new(_.round(sku.rechazo_global/sku.kg_formados*100, 2)) + " %"}
+                                                                    {isNaN(sku.rechazo_global/sku.kg_formados) ? 
+                                                                        "-"
+                                                                        : formatNumber.new(_.round(sku.rechazo_global/sku.kg_formados*100, 2)) + " %"
+                                                                    }
                                                                 </td>
                                                             </tr>
                                                             )
