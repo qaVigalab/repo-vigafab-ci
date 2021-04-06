@@ -320,7 +320,7 @@ const Formadora2 = (props) => {
 
     useEffect(() => {
         if (props.reportesSelected.length > 0){
-            var reportesSel = props.reportesSelected.filter(rep => rep.id_tipo !== 4 && !rep.hora_inicio.includes("05:55:"));
+            var reportesSel = props.reportesSelected.filter(rep => rep.id_tipo !== 4 && !rep.hora_inicio.includes("04:55:"));
 
             if (reportesSel.length > 0){
                 var tiempo_activo = 0, tiempo_inactivo = 0;

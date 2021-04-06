@@ -66,7 +66,7 @@ const TotalEnvasadoras = (props) => {
         if (props.reportesSelected.length > 0){
             var t_activo = 0, t_inactivo = 0;
             for (var j=0; j<props.maquinas.length; j++){
-                var reportesSel = props.reportesSelected.filter(rep => rep.id_vibot === props.maquinas[j].id && rep.id_tipo !== 4 && !rep.hora_inicio.includes("05:55:"));
+                var reportesSel = props.reportesSelected.filter(rep => rep.id_vibot === props.maquinas[j].id && rep.id_tipo !== 4 && !rep.hora_inicio.includes("04:55:"));
                 
                 if (props.maquinas[j].recambio !== 1){
                     for (var i=0; i<reportesSel.length; i++){
