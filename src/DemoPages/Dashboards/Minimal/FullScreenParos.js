@@ -10,7 +10,6 @@ import Brightness1Icon from "@material-ui/icons/Brightness1";
 import _ from "lodash";
 import moment from 'moment';
 
-
 const FullScreenParos = (props) => {
     const [fecha, setFecha] = useState(props.date);
     const [confiabilidad, setConfiabilidad] = useState([]);
@@ -24,28 +23,6 @@ const FullScreenParos = (props) => {
         toggleMachine();
     };
 
-    /*const getConfiabilidad = () => {
-        var myHeaders = new Headers();
-        myHeaders.append("x-api-key", "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m");
-        myHeaders.append("Content-Type", "application/json");
-        var raw = JSON.stringify({ fecha: fecha });
-        var requestOptions = {
-          method: "POST",
-          headers: myHeaders,
-          body: raw,
-          redirect: "follow",
-        };
-        fetch(
-          global.api.dashboard.getConfiabilidadDia,
-          requestOptions
-        )
-        .then((response) => response.json())
-        .then((result) => {
-            setConfiabilidad(result);
-        })
-        .catch((error) => console.log("error", error));
-    }*/
-
     /****************************************************/
     /* Obtención de datos generales de paro por máquina */
     /****************************************************/
@@ -57,8 +34,8 @@ const FullScreenParos = (props) => {
     const [tExtra, setTExtra] = useState(0);
 
     const formatHour = (min) =>{
-        let horas = Math.trunc(min/60);
-        let minutos = min - (60*horas) ;
+        let horas = parseInt(Math.trunc(min/60));
+        let minutos = parseInt(min - (60*horas));
         return horas === 0 ? minutos + " Min" : horas + " Hrs, " + minutos + " Min";
     };
 
@@ -133,6 +110,8 @@ const FullScreenParos = (props) => {
         .then(response => response.json())
         .then(result => {
             setQueryParos(result);
+            setConfiabilidad(result.filter(dato => dato.id_tipo === -2));
+
             setNombreProducto(result[0].producto);
             
             var t_activo = 0, t_noJustificado = 0, t_justificado = 0, t_extra = 0;
@@ -472,7 +451,7 @@ const FullScreenParos = (props) => {
                                                             <DropdownItem onClick={changeMachine}>Envasadora 6</DropdownItem>
                                                             <DropdownItem onClick={changeMachine}>Empaquetadora</DropdownItem>
                                                             <DropdownItem divider />
-                                                            <DropdownItem onClick={changeMachine}>Línea Completa</DropdownItem>
+                                                            {/*<DropdownItem onClick={changeMachine}>Línea Completa</DropdownItem>*/}
                                                         </DropdownMenu>
                                                     </Dropdown>
                                                 </Col>
@@ -535,7 +514,7 @@ const FullScreenParos = (props) => {
                                             />
                                         </Col>
                                         <Col md="3" xl="3" className="ml-1" style={{ alignSelf: 'center' }}>
-                                            <div className="circle">
+                                            <div className="circle mt-2">
                                                 <Circle
                                                     animate={true} // Boolean: Animated/Static progress
                                                     animationDuration="1s" // String: Length of animation
@@ -557,14 +536,17 @@ const FullScreenParos = (props) => {
                                                 <div align="center" className="mt-2">Disp.</div>
                                             </div>
                                             
-                                            {/*<div className="circle mt-2">
+                                            <div className="circle mt-2">
                                                 <Circle
                                                     animate={true} // Boolean: Animated/Static progress
                                                     animationDuration="1s" // String: Length of animation
                                                     responsive={true} // Boolean: Make SVG adapt to parent size
                                                     size="100" // String: Defines the size of the circle.
                                                     lineWidth="40" // String: Defines the thickness of the circle's stroke.
-                                                    progress={_.round(confiabilidad.length === 0 ? 100 : confiabilidad.find(maq => maq.maquina === machineSelected).confiabilidad*100, 2).toFixed(0)} // String: Update to change the progress and percentage.
+                                                    progress={_.round(confiabilidad.length === 0 ? 0 : 
+                                                        confiabilidad.find(maq => maq.vibot === machineSelected).suma*100 > 100 ? 100 :
+                                                        confiabilidad.find(maq => maq.vibot === machineSelected).suma*100, 2).toFixed(0)
+                                                    }// String: Update to change the progress and percentage.
                                                     progressColor="#02c39a" // String: Color of "progress" portion of circle.
                                                     bgColor="#ecedf0" // String: Color of "empty" portion of circle.
                                                     textColor="#6b778c" // String: Color of percentage text color.
@@ -577,7 +559,7 @@ const FullScreenParos = (props) => {
                                                     showPercentageSymbol={true} // Boolean: Show/hide only the "%" symbol.
                                                 />
                                                 <div align="center" className="mt-2">Conf.</div>
-                                            </div>*/}
+                                            </div>
                                         </Col>
                                     </Row>
 

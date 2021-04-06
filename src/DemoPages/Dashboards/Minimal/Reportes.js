@@ -31,10 +31,15 @@ function Reportes() {
 
     const [clicConfirmar, setClicConfirmar] = useState(0);
     const [confirm, setConfirm] = useState(false);
+    const [loading, setLoading] = useState(false);
     const changeBtnConfirmar = (e) => {
         e.preventDefault();
         setClicConfirmar(clicConfirmar + 1);
-        setConfirm(true);
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+            setConfirm(true);
+        }, 5000);
     };
 
     const [sku, setSku] = useState(0);
@@ -179,10 +184,12 @@ function Reportes() {
                                             </Col>
                                             <Col >
                                                 <Label></Label>
-                                                {confirm === false ?
+                                                {confirm === false && loading === false ?
                                                     <Button className="mt-3" size="lg" block color="primary" onClick={(e) => changeBtnConfirmar(e)}>
                                                         Confirmar
                                                     </Button>
+                                                :   loading === true ?
+                                                    <Spinner animation="border" variant="info" style={{ marginTop: '2.35rem' }} />
                                                 :   <div align="center" className="font2Blue mt-3" style={{ color: '#3ac47d' }}>
                                                         ¡Reportes listos!
                                                     </div>
@@ -223,7 +230,10 @@ function Reportes() {
                                         <Row>
                                             <Col md="5" xl="5"></Col>
                                             <Col md="6" xl="6">
-                                                <Button className="my-2" size="lg" block onClick={handleParos.enter}>Generar</Button>
+                                                {confirm === false ?
+                                                    <Button className="my-2 ml-4 buttonOrange" size="lg" block disabled onClick={handleParos.enter}>Generar</Button> :
+                                                    <Button className="my-2 ml-4 buttonOrange" size="lg" block onClick={handleParos.enter}>Generar</Button>
+                                                }
                                             </Col>
                                             <Col md="1" xl="1"></Col>
                                         </Row>
@@ -246,7 +256,10 @@ function Reportes() {
                                         <Row>
                                             <Col md="5" xl="5"></Col>
                                             <Col md="6" xl="6">
-                                                <Button className="my-2" size="lg" block onClick={handlePerdidas.enter}>Generar</Button>
+                                                {confirm === false ?
+                                                    <Button className="my-2 ml-4 buttonOrange" size="lg" block disabled onClick={handlePerdidas.enter}>Generar</Button> :
+                                                    <Button className="my-2 ml-4 buttonOrange" size="lg" block onClick={handlePerdidas.enter}>Generar</Button>
+                                                }
                                             </Col>
                                             <Col md="1" xl="1"></Col>
                                         </Row>
