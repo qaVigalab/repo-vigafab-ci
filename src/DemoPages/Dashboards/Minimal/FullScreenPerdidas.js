@@ -203,7 +203,7 @@ const FullScreenPerdidas = (props) => {
                                     <Row>
                                         <Col>
                                             <div className="">
-                                                Indicador de cumplimiento
+                                                Indicador de calidad
                                                 <hr></hr>
                                             </div>
                                             <Row>
@@ -212,7 +212,7 @@ const FullScreenPerdidas = (props) => {
                                                         <thead className="theadBlue">
                                                             <tr className="text-center">
                                                                 <th>Producto</th>
-                                                                <th>Cumplimiento</th>
+                                                                <th>Calidad</th>
                                                             </tr>
                                                         </thead>
 

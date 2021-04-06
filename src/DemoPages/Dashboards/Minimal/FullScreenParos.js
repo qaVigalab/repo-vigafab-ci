@@ -583,19 +583,19 @@ const FullScreenParos = (props) => {
 
                                     <Row>
                                         <Col md="12" xl="12">
-                                            <Row className="ml-3 mt-2">
+                                            <Row className="ml-2 mt-2">
                                                 <Brightness1Icon className="mr-2" style={{ color: "#2264a7" }} />
                                                 Tiempo Activo: <div className="ml-1" style={{ fontWeight: 'bold' }}>{formatHour(tActivo)}</div>
                                             </Row>
-                                            <Row className="ml-3 my-1">
+                                            <Row className="ml-2 my-1">
                                                 <Brightness1Icon className="mr-2" style={{ color: "#f7b924" }} />
                                                 Tiempo Justificado: <div className="ml-1" style={{ fontWeight: 'bold' }}>{formatHour(tJustificado)}</div>
                                             </Row>
-                                            <Row className="ml-3 my-1">
+                                            <Row className="ml-2 my-1">
                                                 <Brightness1Icon className="mr-2" style={{ color: "#d92550" }} />
                                                 Tiempo Sin Justificar: <div className="ml-1" style={{ fontWeight: 'bold' }}>{formatHour(tNoJustificado)}</div>
                                             </Row>
-                                            <Row className="ml-3 my-1">
+                                            <Row className="ml-2 my-1">
                                                 <Brightness1Icon className="mr-2" style={{ color: "#555" }} />
                                                 Tiempo Total: 
                                                 <div className="ml-1" style={{ fontWeight: 'bold' }}>
@@ -877,7 +877,7 @@ const FullScreenParos = (props) => {
                             </CardBody>
                         </Card>
 
-                        {machineSelected !== "Línea Completa" ?
+                        {machineSelected !== "Línea Completa" && mantenimientoMaquina.length !== 0 ?
                             <Card className="main-card mb-3">
                                 <CardBody>
                                     <Container>
@@ -975,17 +975,7 @@ const FullScreenParos = (props) => {
                                                         </Col>
                                                     </Row>
                                                 </Col>
-                                                : machineSelected === "Línea Completa" ? "" :
-                                                <Col xs="12" >
-                                                    Paralizaciones por Mantenimiento
-                                                    <Table size="sm" style={{marginTop: '1%'}}>
-                                                        <tbody>
-                                                            <tr>
-                                                                <td style={{ textAlign: '-webkit-center' }}><br></br>No hay paros registrados.</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </Table>
-                                                </Col>
+                                                : ""
                                             }
                                         </Row>
                                     </Container>
