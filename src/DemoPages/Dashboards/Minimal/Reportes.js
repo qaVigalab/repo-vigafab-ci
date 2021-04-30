@@ -43,7 +43,7 @@ function Reportes() {
         setTimeout(() => {
             setLoading(false);
             setConfirm(true);
-        }, 1000);
+        }, 15000);
     };
 
     const [sku, setSku] = useState(0);
