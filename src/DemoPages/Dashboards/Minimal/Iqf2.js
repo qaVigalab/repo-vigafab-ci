@@ -179,28 +179,6 @@ const Iqf2 = (props) => {
         },
     };
 
-    const loadKpi = () => {
-        fetch(global.api.dashboard.getresumenmaquina, {
-            "method": "POST",
-            "headers": {
-                "content-type": "application/json",
-                "x-api-key": "p7eENWbONjaDsXw5vF7r11iLGsEgKLuF9PBD6G4m"
-            },
-
-            body: JSON.stringify({
-                id_vibot: id_vibot,
-                id_orden: props.ordenSelected.id_sub_orden
-            }),
-        })
-            .then(response => response.json())
-            .then(result => {
-                setTActivo(result[0].tiempo_actividad);
-            })
-            .catch(err => {
-                console.error(err);
-            });
-    };
-
     const loadGraphs = () => {
         fetch(global.api.dashboard.gettempiqf, {
             "method": "POST",
@@ -238,10 +216,8 @@ const Iqf2 = (props) => {
 
     useEffect(() => {
         if (Object.keys(props.ordenSelected).length > 0){
-            loadKpi();
             loadGraphs();
             const interval = setInterval(() => {
-                loadKpi();
                 loadGraphs();
             }, 300000);
             return () => clearInterval(interval);

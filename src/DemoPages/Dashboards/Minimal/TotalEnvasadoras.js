@@ -53,9 +53,24 @@ const TotalEnvasadoras = (props) => {
                    display: false,
                    color: 'white'
                 }
+            },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        return data['labels'][tooltipItem['index']] + ': ' + 
+                            formatHour(data['datasets'][0]['data'][tooltipItem['index']]);
+                    }
+                }
             }
         }
     );
+
+    const formatHour = (min) => {
+        let horas = min / 60;
+        horas = Math.trunc(horas)
+        let minutos = min - (60 * horas)
+        return horas === 0 ? minutos + " Min" : horas + " Hrs " + minutos + " Min"
+    }
 
     const [cantMaquinas, setCantMaquinas] = useState(0);
     const [disponibilidad, setDisponibilidad] = useState(0);
@@ -71,7 +86,7 @@ const TotalEnvasadoras = (props) => {
                 if (props.maquinas[j].recambio !== 1){
                     for (var i=0; i<reportesSel.length; i++){
                         /* Se calculan los tiempos de actividad y paro */
-                        if (reportesSel[i].id_tipo === 1 && props.maquinas[j].recambio === 0)
+                        if (reportesSel[i].id_tipo === 1)
                             t_inactivo += reportesSel[i].minutos;
                         else if (reportesSel[i].id_tipo === 2)
                             t_activo += reportesSel[i].minutos;
@@ -85,8 +100,8 @@ const TotalEnvasadoras = (props) => {
             );
 
             setEficiencia(
-                isNaN(props.ordenSelected.kg_envasados/(props.ordenSelected.kg_hora * (t_activo+t_inactivo)/60/3)) ? 0 :
-                props.ordenSelected.kg_envasados/(props.ordenSelected.kg_hora * (t_activo+t_inactivo)/60/3) * 100
+                isNaN(props.ordenSelected.kg_envasados/(props.ordenSelected.kg_hora * (t_activo)/60/3)) ? 0 :
+                props.ordenSelected.kg_envasados/(props.ordenSelected.kg_hora * (t_activo)/60/3) * 100
             );
 
             setTActivo(t_activo/3);
@@ -138,7 +153,6 @@ const TotalEnvasadoras = (props) => {
                     </Col>
                     <Col md="3">
                         <Row align="right">
-                            <div className="font2 my-4">Estado:</div>
                             <div className={cantMaquinas == 0 || props.ordenSelected.id_estado != 1  ? "font2gray ml-1 my-4" : "font2Blue ml-1 my-4"}>
                                 {props.ordenSelected.id_estado === 3 ? "Detenidas"
                                 : props.ordenSelected.id_estado === 2 ? "En espera"

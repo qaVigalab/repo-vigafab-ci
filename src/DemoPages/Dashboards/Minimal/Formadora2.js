@@ -170,6 +170,13 @@ const Formadora2 = (props) => {
         }
     );
 
+    const formatHour = (min) => {
+        let horas = min / 60;
+        horas = Math.trunc(horas)
+        let minutos = min - (60 * horas)
+        return horas === 0 ? minutos + " Min" : horas + " Hrs " + minutos + " Min"
+    }
+
     /* Se carga el gráfico de temperaturas asociado a la orden en curso */
     const loadGraphTemp = () => {
         fetch(global.api.dashboard.gettempformadora, {
@@ -202,7 +209,7 @@ const Formadora2 = (props) => {
     /* Se carga el gráfico de eficiencia por minuto */
     const [seriesEfficiency, setSeriesEfficiency] = useState([]);
     const [optionsEfficiency, setOptionsEfficiency] = useState({});
-    const loadGraphEffic = (id_vb) => {
+    /*const loadGraphEffic = (id_vb) => {
         fetch(global.api.dashboard.getEficienciaPorMinuto, {
             "method": "POST",
             "headers": {
@@ -305,7 +312,7 @@ const Formadora2 = (props) => {
         .catch(err => {
             console.error(err);
         });
-    };
+    };*/
 
     const [tActivo, setTActivo] = useState(0);
     const [disponibilidad, setDisponibilidad] = useState(0);
@@ -313,7 +320,6 @@ const Formadora2 = (props) => {
 
     useEffect(() => {
         if (Object.keys(props.ordenSelected).length > 0){
-            loadGraphEffic(6296);
             loadGraphTemp();
         }
     }, [props.ordenSelected]);
@@ -336,18 +342,9 @@ const Formadora2 = (props) => {
                     tiempo_activo/(tiempo_activo+tiempo_inactivo) * 100
                 );
 
-                while (reportesSel.length > 1 && reportesSel[0].id_tipo === 1){
-                    reportesSel.splice(0, 1);
-                }
-
-                var startMoment = moment(reportesSel[0].hora_inicio);
-                var endMoment = moment(reportesSel[reportesSel.length-1].hora_termino);
-                var diff = endMoment.diff(startMoment);
-                const diffDuration = moment.duration(diff);
-
                 setEficiencia(
-                    isNaN(props.ordenSelected.kg_formados/(props.ordenSelected.kg_hora * (diffDuration.hours() + diffDuration.minutes()/60 + diffDuration.seconds()/3600))) ? 0 :
-                    props.ordenSelected.kg_formados/(props.ordenSelected.kg_hora * (diffDuration.hours() + diffDuration.minutes()/60 + diffDuration.seconds()/3600)) * 100
+                    isNaN(props.ordenSelected.kg_formados/(props.ordenSelected.kg_hora * tiempo_activo/60)) ? 0 :
+                    props.ordenSelected.kg_formados/(props.ordenSelected.kg_hora * tiempo_activo/60) * 100
                 );
 
                 setTActivo(tiempo_activo);
@@ -583,6 +580,14 @@ const Formadora2 = (props) => {
                                             datalabels: {
                                                display: false,
                                                color: 'white'
+                                            }
+                                        },
+                                        tooltips: {
+                                            callbacks: {
+                                                label: function(tooltipItem, data) {
+                                                    return data['labels'][tooltipItem['index']] + ': ' + 
+                                                        formatHour(data['datasets'][0]['data'][tooltipItem['index']]);
+                                                }
                                             }
                                         }
                                     }} /></div>

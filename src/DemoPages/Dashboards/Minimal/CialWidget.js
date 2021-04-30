@@ -95,6 +95,13 @@ const CialWidget = (props) => {
     }
   );
 
+  const formatHour = (min) => {
+      let horas = min / 60;
+      horas = Math.trunc(horas)
+      let minutos = min - (60 * horas)
+      return horas === 0 ? minutos + " Min" : horas + " Hrs " + minutos + " Min"
+  }
+
   const [reportes, setReportes] = useState(props.reportesSelected);
   const [tActivo, setTActivo] = useState(0);
   const [disponibilidad, setDisponibilidad] = useState(0);
@@ -138,18 +145,9 @@ const CialWidget = (props) => {
           tiempo_activo/(tiempo_activo+tiempo_inactivo) * 100
         );
 
-        while (reportesSel.length > 1 && reportesSel[0].id_tipo === 1){
-          reportesSel.splice(0, 1);
-        }
-
-        var startMoment = moment(reportesSel[0].hora_inicio);
-        var endMoment = moment(reportesSel[reportesSel.length-1].hora_termino);
-        var diff = endMoment.diff(startMoment);
-        const diffDuration = moment.duration(diff);
-
         setEficiencia(
-            isNaN(kilos_envasados/(props.ordenSelected.kg_hora/3 * (diffDuration.hours() + diffDuration.minutes()/60 + diffDuration.seconds()/3600))) ? 0 :
-            kilos_envasados/(props.ordenSelected.kg_hora/3 * (diffDuration.hours() + diffDuration.minutes()/60 + diffDuration.seconds()/3600)) * 100
+            isNaN(kilos_envasados/(props.ordenSelected.kg_hora/3 * tiempo_activo/60)) ? 0 :
+            kilos_envasados/(props.ordenSelected.kg_hora/3 * tiempo_activo/60) * 100
         );
 
         setTActivo(tiempo_activo);
@@ -356,6 +354,14 @@ const CialWidget = (props) => {
                           datalabels: {
                              display: false,
                              color: 'white'
+                          }
+                      },
+                      tooltips: {
+                          callbacks: {
+                              label: function(tooltipItem, data) {
+                                  return data['labels'][tooltipItem['index']] + ': ' + 
+                                      formatHour(data['datasets'][0]['data'][tooltipItem['index']]);
+                              }
                           }
                       }
                     }}
