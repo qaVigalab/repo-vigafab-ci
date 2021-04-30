@@ -229,10 +229,10 @@ const FullScreenBalance = (props) => {
                                                             {sku}
                                                         </Col>
                                                         <Col md="2" className="font2Blue" align="center" style={{ alignSelf: 'center' }}>
-                                                            {formatNumber.new(balance[sku].hamb_formadas)}<br></br>
+                                                            {formatNumber.new(_.round(balance[sku].hamb_formadas, 2))}<br></br>
                                                             <div style={{ fontSize: 'small' }}>hamb. formadas</div>
                                                             <hr></hr>
-                                                            {formatNumber.new(balance[sku].kg_formados)}<br></br>
+                                                            {formatNumber.new(_.round(balance[sku].kg_formados, 2))}<br></br>
                                                             <div style={{ fontSize: 'small' }}>kg. formados</div>
                                                         </Col>
                                                         <Col md="3" xl="3" align="center" style={{ alignSelf: 'center' }}>
@@ -258,10 +258,10 @@ const FullScreenBalance = (props) => {
                                                             </Row>
                                                         </Col>
                                                         <Col md="2" className="font2Blue" align="center" style={{ alignSelf: 'center' }}>
-                                                            {formatNumber.new(balance[sku].hamb_empacadas)}<br></br>
+                                                            {formatNumber.new(_.round(balance[sku].hamb_empacadas, 2))}<br></br>
                                                             <div style={{ fontSize: 'small' }}>hamb. empacadas</div>
                                                             <hr></hr>
-                                                            {formatNumber.new(balance[sku].kg_empacados)}<br></br>
+                                                            {formatNumber.new(_.round(balance[sku].kg_empacados, 2))}<br></br>
                                                             <div style={{ fontSize: 'small' }}>kg. empacados</div>
                                                         </Col>
                                                     </Row>
