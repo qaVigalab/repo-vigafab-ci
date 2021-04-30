@@ -69,7 +69,7 @@ export const General= [
         label: 'FullScreen Operativa',
         to: '#/dashboards/FullScreenOperativa'
 
-    }, 
+    }/*, 
 
     {
 
@@ -77,7 +77,7 @@ export const General= [
         label: 'Control de Tiempo',
         to: '#/dashboards/TiempoParo'
 
-    },  
+    }*/,  
 
     {
 

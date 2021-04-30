@@ -12,6 +12,7 @@ import _ from "lodash";
 
 import PageTitleAlt3 from "../../../Layout/AppMain/PageTitleAlt3";
 import FullScreenParos from "./FullScreenParos";
+import FullScreenBalance from "./FullScreenBalance";
 import FullScreenPerdidas from "./FullScreenPerdidas";
 import { useCallback } from "react";
 
@@ -19,15 +20,18 @@ function Reportes() {
     let m = moment().set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
 
     const handleParos = useFullScreenHandle();
+    const handleBalance = useFullScreenHandle();
     const handlePerdidas = useFullScreenHandle();
 
     const changeFullScreen = useCallback((state, handle) => {
         if (handle === handleParos){
             console.log("Fullscreen de ", state, handle);
+        } else if (handle === handleBalance){
+            console.log("Fullscreen de ", state, handle);
         } else if (handle === handlePerdidas){
             console.log("Fullscreen de ", state, handle);
         }
-    }, [handleParos, handlePerdidas]);
+    }, [handleParos, handleBalance, handlePerdidas]);
 
     const [clicConfirmar, setClicConfirmar] = useState(0);
     const [confirm, setConfirm] = useState(false);
@@ -39,7 +43,7 @@ function Reportes() {
         setTimeout(() => {
             setLoading(false);
             setConfirm(true);
-        }, 5000);
+        }, 1000);
     };
 
     const [sku, setSku] = useState(0);
@@ -212,8 +216,7 @@ function Reportes() {
                                 </Row>
                                 <hr></hr>
                                 <Row>
-                                    <Col md="1" xl="1"></Col>
-                                    <Col className="mb-2" md="4" xl="4">
+                                    <Col className="mb-2 ml-4" md="3" xl="3">
                                         <Row>
                                             <Col className="ml-4 my-2" align="left">
                                                 <div className="font2Blue">Reporte de paros</div>
@@ -238,8 +241,34 @@ function Reportes() {
                                             <Col md="1" xl="1"></Col>
                                         </Row>
                                     </Col>
-                                    <Col md="2" xl="2"></Col>
-                                    <Col className="mb-2" md="4" xl="4">
+                                    <Col md="1" xl="1"></Col>
+                                    <Col className="mb-2" md="3" xl="3">
+                                        <Row>
+                                            <Col className="ml-4 my-2" align="left">
+                                                <div className="font2Blue">Reporte de masas</div>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col className="ml-4 my-2" align="left">
+                                                <Label style={{ textAlign: 'justify' }}>
+                                                    Permite visualizar el reporte de balance de masa de la línea para el día seleccionado.
+                                                    Sólo admite visualización del día completo, ya que expone el detalle según cada SKU producido durante el día.
+                                                </Label>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col md="5" xl="5"></Col>
+                                            <Col md="6" xl="6">
+                                                {confirm === false ?
+                                                    <Button className="my-2 ml-4 buttonOrange" size="lg" block disabled onClick={handleBalance.enter}>Generar</Button> :
+                                                    <Button className="my-2 ml-4 buttonOrange" size="lg" block onClick={handleBalance.enter}>Generar</Button>
+                                                }
+                                            </Col>
+                                            <Col md="1" xl="1"></Col>
+                                        </Row>
+                                    </Col>
+                                    <Col md="1" xl="1"></Col>
+                                    <Col className="mb-2" md="3" xl="3">
                                         <Row>
                                             <Col className="ml-4 my-2" align="left">
                                                 <div className="font2Blue">Reporte de pérdidas</div>    
@@ -273,6 +302,7 @@ function Reportes() {
             </Fragment>
 
             <FullScreenParos handle={handleParos} onChange={changeFullScreen} date={startDate} sku={sku} confirmar={clicConfirmar} />
+            <FullScreenBalance handle={handleBalance} onChange={changeFullScreen} date={startDate} confirmar={clicConfirmar} />
             <FullScreenPerdidas handle={handlePerdidas} onChange={changeFullScreen} date={startDate} confirmar={clicConfirmar} />
         </div>
     );

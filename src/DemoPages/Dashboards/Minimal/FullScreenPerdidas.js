@@ -41,6 +41,7 @@ const FullScreenPerdidas = (props) => {
     const [kgPerdida, setKgPerdida] = useState(0);
     const [kgFormados, setKgFormados] = useState(0);
     const [kgEmpacados, setKgEmpacados] = useState(0);
+    const [kgSolicitados, setKgSolicitados] = useState(0);
 
     const getRechazos = () => {
         fetch(global.api.dashboard.getRechazosDia, {
@@ -56,7 +57,7 @@ const FullScreenPerdidas = (props) => {
         .then(response => response.json())
         .then(result => {
             var labels = [], dataEnvasado = [], dataRayosX = [];
-            var rechazoEnv = 0, rechazoRayosX = 0, rechazoGlobal = 0, maxLimit = 0, perdidas = 0, kgFormados = 0, kgEmpacados = 0;
+            var rechazoEnv = 0, rechazoRayosX = 0, rechazoGlobal = 0, maxLimit = 0, perdidas = 0, kgFormados = 0, kgEmpacados = 0, kgSolicitados = 0;
 
             result.map(r => {
                 labels.push(r.producto.split("@"));
@@ -77,6 +78,7 @@ const FullScreenPerdidas = (props) => {
                 perdidas += r.rechazo_global;
                 kgFormados += r.kg_formados;
                 kgEmpacados += r.kg_empacados;
+                kgSolicitados += r.kg_solicitados;
             });
 
             setQuery(result);
@@ -87,6 +89,7 @@ const FullScreenPerdidas = (props) => {
             setKgPerdida(perdidas);
             setKgFormados(kgFormados);
             setKgEmpacados(kgEmpacados);
+            setKgSolicitados(kgSolicitados);
 
             setDataRechazos({
                 labels: labels,
@@ -203,7 +206,7 @@ const FullScreenPerdidas = (props) => {
                                     <Row>
                                         <Col>
                                             <div className="">
-                                                Indicador de calidad
+                                                Indicador de cumplimiento
                                                 <hr></hr>
                                             </div>
                                             <Row>
@@ -212,7 +215,7 @@ const FullScreenPerdidas = (props) => {
                                                         <thead className="theadBlue">
                                                             <tr className="text-center">
                                                                 <th>Producto</th>
-                                                                <th>Calidad</th>
+                                                                <th>Cumplimiento</th>
                                                             </tr>
                                                         </thead>
 
@@ -224,9 +227,9 @@ const FullScreenPerdidas = (props) => {
                                                                     { sku.producto }
                                                                 </td>
                                                                 <td style={{ width: "40%", fontWeight: 'bold' }} className="text-center">
-                                                                    {isNaN(sku.kg_empacados/sku.kg_formados) ? 
+                                                                    {isNaN(sku.kg_empacados/sku.kg_solicitados) ? 
                                                                         "-"
-                                                                        : formatNumber.new(_.round(sku.kg_empacados/sku.kg_formados*100, 2)) + " %"
+                                                                        : formatNumber.new(_.round(sku.kg_empacados/sku.kg_solicitados*100, 2)) + " %"
                                                                     }
                                                                 </td>
                                                             </tr>
@@ -239,7 +242,7 @@ const FullScreenPerdidas = (props) => {
                                                                 <td style={{ width: "40%", fontWeight: 'bold' }} className="text-center">
                                                                     {isNaN(kgEmpacados/kgFormados) ? 
                                                                         "-"
-                                                                        : formatNumber.new(_.round(kgEmpacados/kgFormados*100, 2)) + " %"
+                                                                        : formatNumber.new(_.round(kgEmpacados/kgSolicitados*100, 2)) + " %"
                                                                     }
                                                                 </td>
                                                             </tr>

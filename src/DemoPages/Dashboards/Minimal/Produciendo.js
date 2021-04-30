@@ -112,8 +112,8 @@ const Produciendo = (props) => {
 
     useEffect(() => {
         /* Se actualizan las métricas globales */
-        setEficiencia((props.eficienciaFormadora/*+props.eficienciaEnvasadoras*/+props.eficienciaEmpaquetadora)/2);
-        setDisponibilidad((props.disponibilidadFormadora/*+props.disponibilidadEnvasadoras*/+props.disponibilidadEmpaquetadora)/2)
+        setEficiencia((props.eficienciaFormadora/*+props.eficienciaEnvasadoras+props.eficienciaEmpaquetadora)/2*/));
+        setDisponibilidad((props.disponibilidadFormadora/*+props.disponibilidadEnvasadoras+props.disponibilidadEmpaquetadora)/2*/))
 
         if (isNaN((props.ordenSelected.real_kg + props.ordenSelected.cajas_fuera_de_linea*props.ordenSelected.kg_caja)/(props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc)))
             setCalidad(0);
@@ -127,6 +127,7 @@ const Produciendo = (props) => {
             <div className="title2Orange">
                 <Row className='sticky-row my-1'>
                     <br />
+                    <Col md="1"></Col>
                     <Col md="2">
                         <div align="left" className="text-uppercase font-weight-bold my-1 ml-4">{
                             props.ordenSelected.id_estado === 3 ? "Terminada"
@@ -146,41 +147,26 @@ const Produciendo = (props) => {
                             <div align="left" className="font3 my-1">{props.ordenSelected.sku}</div>
                         </Row>
                     </Col>
-                    <Col md="3">
+                    <Col md="4">
                         <Row>
                             <div align="left" className="font2 my-1">Producto:</div>
                             <div align="left" className="font3 my-1">{props.ordenSelected.producto}</div>
-                        </Row>
-                    </Col>
-                    <Col md="2">
-                        <Row>
-                            <div align="left" className="font2 my-1">Productividad:</div>
-                            <div align="left" className="font3 my-1">{props.formatNumber.new(_.round(props.ordenSelected.productividad, 2)) + " ham/min"}</div>
                         </Row>
                     </Col>
                     <br />
                 </Row>
             </div>
 
-            <div className="titleBlue ">
+            <div className="titleBlue">
                 <Row>
                     <br />
-                    <Col align="left" md="2">
+                    <Col md="1"></Col>
+                    <Col align="left" md="4">
                         <div className="text-uppercase font-weight-bold ml-3 titleBlue">Línea de Producción</div>
                     </Col>
                     <Col>
-                        <Row >
-                            <Col align="right">
-                                <div className="font2 my-1">Estado</div>
-                            </Col>
-                            <div className={props.ordenSelected.id_estado === 1 ? "font2White  my-1" : "font2White my-1"}>
-                                {
-                                    props.ordenSelected.id_estado === 3 ? "Terminada"
-                                    : props.ordenSelected.id_estado == 2 ? "En espera"
-                                    : "Produciendo"
-                                }
-                            </div>
-                            <div className="font2 ml-3 my-1">Tiempo Total</div>
+                        <Row align="right">
+                            <div className="font2 ml-3 my-1">Tiempo Total:</div>
                             {parseInt(props.ordenSelected.tiempo_total/60) == 1 ?
                                 <div align="right" className="font2White ml-1 mr-5 my-1">
                                     {parseInt(props.ordenSelected.tiempo_total/60)} hr,
@@ -191,6 +177,9 @@ const Produciendo = (props) => {
                                     {" " + parseInt(props.ordenSelected.tiempo_total%60)} min
                                 </div> 
                             }
+
+                            <div align="left" className="font2 my-1">Productividad:</div>
+                            <div align="left" className="font3 my-1">{props.formatNumber.new(_.round(props.ordenSelected.productividad, 2)) + " ham/min"}</div>
                         </Row>
                     </Col>
                 </Row>
@@ -204,14 +193,13 @@ const Produciendo = (props) => {
                         <div className="whiteBorder"></div>
 
                         <div className="">
-                            <Row className="my-2">
-                                <Col md="1"></Col>
+                            <Row className="my-2" style={{ justifyContent: 'center' }}>
                                 <Col md="3">
-                                    <div className="ml-4 my-3  ">
+                                    <div className="my-3  ">
                                         <img src={icono1} className="rounded float-left mb-2" alt="Balanza" />
                                     </div>
                                 </Col>
-                                <Col md="8">
+                                <Col md="7">
                                     <div align="center" className="bigFont mt-3">{props.formatNumber.new(_.round(props.ordenSelected.kg_formados - props.ordenSelected.reproceso_env_mezc - props.ordenSelected.reproceso_rayos_mezc))}</div>
                                     <div align="center" className="littleFont">de {" " + props.formatNumber.new(_.round(props.ordenSelected.kg_solicitados)) + " "} Kgs</div>
                                 </Col>
@@ -220,14 +208,13 @@ const Produciendo = (props) => {
                         </div>
 
                         <div className="">
-                            <Row className="my-2" >
-                                <Col md="1"></Col>
+                            <Row className="my-2" style={{ justifyContent: 'center' }}>
                                 <Col md="3">
-                                    <div className="ml-4 my-3 ">
+                                    <div className="my-3 ">
                                         <img src={icono2} className="rounded float-left mb-2" alt="Empaque" />
                                     </div>
                                 </Col>
-                                <Col md="8">
+                                <Col md="7">
                                     <div align="center" className="bigFont mt-3">{props.formatNumber.new(_.round(props.ordenSelected.hamb_envasadas - props.ordenSelected.reproceso_rayos_mezc*1000/props.ordenSelected.g_hamburguesa))}</div>
                                     <div align="center" className="littleFont">de {" " + props.formatNumber.new(_.round(props.ordenSelected.hamb_solicitadas)) + " "} Packs</div>
                                 </Col>
@@ -236,14 +223,13 @@ const Produciendo = (props) => {
                         </div>
 
                         <div className="">
-                            <Row className="my-2">
-                                <Col md="1"></Col>
+                            <Row className="my-2" style={{ justifyContent: 'center' }}>
                                 <Col md="3">
-                                    <div className="ml-4 my-3 ">
+                                    <div className="my-3 ">
                                         <img src={icono3} className="rounded float-left mb-3" alt="Caja" />
                                     </div>
                                 </Col>
-                                <Col md="8">
+                                <Col md="7">
                                     <div align="center" className="bigFont mt-3">{props.formatNumber.new(_.round(props.ordenSelected.cajas_acumuladas + props.ordenSelected.cajas_fuera_de_linea))}</div>
                                     <div align="center" className="littleFont">de {" " + props.formatNumber.new(_.round(props.ordenSelected.cajas)) + " "} Cajas</div>
                                 </Col>
@@ -253,10 +239,10 @@ const Produciendo = (props) => {
                     </Col>
                     
                     {/* Gráficos de donas */}
-                    <Col md="3" className="">
+                    <Col md="3" className="" style={{ alignSelf: 'center' }}>
                         <Row className="ml-3 mt-4">
                             <Row>
-                                <Col md="5">
+                                <Col md="6">
                                     <div className="circle">
                                         <Circle
                                             animate={true} // Boolean: Animated/Static progress
@@ -280,7 +266,7 @@ const Produciendo = (props) => {
                                     </div>
                                 </Col>
                                 
-                                <Col md="5">
+                                <Col md="6">
                                     <div className="circle">
                                         <Circle
                                             animate={true} // Boolean: Animated/Static progress
@@ -306,7 +292,7 @@ const Produciendo = (props) => {
                             </Row>
 
                             <Row className="mt-4">
-                                <Col md="5">
+                                <Col md="6">
                                     <div className="circle">
                                         <Circle
                                             animate={true} // Boolean: Animated/Static progress
@@ -330,7 +316,7 @@ const Produciendo = (props) => {
                                     </div>
                                 </Col>
 
-                                <Col md="5">
+                                <Col md="6">
                                     <div className="circle">
                                         <Circle
                                             animate={true} // Boolean: Animated/Static progress
@@ -358,7 +344,7 @@ const Produciendo = (props) => {
                     </Col>
                     
                     {/* Gráfico de torta */}
-                    <Col md="3" className="mb-3">
+                    <Col md="3" className="mb-3" style={{ alignSelf: 'center' }}>
                         <div className="centralbodydetail" style={{ paddingBottom: '15px' }}>
                             <Doughnut
                                 data={dataTorta}
@@ -393,7 +379,7 @@ const Produciendo = (props) => {
                         <div className="whiteBorder"></div>
 
                         <div className="my-3">
-                            <Row className="mt-2 ml-2">
+                            <Row className="mt-2">
                                 <Col md="4" className="p-0">
                                     <div className="circle pl-5 mt-1 ">
                                         <Circle
@@ -432,7 +418,7 @@ const Produciendo = (props) => {
                         </div>
 
                         <div className="my-4">
-                            <Row className="mt-2 ml-2">
+                            <Row className="mt-2">
                                 <Col md="4" className="p-0">
                                     <div className="circle pl-5 mt-1 ">
                                         <Circle
@@ -473,7 +459,7 @@ const Produciendo = (props) => {
                         </div>
 
                         <div className="my-3">
-                            <Row className="mt-2 ml-2">
+                            <Row className="mt-2">
                                 <Col md="4" className="noSpace">
                                     <div className="circle pl-5 mt-1 ">
                                         <Circle
