@@ -1,0 +1,81 @@
+pipeline {
+    agent any
+
+    tools {
+        nodejs 'NodeJS 12.21.0'
+    }
+   
+
+    environment {
+        currentEnvName = envName(env.BRANCH_NAME)
+        installNeeded = requireInstall(env.BRANCH_NAME)
+
+        teamlList = 'nelson.baker@gmail.com'
+
+       
+    }
+    stages {
+        stage('Create Environment') {
+            steps {
+                echo "Current workspace: ${env.WORKSPACE}"
+                echo "Current Env: ${currentEnvName}"
+                echo "Branch Name: ${env.BRANCH_NAME}"
+                echo "Install Required?: ${installNeeded}"
+                sh 'node --version'
+                sh 'npm --version'
+            }
+        }
+
+        stage('Validate') {
+            steps {
+                echo "Validate... ${env.BUILD_ID} on ${env.JENKINS_URL} ${env.JOB_NAME}"
+                
+                echo "If need validate..."
+                
+                echo "End Validate"
+            }
+        }
+
+        stage('Push to remote repo') {
+            steps {
+                echo "Init Push...."
+                               
+
+                echo "End Push"
+            }
+        }
+    }
+    post {
+        failure {
+            emailext    body: "Resultado Pipeline: ${currentBuild.currentResult}:\nJob ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n\nDetalle: ${env.BUILD_URL}",
+                        subject: "Estado ejecucion Jenkins: ${currentBuild.currentResult}: Job ${env.JOB_NAME}",
+                        to: "${teamlList}"
+                        //replyTo: "Vigalab CI<qa@vigalab.com>"
+        }
+    }
+
+}
+
+
+def envName(branch) {
+    if (branch.startsWith("DEV")) {
+        return "desarrollo"
+    } else if (branch == 'qa') {
+        return "qa"
+    } else if (branch == 'main') {
+        return "produccion"
+    }
+
+}
+
+def requireInstall(branch) {
+    def res = 'false'
+    if (branch.startsWith("DEV")) {
+        res = 'true'
+    } else if (branch == 'qa') {
+        res = 'true'
+    } else if (branch == 'main') {
+        res = 'true'
+    }
+    return res;
+}
