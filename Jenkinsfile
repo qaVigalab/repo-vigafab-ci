@@ -57,7 +57,7 @@ pipeline {
                 
                 sh 'git remote -v'
 
-                sh 'git remote set-url vigafab https://github.com/vigalab/vigafab.git'
+                sh 'git remote set-url vigafab https://qa@vigalab.com:Vig4l4bQa123@github.com/vigalab/vigafab.git'
 
                 sh 'git remote -v'
 
