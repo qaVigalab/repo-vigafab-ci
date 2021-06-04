@@ -61,7 +61,7 @@ pipeline {
 
                 sh 'git remote -v'
 
-                sh "git push  DEV"
+                sh "git push vigafab DEV"
 
                 /*
                 script {
