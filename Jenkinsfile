@@ -47,7 +47,10 @@ pipeline {
         stage('Push to remote repo') {
             steps {
                 echo "Init Push...."
-                               
+
+                sh 'git remote add vigafab https://github.com/vigalab/vigafab.git'
+
+                sh 'git remote -v'               
 
                 echo "End Push"
             }
