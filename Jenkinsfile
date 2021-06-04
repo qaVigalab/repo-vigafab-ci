@@ -30,7 +30,7 @@ pipeline {
             steps {
                 echo "Install NODE dependencies..."
                 
-                sh 'npm install'
+                //sh 'npm install'
             }
         }
 
@@ -55,6 +55,10 @@ pipeline {
                     }
                 }
                 
+                sh 'git remote -v'
+
+                sh 'git remote set-url vigafab git@github.com:qa@vigalab.com/vigafab.git'
+
                 sh 'git remote -v'
 
                 sh "git pull vigafab DEV"               
