@@ -57,23 +57,22 @@ pipeline {
                 
                 sh 'git remote -v'
 
-                sh 'git remote set-url vigafab https://qaVigalab:Vig4l4bQa123@github.com/vigalab/vigafab.git'
-
-                sh 'git remote -v'
-
-                sh "git push vigafab DEV"
-
-                /*
                 script {
                     withCredentials([
                         usernamePassword(credentialsId: 'GitHub',
                         usernameVariable: 'username',
                         passwordVariable: 'password')
                     ]) {
-                        sh "git push  DEV"
+                        
+                        sh "git remote set-url vigafab https://${username}:${password}@github.com/vigalab/vigafab.git"
+
+                        sh 'git remote -v'
+
+                        sh "git push vigafab ${env.BRANCH_NAME}"
+
                     }
                 }
-                */
+            
                                
 
                 echo "End Push"
