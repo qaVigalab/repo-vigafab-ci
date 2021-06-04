@@ -38,7 +38,7 @@ pipeline {
             steps {
                 echo "Validate..."
                 
-                sh 'npm test'
+                
                 
                 echo "End Validate"
             }
