@@ -48,8 +48,12 @@ pipeline {
             steps {
                 echo "Init Push...."
 
-                sh 'git remote add vigafab https://github.com/vigalab/vigafab.git'
-
+                try { 
+                    sh 'git remote add vigafab https://github.com/vigalab/vigafab.git'
+                } catch(ExceptionName e1) {
+                    echo "Remote repository was added"
+                }
+                
                 sh 'git remote -v'
 
                 sh "git pull vigafab ${env.BRANCH_NAME}"               
