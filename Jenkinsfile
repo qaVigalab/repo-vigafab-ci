@@ -68,7 +68,7 @@ pipeline {
                         usernameVariable: 'username',
                         passwordVariable: 'password')
                     ]) {
-                        sh "git push https://${username}:${password}@github.com/vigalab/vigafab.git DEV"
+                        sh "git push vigafab DEV"
                     }
                 }
                 
