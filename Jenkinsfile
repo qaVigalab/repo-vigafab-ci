@@ -57,7 +57,7 @@ pipeline {
                 
                 sh 'git remote -v'
 
-                sh "git pull vigafab ${env.BRANCH_NAME}"               
+                sh "git pull vigafab DEV"               
 
                 echo "End Push"
             }
