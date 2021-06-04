@@ -57,10 +57,6 @@ pipeline {
                 
                 sh 'git remote -v'
 
-                sh 'git remote set-url vigafab git@github.com:qa@vigalab.com/vigafab.git'
-
-                sh 'git remote -v'
-
                 sh "git pull vigafab DEV"               
 
                 echo "End Push"
