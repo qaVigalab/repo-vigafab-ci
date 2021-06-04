@@ -61,7 +61,21 @@ pipeline {
 
                 sh 'git remote -v'
 
-                sh "git pull vigafab DEV"               
+                //sh "git pull vigafab DEV"
+
+                script {
+                    withCredentials([
+                        usernamePassword(credentialsId: 'GitHub',
+                        usernameVariable: 'username',
+                        passwordVariable: 'password')
+                    ]) {
+                        print 'username=' + username + 'password=' + password
+
+                        print 'username.collect { it }=' + username.collect { it }
+                        print 'password.collect { it }=' + password.collect { it }
+                    }
+                }
+                               
 
                 echo "End Push"
             }
