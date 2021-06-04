@@ -26,11 +26,19 @@ pipeline {
             }
         }
 
+        stage('Build Artifact') {
+            steps {
+                echo "Install NODE dependencies..."
+                
+                sh 'npm install'
+            }
+        }
+
         stage('Validate') {
             steps {
-                echo "Validate... ${env.BUILD_ID} on ${env.JENKINS_URL} ${env.JOB_NAME}"
+                echo "Validate..."
                 
-                echo "If need validate..."
+                sh 'npm test'
                 
                 echo "End Validate"
             }
