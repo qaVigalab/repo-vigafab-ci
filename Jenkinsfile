@@ -47,11 +47,12 @@ pipeline {
         stage('Push to remote repo') {
             steps {
                 echo "Init Push...."
-
-                try { 
-                    sh 'git remote add vigafab https://github.com/vigalab/vigafab.git'
-                } catch(ExceptionName e1) {
-                    echo "Remote repository was added"
+                script {
+                    try { 
+                        sh 'git remote add vigafab https://github.com/vigalab/vigafab.git'
+                    } catch(err) {
+                        echo "Remote repository was added"
+                    }
                 }
                 
                 sh 'git remote -v'
