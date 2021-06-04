@@ -61,21 +61,17 @@ pipeline {
 
                 sh 'git remote -v'
 
-                sh "git push vigafab DEV"
-
-                /*
+                
                 script {
                     withCredentials([
                         usernamePassword(credentialsId: 'GitHub',
                         usernameVariable: 'username',
                         passwordVariable: 'password')
                     ]) {
-                        URLEncoder.encode(password, "UTF-8")
-
-
+                        sh "git push https://${username}:${password}@github.com/vigalab/vigafab.git DEV"
                     }
                 }
-                */
+                
                                
 
                 echo "End Push"
